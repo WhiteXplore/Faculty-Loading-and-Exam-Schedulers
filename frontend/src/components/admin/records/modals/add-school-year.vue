@@ -5,7 +5,7 @@
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
       <form
         @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
+        class="w-[25vw] bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
       >
         <!-- Header -->
         <div
@@ -25,7 +25,7 @@
         </div>
 
         <!-- Body -->
-        <div class="p-5 w-[35vw] space-y-5">
+        <div class="p-5 space-y-5">
           <!-- <div class="w-full space-y-2">
             <label>School Year Name:</label>
             <input
@@ -45,7 +45,7 @@
                 required
                 min="2000"
                 max="2100"
-                class="w-full border px-3 py-3"
+                class="w-full border px-3 py-3 rounded-lg"
                 placeholder="e.g., 2024"
               />
             </div>
@@ -57,7 +57,7 @@
                 required
                 min="2000"
                 max="2100"
-                class="w-full border px-3 py-3"
+                class="w-full border px-3 py-3 rounded-lg"
                 placeholder="e.g., 2025"
               />
             </div>
@@ -68,7 +68,7 @@
             <select
               v-model.number="form.semester"
               required
-              class="w-full border px-3 py-3"
+              class="w-full border px-3 py-3 rounded-lg"
             >
               <option value="">Select Semester</option>
               <option value="1">1st Semester</option>

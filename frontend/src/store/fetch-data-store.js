@@ -26,6 +26,8 @@ export const useFetchDataStore = defineStore("fetchData", {
     final_schedules: [],
     class_sections: [],
     unscheduled_meetings: [],
+    generated_scheduled: [],
+    schedule_by_room:[],
     college_branch: [],
     faculty_branch: [],
     buildings: [],
@@ -40,6 +42,35 @@ export const useFetchDataStore = defineStore("fetchData", {
   }),
 
   actions: {
+    async runScheduler() {
+      await axios.get(
+        process.env.VUE_APP_API_BASE_URL + "/generated-scheduled/load",
+      );
+    },
+
+    async fetchGeneratedScheduled() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const res = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/generated-scheduled/generate",
+        );
+
+        const payload = res.data?.data || {};
+
+        this.generated_scheduled = payload.scheduled_meetings || [];
+        this.unscheduled_meetings = payload.unscheduled_meetings || [];
+         this.schedule_by_room = payload.schedule_by_room || [];
+
+        return payload;
+      } catch (err) {
+        this.error = err.message || "Failed to fetch generated schedule";
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async fetchBuildingAreas() {
       this.loading = true;
       this.error = null;

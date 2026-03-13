@@ -1,49 +1,64 @@
 <template>
   <div v-if="isTable">
     <!-- Header -->
+    <!-- Header -->
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4 font-regular">
         Pages / User Accounts
       </div>
 
       <div class="flex gap-2">
-        <div
-          @click="toggleImportExpertise"
-          class="flex items-center gap-2 px-3 py-2 border text-purple-600 border-purple-600 rounded-xl hover:bg-purple-700 hover:text-white hover:shadow-lg cursor-pointer transition duration-200"
-        >
+        <!-- IMPORT DROPDOWN -->
+        <div class="relative">
           <div
-            class="p-1 bg-purple-500 bg-opacity-20 rounded-full flex items-center justify-center"
+            @click="showImportSelector = true"
+            class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+            <div
+              class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
+              <icon :name="'uploads'" class="w-4 h-4" />
+            </div>
+            <span class="font-medium text-sm">Import</span>
           </div>
-          <span class="font-medium text-sm">Import Expertise</span>
-        </div>
 
-        <div
-          @click="toggleImport"
-          class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
-        >
+          <!-- DROPDOWN MENU -->
           <div
-            class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
+            v-if="showImportMenu"
+            class="absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg overflow-hidden z-50"
           >
-            <icon :name="'uploads'" class="w-4 h-4" />
+            <div
+              @click="openImportUsers"
+              class="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-2"
+            >
+              <icon name="uploads" class="w-4 h-4 text-blue-600" />
+              Import Users
+            </div>
+
+            <div
+              @click="openImportExpertise"
+              class="px-4 py-2 hover:bg-purple-50 cursor-pointer text-sm flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-purple-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              Import Expertise
+            </div>
           </div>
-          <span class="font-medium text-sm">Import Users</span>
         </div>
 
+        <!-- ADD ACCOUNT -->
         <div
           @click="toggleAdd"
           class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
@@ -321,6 +336,103 @@
       </button>
     </div>
   </div>
+  <!-- Import Selection Modal -->
+  <div
+    v-if="showImportSelector"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-2xl shadow-xl w-[450px] p-1.5 animate-slideUp">
+      <!-- Title -->
+      <div
+        class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[14px] flex justify-between items-center border-b shadow"
+      >
+        <div class="flex gap-1 items-center">
+          <icon :name="'add-students'" />
+          <h1 class="font-bold tracking-wide text-lg">Choose Import</h1>
+        </div>
+        <icon
+          :name="'circle-close3'"
+          @click="$emit('close')"
+          class="cursor-pointer"
+        />
+      </div>
+
+      <!-- Cards -->
+      <div class="grid grid-cols-2 gap-4 p-2">
+        <!-- Import Users -->
+        <div
+          @click="openImportUsers"
+          class="border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-blue-50 hover:border-blue-500 transition"
+        >
+          <div class="bg-blue-100 p-3 rounded-full mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 h-6 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+          </div>
+
+          <span class="text-sm font-semibold text-gray-700">
+            Import Users
+          </span>
+
+          <p class="text-xs text-gray-500 text-center mt-1">
+            Upload user accounts CSV
+          </p>
+        </div>
+
+        <!-- Import Expertise -->
+        <div
+          @click="openImportExpertise"
+          class="border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-purple-50 hover:border-purple-500 transition"
+        >
+          <div class="bg-purple-100 p-3 rounded-full mb-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 h-6 text-purple-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+          </div>
+
+          <span class="text-sm font-semibold text-gray-700">
+            Import Expertise
+          </span>
+
+          <p class="text-xs text-gray-500 text-center mt-1">
+            Upload expertise data CSV
+          </p>
+        </div>
+      </div>
+
+      <!-- Cancel -->
+      <div class="p-1.5 text-center flex justify-end">
+        <button
+          @click="showImportSelector = false"
+          class="text-sm px-4 py-2 border rounded-lg hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -351,12 +463,16 @@ export default {
       searchQuery: "",
       isAdd: false,
       isTable: true,
-      showDeleteModal: false,
+
+      showImportSelector: false, // NEW
       showImportModal: false,
       showImportExpertiseModal: false,
+
+      showDeleteModal: false,
       showViewExpertiseModal: false,
+
       recordToDelete: null,
-      selectedUser: null, // ✅ fixed
+      selectedUser: null,
       selectedUserExpertise: null,
       showEditModal: false,
       isDeleting: false,
@@ -408,6 +524,19 @@ export default {
     },
   },
   methods: {
+    openImportUsers() {
+      this.showImportSelector = false;
+      this.showImportModal = true;
+    },
+
+    openImportExpertise() {
+      this.showImportSelector = false;
+      this.showImportExpertiseModal = true;
+    },
+    toggleImportMenu() {
+      this.showImportMenu = !this.showImportMenu;
+    },
+
     async loadUsers() {
       const store = useFetchDataStore();
       await store.fetchUsers();

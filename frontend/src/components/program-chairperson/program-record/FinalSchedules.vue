@@ -32,9 +32,10 @@
     </div>
 
     <!-- Content Card -->
-    <div class="bg-white border border-gray-300 border-t-0 shadow-sm mt-2">
+    <div class="bg-white shadow-sm mt-2">
       <tableFinalGenerated v-if="activeTab === 'Scheduled'" />
       <tableUnscheduledMeetings v-if="activeTab === 'Unscheduled'" />
+      <tableScheduleByRoom v-if="activeTab === 'Scheduled by Rooms'" />
     </div>
   </div>
 </template>
@@ -42,12 +43,13 @@
 <script>
 import tableFinalGenerated from "./tables/table-final-generated.vue";
 import tableUnscheduledMeetings from "./tables/table-unscheduled-meetings.vue";
-
+import tableScheduleByRoom from "@/components/admin/records/tables/table-schedule-by-room.vue";
 export default {
   name: "FacultyLoadingPage",
   components: {
     tableFinalGenerated,
     tableUnscheduledMeetings,
+    tableScheduleByRoom,
   },
   data() {
     return {
@@ -55,6 +57,7 @@ export default {
       tabs: [
         { label: "Scheduled", value: "Scheduled" },
         { label: "Unscheduled", value: "Unscheduled" },
+        { label: "Scheduled by Rooms", value: "Scheduled by Rooms" },
       ],
     };
   },

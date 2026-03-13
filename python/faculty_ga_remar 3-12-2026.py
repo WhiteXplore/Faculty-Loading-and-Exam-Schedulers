@@ -14,10 +14,10 @@ from openpyxl.utils import get_column_letter
 # MySQL Connection (adjust creds/host/db as needed)
 # =========================
 DB_USER = "root"
-DB_PASS = "admin12345.."
+DB_PASS = "root"
 DB_HOST = "127.0.0.2"
 DB_PORT = 3306
-DB_NAME = "dnsc_class_scheduler2"
+DB_NAME = "dnsc_class_scheduler_ga3"
 
 engine = create_engine(
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
@@ -47,8 +47,7 @@ FALLBACK_DAY = "Wednesday"
 # All schedulable days — derived automatically from patterns + fallback
 DAYS = sorted(
     {day for days in DAY_PATTERNS.values() for day in days} | {FALLBACK_DAY},
-    key=["Monday", "Tuesday", "Wednesday", "Thursday",
-         "Friday", "Saturday", "Sunday"].index
+    key=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].index
 )
 START_HOUR = 7  # 7 AM
 END_HOUR = 21   # 9 PM
@@ -379,8 +378,8 @@ def get_travel_gap_minutes(building1, travel1, building2, travel2):
 
 
 def check_travel_time_compatible(faculty_id, day, start_hour, duration,
-                                 new_building, new_travel_time,
-                                 faculty_schedule_tracker):
+                                  new_building, new_travel_time,
+                                  faculty_schedule_tracker):
     """
     Check if scheduling a new class at (day, start_hour, duration) with
     the given building/travel_time is compatible with the faculty's existing
@@ -585,8 +584,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
     fail_reason = "No available time slots"
 
     # Try each day pattern (TTH, MF, MWF) - balanced for fairness
-    balanced_patterns = get_balanced_patterns(
-        day_pattern_tracker, total_hours_per_week)
+    balanced_patterns = get_balanced_patterns(day_pattern_tracker, total_hours_per_week)
     for pattern_name, pattern_days in balanced_patterns:
         num_meetings = len(pattern_days)
         lecture_hours = lecture_hours_per_week / num_meetings
@@ -595,8 +593,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
 
         # Get consecutive start: right after the faculty's last class on ALL days
         next_starts = [
-            get_faculty_next_start_hour(
-                faculty_id, day, faculty_schedule_tracker, scheduling_start_hour)
+            get_faculty_next_start_hour(faculty_id, day, faculty_schedule_tracker, scheduling_start_hour)
             for day in pattern_days
         ]
         consecutive_start = max(next_starts)
@@ -612,7 +609,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
         for start_hour in available_slots:
             # Check faculty availability on ALL days
             if not all(is_faculty_available(faculty_id, day, start_hour, total_duration,
-                                            faculty_schedule_tracker)
+                                           faculty_schedule_tracker)
                        for day in pattern_days):
                 fail_reason = "Faculty time conflict"
                 continue
@@ -812,12 +809,10 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
                 })
 
             # Update day pattern tracker for fairness
-            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(
-                pattern_name, 0) + 1
+            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(pattern_name, 0) + 1
 
             # Update faculty branch tracker for all days
-            update_branch_tracker(faculty_id, pattern_days,
-                                  branch_id, faculty_branch_tracker or {})
+            update_branch_tracker(faculty_id, pattern_days, branch_id, faculty_branch_tracker or {})
 
             return scheduled_meetings
 
@@ -841,8 +836,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             fail_reason = "Faculty time conflict"
             continue
 
-        faculty_hours_wed = get_faculty_daily_hours(
-            faculty_id, wednesday, faculty_schedule_tracker)
+        faculty_hours_wed = get_faculty_daily_hours(faculty_id, wednesday, faculty_schedule_tracker)
         if faculty_hours_wed + wed_total_duration > 8:
             fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
             continue
@@ -974,8 +968,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             "schedule_type": schedule_type
         })
 
-        update_branch_tracker(
-            faculty_id, [wednesday], branch_id, faculty_branch_tracker or {})
+        update_branch_tracker(faculty_id, [wednesday], branch_id, faculty_branch_tracker or {})
 
         return scheduled_meetings
 
@@ -1042,8 +1035,7 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
     fail_reason = "No available time slots"
 
     # Try each day pattern - balanced for fairness
-    balanced_patterns = get_balanced_patterns(
-        day_pattern_tracker, lecture_hours_per_week)
+    balanced_patterns = get_balanced_patterns(day_pattern_tracker, lecture_hours_per_week)
     for pattern_name, pattern_days in balanced_patterns:
         num_meetings = len(pattern_days)
 
@@ -1053,19 +1045,15 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         remainder = int(lecture_hours_per_week - short_h * num_meetings)
         if remainder > 0:
             long_h = short_h + 1
-            hours_list = [long_h] * remainder + \
-                [short_h] * (num_meetings - remainder)
-            # fairness: randomize which day gets the longer block
-            random.shuffle(hours_list)
+            hours_list = [long_h] * remainder + [short_h] * (num_meetings - remainder)
+            random.shuffle(hours_list)  # fairness: randomize which day gets the longer block
         else:
-            hours_list = [int(lecture_hours_per_week //
-                              num_meetings)] * num_meetings
+            hours_list = [int(lecture_hours_per_week // num_meetings)] * num_meetings
         max_duration = max(hours_list)
 
         # Get consecutive start: right after the faculty's last class on ALL days
         next_starts = [
-            get_faculty_next_start_hour(
-                faculty_id, day, faculty_schedule_tracker, scheduling_start_hour)
+            get_faculty_next_start_hour(faculty_id, day, faculty_schedule_tracker, scheduling_start_hour)
             for day in pattern_days
         ]
         consecutive_start = max(next_starts)
@@ -1081,7 +1069,7 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         for start_hour in available_slots:
             # Check faculty availability on ALL days (per-day duration)
             if not all(is_faculty_available(faculty_id, day, start_hour, hours_list[i],
-                                            faculty_schedule_tracker)
+                                           faculty_schedule_tracker)
                        for i, day in enumerate(pattern_days)):
                 fail_reason = "Faculty time conflict"
                 continue
@@ -1119,8 +1107,7 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                 # Pair each day with its hours, sort by hours descending so
                 # the days with the most hours get f2f first
                 day_hour_pairs = list(zip(pattern_days, hours_list))
-                day_hour_pairs.sort(
-                    key=lambda dh: (-dh[1], day_f2f_tracker.get(dh[0], 0), random.random()))
+                day_hour_pairs.sort(key=lambda dh: (-dh[1], day_f2f_tracker.get(dh[0], 0), random.random()))
                 f2f_day_set = set(d for d, _ in day_hour_pairs[:num_f2f])
             else:
                 # Equal hours — use fairness tracker (least f2f count gets priority)
@@ -1140,15 +1127,13 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                     if room:
                         day_rooms[day] = room
                     else:
-                        # fallback this specific day only
-                        day_types[day] = "online"
+                        day_types[day] = "online"  # fallback this specific day only
 
             # Constraint: Check travel time compatibility on each day with its room
             travel_conflict = False
             for i, day in enumerate(pattern_days):
                 day_room = day_rooms.get(day)
-                room_building = day_room.get(
-                    "building_name") if day_room else None
+                room_building = day_room.get("building_name") if day_room else None
                 room_travel = day_room.get("travel_time", 0) if day_room else 0
                 if not check_travel_time_compatible(
                         faculty_id, day, start_hour, hours_list[i],
@@ -1229,12 +1214,9 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
 
                 if day_is_f2f and day_room:
                     meeting_entry["room_id"] = day_room["room_id"]
-                    meeting_entry["room_name"] = day_room.get(
-                        "room_name", "Unknown")
-                    meeting_entry["room_type"] = day_room.get(
-                        "room_type", "Unknown")
-                    meeting_entry["room_capacity"] = day_room.get(
-                        "room_capacity", 0)
+                    meeting_entry["room_name"] = day_room.get("room_name", "Unknown")
+                    meeting_entry["room_type"] = day_room.get("room_type", "Unknown")
+                    meeting_entry["room_capacity"] = day_room.get("room_capacity", 0)
                 else:
                     meeting_entry["room_id"] = None
                     meeting_entry["room_name"] = "Online"
@@ -1257,12 +1239,10 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                     day_f2f_tracker[day] = day_f2f_tracker.get(day, 0) + 1
 
             # Update day pattern tracker for fairness
-            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(
-                pattern_name, 0) + 1
+            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(pattern_name, 0) + 1
 
             # Update faculty branch tracker for all days
-            update_branch_tracker(faculty_id, pattern_days,
-                                  branch_id, faculty_branch_tracker or {})
+            update_branch_tracker(faculty_id, pattern_days, branch_id, faculty_branch_tracker or {})
 
             return scheduled_meetings
 
@@ -1284,8 +1264,7 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             fail_reason = "Faculty time conflict"
             continue
 
-        faculty_hours_wed = get_faculty_daily_hours(
-            faculty_id, wednesday, faculty_schedule_tracker)
+        faculty_hours_wed = get_faculty_daily_hours(faculty_id, wednesday, faculty_schedule_tracker)
         if faculty_hours_wed + wed_lecture_hours > 8:
             fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
             continue
@@ -1316,10 +1295,8 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         # If target is online, no room needed
 
         # Constraint: Check travel time compatibility on Wednesday
-        wed_room_building = lecture_room.get(
-            "building_name") if lecture_room else None
-        wed_room_travel = lecture_room.get(
-            "travel_time", 0) if lecture_room else 0
+        wed_room_building = lecture_room.get("building_name") if lecture_room else None
+        wed_room_travel = lecture_room.get("travel_time", 0) if lecture_room else 0
         if not check_travel_time_compatible(
                 faculty_id, wednesday, start_hour, wed_lecture_hours,
                 wed_room_building, wed_room_travel, faculty_schedule_tracker):
@@ -1388,12 +1365,9 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
 
         if lecture_room:
             meeting_entry["room_id"] = lecture_room_id
-            meeting_entry["room_name"] = lecture_room.get(
-                "room_name", "Unknown")
-            meeting_entry["room_type"] = lecture_room.get(
-                "room_type", "Unknown")
-            meeting_entry["room_capacity"] = lecture_room.get(
-                "room_capacity", 0)
+            meeting_entry["room_name"] = lecture_room.get("room_name", "Unknown")
+            meeting_entry["room_type"] = lecture_room.get("room_type", "Unknown")
+            meeting_entry["room_capacity"] = lecture_room.get("room_capacity", 0)
         else:
             meeting_entry["room_id"] = None
             meeting_entry["room_name"] = "Online"
@@ -1411,8 +1385,7 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         lecture_type_tracker["total_lecture_hours"] += wed_lecture_hours
 
         # Update faculty branch tracker for Wednesday
-        update_branch_tracker(
-            faculty_id, [wednesday], branch_id, faculty_branch_tracker or {})
+        update_branch_tracker(faculty_id, [wednesday], branch_id, faculty_branch_tracker or {})
 
         return scheduled_meetings
 
@@ -1565,8 +1538,7 @@ def generate_faculty_core_time(complete_schedule):
             }
 
         if day not in faculty_days[fid]["days"]:
-            faculty_days[fid]["days"][day] = {
-                "earliest_start": start, "latest_end": end}
+            faculty_days[fid]["days"][day] = {"earliest_start": start, "latest_end": end}
         else:
             entry = faculty_days[fid]["days"][day]
             if start < entry["earliest_start"]:
@@ -1608,8 +1580,7 @@ def generate_faculty_core_time(complete_schedule):
             day_class_span = {}
             for d in all_weekdays:
                 if d in days_data:
-                    day_class_span[d] = days_data[d]["latest_end"] - \
-                        days_data[d]["earliest_start"]
+                    day_class_span[d] = days_data[d]["latest_end"] - days_data[d]["earliest_start"]
                 else:
                     day_class_span[d] = 0
 
@@ -1617,16 +1588,14 @@ def generate_faculty_core_time(complete_schedule):
             remaining_to_distribute = max(target_weekly - locked_hours, 0)
 
             # Start each day at its class span minimum
-            daily_targets = {
-                d: max(day_class_span[d], 0) for d in all_weekdays}
+            daily_targets = {d: max(day_class_span[d], 0) for d in all_weekdays}
 
             # Distribute remaining hours across days, 1 hour at a time,
             # prioritizing days with fewer hours (balancing), up to a reasonable cap
             while remaining_to_distribute > 0:
                 # Find the day(s) with the fewest current hours
                 min_hrs = min(daily_targets[d] for d in all_weekdays)
-                candidates = [
-                    d for d in all_weekdays if daily_targets[d] == min_hrs]
+                candidates = [d for d in all_weekdays if daily_targets[d] == min_hrs]
                 random.shuffle(candidates)
                 for d in candidates:
                     if remaining_to_distribute <= 0:
@@ -1759,8 +1728,7 @@ def create_schedule(faculty_loads, rooms):
     faculty_schedule_tracker = {}  # Track faculty schedules
     class_schedule_tracker = {}  # Track class section schedules to prevent self-conflicts
     # Track lecture hours for f2f/online percentage distribution
-    lecture_type_tracker = {"face_to_face_hours": 0.0,
-                            "online_hours": 0.0, "total_lecture_hours": 0.0}
+    lecture_type_tracker = {"face_to_face_hours": 0.0, "online_hours": 0.0, "total_lecture_hours": 0.0}
     # Track day pattern usage for fair distribution
     day_pattern_tracker = {"TTH": 0, "MF": 0, "MWF": 0}
     # Track per-day f2f assignment count so no single day always gets f2f
@@ -1899,8 +1867,7 @@ def create_schedule(faculty_loads, rooms):
               f"[Target: {int(TARGET_FACE_TO_FACE_PERCENTAGE * 100)}% f2f]")
     print("-"*80)
     # Show day pattern distribution
-    pattern_counts = {name: day_pattern_tracker.get(
-        name, 0) for name in DAY_PATTERNS}
+    pattern_counts = {name: day_pattern_tracker.get(name, 0) for name in DAY_PATTERNS}
     # Count fallback-only schedules from complete_schedule
     fallback_only_classes = set()
     for m in complete_schedule:
@@ -1913,8 +1880,7 @@ def create_schedule(faculty_loads, rooms):
     fallback_count = len(fallback_only_classes)
     total_patterns = sum(pattern_counts.values()) + fallback_count
     if total_patterns > 0:
-        dist_parts = [f"{name}: {count}" for name,
-                      count in pattern_counts.items()]
+        dist_parts = [f"{name}: {count}" for name, count in pattern_counts.items()]
         dist_parts.append(f"{FALLBACK_DAY[:3]}-only: {fallback_count}")
         print(f"Day Distribution: {', '.join(dist_parts)}")
     # Show per-day f2f assignment counts (fairness audit)
@@ -1958,8 +1924,7 @@ def create_schedule(faculty_loads, rooms):
         })
     # Sort each room's entries by day then start hour, and remove sort keys
     for room_name in schedule_by_room:
-        schedule_by_room[room_name].sort(
-            key=lambda x: (x["_sort_day"], x["_sort_hour"]))
+        schedule_by_room[room_name].sort(key=lambda x: (x["_sort_day"], x["_sort_hour"]))
         for item in schedule_by_room[room_name]:
             del item["_sort_day"]
             del item["_sort_hour"]
@@ -2654,8 +2619,7 @@ def save_schedule_to_excel(schedule, unscheduled, faculty_loads, filename):
     ws_conflicts.append(headers_conflicts)
 
     # Style headers
-    conflict_header_fill = PatternFill(
-        start_color="C00000", end_color="C00000", fill_type="solid")
+    conflict_header_fill = PatternFill(start_color="C00000", end_color="C00000", fill_type="solid")
     for col_num, header in enumerate(headers_conflicts, 1):
         cell = ws_conflicts.cell(1, col_num)
         cell.font = header_font
@@ -2699,11 +2663,9 @@ def save_schedule_to_excel(schedule, unscheduled, faculty_loads, filename):
                 conflict_type_cell.font = Font(bold=True)
     else:
         # No conflicts - add a message
-        ws_conflicts.append(["No conflicts detected", "", "",
-                            "", "", "", "", "", "Schedule is conflict-free!"])
+        ws_conflicts.append(["No conflicts detected", "", "", "", "", "", "", "", "Schedule is conflict-free!"])
         cell = ws_conflicts.cell(2, 1)
-        cell.fill = PatternFill(start_color="00B050",
-                                end_color="00B050", fill_type="solid")
+        cell.fill = PatternFill(start_color="00B050", end_color="00B050", fill_type="solid")
         cell.font = Font(bold=True, color="FFFFFF")
 
     # Auto-adjust column widths
@@ -3038,7 +3000,7 @@ if __name__ == "__main__":
         rooms
     )
  # Save schedule to Excel file
-
+ 
     # Generate timestamp for filenames
     # Create output directory if it doesn't exist
     output_dir = "faculty_loading_output"
@@ -3050,17 +3012,14 @@ if __name__ == "__main__":
                            faculty_load_result, schedule_excel_filename)
 
     # Save schedule to JSON file (always overwrites with same filename)
-    json_output_dir = os.path.join(
-        "..", "backend", "src", "generated_scheduled", "json_output")
+    json_output_dir = os.path.join("..", "backend", "src", "generated_scheduled", "json_output")
     os.makedirs(json_output_dir, exist_ok=True)
     json_filename = os.path.join(json_output_dir, "faculty_loading.json")
-    save_schedule_to_json(
-        complete_schedule, unscheduled_meetings, json_filename, schedule_by_room)
+    save_schedule_to_json(complete_schedule, unscheduled_meetings, json_filename, schedule_by_room)
 
     # Generate faculty core time schedule (time-in / time-out)
     faculty_core_time = generate_faculty_core_time(complete_schedule)
-    core_time_filename = os.path.join(
-        json_output_dir, "faculty_core_time.json")
+    core_time_filename = os.path.join(json_output_dir, "faculty_core_time.json")
     save_faculty_core_time_to_json(faculty_core_time, core_time_filename)
 
     # ------------------------------------------

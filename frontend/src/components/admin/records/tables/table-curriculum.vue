@@ -93,12 +93,16 @@
             class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
           >
             <tr>
-              <th class="px-4 py-3 text-left font-normal w-[45%]">
+              <th class="px-4 py-3 text-left font-normal w-[35%]">
                 Program Title
               </th>
 
               <th class="px-4 py-3 font-normal text-center w-[33%]">
-                Effective Year
+                Effective Year From
+              </th>
+
+              <th class="px-4 py-3 font-normal text-center w-[33%]">
+                Effective Year To
               </th>
 
               <th
@@ -116,6 +120,9 @@
             >
               <td class="px-4 py-3 text-left">
                 {{ curriculum_data.program?.program_name }}
+              </td>
+              <td class="px-4 py-3 text-center">
+                {{ curriculum_data.curriculum_start_year }}
               </td>
               <td class="px-4 py-3 text-center">
                 {{ curriculum_data.curriculum_end_year }}

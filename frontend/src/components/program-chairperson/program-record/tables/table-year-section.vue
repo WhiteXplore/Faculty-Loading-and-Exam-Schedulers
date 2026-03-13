@@ -4,19 +4,17 @@
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / Year & Section</div>
 
-      <div class="flex items-center gap-2">
-        <button
-          @click="openYearSectionModal"
-          class="flex items-center gap-2 px-4 py-2 text-defaultGreen bg-white border border-green-500 rounded-xl shadow-sm hover:bg-green-600 hover:text-white transition-all duration-300"
+      <button
+        @click="openYearSectionModal"
+        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+      >
+        <div
+          class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
         >
-          <div
-            class="flex items-center justify-center w-5 h-5 bg-green-100 rounded-full"
-          >
-            <icon name="circle-add" class="w-4 h-4" />
-          </div>
-          <span class="font-medium">Add Year/Section</span>
-        </button>
-      </div>
+          <icon name="circle-add" />
+        </div>
+        <span class="font-medium">Add Year/Section</span>
+      </button>
     </div>
 
     <!-- MAIN CONTENT -->

@@ -81,45 +81,21 @@
       </div>
     </div>
   </div>
-  <div
-    class="flex flex-col space-y-1 h-[calc(100vh-180px)] overflow-hidden px-2"
-  >
+
+  <div class="flex flex-col space-y-2 h-[88vh]">
     <!-- TODO  Top Controls -->
-    <div class="flex flex-wrap items-center justify-between">
-      <!-- LEFT : Faculty Search -->
-      <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search faculty..."
-          class="rounded-xl border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
-        />
-
+    <div class="flex flex-wrap justify-between items-center gap-3 px-1">
+      <div class="flex gap-3 flex-wrap">
+        <!-- TODO  Filters (pushed to the end) -->
         <div
-          class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
+          class="flex items-center gap-3 flex-wrap ml-auto"
+          v-if="appearSave"
         >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
-        </div>
-      </div>
-
-      <!-- RIGHT SIDE -->
-      <div class="flex flex-wrap items-center gap-3">
-        <!-- Filters -->
-        <div class="flex flex-wrap items-center gap-3">
-          <!-- Institute -->
+          <!-- TODO  Institute Filter -->
           <div class="relative">
             <select
               v-model="selectedInstituteId"
-              class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md"
+              class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md w-[200px]"
             >
               <option value="">All Institutes</option>
               <option
@@ -131,6 +107,7 @@
               </option>
             </select>
 
+            <!-- TODO  Custom arrow -->
             <div
               class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
             >
@@ -150,12 +127,12 @@
             </div>
           </div>
 
-          <!-- Program -->
+          <!-- TODO  Program Filter -->
           <div class="relative">
             <select
               v-model="selectedProgramId"
               :disabled="!selectedInstituteId"
-              class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+              class="appearance-none rounded-xl w-auto border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               <option value="">All Programs</option>
               <option
@@ -167,6 +144,7 @@
               </option>
             </select>
 
+            <!-- TODO  Custom arrow -->
             <div
               class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
             >
@@ -186,34 +164,51 @@
             </div>
           </div>
         </div>
+        <!-- TODO  Toggle View Button -->
 
-        <!-- Actions -->
-        <div class="flex items-center gap-2">
-          <!-- Generate -->
-          <button
-            @click="generateSchedule"
-            class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-600 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg transition duration-200"
+        <div
+          @click="showFacultyTable = !showFacultyTable"
+          class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
+        >
+          <div
+            class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
           >
-            <div
-              class="p-1 bg-blue-800/20 rounded-full flex items-center justify-center"
-            >
-              <icon name="arrow-path" />
-            </div>
-            <span class="font-medium text-sm">Generate</span>
-          </button>
+            <icon name="users" />
+          </div>
+          <span class="font-medium text-sm">
+            {{ showFacultyTable ? "View Cards" : "View Faculty" }}
+          </span>
+        </div>
 
-          <!-- Save -->
-          <button
-            @click="showConfirmSaved = true"
-            class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg transition duration-200"
+        <!-- TODO  Auto Generation -->
+
+        <div
+          @click="generateSchedule"
+          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+        >
+          <div
+            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
           >
-            <div
-              class="p-1 bg-defaultGreen/20 rounded-full flex items-center justify-center"
-            >
-              <icon name="circle-check" />
-            </div>
-            <span class="font-medium text-sm">Save Schedule</span>
-          </button>
+            <icon name="arrow-path" />
+          </div>
+
+          <span class="font-medium text-sm">Generate</span>
+        </div>
+
+        <!-- TODO  Save Schedule -->
+
+        <div
+          v-if="appearSave"
+          @click="showConfirmSaved = true"
+          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+        >
+          <div
+            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+          >
+            <icon name="circle-check" />
+          </div>
+
+          <span class="font-medium text-sm">Save this Schedule</span>
         </div>
       </div>
     </div>
@@ -233,7 +228,7 @@
     </div>
 
     <!-- TODO  Scrollable Content -->
-    <div class="flex-1 overflow-y-auto scrollbar-hide">
+    <div class="flex-1 overflow-y-auto">
       <div v-if="showFacultyTable">
         <div class="overflow-x-auto border p-3 rounded-xl bg-white">
           <!-- TODO  Top Controls -->
@@ -302,7 +297,7 @@
 
           <!-- TODO  Table -->
           <div class="w-full mt-2 rounded-xl border bg-white overflow-hidden">
-            <div>
+            <div class="max-h-[69vh] overflow-y-auto">
               <table class="min-w-full text-sm text-gray-700 border-collapse">
                 <thead
                   class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
@@ -404,16 +399,11 @@
       <div v-else>
         <!-- TODO  Faculty Cards -->
         <div
-          v-if="Object.keys(filteredFacultyCards).length"
-          :class="[
-            'gap-2 overflow-hidden  grid h-full',
-            Object.keys(filteredFacultyCards).length === 1
-              ? 'grid-cols-1'
-              : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2',
-          ]"
+          v-if="Object.keys(filteredGroupedSchedule).length"
+          class="gap-2 overflow-y-auto pr-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 h-full"
         >
           <div
-            v-for="(schedules, instructor) in filteredFacultyCards"
+            v-for="[instructor] in visibleFacultyCards"
             :key="instructor"
             class="bg-white rounded-xl border flex flex-col relative"
           >
@@ -431,7 +421,7 @@
             </div>
 
             <!-- TODO  Schedule Table -->
-            <div class="flex-1">
+            <div class="flex-1 overflow-auto">
               <table class="w-full text-left border-collapse text-[11px]">
                 <thead class="sticky top-0 bg-gray-100 z-10">
                   <tr class="text-gray-700">
@@ -545,14 +535,10 @@
             <div
               v-if="scheduleTooltipVisible && tooltipItem"
               class="fixed z-[9999] pointer-events-none"
-              :style="{
-                top: tooltipY + 'px',
-                left: tooltipX + 'px',
-                maxWidth: '260px',
-              }"
+              :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
             >
               <div
-                class="bg-white border border-gray-300 rounded-xl p-3 scale-125"
+                class="bg-white border border-gray-300 rounded-xl p-3 scale-125 origin-top-left"
               >
                 <div
                   class="flex items-center justify-between gap-2 mb-2 w-full"
@@ -745,7 +731,7 @@
             </span>
 
             <!-- Scrollable list -->
-            <div class="mt-3 space-y-4 max-h-[420px] overflow-y-auto p-2">
+            <div class="mt-3 space-y-4 max-h-[420px] overflow-y-auto pr-2 p-2">
               <div
                 v-for="conflict in conflictRecords"
                 :key="conflict.id"
@@ -882,7 +868,7 @@ export default {
       timeSlotHeight: 60,
 
       schoolYears: [],
-
+      appearSave: false,
       conflictModalVisible: false,
       scheduleTooltipVisible: false,
       tooltipItem: null,
@@ -896,31 +882,17 @@ export default {
   },
 
   computed: {
-    filteredFacultyCards() {
-      let entries = Object.entries(this.filteredGroupedSchedule);
-
-      if (this.searchQuery) {
-        const q = this.searchQuery.toLowerCase();
-        entries = entries.filter(([faculty]) =>
-          faculty.toLowerCase().includes(q),
-        );
-      }
-
+    visibleFacultyCards() {
+      const entries = Object.entries(this.filteredGroupedSchedule);
       const start = (this.cardPage - 1) * this.cardsPerPage;
       const end = start + this.cardsPerPage;
-
-      return Object.fromEntries(entries.slice(start, end));
+      return entries.slice(start, end);
     },
+
     totalCardPages() {
-      const entries = Object.entries(this.filteredGroupedSchedule);
-
-      const filtered = this.searchQuery
-        ? entries.filter(([faculty]) =>
-            faculty.toLowerCase().includes(this.searchQuery.toLowerCase()),
-          )
-        : entries;
-
-      return Math.ceil(filtered.length / this.cardsPerPage);
+      return Math.ceil(
+        Object.keys(this.filteredGroupedSchedule).length / this.cardsPerPage,
+      );
     },
 
     coursesList() {
@@ -969,50 +941,41 @@ export default {
     uniqueInstitutes() {
       const store = useFetchDataStore();
       const institutes = store.institutes || [];
-
-      const ids = [
-        ...new Set(this.schedule.map((s) => Number(s.institute_id))),
-      ];
-
-      return ids.map((id) => {
-        const inst = institutes.find((i) => Number(i.institute_id) === id);
-
-        return {
-          id,
-          name: inst?.institute_code || `Institute ${id}`,
-        };
-      });
+      return Array.from(new Set(this.schedule.map((s) => s.institute_id))).map(
+        (id) => {
+          const inst = institutes.find((i) => i.institute_id === id);
+          return inst
+            ? { id, name: inst.institute_name }
+            : { id, name: `Institute ${id}` };
+        },
+      );
     },
 
     // Map program IDs to their names (filtered by selectedInstituteId if any)
     filteredPrograms() {
       const store = useFetchDataStore();
       const programs = store.programs || [];
-
-      let ids;
+      let programIds;
 
       if (!this.selectedInstituteId) {
-        ids = [...new Set(this.schedule.map((s) => Number(s.program_id)))];
+        programIds = Array.from(
+          new Set(this.schedule.map((s) => s.program_id)),
+        );
       } else {
-        ids = [
-          ...new Set(
+        programIds = Array.from(
+          new Set(
             this.schedule
-              .filter(
-                (s) =>
-                  Number(s.institute_id) === Number(this.selectedInstituteId),
-              )
-              .map((s) => Number(s.program_id)),
+              .filter((s) => s.institute_id == this.selectedInstituteId)
+              .map((s) => s.program_id),
           ),
-        ];
+        );
       }
 
-      return ids.map((id) => {
-        const prog = programs.find((p) => Number(p.program_id) === id);
-
-        return {
-          id,
-          name: prog?.program_code || `Program ${id}`,
-        };
+      return programIds.map((id) => {
+        const prog = programs.find((p) => p.program_id === id);
+        return prog
+          ? { id, name: prog.program_code }
+          : { id, name: `Program ${id}` };
       });
     },
 
@@ -1095,31 +1058,14 @@ export default {
       await store.fetchCourses();
     },
     showScheduleTooltip(event, item) {
-      const tooltipWidth = 260;
-      const tooltipHeight = 160;
+      const rect = event.currentTarget.getBoundingClientRect();
 
-      const padding = 20;
-
-      let x = event.clientX + 15;
-      let y = event.clientY + 15;
-
-      const screenWidth = window.innerWidth;
-      const screenHeight = window.innerHeight;
-
-      // Prevent overflow on right side
-      if (x + tooltipWidth + padding > screenWidth) {
-        x = event.clientX - tooltipWidth - 15;
-      }
-
-      // Prevent overflow bottom
-      if (y + tooltipHeight + padding > screenHeight) {
-        y = event.clientY - tooltipHeight - 15;
-      }
-
-      this.tooltipX = x;
-      this.tooltipY = y;
       this.tooltipItem = item;
       this.scheduleTooltipVisible = true;
+
+      // 👉 fixed position: right side of block
+      this.tooltipX = rect.right + 12;
+      this.tooltipY = rect.top;
     },
 
     hideScheduleTooltip() {
@@ -1421,6 +1367,7 @@ export default {
 
         this.scheduleGenerated = true;
         this.showFacultyTable = false;
+        this.appearSave = true;
       } catch (err) {
         console.error(err);
         this.error = "Failed to generate schedule";
@@ -1527,10 +1474,6 @@ export default {
   async mounted() {
     const store = useFetchDataStore();
 
-    await store.fetchInstitutes();
-    await store.fetchPrograms();
-    await store.fetchCourses();
-
     const data = await store.fetchGeneratedScheduled();
 
     this.schedule = data.scheduled_meetings || [];
@@ -1541,14 +1484,3 @@ export default {
   },
 };
 </script>
-<style>
-/* Hide scrollbar but allow scrolling */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none; /* Firefox */
-}
-</style>

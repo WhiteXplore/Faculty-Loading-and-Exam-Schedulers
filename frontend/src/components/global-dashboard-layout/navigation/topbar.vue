@@ -22,7 +22,7 @@
           @change="updateSchoolYear"
           @focus="isDropdownOpen = true"
           @blur="isDropdownOpen = false"
-          class="appearance-none rounded-full border border-green-600 bg-white py-2 pl-4 pr-10 text-center text-green-900 text-sm font-semibold shadow-md cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-lg"
+          class="appearance-none rounded-xl border border-green-600 bg-white py-2 pl-4 pr-10 text-center text-green-900 text-sm font-semibold cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-lg"
         >
           <option value="" disabled>Select Active School Year</option>
           <option
@@ -30,7 +30,7 @@
             :key="sy.school_year_id"
             :value="sy.school_year_id"
           >
-            {{ sy.school_year_name }} — {{ getSemesterLabel(sy.semester) }}
+            {{ sy.school_year_name }} {{ getSemesterLabel(sy.semester) }}
           </option>
         </select>
 
@@ -58,10 +58,10 @@
       <!-- Static text if one or none -->
       <div
         v-else
-        class="bg-green-50 border border-green-600 rounded-full px-5 py-1.5 shadow-md text-green-900 text-sm font-semibold flex items-center justify-center"
+        class="border border-green-600 rounded-xl px-4 py-1.5 text-green-900 text-sm font-semibold flex items-center justify-center"
       >
         <span v-if="activeYears.length === 1">
-          {{ activeYears[0].school_year_name }} —
+          {{ activeYears[0].school_year_name }}
           {{ getSemesterLabel(activeYears[0].semester) }}
         </span>
         <span v-else class="text-gray-500">No Active Year</span>
