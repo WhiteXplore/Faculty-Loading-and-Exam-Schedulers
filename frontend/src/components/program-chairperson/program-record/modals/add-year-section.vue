@@ -3,22 +3,21 @@
     class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-40 z-50"
   >
     <div
-      class="rounded-[16px] shadow-lg flex flex-col lg:flex-row animate-slideUp overflow-hidden"
+      class="rounded-[16px] shadow-lg flex flex-col animate-slideUp overflow-hidden"
     >
-      <!-- LEFT: Main Form -->
       <form
         @submit.prevent="submitData"
-        class="w-full lg:w-[60vw] text-[13px] bg-white rounded-b-[16px] lg:rounded-b-none lg:rounded-l-[16px] shadow-md flex flex-col"
+        class="w-[60vw] text-[13px] bg-white rounded-[16px] shadow-md flex flex-col"
         ref="yearSectionForm"
       >
         <!-- Header -->
         <div
-          class="w-full p-5 bg-defaultGreen text-white rounded-t-[16px] lg:rounded-tl-[16px] lg:rounded-tr-none flex justify-between items-center border-b border-green-700 shadow"
+          class="w-full p-5 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b border-green-700 shadow"
         >
           <div class="flex gap-2 items-center">
             <icon :name="'add-students'" class="size-5" />
             <h1 class="font-semibold tracking-wide text-lg">
-              Add Year/Section – {{ programData.program_name }}sss
+              Add Year/Section – {{ programData.program_name }}
             </h1>
           </div>
           <icon
@@ -28,48 +27,44 @@
           />
         </div>
 
-        <!-- Body -->
+        <!-- BODY -->
         <div class="p-6 space-y-6 text-[13px] max-h-[80vh] overflow-y-auto">
-          <div class="flex flex-col space-y-2">
-            <!-- PROGRAM INFO -->
-            <div class="p-4 bg-gray-50 border rounded-xl">
-              <div
-                class="flex flex-col md:flex-row md:items-center md:justify-between gap-2"
-              >
-                <p class="text-gray-800">
-                  <span class="font-semibold text-gray-800">Program:</span>
-                  {{ programData.program_name }} ({{
-                    programData.program_code
-                  }})
-                </p>
-              </div>
-            </div>
-            <!-- Instructions -->
-            <div class="p-4 bg-blue-50 border rounded-xl">
-              <h3 class="font-bold text-gray-800">Instructions</h3>
-              <ul
-                class="list-disc list-inside text-gray-700 space-y-1 text-[12px]"
-              >
-                <li>Click "Add Year/Section" to configure sections.</li>
-                <li>Set number of sections for each year level (1st–4th).</li>
-                <li>Sections will be automatically named (A, B, C, etc.).</li>
-              </ul>
-            </div>
+          <!-- PROGRAM INFO -->
+          <div class="p-4 bg-gray-50 border rounded-xl">
+            <p class="text-gray-800">
+              <span class="font-semibold text-gray-800">Program:</span>
+              {{ programData.program_name }}
+              ({{ programData.program_code }})
+            </p>
           </div>
 
-          <!-- School Year Selection -->
+          <!-- Instructions -->
+          <div class="p-4 bg-blue-50 border rounded-xl">
+            <h3 class="font-bold text-gray-800">Instructions</h3>
+            <ul
+              class="list-disc list-inside text-gray-700 space-y-1 text-[12px]"
+            >
+              <li>Click "Add Year/Section" to configure sections.</li>
+              <li>Set number of sections for each year level (1st–4th).</li>
+              <li>Sections will be automatically named (A, B, C, etc.).</li>
+            </ul>
+          </div>
+
+          <!-- SCHOOL YEAR -->
           <div class="flex flex-col space-y-2 w-full relative">
             <label class="font-semibold text-gray-800">
               School Year <span class="text-red-500">*</span>
             </label>
+
             <input
               v-model="searchSchoolYearQuery"
               type="text"
               placeholder="Search school year..."
               required
-              class="px-4 py-3 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-green-400 focus:border-green-400 outline-none transition"
+              class="px-4 py-3 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-green-400 focus:border-green-400 outline-none"
               @focus="showSchoolYearDropdown = true"
             />
+
             <div
               v-if="showSchoolYearDropdown && filteredSchoolYears.length"
               class="absolute top-[75px] w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-10"
@@ -78,15 +73,16 @@
               <div
                 v-for="sy in filteredSchoolYears"
                 :key="sy.school_year_id"
-                class="px-4 py-2 hover:bg-green-50 cursor-pointer transition-colors"
+                class="px-4 py-2 hover:bg-green-50 cursor-pointer"
                 @mousedown="selectSchoolYear(sy)"
               >
                 {{ sy.school_year_name }} - {{ formatSemester(sy.semester) }}
               </div>
             </div>
           </div>
-          <!-- Selected School Year Badge -->
-          <div v-if="selectedSchoolYear" class="mt-2">
+
+          <!-- Selected Badge -->
+          <div v-if="selectedSchoolYear">
             <span
               class="inline-flex items-center bg-green-100 text-green-900 text-sm font-semibold px-4 py-1.5 rounded-full border border-green-300 shadow-sm"
             >
@@ -95,108 +91,158 @@
             </span>
           </div>
 
-          <!-- Year/Section Configuration -->
-          <div class="mt-2">
-            <h3
-              class="font-semibold text-gray-800 text-md mb-4 flex items-center gap-2"
-            >
-              <icon name="setting" class="size-4 text-green-700" />
-              <span> Configure Sections per Year Levels</span>
-            </h3>
-
-            <div class="space-y-6">
-              <!-- Each Year Level Card -->
-              <div
-                v-for="year in yearLevels"
-                :key="year.value"
-                class="rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200"
+          <!-- MAIN AREA -->
+          <div class="flex flex-col lg:flex-row gap-6">
+            <!-- LEFT: CONFIGURE SECTIONS -->
+            <div class="flex-1">
+              <h3
+                class="font-semibold text-gray-800 text-md mb-4 flex items-center gap-2"
               >
-                <!-- Header -->
+                <icon name="setting" class="size-4 text-green-700" />
+                Configure Sections per Year Levels
+              </h3>
+
+              <div class="space-y-6">
                 <div
-                  class="flex justify-between items-center px-5 py-3 bg-green-50 border-b rounded-t-xl"
+                  v-for="year in yearLevels"
+                  :key="year.value"
+                  class="rounded-xl border border-gray-200 bg-white shadow-sm"
                 >
-                  <div class="flex items-start gap-2">
-                    <icon name="calendar" class="size-4 text-green-700" />
-                    <h4 class="font-semibold text-green-800 tracking-wide">
-                      {{ year.label }}
-                    </h4>
-                  </div>
-
-                  <!-- Number of Sections Input -->
-                  <div class="flex items-center gap-2 text-sm">
-                    <label class="text-gray-700 font-medium whitespace-nowrap">
-                      Sections:
-                    </label>
-                    <input
-                      v-model.number="year.numSections"
-                      type="number"
-                      min="0"
-                      max="10"
-                      class="w-20 border border-gray-300 rounded-md px-3 py-1.5 text-center focus:ring-2 focus:ring-defaultGreen focus:border-defaultGreen outline-none transition"
-                      placeholder="0"
-                      @input="updateSections(year)"
-                    />
-                  </div>
-                </div>
-
-                <!-- Section List -->
-                <transition-group
-                  name="fade"
-                  tag="div"
-                  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-5 py-4"
-                >
+                  <!-- HEADER -->
                   <div
-                    v-for="(section, index) in year.sections"
-                    :key="index"
-                    class="group bg-green-50 border border-green-100 rounded-lg shadow-sm hover:border-defaultGreen transition-all duration-200 p-4 flex flex-col gap-2 relative"
+                    class="flex justify-between items-center px-5 py-3 bg-gray-50 border-b rounded-t-xl"
                   >
-                    <!-- Section Header -->
-                    <div class="flex justify-between items-center">
-                      <span class="font-semibold text-defaultGreen text-sm">
-                        Section {{ getSectionLetter(index) }}
-                      </span>
-                      <span
-                        class="bg-green-100 text-green-700 text-xs font-medium px-2 py-0.5 rounded-full"
-                      >
-                        {{ section.classSize || 0 }} students
-                      </span>
+                    <div class="flex items-center gap-2">
+                      <icon name="calendar" class="size-5 text-green-700" />
+                      <h4 class="font-semibold text-green-800">
+                        {{ year.label }}
+                      </h4>
                     </div>
 
-                    <!-- Class Size Input -->
-                    <div class="flex items-center gap-2 mt-2">
-                      <icon name="users" class="size-4 text-defaultGreen" />
+                    <div class="flex items-center gap-2 text-sm">
+                      <label class="text-gray-700 font-medium">
+                        Sections:
+                      </label>
+
                       <input
-                        v-model.number="section.classSize"
+                        v-model.number="year.numSections"
                         type="number"
-                        min="1"
-                        max="100"
-                        class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-center text-sm focus:ring-2 focus:ring-green-300 focus:border-green-400 outline-none transition"
-                        placeholder="Enter size"
+                        min="0"
+                        max="10"
+                        class="w-20 border border-gray-300 rounded-md px-3 py-1.5 text-center focus:ring-2 focus:ring-defaultGreen"
+                        placeholder="0"
+                        @input="updateSections(year)"
                       />
                     </div>
                   </div>
-                </transition-group>
 
-                <!-- Helper -->
+                  <!-- SECTION CARDS -->
+                  <div
+                    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4 px-5 py-4"
+                  >
+                    <div
+                      v-for="(section, index) in year.sections"
+                      :key="index"
+                      class="bg-green-50 border border-green-100 rounded-lg p-4 flex flex-col gap-2"
+                    >
+                      <div class="flex justify-between items-center">
+                        <span class="font-semibold text-defaultGreen text-sm">
+                          Section {{ getSectionLetter(index) }}
+                        </span>
+
+                        <span
+                          class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full"
+                        >
+                          {{ section.classSize || 0 }} students
+                        </span>
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        <icon name="users" class="size-4 text-defaultGreen" />
+
+                        <input
+                          v-model.number="section.classSize"
+                          type="number"
+                          min="1"
+                          max="100"
+                          class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-center text-sm focus:ring-2 focus:ring-green-300"
+                          placeholder="Enter size"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="year.numSections === 0"
+                    class="text-gray-500 text-sm italic px-5 py-3 border-t border-green-100 bg-gray-50 rounded-b-xl"
+                  >
+                    No sections configured for {{ year.label }}.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: SUMMARY -->
+            <div
+              v-if="totalSections > 0"
+              class="flex-1 p-4 border border-green-100 rounded-xl shadow-md h-fit max-h-full overflow-y-auto"
+            >
+              <div class="flex items-center justify-between">
                 <div
-                  v-if="year.numSections === 0"
-                  class="text-gray-500 text-sm italic px-5 py-3 border-t border-green-100 bg-gray-50 rounded-b-xl"
+                  class="font-semibold text-sm text-green-800 mb-2 flex items-center gap-2"
                 >
-                  No sections configured for {{ year.label }}.
+                  <icon name="summary" />
+                  <h2>Summary</h2>
+                </div>
+
+                <p class="text-sm mb-3 text-gray-700">
+                  Total sections:
+                  <span class="font-bold text-green-700">
+                    {{ totalSections }}
+                  </span>
+                </p>
+              </div>
+
+              <div class="space-y-4 text-sm">
+                <div v-for="year in yearLevels" :key="year.value">
+                  <div
+                    v-if="year.numSections > 0"
+                    class="bg-white rounded-xl border border-green-100 p-3"
+                  >
+                    <h3 class="font-semibold text-green-700 mb-2">
+                      {{ year.label }}
+                    </h3>
+
+                    <div class="space-y-2">
+                      <div
+                        v-for="(section, index) in year.sections"
+                        :key="index"
+                        class="flex justify-between items-center bg-gray-50 rounded-md px-3 py-3 border border-green-100"
+                      >
+                        <span> Section {{ getSectionLetter(index) }} </span>
+
+                        <span class="text-xs text-gray-600">
+                          {{ section.classSize }} students
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <!-- Buttons -->
+
+        <!-- BUTTONS -->
         <div class="flex justify-end gap-2 pt-4 border-t p-4">
           <button
             type="button"
-            class="bg-gray-100 text-gray-600 p-2 px-3 rounded-lg hover:bg-white border hover:border-gray-800 hover:text-gray-800"
+            class="bg-gray-100 text-gray-600 p-2 px-3 rounded-lg hover:bg-white border hover:border-gray-800"
             @click="$emit('close')"
           >
             Cancel
           </button>
+
           <button
             class="bg-defaultGreen p-2 px-3 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800"
             type="submit"
@@ -206,63 +252,6 @@
           </button>
         </div>
       </form>
-
-      <!-- RIGHT: Summary Section -->
-      <div
-        class="w-full lg:w-[25vw] bg-gray-50 p-4 border-l border-green-100 flex flex-col justify-start rounded-b-[16px] lg:rounded-b-none lg:rounded-r-[16px] overflow-y-auto max-h-[99vh] shadow-inner"
-        v-if="totalSections > 0"
-      >
-        <!-- Header -->
-        <div
-          class="font-semibold text-lg text-green-800 mb-4 flex items-center gap-2"
-        >
-          <icon name="summary" />
-          <h2>Summary</h2>
-        </div>
-
-        <!-- Total Sections -->
-        <p class="text-sm mb-3 text-gray-700">
-          Total sections to be created:
-          <span class="font-bold text-green-700">{{ totalSections }}</span>
-        </p>
-
-        <!-- Year Levels -->
-        <div class="text-sm text-gray-700 space-y-4">
-          <div v-for="year in yearLevels" :key="year.value">
-            <div
-              v-if="year.numSections > 0 && year.sections.length > 0"
-              class="bg-white rounded-xl shadow-sm border border-green-100 p-3 transition-all duration-200"
-            >
-              <h3 class="font-semibold text-green-700 mb-2">
-                {{ year.label }}
-              </h3>
-
-              <div class="space-y-2">
-                <div
-                  v-for="(section, index) in year.sections"
-                  :key="index"
-                  class="flex justify-between items-center bg-green-50 rounded-md px-3 py-2 border border-green-100 hover:bg-green-100 transition-colors duration-200"
-                >
-                  <span class="text-gray-800 font-medium">
-                    Section {{ getSectionLetter(index) }}
-                  </span>
-                  <span class="text-gray-600 text-xs">
-                    {{ section.classSize }} students
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- No Sections -->
-        <div
-          v-if="totalSections === 0"
-          class="text-gray-500 text-sm italic mt-4 text-center"
-        >
-          No sections configured yet.
-        </div>
-      </div>
     </div>
   </div>
 </template>

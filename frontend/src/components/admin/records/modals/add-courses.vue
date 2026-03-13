@@ -70,12 +70,12 @@
 
           <!-- Description -->
           <div class="w-full space-y-2">
-            <label for="course_description" class="font-bold"
+            <label for="course_title" class="font-bold"
               >Course Description:</label
             >
             <textarea
-              v-model="form.course_description"
-              id="course_description"
+              v-model="form.course_title"
+              id="course_title"
               required
               class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
               placeholder="Enter course description"
@@ -180,7 +180,7 @@
                   class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                   @mousedown="selectcourse(course)"
                 >
-                  {{ course.course_code }} - {{ course.course_description }}
+                  {{ course.course_code }} - {{ course.course_title }}
                 </div>
               </div>
             </div>
@@ -239,7 +239,7 @@ export default {
       form: {
         curriculum_id: "",
         course_code: "",
-        course_description: "",
+        course_title: "",
         course_semester: "",
         course_lab: "",
         course_lec: "",
@@ -276,7 +276,7 @@ export default {
       return this.courses.filter(
         (course) =>
           (course.course_code?.toLowerCase().includes(q) ||
-            course.course_description?.toLowerCase().includes(q)) &&
+            course.course_title?.toLowerCase().includes(q)) &&
           this.form.curriculum_id === course.curriculum_id &&
           !this.form.course_requisite.includes(course.course_code),
       );
@@ -351,7 +351,7 @@ export default {
       this.form = {
         curriculum_id: this.courseData.curriculum_id,
         course_code: this.courseData.course_code,
-        course_description: this.courseData.course_description,
+        course_title: this.courseData.course_title,
         course_semester: this.courseData.course_semester,
         course_lab: this.courseData.course_lab,
         course_lec: this.courseData.course_lec,

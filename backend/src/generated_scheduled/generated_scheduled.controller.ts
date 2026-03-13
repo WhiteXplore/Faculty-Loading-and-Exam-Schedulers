@@ -28,8 +28,7 @@ export class GeneratedScheduledController {
    */
   @Get('load')
   async runScheduler() {
-    const data =
-      await this.generatedScheduledService.runPythonScheduler();
+    const data = await this.generatedScheduledService.runPythonScheduler();
 
     return {
       success: true,
@@ -42,8 +41,7 @@ export class GeneratedScheduledController {
    */
   @Get('generate')
   getGeneratedSchedule() {
-    const data =
-      this.generatedScheduledService.getFacultyLoadingFromFile();
+    const data = this.generatedScheduledService.getFacultyLoadingFromFile();
 
     return {
       success: true,

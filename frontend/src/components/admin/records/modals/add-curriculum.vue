@@ -27,6 +27,16 @@
 
         <!-- Body -->
         <div class="p-5 w-[28vw] space-y-4">
+          <!-- Curriculum Name -->
+          <div class="flex flex-col space-y-2">
+            <label class="font-bold">Curriculum Name:</label>
+            <input
+              :value="formattedCurriculumName"
+              type="text"
+              disabled
+              class="w-full border px-3 py-3 border-gray-600 rounded-md bg-gray-100 cursor-not-allowed"
+            />
+          </div>
           <!-- Program -->
           <div class="flex flex-col space-y-2 relative">
             <label class="font-bold">Program:</label>
@@ -56,27 +66,36 @@
             </div>
           </div>
 
-          <!-- Curriculum Name -->
-          <div class="flex flex-col space-y-2">
-            <label class="font-bold">Curriculum Name:</label>
-            <input
-              :value="formattedCurriculumName"
-              type="text"
-              disabled
-              class="w-full border px-3 py-3 border-gray-600 rounded-md bg-gray-100 cursor-not-allowed"
-            />
-          </div>
-
           <!-- Effective Year -->
+
           <div class="flex flex-col space-y-2">
             <label class="font-bold">Effective Year:</label>
-            <input
-              v-model="form.curriculum_end_year"
-              type="number"
-              required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md"
-              placeholder="e.g. 2025"
-            />
+
+            <div class="flex gap-3">
+              <!-- FROM -->
+              <div class="flex-1">
+                <label class="font-bold">From:</label>
+                <input
+                  v-model="form.curriculum_start_year"
+                  type="number"
+                  required
+                  class="w-full border px-3 py-3 border-gray-600 rounded-md"
+                  placeholder="e.g. 2025"
+                />
+              </div>
+
+              <!-- TO -->
+              <div class="flex-1">
+                <label class="font-bold">To:</label>
+                <input
+                  v-model="form.curriculum_end_year"
+                  type="number"
+                  required
+                  class="w-full border px-3 py-3 border-gray-600 rounded-md"
+                  placeholder="e.g. 2026"
+                />
+              </div>
+            </div>
           </div>
 
           <!-- Divider -->
@@ -125,6 +144,7 @@ export default {
   data() {
     return {
       form: {
+        institute_id: "",
         program_id: "",
         curriculum_start_year: "",
         curriculum_end_year: "",
@@ -151,12 +171,12 @@ export default {
     },
 
     formattedCurriculumName() {
-      if (!this.form.program_id || !this.form.curriculum_end_year) return "";
+      if (!this.form.program_id || !this.form.curriculum_start_year) return "";
       const program = this.programs.find(
         (p) => p.program_id === this.form.program_id,
       );
       return program
-        ? `${this.form.curriculum_end_year} - ${program.program_name}`
+        ? `${this.form.curriculum_start_year} - ${program.program_name}`
         : "";
     },
   },
@@ -167,12 +187,14 @@ export default {
       handler(newVal) {
         if (newVal) {
           this.form.program_id = newVal.program_id;
+          this.form.institute_id = newVal.institute_id;
           this.form.curriculum_start_year = newVal.curriculum_start_year;
           this.form.curriculum_end_year = newVal.curriculum_end_year;
 
           const program = this.programs.find(
             (p) => p.program_id === newVal.program_id,
           );
+
           if (program) {
             this.searchProgramQuery = program.program_name;
           }
@@ -185,6 +207,7 @@ export default {
     ...mapActions(useFetchDataStore, ["fetchPrograms"]),
 
     selectProgram(program) {
+      this.form.institute_id = program.institute_id;
       this.form.program_id = program.program_id;
       this.searchProgramQuery = program.program_name;
       this.showProgramDropdown = false;
