@@ -27,11 +27,12 @@ export const useFetchDataStore = defineStore("fetchData", {
     class_sections: [],
     unscheduled_meetings: [],
     generated_scheduled: [],
-    schedule_by_room:[],
+    schedule_by_room: [],
     college_branch: [],
     faculty_branch: [],
     buildings: [],
     building_areas: [],
+    school_years: [],
     year: null, // currently selected year
     activeYears: [],
     activeYear: null, // latest active year for table filtering
@@ -61,7 +62,7 @@ export const useFetchDataStore = defineStore("fetchData", {
 
         this.generated_scheduled = payload.scheduled_meetings || [];
         this.unscheduled_meetings = payload.unscheduled_meetings || [];
-         this.schedule_by_room = payload.schedule_by_room || [];
+        this.schedule_by_room = payload.schedule_by_room || [];
 
         return payload;
       } catch (err) {
@@ -129,6 +130,21 @@ export const useFetchDataStore = defineStore("fetchData", {
         this.college_branch = data;
       } catch (err) {
         this.error = err.message || "Failed to fetch college_branch";
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchSchoolYears() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const { data } = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
+        );
+        this.school_years = data;
+      } catch (err) {
+        this.error = err.message || "Failed to fetch school_years";
       } finally {
         this.loading = false;
       }

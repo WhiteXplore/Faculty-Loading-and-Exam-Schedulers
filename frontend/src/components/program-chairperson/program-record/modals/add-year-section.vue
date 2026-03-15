@@ -81,14 +81,33 @@
             </div>
           </div>
 
-          <!-- Selected Badge -->
-          <div v-if="selectedSchoolYear">
-            <span
-              class="inline-flex items-center bg-green-100 text-green-900 text-sm font-semibold px-4 py-1.5 rounded-full border border-green-300 shadow-sm"
+          <div class="flex flex-col space-y-2 w-full relative">
+            <label class="font-semibold text-gray-800">
+              College Branch <span class="text-red-500">*</span>
+            </label>
+
+            <input
+              v-model="searchCollegeBranchQuery"
+              type="text"
+              placeholder="Search college branch..."
+              required
+              class="px-4 py-3 border border-gray-300 rounded-lg text-gray-800 focus:ring-2 focus:ring-green-400 focus:border-green-400 outline-none"
+              @focus="showCollegeBranchDropdown = true"
+            />
+
+            <div
+              v-if="showCollegeBranchDropdown && filteredCollegeBranch.length"
+              class="absolute top-[75px] w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-10"
             >
-              {{ selectedSchoolYear.school_year_name }} –
-              {{ formatSemester(selectedSchoolYear.semester) }}
-            </span>
+              <div
+                v-for="cb in filteredCollegeBranch"
+                :key="cb.college_branch_id"
+                class="px-4 py-2 hover:bg-green-50 cursor-pointer"
+                @mousedown.prevent="selectCollegeBranch(cb)"
+              >
+                {{ cb.college_branch_name }}
+              </div>
+            </div>
           </div>
 
           <!-- MAIN AREA -->
@@ -96,9 +115,9 @@
             <!-- LEFT: CONFIGURE SECTIONS -->
             <div class="flex-1">
               <h3
-                class="font-semibold text-gray-800 text-md mb-4 flex items-center gap-2"
+                class="font-semibold text-gray-800 text-sm mb-4 flex items-center gap-2"
               >
-                <icon name="setting" class="size-4 text-green-700" />
+                <icon name="setting" class="text-green-700" />
                 Configure Sections per Year Levels
               </h3>
 
@@ -106,7 +125,7 @@
                 <div
                   v-for="year in yearLevels"
                   :key="year.value"
-                  class="rounded-xl border border-gray-200 bg-white shadow-sm"
+                  class="rounded-xl border border-gray-200 bg-white"
                 >
                   <!-- HEADER -->
                   <div
@@ -147,7 +166,10 @@
                     >
                       <div class="flex justify-between items-center">
                         <span class="font-semibold text-defaultGreen text-sm">
-                          Section {{ getSectionLetter(index) }}
+                          Section
+                          {{
+                            getSectionLetter(getStartIndex(year.label) + index)
+                          }}
                         </span>
 
                         <span
@@ -185,13 +207,11 @@
             <!-- RIGHT: SUMMARY -->
             <div
               v-if="totalSections > 0"
-              class="flex-1 p-4 border border-green-100 rounded-xl shadow-md h-fit max-h-full overflow-y-auto"
+              class="flex-1 h-fit max-h-full overflow-y-auto"
             >
               <div class="flex items-center justify-between">
-                <div
-                  class="font-semibold text-sm text-green-800 mb-2 flex items-center gap-2"
-                >
-                  <icon name="summary" />
+                <div class="font-semibold text-sm mb-2 flex items-center gap-2">
+                  <icon name="summary" class="text-green-700" />
                   <h2>Summary</h2>
                 </div>
 
@@ -203,11 +223,11 @@
                 </p>
               </div>
 
-              <div class="space-y-4 text-sm">
+              <div class="space-y-4 text-sm mt-1.5">
                 <div v-for="year in yearLevels" :key="year.value">
                   <div
                     v-if="year.numSections > 0"
-                    class="bg-white rounded-xl border border-green-100 p-3"
+                    class="bg-white rounded-xl border border-gray-200 p-3"
                   >
                     <h3 class="font-semibold text-green-700 mb-2">
                       {{ year.label }}
@@ -219,7 +239,12 @@
                         :key="index"
                         class="flex justify-between items-center bg-gray-50 rounded-md px-3 py-3 border border-green-100"
                       >
-                        <span> Section {{ getSectionLetter(index) }} </span>
+                        <span>
+                          Section
+                          {{
+                            getSectionLetter(getStartIndex(year.label) + index)
+                          }}
+                        </span>
 
                         <span class="text-xs text-gray-600">
                           {{ section.classSize }} students
@@ -260,20 +285,27 @@
 import icon from "@/assets/icon.vue";
 import { toast } from "vue3-toastify";
 import axios from "axios";
+import { useFetchDataStore } from "@/store/fetch-data-store";
 
 export default {
   name: "AddYearSectionModal",
   components: { icon },
+
   props: {
     programData: { type: Object, required: true },
   },
+
   data() {
     return {
       selectedSchoolYearId: null,
       selectedSchoolYear: null,
       searchSchoolYearQuery: "",
       showSchoolYearDropdown: false,
-      schoolYears: [],
+
+      searchCollegeBranchQuery: "",
+      showCollegeBranchDropdown: false,
+      selectedCollegeBranchId: null,
+
       yearLevels: [
         { value: 1, label: "1st Year", numSections: 0, sections: [] },
         { value: 2, label: "2nd Year", numSections: 0, sections: [] },
@@ -282,14 +314,44 @@ export default {
       ],
     };
   },
+
   computed: {
+    fetchStore() {
+      return useFetchDataStore();
+    },
+
+    sections() {
+      return this.fetchStore.sections;
+    },
+
+    schoolYears() {
+      return this.fetchStore.school_years;
+    },
+
+    college_branch() {
+      return this.fetchStore.college_branch;
+    },
+
     filteredSchoolYears() {
       if (!this.searchSchoolYearQuery) return this.schoolYears;
+
       const q = this.searchSchoolYearQuery.toLowerCase();
+
       return this.schoolYears.filter((sy) =>
         sy.school_year_name?.toLowerCase().includes(q),
       );
     },
+
+    filteredCollegeBranch() {
+      if (!this.searchCollegeBranchQuery) return this.college_branch;
+
+      const q = this.searchCollegeBranchQuery.toLowerCase();
+
+      return this.college_branch.filter((cb) =>
+        cb.college_branch_name?.toLowerCase().includes(q),
+      );
+    },
+
     totalSections() {
       return this.yearLevels.reduce(
         (sum, year) => sum + (year.numSections || 0),
@@ -297,58 +359,96 @@ export default {
       );
     },
   },
+
   methods: {
     formatSemester(value) {
       if (value === 1 || value === "1") return "First Semester";
       if (value === 2 || value === "2") return "Second Semester";
-      return value; // fallback if unexpected
+      return value;
     },
-    async fetchSchoolYears() {
-      try {
-        const response = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
-        );
-        this.schoolYears = response.data;
-      } catch (error) {
-        console.error("Failed to load school years:", error);
-      }
-    },
+
     selectSchoolYear(sy) {
       this.selectedSchoolYearId = sy.school_year_id;
-      this.searchSchoolYearQuery = sy.school_year_name;
       this.selectedSchoolYear = sy;
+
+      this.searchSchoolYearQuery =
+        sy.school_year_name + " - " + this.formatSemester(sy.semester);
+
       this.showSchoolYearDropdown = false;
     },
+
+    selectCollegeBranch(cb) {
+      this.selectedCollegeBranchId = cb.college_branch_id;
+      this.searchCollegeBranchQuery = cb.college_branch_name;
+      this.showCollegeBranchDropdown = false;
+    },
+
     getSectionLetter(index) {
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
       return letters[index] || "?";
     },
-    getSectionNames(numSections) {
+
+    getStartIndex(yearLabel) {
       const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      const names = [];
-      for (let i = 0; i < numSections; i++) {
-        names.push(letters[i]);
-      }
-      return names.join(", ");
+      const nextLetter = this.getNextSectionLetter(yearLabel);
+      return letters.indexOf(nextLetter);
     },
+
+    getNextSectionLetter(yearLabel) {
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      const filtered = this.sections.filter((cls) => {
+        return (
+          String(cls.program_id) === String(this.programData.program_id) &&
+          String(cls.school_year_id) === String(this.selectedSchoolYearId) &&
+          String(cls.college_branch_id) ===
+            String(this.selectedCollegeBranchId) &&
+          cls.set_name?.toLowerCase().includes(yearLabel.toLowerCase())
+        );
+      });
+
+      if (!filtered.length) return "A";
+
+      const existingLetters = filtered
+        .map((cls) => {
+          const parts = cls.set_name.split("-");
+          return parts[1]?.trim();
+        })
+        .filter(Boolean);
+
+      const indexes = existingLetters
+        .map((l) => letters.indexOf(l))
+        .filter((i) => i !== -1);
+
+      if (!indexes.length) return "A";
+
+      const highestIndex = Math.max(...indexes);
+
+      return letters[highestIndex + 1] || "Z";
+    },
+
     updateSections(year) {
       const currentNum = year.sections.length;
       const newNum = year.numSections || 0;
 
       if (newNum > currentNum) {
-        // Add new sections
         for (let i = currentNum; i < newNum; i++) {
           year.sections.push({ classSize: 40 });
         }
       } else if (newNum < currentNum) {
-        // Remove excess sections
         year.sections.splice(newNum);
       }
     },
+
     async submitData() {
       try {
         if (!this.selectedSchoolYearId) {
           toast.error("Please select a school year");
+          return;
+        }
+
+        if (!this.selectedCollegeBranchId) {
+          toast.error("Please select a college branch");
           return;
         }
 
@@ -360,13 +460,16 @@ export default {
         const classesToCreate = [];
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        // Generate class records for each year level
         this.yearLevels.forEach((year) => {
           if (year.numSections > 0 && year.sections.length > 0) {
+            const startIndex = this.getStartIndex(year.label);
+
             year.sections.forEach((section, index) => {
-              const sectionLetter = letters[index];
+              const sectionLetter = letters[startIndex + index];
+
               classesToCreate.push({
                 school_year_id: this.selectedSchoolYearId,
+                college_branch_id: this.selectedCollegeBranchId,
                 program_id: this.programData.program_id,
                 set_name: `${year.label} - ${sectionLetter}`,
                 class_size: section.classSize || 30,
@@ -375,7 +478,6 @@ export default {
           }
         });
 
-        // Create all classes
         const promises = classesToCreate.map((classData) =>
           axios.post(
             process.env.VUE_APP_API_BASE_URL + "/class/add-class",
@@ -391,22 +493,27 @@ export default {
 
         this.$emit("refresh");
         this.$emit("close");
-
-        // Play audio
-        try {
-          const audio = new Audio(require("@/assets/add.mp3"));
-          await audio.play();
-        } catch (audioErr) {
-          console.warn("Audio failed to play:", audioErr);
-        }
       } catch (err) {
         console.error(err);
         toast.error("Failed to create sections.");
       }
     },
   },
+
   async mounted() {
-    await this.fetchSchoolYears();
+    const store = useFetchDataStore();
+
+    if (!store.school_years.length) {
+      await store.fetchSchoolYears();
+    }
+
+    if (!store.college_branch.length) {
+      await store.fetchCollegeBranch();
+    }
+
+    if (!store.sections.length) {
+      await store.fetchClassSections();
+    }
   },
 };
 </script>

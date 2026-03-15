@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6 text-[13px]">
+  <div class="space-y-2 text-[13px]">
     <!-- HEADER -->
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / Year & Section</div>
@@ -20,16 +20,13 @@
     <!-- MAIN CONTENT -->
     <div v-if="user" class="space-y-6">
       <!-- Program Info (Program Chairperson only) -->
-      <div
-        v-if="user.role === 'Program Chairperson' && userProgram"
-        class="bg-white border border-green-100 p-5 rounded-2xl"
-      >
-        <h2 class="text-lg font-bold text-gray-800">
+      <div v-if="user.role === 'Program Chairperson' && userProgram">
+        <!-- <h2 class="text-lg font-bold text-gray-800">
           {{ userProgram.program_name }}
         </h2>
         <p class="text-sm text-gray-600 mb-2" v-if="userProgram.institute">
           Institute: {{ userProgram.institute.institute_name }}
-        </p>
+        </p> -->
 
         <!-- SECTIONS TABLE -->
         <div v-if="filteredAndSearchedClasses.length > 0">
@@ -72,34 +69,75 @@
               </div>
 
               <!-- Search -->
-              <div class="relative">
-                <input
-                  v-model="searchQuery"
-                  type="text"
-                  placeholder="Search section ..."
-                  class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full sm:w-[280px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
-                  @input="changePage(1)"
-                />
-                <div
-                  class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-                >
-                  <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
+              <!-- Filters -->
+              <div class="flex items-center gap-2">
+                <!-- Campus Branch Filter -->
+                <div class="relative">
+                  <select
+                    v-model="selectedCampus"
+                    class="appearance-none rounded-full border border-green-600 bg-white px-3 py-2 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+                    @change="changePage(1)"
                   >
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="M21 21l-4.35-4.35" />
-                  </svg>
+                    <option value="all">All Campus</option>
+                    <option
+                      v-for="campus in campusBranches"
+                      :key="campus"
+                      :value="campus"
+                    >
+                      {{ campus }}
+                    </option>
+                  </select>
+
+                  <div
+                    class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Search -->
+                <div class="relative">
+                  <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Search section ..."
+                    class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-[240px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+                    @input="changePage(1)"
+                  />
+
+                  <div
+                    class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Table -->
-            <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-              <div class="max-h-[69vh] overflow-y-auto">
+            <div class="w-full mt-2 rounded-xl border bg-white overflow-hidden">
+              <div class="max-h-[70vh] overflow-y-auto">
                 <table class="min-w-full text-sm text-gray-700 border-collapse">
                   <thead
                     class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
@@ -111,6 +149,7 @@
                       >
                         Program
                       </th>
+                      <th class="px-4 py-3 text-left w-[15%]">Campus Branch</th>
                       <th class="px-4 py-3 text-left w-[15%]">Program</th>
                       <th class="px-4 py-3 text-left w-[15%]">Section Name</th>
                       <th class="px-4 py-3 text-center w-[18%]">Class Size</th>
@@ -130,6 +169,10 @@
                         class="px-4 py-3 text-left"
                       >
                         {{ cls.program?.program_name }}
+                      </td>
+
+                      <td class="px-4 py-3 text-left">
+                        {{ cls.colleges?.college_branch_name }}
                       </td>
                       <td class="px-4 py-3 text-left">
                         {{ cls.program?.program_code }}
@@ -244,9 +287,8 @@
     v-if="showYearSectionModal"
     :programData="userProgram || {}"
     @close="closeYearSectionModal"
-    @refresh="loadUserProgram"
+    @refresh="refreshSections"
   />
-
   <div v-if="showDeleteModal" class="fixed inset-0 z-50">
     <div class="absolute inset-0 bg-gray-800 bg-opacity-40"></div>
     <div
@@ -291,7 +333,7 @@ import icon from "@/assets/icon.vue";
 import { toast } from "vue3-toastify";
 import addYearSection from "@/components/program-chairperson/program-record/modals/add-year-section.vue";
 import axios from "axios";
-import { mapState } from "pinia";
+import { mapState, mapActions } from "pinia";
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import { eventBus } from "@/bus/event-bus";
 export default {
@@ -299,11 +341,10 @@ export default {
   components: { icon, addYearSection },
   data() {
     return {
+      selectedCampus: "all",
       showYearSectionModal: false,
       userProgram: null,
       user: null,
-      classes: [],
-      programs: [],
       searchQuery: "",
       currentPage: 1,
       itemsPerPage: 10,
@@ -316,20 +357,24 @@ export default {
     };
   },
   computed: {
-    ...mapState(useFetchDataStore, ["activeYear"]),
+    ...mapState(useFetchDataStore, ["activeYear", "programs", "sections"]),
+    campusBranches() {
+      const branches = this.sections
+        .map((cls) => cls.colleges?.college_branch_name)
+        .filter(Boolean);
 
+      return [...new Set(branches)];
+    },
     filteredClasses() {
       const active = this.activeSchoolYear || this.activeYear;
       if (!active?.school_year_id) return [];
 
-      let result = this.classes.filter(
+      let result = this.sections.filter(
         (cls) => String(cls.school_year_id) === String(active.school_year_id),
       );
 
-      // Admin → see all programs
       if (this.user?.role === "Admin") return result;
 
-      // Program Chairperson → only their program
       if (this.userProgram) {
         return result.filter(
           (cls) =>
@@ -358,9 +403,17 @@ export default {
     },
 
     filteredAndSearchedClasses() {
-      const filtered = this.filteredClasses.filter((cls) =>
-        cls.set_name.toLowerCase().includes(this.searchQuery.toLowerCase()),
-      );
+      const filtered = this.filteredClasses.filter((cls) => {
+        const matchesSearch = cls.set_name
+          .toLowerCase()
+          .includes(this.searchQuery.toLowerCase());
+
+        const matchesCampus =
+          this.selectedCampus === "all" ||
+          cls.colleges?.college_branch_name === this.selectedCampus;
+
+        return matchesSearch && matchesCampus;
+      });
 
       // Custom sort: year priority then section letter
       return filtered.sort((a, b) => {
@@ -426,6 +479,11 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useFetchDataStore, ["fetchPrograms", "fetchClassSections"]),
+    async refreshSections() {
+      await this.fetchClassSections();
+      await this.loadUserProgram();
+    },
     formatSemester(value) {
       if (value === 1 || value === "1") return "First Semester";
       if (value === 2 || value === "2") return "Second Semester";
@@ -447,26 +505,12 @@ export default {
       this.user = data;
     },
 
-    async loadPrograms() {
-      const { data } = await axios.get(
-        process.env.VUE_APP_API_BASE_URL + "/programs/get-programs",
-      );
-      this.programs = data;
-    },
-
     async loadUserProgram() {
       if (this.user?.role === "Program Chairperson") {
         this.userProgram = this.programs.find(
           (p) => String(p.program_id) === String(this.user.program_id),
         );
       }
-    },
-
-    async loadClasses() {
-      const { data } = await axios.get(
-        process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
-      );
-      this.classes = data;
     },
 
     promptDelete(classId) {
@@ -483,7 +527,7 @@ export default {
             `/class/delete-id/${this.deleteTargetId}`,
           { withCredentials: true },
         );
-        await this.loadClasses();
+        await this.fetchClassSections();
         toast.success("Record deleted successfully");
         this.showDeleteModal = false;
         this.deleteTargetId = null;
@@ -499,7 +543,6 @@ export default {
 
     closeYearSectionModal() {
       this.showYearSectionModal = false;
-      this.loadClasses();
     },
 
     changePage(page) {
@@ -509,28 +552,26 @@ export default {
 
   async mounted() {
     await this.fetchUser();
+
     const store = useFetchDataStore();
     await store.fetchActiveYears();
-    await this.loadClasses();
-    await this.loadPrograms();
+
+    await this.fetchPrograms();
+    await this.fetchClassSections();
+
     await this.loadUserProgram();
+
     this.loading = false;
 
-    // Listen to eventBus for new year
     this.stopEventBus = eventBus.on(async (newYear) => {
       if (!newYear) return;
 
-      // 1️⃣ Update local activeSchoolYear
       this.activeSchoolYear = newYear;
-
-      // 2️⃣ Reset pagination
       this.currentPage = 1;
 
-      // 3️⃣ Wait for reactivity
       await this.$nextTick();
 
-      // 4️⃣ Reload table
-      await this.loadClasses();
+      await this.fetchClassSections();
     });
   },
 

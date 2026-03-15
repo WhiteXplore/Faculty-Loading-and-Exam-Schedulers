@@ -7,6 +7,10 @@ export class CreateClassDto {
 
   @IsInt()
   @IsNotEmpty()
+  college_branch_id: number;
+
+  @IsInt()
+  @IsNotEmpty()
   program_id: number;
 
   @IsString()
@@ -17,4 +21,3 @@ export class CreateClassDto {
   @IsNotEmpty()
   class_size: number;
 }
-

@@ -71,11 +71,11 @@
       <div class="flex items-center gap-2">
         <div
           ref="profileIcon"
-          class="w-10 h-10 rounded-full border-2 border-transparent hover:border-green-500 cursor-pointer transition"
+          class="w-9 h-9 scale-120 rounded-xl border-defaultGreen border cursor-pointer transition"
           @click.stop="toggleOpenProfile"
         >
           <img
-            src="../../../assets/img/users.png"
+            src="../../../assets/img/users1.png"
             alt="Profile"
             class="w-full h-full rounded-full object-cover"
           />

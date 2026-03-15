@@ -74,25 +74,26 @@
                     :class="[
                       'px-3 py-2 text-sm flex justify-between items-center cursor-pointer transition',
                       currentSemesterData.expertise.some(
-                        (c) => c.course_id === course.course_id
+                        (c) => c.course_id === course.course_id,
                       )
                         ? 'text-gray-400 cursor-not-allowed'
                         : 'text-gray-800 hover:bg-green-100',
                     ]"
                     @click="
                       !currentSemesterData.expertise.some(
-                        (c) => c.course_id === course.course_id
+                        (c) => c.course_id === course.course_id,
                       ) && addCourse(course)
                     "
                   >
-                    <span
-                      >{{ course.course_code }} -
-                      {{ course.course_title }}</span
-                    >
+                    <span>
+                      {{ course.curriculum?.program?.program_code }}
+                      ( {{ course.course_level }} ) - {{ course.course_code }} -
+                      {{ course.course_title }}
+                    </span>
                     <span
                       v-if="
                         currentSemesterData.expertise.some(
-                          (c) => c.course_id === course.course_id
+                          (c) => c.course_id === course.course_id,
                         )
                       "
                       class="text-xs text-red-500"
@@ -120,8 +121,10 @@
                     :key="index"
                     class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer"
                   >
-                    <span class="text-gray-700 text-sm font-medium">
-                      {{ item.course_code }} - {{ item.course_title }}
+                    <span>
+                      {{ item.curriculum?.program?.program_code }}
+                      ({{ item.course_level }}) - {{ item.course_code }} -
+                      {{ item.course_title }}
                     </span>
                     <button
                       type="button"
@@ -163,25 +166,26 @@
                     :class="[
                       'px-3 py-2 text-sm flex justify-between items-center transition',
                       currentSemesterData.other_expertise.some(
-                        (c) => c.course_id === course.course_id
+                        (c) => c.course_id === course.course_id,
                       )
                         ? 'text-gray-400 cursor-not-allowed'
                         : 'text-gray-800 hover:bg-green-100 cursor-pointer',
                     ]"
                     @click="
                       !currentSemesterData.other_expertise.some(
-                        (c) => c.course_id === course.course_id
+                        (c) => c.course_id === course.course_id,
                       ) && addOtherCourse(course)
                     "
                   >
-                    <span
-                      >{{ course.course_code }} -
-                      {{ course.course_title }}</span
-                    >
+                    <span>
+                      {{ course.curriculum?.program?.program_code }}
+                      ( {{ course.course_level }} ) - {{ course.course_code }} -
+                      {{ course.course_title }}
+                    </span>
                     <span
                       v-if="
                         currentSemesterData.other_expertise.some(
-                          (c) => c.course_id === course.course_id
+                          (c) => c.course_id === course.course_id,
                         )
                       "
                       class="text-xs text-red-500"
@@ -201,8 +205,10 @@
                     :key="index"
                     class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer"
                   >
-                    <span class="text-gray-700 text-sm font-medium">
-                      {{ item.course_code }} - {{ item.course_title }}
+                    <span>
+                      {{ item.curriculum?.program?.program_code }}
+                      ({{ item.course_level }}) - {{ item.course_code }} -
+                      {{ item.course_title }}
                     </span>
                     <button
                       type="button"
@@ -276,14 +282,14 @@ export default {
             this.userData?.institute?.institute_id &&
           c.curriculum?.program_id === this.userData?.program?.program_id &&
           !this.currentSemesterData.other_expertise.some(
-            (e) => e.course_id === c.course_id
+            (e) => e.course_id === c.course_id,
           ) &&
           ((c.course_code?.toLowerCase() || "").includes(
-            this.searchQuery.toLowerCase()
+            this.searchQuery.toLowerCase(),
           ) ||
             (c.course_title?.toLowerCase() || "").includes(
-              this.searchQuery.toLowerCase()
-            ))
+              this.searchQuery.toLowerCase(),
+            )),
       );
     },
     filteredOtherCourses() {
@@ -294,14 +300,14 @@ export default {
           c.curriculum?.program?.institute_id ===
             this.userData?.institute?.institute_id &&
           !this.currentSemesterData.expertise.some(
-            (e) => e.course_id === c.course_id
+            (e) => e.course_id === c.course_id,
           ) &&
           ((c.course_code?.toLowerCase() || "").includes(
-            this.otherSearchQuery.toLowerCase()
+            this.otherSearchQuery.toLowerCase(),
           ) ||
             (c.course_title?.toLowerCase() || "").includes(
-              this.otherSearchQuery.toLowerCase()
-            ))
+              this.otherSearchQuery.toLowerCase(),
+            )),
       );
     },
   },
@@ -342,7 +348,7 @@ export default {
         await axios.patch(
           process.env.VUE_APP_API_BASE_URL + `/auth/update/${this.userData.id}`,
           payload,
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         toast.success("Expertise updated successfully!");
@@ -350,7 +356,7 @@ export default {
         this.$emit("close");
       } catch (error) {
         toast.error(
-          error?.response?.data?.message || "Failed to update expertise"
+          error?.response?.data?.message || "Failed to update expertise",
         );
       }
     },
