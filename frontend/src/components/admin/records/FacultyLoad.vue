@@ -37,7 +37,7 @@
     <div class="bg-white border-t-0 mt-2">
       <tableFacultyLoading v-if="activeTab === 'Faculty Loading'" />
       <tableFacultyLoading2 v-if="activeTab === 'Scheduled by Rooms'" />
-      <!-- <tableFacultyLoading3 v-if="activeTab === 'Scheduled by Rooms2'" /> -->
+      <tableFacultyLoading3 v-if="activeTab === 'Scheduled by Rooms2'" />
       <tableAvailableRooms v-if="activeTab === 'Available Rooms'" />
       <!-- Future tabs can be added here -->
     </div>
@@ -48,14 +48,14 @@
 import tableAvailableRooms from "./tables/table-available-rooms.vue";
 import tableFacultyLoading from "./tables/table-faculty-loading.vue";
 import tableFacultyLoading2 from "./tables/table-schedule-by-room.vue";
-// import tableFacultyLoading3 from "./tables/table-schedule-by-room copy.vue";
+import tableFacultyLoading3 from "./tables/table-schedule-by-room copy.vue";
 export default {
   name: "FacultyLoadingPage",
   components: {
     tableFacultyLoading,
     tableFacultyLoading2,
     tableAvailableRooms,
-    // tableFacultyLoading3,
+    tableFacultyLoading3,
   },
   data() {
     return {
@@ -63,9 +63,8 @@ export default {
       tabs: [
         { label: "Faculty Loading", value: "Faculty Loading" },
         { label: "Scheduled by Rooms", value: "Scheduled by Rooms" },
+        { label: "Scheduled by Rooms2", value: "Scheduled by Rooms2" },
         { label: "Available Rooms", value: "Available Rooms" },
-
-        // { label: "Scheduled by Rooms2", value: "Scheduled by Rooms2" },
       ],
     };
   },

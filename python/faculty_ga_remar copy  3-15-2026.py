@@ -47,7 +47,8 @@ FALLBACK_DAY = "Wednesday"
 # All schedulable days — derived automatically from patterns + fallback
 DAYS = sorted(
     {day for days in DAY_PATTERNS.values() for day in days} | {FALLBACK_DAY},
-    key=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].index
+    key=["Monday", "Tuesday", "Wednesday", "Thursday",
+         "Friday", "Saturday", "Sunday"].index
 )
 START_HOUR = 7  # 7 AM
 END_HOUR = 21   # 9 PM
@@ -56,8 +57,6 @@ PART_TIME_START_HOUR = 17  # 5 PM - Part-time faculty can only teach from 5 PM o
 PART_TIME_END_HOUR = 22
 LUNCH_START = 12
 LUNCH_END = 13
-# AM/PM boundary for balanced scheduling
-AFTERNOON_START = 13  # 1 PM — classes at or after this hour count as "afternoon"
 MAX_CAPACITY_EXCESS = 5  # Allow up to 5 students over capacity
 FULL_TIME_WEEKLY_HOURS = 40  # Full-time faculty weekly presence at school
 
@@ -78,14 +77,6 @@ TARGET_FACE_TO_FACE_PERCENTAGE = 0.70  # 70% face-to-face
 # Percentage of lab+lecture classes that may use different rooms on different pattern days
 # (the rest require the same room on every day in the pattern)
 DIFFERENT_ROOM_PERCENTAGE = 0.30  # 30% allowed different rooms per day
-
-# Maximum round-trip travel time (in minutes) that still allows mixed-branch scheduling in a day.
-# If 2 × time_travel > this threshold, the ENTIRE day must be spent at that branch.
-# e.g., 480 min = 8 hours → branches with one-way travel >= 240 min (4h) force a full-day assignment.
-FAR_BRANCH_ROUND_TRIP_LIMIT = 480  # minutes
-
-# Main branch ID — faculty can teach at Main + at most 1 other branch across the week
-MAIN_BRANCH_ID = 1
 
 
 def get_balanced_patterns(day_pattern_tracker, weekly_hours):
@@ -319,77 +310,6 @@ def get_faculty_next_start_hour(faculty_id, day, faculty_schedule_tracker, defau
     return math.ceil(max(s["start_hour"] + s["duration"] for s in slots))
 
 
-def get_faculty_am_pm_hours(faculty_id, days, faculty_schedule_tracker):
-    """
-    Calculate total AM and PM hours for a faculty across the given days.
-    AM = hours where start_hour < AFTERNOON_START (before 1 PM)
-    PM = hours where start_hour >= AFTERNOON_START (1 PM or later)
-    Returns (am_hours, pm_hours).
-    """
-    am_hours = 0.0
-    pm_hours = 0.0
-    if faculty_id not in faculty_schedule_tracker:
-        return am_hours, pm_hours
-    for day in days:
-        if day not in faculty_schedule_tracker[faculty_id]:
-            continue
-        for block in faculty_schedule_tracker[faculty_id][day]:
-            start = block["start_hour"]
-            duration = block["duration"]
-            if start < AFTERNOON_START:
-                # Part or all in AM
-                am_part = min(duration, AFTERNOON_START - start)
-                pm_part = duration - am_part
-                am_hours += am_part
-                pm_hours += pm_part
-            else:
-                pm_hours += duration
-    return am_hours, pm_hours
-
-
-def get_balanced_slots(faculty_id, days, duration, scheduling_start_hour, scheduling_end_hour,
-                       faculty_schedule_tracker):
-    """
-    Return available time slots ordered to balance AM and PM scheduling.
-    If the faculty already has more AM hours, prefer PM slots first (and vice versa).
-    Within the preferred period, slots are consecutive (back-to-back after last class).
-    """
-    am_hours, pm_hours = get_faculty_am_pm_hours(faculty_id, days, faculty_schedule_tracker)
-
-    # Determine AM and PM slot ranges
-    am_slots = find_available_slots(scheduling_start_hour, LUNCH_START, duration)
-    pm_slots = find_available_slots(AFTERNOON_START, scheduling_end_hour, duration)
-
-    # Filter each to only slots that are back-to-back (consecutive) with existing classes
-    # For AM: find next available after existing AM classes
-    # For PM: find next available after existing PM classes
-    def get_consecutive_slots(slots, period_start):
-        """Filter slots to start from consecutive point in this period."""
-        next_starts = []
-        for day in days:
-            ns = get_faculty_next_start_hour(faculty_id, day, faculty_schedule_tracker, period_start)
-            next_starts.append(ns)
-        min_start = max(next_starts)
-        return [s for s in slots if s >= min_start]
-
-    am_consecutive = get_consecutive_slots(am_slots, scheduling_start_hour)
-    pm_consecutive = get_consecutive_slots(pm_slots, AFTERNOON_START)
-
-    # If no consecutive slots exist in a period, use all available slots in that period
-    if not am_consecutive:
-        am_consecutive = am_slots
-    if not pm_consecutive:
-        pm_consecutive = pm_slots
-
-    # Order: prefer the period with fewer hours for balance
-    if am_hours <= pm_hours:
-        # Prefer AM first, then PM
-        return am_consecutive + pm_consecutive
-    else:
-        # Prefer PM first, then AM
-        return pm_consecutive + am_consecutive
-
-
 def is_class_available(class_id, day, start_hour, duration, class_schedule_tracker):
     """
     Check if a class section is available (not already scheduled) for the given day and time block.
@@ -411,91 +331,28 @@ def is_class_available(class_id, day, start_hour, duration, class_schedule_track
     return True
 
 
-def is_branch_available(faculty_id, day, branch_id, faculty_branch_tracker, far_branch_set=None):
+def is_branch_available(faculty_id, day, branch_id, faculty_branch_tracker):
     """
     Check if a faculty member can be scheduled at the given branch on a given day.
-
-    Rules:
-    1. Multi-branch per day is ALLOWED — a faculty can teach at multiple branches
-       on the same day as long as the travel time gap between classes is respected
-       (enforced separately by check_travel_time_compatible).
-    2. Max 1 non-Main branch per week — across the entire week, a faculty may teach at
-       Main (MAIN_BRANCH_ID) plus at most ONE other branch.
-    3. Far branches (round-trip > FAR_BRANCH_ROUND_TRIP_LIMIT) force a full-day
-       assignment — no mixing with other branches on that day.
-
-    Returns True if the assignment is allowed, False otherwise.
+    A faculty may only be assigned to ONE college branch per day.
+    Returns True if:
+      - branch_id is None (class has no branch constraint), OR
+      - faculty has no branch assigned on that day yet, OR
+      - faculty's already-assigned branch for that day matches branch_id.
+    Returns False if a DIFFERENT branch is already assigned for that day.
     """
     if branch_id is None:
         return True
     if faculty_id not in faculty_branch_tracker:
         return True
-    if far_branch_set is None:
-        far_branch_set = set()
-
-    tracker = faculty_branch_tracker[faculty_id]
-
-    # Rule 3: Far branch — entire day must be at that branch only
-    if day in tracker:
-        existing_branches = tracker[day]
-        # If the new class is at a far branch, no other branch can exist that day
-        if branch_id in far_branch_set:
-            for eb in existing_branches:
-                if eb != branch_id:
-                    return False
-        # If the day already has a far branch, only that branch is allowed
-        for eb in existing_branches:
-            if eb in far_branch_set and eb != branch_id:
-                return False
-
-    # Rule 2: Max 1 non-Main branch per week
-    if branch_id != MAIN_BRANCH_ID:
-        for d, assigned_branches in tracker.items():
-            for ab in assigned_branches:
-                if ab != MAIN_BRANCH_ID and ab != branch_id:
-                    # Faculty already has a DIFFERENT non-Main branch
-                    return False
-
-    return True
-
-
-def is_far_branch(rooms, branch_id):
-    """
-    Check if a branch is a 'far branch' — one where round-trip travel time
-    exceeds FAR_BRANCH_ROUND_TRIP_LIMIT, meaning the entire day must be
-    dedicated to that branch (no mixing with other branches on the same day).
-    """
-    if branch_id is None or branch_id == MAIN_BRANCH_ID:
-        return False
-    for room in rooms:
-        if room.get("branch_id") == branch_id:
-            travel = room.get("time_travel", 0) or 0
-            if travel * 2 > FAR_BRANCH_ROUND_TRIP_LIMIT:
-                return True
-    return False
-
-
-def get_branch_travel_time(rooms, branch_id):
-    """
-    Get the representative travel time (in minutes) for a branch.
-    Returns the max time_travel value among rooms in that branch.
-    Returns 0 for Main branch or unknown branches.
-    """
-    if branch_id is None or branch_id == MAIN_BRANCH_ID:
-        return 0
-    max_travel = 0
-    for room in rooms:
-        if room.get("branch_id") == branch_id:
-            t = room.get("time_travel", 0) or 0
-            if t > max_travel:
-                max_travel = t
-    return max_travel
+    if day not in faculty_branch_tracker[faculty_id]:
+        return True
+    return faculty_branch_tracker[faculty_id][day] == branch_id
 
 
 def update_branch_tracker(faculty_id, days, branch_id, faculty_branch_tracker):
     """
     Record the branch a faculty is assigned to for the given days.
-    Each day stores a SET of branches (since multi-branch per day is allowed).
     Skips if branch_id is None.
     """
     if branch_id is None:
@@ -503,9 +360,7 @@ def update_branch_tracker(faculty_id, days, branch_id, faculty_branch_tracker):
     if faculty_id not in faculty_branch_tracker:
         faculty_branch_tracker[faculty_id] = {}
     for day in days:
-        if day not in faculty_branch_tracker[faculty_id]:
-            faculty_branch_tracker[faculty_id][day] = set()
-        faculty_branch_tracker[faculty_id][day].add(branch_id)
+        faculty_branch_tracker[faculty_id][day] = branch_id
 
 
 def get_travel_gap_minutes(building1, travel1, building2, travel2):
@@ -524,8 +379,8 @@ def get_travel_gap_minutes(building1, travel1, building2, travel2):
 
 
 def check_travel_time_compatible(faculty_id, day, start_hour, duration,
-                                  new_building, new_travel_time,
-                                  faculty_schedule_tracker):
+                                 new_building, new_travel_time,
+                                 faculty_schedule_tracker):
     """
     Check if scheduling a new class at (day, start_hour, duration) with
     the given building/travel_time is compatible with the faculty's existing
@@ -634,27 +489,20 @@ def filter_slots_by_preferred_time(slots, preferred_windows, duration):
     return filtered
 
 
-def filter_rooms_by_type_and_institute(rooms, course_type, institute_id, branch_id=None):
+def filter_rooms_by_type_and_institute(rooms, course_type, institute_id):
     """
-    Filter rooms by type (Lecture/Laboratory), institute, and branch.
+    Filter rooms by type (Lecture/Laboratory) and institute.
     - Lecture rooms: available to ALL institutes (no institute filter)
     - Laboratory rooms: strictly filtered by institute ownership
-    - All rooms: must belong to the same college branch as the class
     """
     filtered = []
     for room in rooms:
         room_type = room.get("room_type", "").strip()
         room_institute = room.get("institute_id")
-        room_branch = room.get("branch_id")
 
         # Check room type match (case-insensitive)
         if room_type.lower() != course_type.lower():
             continue
-
-        # All rooms must match the class's college branch
-        if branch_id is not None:
-            if room_branch is None or room_branch != branch_id:
-                continue
 
         # Laboratory rooms are strictly owned by their institute
         # Lecture rooms are open to all institutes
@@ -669,13 +517,13 @@ def filter_rooms_by_type_and_institute(rooms, course_type, institute_id, branch_
 
 
 def find_suitable_room(rooms, course_type, institute_id, class_size, day, start_hour,
-                       duration, schedule_tracker, branch_id=None):
+                       duration, schedule_tracker):
     """
     Find a suitable room that matches all requirements.
     """
-    # Filter rooms by type, institute, and branch
+    # Filter rooms by type and institute
     candidate_rooms = filter_rooms_by_type_and_institute(
-        rooms, course_type, institute_id, branch_id)
+        rooms, course_type, institute_id)
 
     # Sort by capacity (prefer rooms closer to class size)
     candidate_rooms.sort(key=lambda r: r.get(
@@ -699,8 +547,7 @@ def find_suitable_room(rooms, course_type, institute_id, class_size, day, start_
 def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
                             schedule_tracker, faculty_schedule_tracker,
                             unscheduled_meetings, class_schedule_tracker,
-                            day_pattern_tracker, preferred_time=None, faculty_branch_tracker=None,
-                            far_branch_set=None):
+                            day_pattern_tracker, preferred_time=None, faculty_branch_tracker=None):
     """
     Schedule a class that has both lecture and lab components.
     They must be scheduled consecutively (lecture first, then lab) on the same day.
@@ -714,7 +561,6 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
     """
     institute_id = cls.get("institute_id")
     class_size = cls.get("class_size", 30)
-    class_branch_id = cls.get("branch_id")
 
     # Classes with lab MUST be face-to-face
     schedule_type = "face to face"
@@ -739,27 +585,34 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
     fail_reason = "No available time slots"
 
     # Try each day pattern (TTH, MF, MWF) - balanced for fairness
-    balanced_patterns = get_balanced_patterns(day_pattern_tracker, total_hours_per_week)
+    balanced_patterns = get_balanced_patterns(
+        day_pattern_tracker, total_hours_per_week)
     for pattern_name, pattern_days in balanced_patterns:
         num_meetings = len(pattern_days)
         lecture_hours = lecture_hours_per_week / num_meetings
         lab_hours = lab_hours_per_week / num_meetings
         total_duration = lecture_hours + lab_hours
 
-        # Get AM/PM-balanced slots for fair distribution across morning and afternoon
-        available_slots = get_balanced_slots(
-            faculty_id, pattern_days, total_duration,
-            scheduling_start_hour, scheduling_end_hour,
-            faculty_schedule_tracker)
+        # Get consecutive start: right after the faculty's last class on ALL days
+        next_starts = [
+            get_faculty_next_start_hour(
+                faculty_id, day, faculty_schedule_tracker, scheduling_start_hour)
+            for day in pattern_days
+        ]
+        consecutive_start = max(next_starts)
+
+        # Find slots starting from consecutive point (in order, not randomized)
+        available_slots = find_available_slots(
+            consecutive_start, scheduling_end_hour, total_duration)
         # Restrict to preferred time windows if the faculty has one
         available_slots = filter_slots_by_preferred_time(
             available_slots, preferred_time, total_duration)
 
-        # Try each time slot — balanced between AM and PM
+        # Try each time slot in order to keep scheduling back-to-back
         for start_hour in available_slots:
             # Check faculty availability on ALL days
             if not all(is_faculty_available(faculty_id, day, start_hour, total_duration,
-                                           faculty_schedule_tracker)
+                                            faculty_schedule_tracker)
                        for day in pattern_days):
                 fail_reason = "Faculty time conflict"
                 continue
@@ -788,13 +641,13 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
                 rooms_found = True
                 for day in pattern_days:
                     lec_room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
-                                                  day, start_hour, lecture_hours, schedule_tracker, class_branch_id)
+                                                  day, start_hour, lecture_hours, schedule_tracker)
                     if not lec_room:
                         fail_reason = "No available lecture room"
                         rooms_found = False
                         break
                     lab_room = find_suitable_room(rooms, "Laboratory", institute_id, class_size,
-                                                  day, lab_start_hour, lab_hours, schedule_tracker, class_branch_id)
+                                                  day, lab_start_hour, lab_hours, schedule_tracker)
                     if not lab_room:
                         fail_reason = "No available laboratory room"
                         rooms_found = False
@@ -806,7 +659,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             else:
                 # --- Same room on all pattern days (original behavior) ---
                 lecture_room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
-                                                  pattern_days[0], start_hour, lecture_hours, schedule_tracker, class_branch_id)
+                                                  pattern_days[0], start_hour, lecture_hours, schedule_tracker)
                 if not lecture_room:
                     fail_reason = "No available lecture room"
                     continue
@@ -815,7 +668,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
                     fail_reason = "No available lecture room on all pattern days"
                     continue
                 lab_room = find_suitable_room(rooms, "Laboratory", institute_id, class_size,
-                                              pattern_days[0], lab_start_hour, lab_hours, schedule_tracker, class_branch_id)
+                                              pattern_days[0], lab_start_hour, lab_hours, schedule_tracker)
                 if not lab_room:
                     fail_reason = "No available laboratory room"
                     continue
@@ -828,10 +681,8 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
                 day_lab_rooms = {day: lab_room for day in pattern_days}
 
             # Constraint: Check faculty branch consistency on ALL days
-            branch_id = cls.get("branch_id")
-            if not all(is_branch_available(faculty_id, day, branch_id,
-                                           faculty_branch_tracker if faculty_branch_tracker is not None else {},
-                                           far_branch_set)
+            branch_id = cls.get("college_branch_id")
+            if not all(is_branch_available(faculty_id, day, branch_id, faculty_branch_tracker or {})
                        for day in pattern_days):
                 fail_reason = "Faculty branch conflict"
                 continue
@@ -841,7 +692,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             for day in pattern_days:
                 day_lec = day_lecture_rooms[day]
                 lec_building = day_lec.get("building_name")
-                lec_travel = day_lec.get("time_travel", 0)
+                lec_travel = day_lec.get("travel_time", 0)
                 if not check_travel_time_compatible(
                         faculty_id, day, start_hour, total_duration,
                         lec_building, lec_travel, faculty_schedule_tracker):
@@ -898,7 +749,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
                     "class_id": cls["class_id"],
                     "course_code": cls["course_code"],
                     "building_name": day_lec_room.get("building_name"),
-                    "travel_time": day_lec_room.get("time_travel", 0)
+                    "travel_time": day_lec_room.get("travel_time", 0)
                 })
 
                 # Add to class schedule tracker
@@ -961,10 +812,12 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
                 })
 
             # Update day pattern tracker for fairness
-            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(pattern_name, 0) + 1
+            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(
+                pattern_name, 0) + 1
 
             # Update faculty branch tracker for all days
-            update_branch_tracker(faculty_id, pattern_days, branch_id, faculty_branch_tracker if faculty_branch_tracker is not None else {})
+            update_branch_tracker(faculty_id, pattern_days,
+                                  branch_id, faculty_branch_tracker or {})
 
             return scheduled_meetings
 
@@ -974,11 +827,11 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
     wed_lab_hours = lab_hours_per_week
     wed_total_duration = wed_lecture_hours + wed_lab_hours
 
-    # Get AM/PM-balanced slots on Wednesday
-    available_slots = get_balanced_slots(
-        faculty_id, [wednesday], wed_total_duration,
-        scheduling_start_hour, scheduling_end_hour,
-        faculty_schedule_tracker)
+    # Get consecutive start on Wednesday
+    wed_consecutive_start = get_faculty_next_start_hour(
+        faculty_id, wednesday, faculty_schedule_tracker, scheduling_start_hour)
+    available_slots = find_available_slots(
+        wed_consecutive_start, scheduling_end_hour, wed_total_duration)
     available_slots = filter_slots_by_preferred_time(
         available_slots, preferred_time, wed_total_duration)
 
@@ -988,7 +841,8 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             fail_reason = "Faculty time conflict"
             continue
 
-        faculty_hours_wed = get_faculty_daily_hours(faculty_id, wednesday, faculty_schedule_tracker)
+        faculty_hours_wed = get_faculty_daily_hours(
+            faculty_id, wednesday, faculty_schedule_tracker)
         if faculty_hours_wed + wed_total_duration > 8:
             fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
             continue
@@ -998,29 +852,27 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             fail_reason = "Class section time conflict"
             continue
 
-        branch_id = cls.get("branch_id")
-        if not is_branch_available(faculty_id, wednesday, branch_id,
-                                   faculty_branch_tracker if faculty_branch_tracker is not None else {},
-                                   far_branch_set):
+        branch_id = cls.get("college_branch_id")
+        if not is_branch_available(faculty_id, wednesday, branch_id, faculty_branch_tracker or {}):
             fail_reason = "Faculty branch conflict"
             continue
 
         lecture_room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
-                                          wednesday, start_hour, wed_lecture_hours, schedule_tracker, class_branch_id)
+                                          wednesday, start_hour, wed_lecture_hours, schedule_tracker)
         if not lecture_room:
             fail_reason = "No available lecture room"
             continue
 
         wed_lab_start_hour = start_hour + wed_lecture_hours
         lab_room = find_suitable_room(rooms, "Laboratory", institute_id, class_size,
-                                      wednesday, wed_lab_start_hour, wed_lab_hours, schedule_tracker, class_branch_id)
+                                      wednesday, wed_lab_start_hour, wed_lab_hours, schedule_tracker)
         if not lab_room:
             fail_reason = "No available laboratory room"
             continue
 
         # Constraint: Check travel time compatibility on Wednesday
         wed_lec_building = lecture_room.get("building_name")
-        wed_lec_travel = lecture_room.get("time_travel", 0)
+        wed_lec_travel = lecture_room.get("travel_time", 0)
         if not check_travel_time_compatible(
                 faculty_id, wednesday, start_hour, wed_total_duration,
                 wed_lec_building, wed_lec_travel, faculty_schedule_tracker):
@@ -1064,7 +916,7 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             "class_id": cls["class_id"],
             "course_code": cls["course_code"],
             "building_name": lecture_room.get("building_name"),
-            "travel_time": lecture_room.get("time_travel", 0)
+            "travel_time": lecture_room.get("travel_time", 0)
         })
 
         if class_id not in class_schedule_tracker:
@@ -1122,7 +974,8 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             "schedule_type": schedule_type
         })
 
-        update_branch_tracker(faculty_id, [wednesday], branch_id, faculty_branch_tracker if faculty_branch_tracker is not None else {})
+        update_branch_tracker(
+            faculty_id, [wednesday], branch_id, faculty_branch_tracker or {})
 
         return scheduled_meetings
 
@@ -1149,7 +1002,7 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                           schedule_tracker, faculty_schedule_tracker,
                           unscheduled_meetings, class_schedule_tracker,
                           lecture_type_tracker, day_pattern_tracker, preferred_time=None, faculty_branch_tracker=None,
-                          day_f2f_tracker=None, far_branch_set=None):
+                          day_f2f_tracker=None):
     """
     Schedule a class that has only lecture (no lab).
     Classes meet on a day pattern (TTH, MF, or MWF) with hours split equally per meeting.
@@ -1173,7 +1026,6 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
 
     institute_id = cls.get("institute_id")
     class_size = cls.get("class_size", 30)
-    class_branch_id = cls.get("branch_id")
 
     lecture_units = cls.get("course_lec", 0)
     lecture_hours_per_week = lecture_units * LECTURE_UNIT_TO_HOUR
@@ -1190,7 +1042,8 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
     fail_reason = "No available time slots"
 
     # Try each day pattern - balanced for fairness
-    balanced_patterns = get_balanced_patterns(day_pattern_tracker, lecture_hours_per_week)
+    balanced_patterns = get_balanced_patterns(
+        day_pattern_tracker, lecture_hours_per_week)
     for pattern_name, pattern_days in balanced_patterns:
         num_meetings = len(pattern_days)
 
@@ -1200,26 +1053,35 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         remainder = int(lecture_hours_per_week - short_h * num_meetings)
         if remainder > 0:
             long_h = short_h + 1
-            hours_list = [long_h] * remainder + [short_h] * (num_meetings - remainder)
-            random.shuffle(hours_list)  # fairness: randomize which day gets the longer block
+            hours_list = [long_h] * remainder + \
+                [short_h] * (num_meetings - remainder)
+            # fairness: randomize which day gets the longer block
+            random.shuffle(hours_list)
         else:
-            hours_list = [int(lecture_hours_per_week // num_meetings)] * num_meetings
+            hours_list = [int(lecture_hours_per_week //
+                              num_meetings)] * num_meetings
         max_duration = max(hours_list)
 
-        # Get AM/PM-balanced slots for fair distribution across morning and afternoon
-        available_slots = get_balanced_slots(
-            faculty_id, pattern_days, max_duration,
-            scheduling_start_hour, scheduling_end_hour,
-            faculty_schedule_tracker)
+        # Get consecutive start: right after the faculty's last class on ALL days
+        next_starts = [
+            get_faculty_next_start_hour(
+                faculty_id, day, faculty_schedule_tracker, scheduling_start_hour)
+            for day in pattern_days
+        ]
+        consecutive_start = max(next_starts)
+
+        # Find slots starting from consecutive point (use max duration so slot fits all days)
+        available_slots = find_available_slots(
+            consecutive_start, scheduling_end_hour, max_duration)
         # Restrict to preferred time windows if the faculty has one
         available_slots = filter_slots_by_preferred_time(
             available_slots, preferred_time, max_duration)
 
-        # Try each time slot — balanced between AM and PM
+        # Try each time slot in order to keep scheduling back-to-back
         for start_hour in available_slots:
             # Check faculty availability on ALL days (per-day duration)
             if not all(is_faculty_available(faculty_id, day, start_hour, hours_list[i],
-                                           faculty_schedule_tracker)
+                                            faculty_schedule_tracker)
                        for i, day in enumerate(pattern_days)):
                 fail_reason = "Faculty time conflict"
                 continue
@@ -1238,10 +1100,8 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                 continue
 
             # Constraint: Check faculty branch consistency on ALL days
-            branch_id = cls.get("branch_id")
-            if not all(is_branch_available(faculty_id, day, branch_id,
-                                           faculty_branch_tracker if faculty_branch_tracker is not None else {},
-                                           far_branch_set)
+            branch_id = cls.get("college_branch_id")
+            if not all(is_branch_available(faculty_id, day, branch_id, faculty_branch_tracker or {})
                        for day in pattern_days):
                 fail_reason = "Faculty branch conflict"
                 continue
@@ -1259,7 +1119,8 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                 # Pair each day with its hours, sort by hours descending so
                 # the days with the most hours get f2f first
                 day_hour_pairs = list(zip(pattern_days, hours_list))
-                day_hour_pairs.sort(key=lambda dh: (-dh[1], day_f2f_tracker.get(dh[0], 0), random.random()))
+                day_hour_pairs.sort(
+                    key=lambda dh: (-dh[1], day_f2f_tracker.get(dh[0], 0), random.random()))
                 f2f_day_set = set(d for d, _ in day_hour_pairs[:num_f2f])
             else:
                 # Equal hours — use fairness tracker (least f2f count gets priority)
@@ -1275,24 +1136,20 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             for i, day in enumerate(pattern_days):
                 if day_types[day] == "face to face":
                     room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
-                                              day, start_hour, hours_list[i], schedule_tracker, class_branch_id)
+                                              day, start_hour, hours_list[i], schedule_tracker)
                     if room:
                         day_rooms[day] = room
                     else:
-                        day_types[day] = "online"  # fallback this specific day only
+                        # fallback this specific day only
+                        day_types[day] = "online"
 
             # Constraint: Check travel time compatibility on each day with its room
-            # For online classes at non-Main branches, use the branch's travel time
             travel_conflict = False
             for i, day in enumerate(pattern_days):
                 day_room = day_rooms.get(day)
-                if day_room:
-                    room_building = day_room.get("building_name")
-                    room_travel = day_room.get("time_travel", 0)
-                else:
-                    branch_travel = get_branch_travel_time(rooms, class_branch_id)
-                    room_building = f"__branch_{class_branch_id}" if branch_travel > 0 else None
-                    room_travel = branch_travel
+                room_building = day_room.get(
+                    "building_name") if day_room else None
+                room_travel = day_room.get("travel_time", 0) if day_room else 0
                 if not check_travel_time_compatible(
                         faculty_id, day, start_hour, hours_list[i],
                         room_building, room_travel, faculty_schedule_tracker):
@@ -1325,28 +1182,18 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                     })
 
                 # Faculty schedule tracker (all days)
-                # For online classes at non-Main branches, use the branch's travel time
-                # so inter-branch travel gaps are still enforced
                 if faculty_id not in faculty_schedule_tracker:
                     faculty_schedule_tracker[faculty_id] = {}
                 if day not in faculty_schedule_tracker[faculty_id]:
                     faculty_schedule_tracker[faculty_id][day] = []
                 day_room = day_rooms.get(day)
-                if day_room:
-                    sched_building = day_room.get("building_name")
-                    sched_travel = day_room.get("time_travel", 0)
-                else:
-                    # Online class — use branch travel time for inter-branch gap enforcement
-                    branch_travel = get_branch_travel_time(rooms, class_branch_id)
-                    sched_building = f"__branch_{class_branch_id}" if branch_travel > 0 else None
-                    sched_travel = branch_travel
                 faculty_schedule_tracker[faculty_id][day].append({
                     "start_hour": start_hour,
                     "duration": day_hours,
                     "class_id": cls["class_id"],
                     "course_code": cls["course_code"],
-                    "building_name": sched_building,
-                    "travel_time": sched_travel
+                    "building_name": day_room.get("building_name") if day_room else None,
+                    "travel_time": day_room.get("travel_time", 0) if day_room else 0
                 })
 
                 # Class schedule tracker (all days)
@@ -1382,9 +1229,12 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
 
                 if day_is_f2f and day_room:
                     meeting_entry["room_id"] = day_room["room_id"]
-                    meeting_entry["room_name"] = day_room.get("room_name", "Unknown")
-                    meeting_entry["room_type"] = day_room.get("room_type", "Unknown")
-                    meeting_entry["room_capacity"] = day_room.get("room_capacity", 0)
+                    meeting_entry["room_name"] = day_room.get(
+                        "room_name", "Unknown")
+                    meeting_entry["room_type"] = day_room.get(
+                        "room_type", "Unknown")
+                    meeting_entry["room_capacity"] = day_room.get(
+                        "room_capacity", 0)
                 else:
                     meeting_entry["room_id"] = None
                     meeting_entry["room_name"] = "Online"
@@ -1407,10 +1257,12 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                     day_f2f_tracker[day] = day_f2f_tracker.get(day, 0) + 1
 
             # Update day pattern tracker for fairness
-            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(pattern_name, 0) + 1
+            day_pattern_tracker[pattern_name] = day_pattern_tracker.get(
+                pattern_name, 0) + 1
 
             # Update faculty branch tracker for all days
-            update_branch_tracker(faculty_id, pattern_days, branch_id, faculty_branch_tracker if faculty_branch_tracker is not None else {})
+            update_branch_tracker(faculty_id, pattern_days,
+                                  branch_id, faculty_branch_tracker or {})
 
             return scheduled_meetings
 
@@ -1418,11 +1270,11 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
     wednesday = FALLBACK_DAY
     wed_lecture_hours = lecture_hours_per_week  # Full hours for single day
 
-    # Get AM/PM-balanced slots on Wednesday
-    available_slots = get_balanced_slots(
-        faculty_id, [wednesday], wed_lecture_hours,
-        scheduling_start_hour, scheduling_end_hour,
-        faculty_schedule_tracker)
+    # Get consecutive start on Wednesday
+    wed_consecutive_start = get_faculty_next_start_hour(
+        faculty_id, wednesday, faculty_schedule_tracker, scheduling_start_hour)
+    available_slots = find_available_slots(
+        wed_consecutive_start, scheduling_end_hour, wed_lecture_hours)
     available_slots = filter_slots_by_preferred_time(
         available_slots, preferred_time, wed_lecture_hours)
 
@@ -1432,7 +1284,8 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             fail_reason = "Faculty time conflict"
             continue
 
-        faculty_hours_wed = get_faculty_daily_hours(faculty_id, wednesday, faculty_schedule_tracker)
+        faculty_hours_wed = get_faculty_daily_hours(
+            faculty_id, wednesday, faculty_schedule_tracker)
         if faculty_hours_wed + wed_lecture_hours > 8:
             fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
             continue
@@ -1442,10 +1295,8 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             fail_reason = "Class section time conflict"
             continue
 
-        branch_id = cls.get("branch_id")
-        if not is_branch_available(faculty_id, wednesday, branch_id,
-                                   faculty_branch_tracker if faculty_branch_tracker is not None else {},
-                                   far_branch_set):
+        branch_id = cls.get("college_branch_id")
+        if not is_branch_available(faculty_id, wednesday, branch_id, faculty_branch_tracker or {}):
             fail_reason = "Faculty branch conflict"
             continue
 
@@ -1459,19 +1310,16 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
 
         if wed_schedule_type == "face to face":
             lecture_room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
-                                              wednesday, start_hour, wed_lecture_hours, schedule_tracker, class_branch_id)
+                                              wednesday, start_hour, wed_lecture_hours, schedule_tracker)
             if not lecture_room:
                 schedule_type = "online"
         # If target is online, no room needed
 
         # Constraint: Check travel time compatibility on Wednesday
-        if lecture_room:
-            wed_room_building = lecture_room.get("building_name")
-            wed_room_travel = lecture_room.get("time_travel", 0)
-        else:
-            wed_bt = get_branch_travel_time(rooms, class_branch_id)
-            wed_room_building = f"__branch_{class_branch_id}" if wed_bt > 0 else None
-            wed_room_travel = wed_bt
+        wed_room_building = lecture_room.get(
+            "building_name") if lecture_room else None
+        wed_room_travel = lecture_room.get(
+            "travel_time", 0) if lecture_room else 0
         if not check_travel_time_compatible(
                 faculty_id, wednesday, start_hour, wed_lecture_hours,
                 wed_room_building, wed_room_travel, faculty_schedule_tracker):
@@ -1499,20 +1347,13 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             faculty_schedule_tracker[faculty_id] = {}
         if wednesday not in faculty_schedule_tracker[faculty_id]:
             faculty_schedule_tracker[faculty_id][wednesday] = []
-        if lecture_room:
-            wed_sched_building = lecture_room.get("building_name")
-            wed_sched_travel = lecture_room.get("time_travel", 0)
-        else:
-            wed_branch_travel = get_branch_travel_time(rooms, class_branch_id)
-            wed_sched_building = f"__branch_{class_branch_id}" if wed_branch_travel > 0 else None
-            wed_sched_travel = wed_branch_travel
         faculty_schedule_tracker[faculty_id][wednesday].append({
             "start_hour": start_hour,
             "duration": wed_lecture_hours,
             "class_id": cls["class_id"],
             "course_code": cls["course_code"],
-            "building_name": wed_sched_building,
-            "travel_time": wed_sched_travel
+            "building_name": lecture_room.get("building_name") if lecture_room else None,
+            "travel_time": lecture_room.get("travel_time", 0) if lecture_room else 0
         })
 
         if class_id not in class_schedule_tracker:
@@ -1547,9 +1388,12 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
 
         if lecture_room:
             meeting_entry["room_id"] = lecture_room_id
-            meeting_entry["room_name"] = lecture_room.get("room_name", "Unknown")
-            meeting_entry["room_type"] = lecture_room.get("room_type", "Unknown")
-            meeting_entry["room_capacity"] = lecture_room.get("room_capacity", 0)
+            meeting_entry["room_name"] = lecture_room.get(
+                "room_name", "Unknown")
+            meeting_entry["room_type"] = lecture_room.get(
+                "room_type", "Unknown")
+            meeting_entry["room_capacity"] = lecture_room.get(
+                "room_capacity", 0)
         else:
             meeting_entry["room_id"] = None
             meeting_entry["room_name"] = "Online"
@@ -1567,7 +1411,8 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         lecture_type_tracker["total_lecture_hours"] += wed_lecture_hours
 
         # Update faculty branch tracker for Wednesday
-        update_branch_tracker(faculty_id, [wednesday], branch_id, faculty_branch_tracker if faculty_branch_tracker is not None else {})
+        update_branch_tracker(
+            faculty_id, [wednesday], branch_id, faculty_branch_tracker or {})
 
         return scheduled_meetings
 
@@ -1600,7 +1445,6 @@ def schedule_class_meeting(cls, course_type, hours, rooms, faculty_id,
     """
     institute_id = cls.get("institute_id")
     class_size = cls.get("class_size", 30)  # Default to 30 if not specified
-    class_branch_id = cls.get("branch_id")
 
     # Track the most recent failure reason for specific error reporting
     fail_reason = "No available time slots"
@@ -1620,7 +1464,7 @@ def schedule_class_meeting(cls, course_type, hours, rooms, faculty_id,
 
             # Find suitable room
             room = find_suitable_room(rooms, course_type, institute_id, class_size,
-                                      day, start_hour, hours, schedule_tracker, class_branch_id)
+                                      day, start_hour, hours, schedule_tracker)
 
             if not room:
                 fail_reason = f"No available {course_type.lower()} room"
@@ -1654,7 +1498,7 @@ def schedule_class_meeting(cls, course_type, hours, rooms, faculty_id,
                     "class_id": cls["class_id"],
                     "course_code": cls["course_code"],
                     "building_name": room.get("building_name"),
-                    "travel_time": room.get("time_travel", 0)
+                    "travel_time": room.get("travel_time", 0)
                 })
 
                 return {
@@ -1721,7 +1565,8 @@ def generate_faculty_core_time(complete_schedule):
             }
 
         if day not in faculty_days[fid]["days"]:
-            faculty_days[fid]["days"][day] = {"earliest_start": start, "latest_end": end}
+            faculty_days[fid]["days"][day] = {
+                "earliest_start": start, "latest_end": end}
         else:
             entry = faculty_days[fid]["days"][day]
             if start < entry["earliest_start"]:
@@ -1755,15 +1600,16 @@ def generate_faculty_core_time(complete_schedule):
 
         if emp_type.lower() == "full time":
             # Full-time: distribute FULL_TIME_WEEKLY_HOURS across all weekdays
-            # time_in = first class (or padded earlier), time_out = last class (or padded later)
             all_weekdays = list(DAYS)
+            num_days = len(all_weekdays)
             target_weekly = FULL_TIME_WEEKLY_HOURS
 
             # Compute minimum hours locked by class spans (can't go below these)
             day_class_span = {}
             for d in all_weekdays:
                 if d in days_data:
-                    day_class_span[d] = days_data[d]["latest_end"] - days_data[d]["earliest_start"]
+                    day_class_span[d] = days_data[d]["latest_end"] - \
+                        days_data[d]["earliest_start"]
                 else:
                     day_class_span[d] = 0
 
@@ -1771,12 +1617,16 @@ def generate_faculty_core_time(complete_schedule):
             remaining_to_distribute = max(target_weekly - locked_hours, 0)
 
             # Start each day at its class span minimum
-            daily_targets = {d: max(day_class_span[d], 0) for d in all_weekdays}
+            daily_targets = {
+                d: max(day_class_span[d], 0) for d in all_weekdays}
 
-            # Distribute remaining hours 1 at a time to days with fewest hours (balanced)
+            # Distribute remaining hours across days, 1 hour at a time,
+            # prioritizing days with fewer hours (balancing), up to a reasonable cap
             while remaining_to_distribute > 0:
+                # Find the day(s) with the fewest current hours
                 min_hrs = min(daily_targets[d] for d in all_weekdays)
-                candidates = [d for d in all_weekdays if daily_targets[d] == min_hrs]
+                candidates = [
+                    d for d in all_weekdays if daily_targets[d] == min_hrs]
                 random.shuffle(candidates)
                 for d in candidates:
                     if remaining_to_distribute <= 0:
@@ -1792,7 +1642,10 @@ def generate_faculty_core_time(complete_schedule):
                 "schedule": []
             }
 
-            for day in all_weekdays:
+            for day in DAYS:
+                if day not in all_weekdays:
+                    continue
+
                 target_hrs = daily_targets[day]
 
                 if day in days_data:
@@ -1801,15 +1654,18 @@ def generate_faculty_core_time(complete_schedule):
                     class_span = latest - earliest
 
                     if class_span >= target_hrs:
+                        # Classes already fill the target — use class window
                         time_in = earliest
                         time_out = latest
                     else:
-                        # Expand around class window to reach target
+                        # Expand around the class window to reach target hours
                         extra = target_hrs - class_span
+                        # Try to add time before classes first, then after
                         add_before = min(extra, max(earliest - START_HOUR, 0))
                         add_after = extra - add_before
                         time_in = earliest - add_before
                         time_out = latest + add_after
+                        # Clamp to valid hours
                         if time_out > END_HOUR:
                             overflow = time_out - END_HOUR
                             time_out = END_HOUR
@@ -1834,7 +1690,7 @@ def generate_faculty_core_time(complete_schedule):
             result.append(faculty_entry)
 
         else:
-            # Part-time: time_in = first class, time_out = last class (no padding)
+            # Part-time: only track days with actual classes
             faculty_entry = {
                 "faculty_id": fid,
                 "faculty_name": fname,
@@ -1866,65 +1722,9 @@ def generate_faculty_core_time(complete_schedule):
     return result
 
 
-def build_faculty_with_multiple_branches(complete_schedule, branch_map):
-    """
-    Identify faculty members who teach at more than one branch.
-    Returns a dict keyed by faculty_name, each value containing branch details.
-    """
-    if not branch_map:
-        branch_map = {}
-
-    # Collect per-faculty: which branches they teach at, and which days/courses per branch
-    faculty_branches = {}
-    for meeting in complete_schedule:
-        fid = meeting.get("faculty_id")
-        fname = meeting.get("faculty_name", "Unknown")
-        branch_id = meeting.get("college_branch_id")
-        if branch_id is None:
-            continue
-
-        branch_name = branch_map.get(branch_id, f"Branch {branch_id}")
-
-        if fid not in faculty_branches:
-            faculty_branches[fid] = {"faculty_name": fname, "branches": {}}
-
-        if branch_name not in faculty_branches[fid]["branches"]:
-            faculty_branches[fid]["branches"][branch_name] = {
-                "branch_id": branch_id,
-                "days": set(),
-                "courses": set(),
-                "total_meetings": 0
-            }
-
-        faculty_branches[fid]["branches"][branch_name]["days"].add(meeting.get("day"))
-        faculty_branches[fid]["branches"][branch_name]["courses"].add(meeting.get("course_code"))
-        faculty_branches[fid]["branches"][branch_name]["total_meetings"] += 1
-
-    # Filter to only faculty with multiple branches
-    result = {}
-    for fid, data in faculty_branches.items():
-        if len(data["branches"]) > 1:
-            fname = data["faculty_name"]
-            result[fname] = {}
-            for branch_name, info in data["branches"].items():
-                result[fname][branch_name] = {
-                    "branch_id": info["branch_id"],
-                    "days": sorted(list(info["days"]),
-                                   key=lambda d: ["Monday", "Tuesday", "Wednesday",
-                                                   "Thursday", "Friday", "Saturday", "Sunday"].index(d)
-                                   if d in ["Monday", "Tuesday", "Wednesday",
-                                            "Thursday", "Friday", "Saturday", "Sunday"] else 99),
-                    "courses": sorted(list(info["courses"])),
-                    "total_meetings": info["total_meetings"]
-                }
-
-    return result
-
-
-def save_faculty_core_time_to_json(core_time_data, filename, complete_schedule=None, branch_map=None):
+def save_faculty_core_time_to_json(core_time_data, filename):
     """
     Save faculty core time schedule to a JSON file.
-    Includes faculty_with_multiple_branches if schedule data is provided.
     """
     output = {
         "metadata": {
@@ -1935,25 +1735,14 @@ def save_faculty_core_time_to_json(core_time_data, filename, complete_schedule=N
         "faculty_schedules": core_time_data
     }
 
-    # Add faculty with multiple branches if schedule data is available
-    if complete_schedule is not None:
-        multi_branch = build_faculty_with_multiple_branches(complete_schedule, branch_map or {})
-        output["faculty_with_multiple_branches"] = multi_branch
-        output["metadata"]["faculty_with_multiple_branches_count"] = len(multi_branch)
-
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(output, f, indent=2, ensure_ascii=False, default=str)
 
     print(f"[INFO] Faculty core time schedule saved to: {filename}")
-    if complete_schedule is not None and multi_branch:
-        print(f"[INFO] Faculty with multiple branches: {len(multi_branch)}")
-        for fname, branches in multi_branch.items():
-            branch_names = list(branches.keys())
-            print(f"  - {fname}: {', '.join(branch_names)}")
 
 
-def create_schedule(faculty_loads, rooms, branch_map=None):
+def create_schedule(faculty_loads, rooms):
     """
     Create a complete schedule for all faculty loads.
     Scheduling rules:
@@ -1970,24 +1759,13 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     faculty_schedule_tracker = {}  # Track faculty schedules
     class_schedule_tracker = {}  # Track class section schedules to prevent self-conflicts
     # Track lecture hours for f2f/online percentage distribution
-    lecture_type_tracker = {"face_to_face_hours": 0.0, "online_hours": 0.0, "total_lecture_hours": 0.0}
+    lecture_type_tracker = {"face_to_face_hours": 0.0,
+                            "online_hours": 0.0, "total_lecture_hours": 0.0}
     # Track day pattern usage for fair distribution
     day_pattern_tracker = {"TTH": 0, "MF": 0, "MWF": 0}
     # Track per-day f2f assignment count so no single day always gets f2f
     day_f2f_tracker = {}
     faculty_branch_tracker = {}
-    # Pre-compute which branches are "far" (round-trip travel > FAR_BRANCH_ROUND_TRIP_LIMIT)
-    far_branch_set = set()
-    seen_branches = set()
-    for room in rooms:
-        bid = room.get("branch_id")
-        if bid and bid not in seen_branches:
-            seen_branches.add(bid)
-            if is_far_branch(rooms, bid):
-                far_branch_set.add(bid)
-    if far_branch_set:
-        far_names = [branch_map.get(b, f"Branch {b}") if branch_map else f"Branch {b}" for b in far_branch_set]
-        print(f"[INFO] Far branches (full-day only): {', '.join(far_names)}")
     complete_schedule = []
     unscheduled_meetings = []
 
@@ -2048,8 +1826,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                 scheduled_meetings = schedule_class_with_lab(
                     cls, rooms, faculty_id, employment_type,
                     schedule_tracker, faculty_schedule_tracker, unscheduled_meetings, class_schedule_tracker,
-                    day_pattern_tracker, preferred_time, faculty_branch_tracker,
-                    far_branch_set
+                    day_pattern_tracker, preferred_time, faculty_branch_tracker
                 )
 
                 if scheduled_meetings:
@@ -2057,7 +1834,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                         meeting["faculty_id"] = faculty_id
                         meeting["faculty_name"] = faculty_name
                         meeting["employment_type"] = employment_type
-                        meeting["college_branch_id"] = cls.get("branch_id")
                         complete_schedule.append(meeting)
                     print("[OK] Scheduled")
                 else:
@@ -2071,7 +1847,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                     cls, rooms, faculty_id, employment_type,
                     schedule_tracker, faculty_schedule_tracker, unscheduled_meetings, class_schedule_tracker,
                     lecture_type_tracker, day_pattern_tracker, preferred_time, faculty_branch_tracker,
-                    day_f2f_tracker, far_branch_set
+                    day_f2f_tracker
                 )
 
                 if scheduled_meetings:
@@ -2079,7 +1855,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                         meeting["faculty_id"] = faculty_id
                         meeting["faculty_name"] = faculty_name
                         meeting["employment_type"] = employment_type
-                        meeting["college_branch_id"] = cls.get("branch_id")
                         complete_schedule.append(meeting)
                     print("[OK] Scheduled")
                 else:
@@ -2094,7 +1869,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                     cls, rooms, faculty_id, employment_type,
                     schedule_tracker, faculty_schedule_tracker, unscheduled_meetings, class_schedule_tracker,
                     lecture_type_tracker, day_pattern_tracker, preferred_time, faculty_branch_tracker,
-                    day_f2f_tracker, far_branch_set
+                    day_f2f_tracker
                 )
 
                 if scheduled_meetings:
@@ -2104,7 +1879,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                         meeting["faculty_id"] = faculty_id
                         meeting["faculty_name"] = faculty_name
                         meeting["employment_type"] = employment_type
-                        meeting["college_branch_id"] = cls.get("branch_id")
                         complete_schedule.append(meeting)
                     print("[OK] Scheduled")
                 else:
@@ -2125,7 +1899,8 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
               f"[Target: {int(TARGET_FACE_TO_FACE_PERCENTAGE * 100)}% f2f]")
     print("-"*80)
     # Show day pattern distribution
-    pattern_counts = {name: day_pattern_tracker.get(name, 0) for name in DAY_PATTERNS}
+    pattern_counts = {name: day_pattern_tracker.get(
+        name, 0) for name in DAY_PATTERNS}
     # Count fallback-only schedules from complete_schedule
     fallback_only_classes = set()
     for m in complete_schedule:
@@ -2138,7 +1913,8 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     fallback_count = len(fallback_only_classes)
     total_patterns = sum(pattern_counts.values()) + fallback_count
     if total_patterns > 0:
-        dist_parts = [f"{name}: {count}" for name, count in pattern_counts.items()]
+        dist_parts = [f"{name}: {count}" for name,
+                      count in pattern_counts.items()]
         dist_parts.append(f"{FALLBACK_DAY[:3]}-only: {fallback_count}")
         print(f"Day Distribution: {', '.join(dist_parts)}")
     # Show per-day f2f assignment counts (fairness audit)
@@ -2182,44 +1958,13 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
         })
     # Sort each room's entries by day then start hour, and remove sort keys
     for room_name in schedule_by_room:
-        schedule_by_room[room_name].sort(key=lambda x: (x["_sort_day"], x["_sort_hour"]))
+        schedule_by_room[room_name].sort(
+            key=lambda x: (x["_sort_day"], x["_sort_hour"]))
         for item in schedule_by_room[room_name]:
             del item["_sort_day"]
             del item["_sort_hour"]
 
-    # Build schedule_by_branch: group schedule entries by branch name, sorted chronologically
-    if branch_map is None:
-        branch_map = {}
-    schedule_by_branch = {}
-    for entry in complete_schedule:
-        branch_id = entry.get("college_branch_id")
-        branch_name = branch_map.get(branch_id, f"Branch {branch_id}") if branch_id else "Unassigned"
-        if branch_name not in schedule_by_branch:
-            schedule_by_branch[branch_name] = []
-        schedule_by_branch[branch_name].append({
-            "class_id": entry.get("class_id"),
-            "set_name": entry.get("set_name", "Unknown"),
-            "course_code": entry.get("course_code", "Unknown"),
-            "program_code": entry.get("program_code", "Unknown"),
-            "faculty_name": entry.get("faculty_name", "Unknown"),
-            "type": entry.get("type", "Unknown"),
-            "day": entry.get("day"),
-            "start_hour": entry.get("start_hour", 0),
-            "duration": entry.get("duration", 0),
-            "time_slot": entry.get("time_slot", "Unknown"),
-            "room_name": entry.get("room_name", "Online"),
-            "schedule_type": entry.get("schedule_type", "Unknown"),
-            "_sort_day": day_order.get(entry.get("day", ""), 99),
-            "_sort_hour": entry.get("start_hour", 0)
-        })
-    # Sort each branch's entries by day then start hour, and remove sort keys
-    for branch_name in schedule_by_branch:
-        schedule_by_branch[branch_name].sort(key=lambda x: (x["_sort_day"], x["_sort_hour"]))
-        for item in schedule_by_branch[branch_name]:
-            del item["_sort_day"]
-            del item["_sort_hour"]
-
-    return complete_schedule, unscheduled_meetings, schedule_by_room, schedule_by_branch
+    return complete_schedule, unscheduled_meetings, schedule_by_room
 
 
 def validate_schedule(schedule):
@@ -2460,7 +2205,7 @@ def save_schedule_to_text(schedule, unscheduled, filename):
     print(f"\n[INFO] Schedule saved to text file: {filename}")
 
 
-def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None, schedule_by_branch=None):
+def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None):
     """Save schedule to a JSON file."""
     # Count full time and part time faculty in schedule
     faculty_types = {}
@@ -2487,8 +2232,7 @@ def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None
         },
         "scheduled_meetings": schedule,
         "unscheduled_meetings": unscheduled,
-        "schedule_by_room": schedule_by_room or {},
-        "schedule_by_branch": schedule_by_branch or {}
+        "schedule_by_room": schedule_by_room or {}
     }
 
     with open(filename, 'w', encoding='utf-8') as f:
@@ -2910,7 +2654,8 @@ def save_schedule_to_excel(schedule, unscheduled, faculty_loads, filename):
     ws_conflicts.append(headers_conflicts)
 
     # Style headers
-    conflict_header_fill = PatternFill(start_color="C00000", end_color="C00000", fill_type="solid")
+    conflict_header_fill = PatternFill(
+        start_color="C00000", end_color="C00000", fill_type="solid")
     for col_num, header in enumerate(headers_conflicts, 1):
         cell = ws_conflicts.cell(1, col_num)
         cell.font = header_font
@@ -2954,9 +2699,11 @@ def save_schedule_to_excel(schedule, unscheduled, faculty_loads, filename):
                 conflict_type_cell.font = Font(bold=True)
     else:
         # No conflicts - add a message
-        ws_conflicts.append(["No conflicts detected", "", "", "", "", "", "", "", "Schedule is conflict-free!"])
+        ws_conflicts.append(["No conflicts detected", "", "",
+                            "", "", "", "", "", "Schedule is conflict-free!"])
         cell = ws_conflicts.cell(2, 1)
-        cell.fill = PatternFill(start_color="00B050", end_color="00B050", fill_type="solid")
+        cell.fill = PatternFill(start_color="00B050",
+                                end_color="00B050", fill_type="solid")
         cell.font = Font(bold=True, color="FFFFFF")
 
     # Auto-adjust column widths
@@ -3255,9 +3002,6 @@ if __name__ == "__main__":
     classes_table = Table(
         "classes", metadata, autoload_with=engine
     )
-    college_branch_table = Table(
-        "college_branch", metadata, autoload_with=engine
-    )
 
     classes_course = fetch_table_data(classes_course_table)
     faculty_expertise_courses = fetch_table_data(
@@ -3266,13 +3010,9 @@ if __name__ == "__main__":
     rooms = fetch_table_data(rooms_table)
     programs = fetch_table_data(programs_table)
     classes = fetch_table_data(classes_table)
-    college_branches = fetch_table_data(college_branch_table)
 
     # Build program_id -> program_code lookup map
     program_map = {p["program_id"]: p["program_code"] for p in programs}
-
-    # Build college_branch_id -> college_branch_name lookup map
-    branch_map = {b["college_branch_id"]: b["college_branch_name"] for b in college_branches}
 
     # Build class_id -> class_size lookup map
     class_size_map = {c["class_id"]: c["class_size"] for c in classes}
@@ -3293,13 +3033,12 @@ if __name__ == "__main__":
     # ------------------------------------------
     # CREATE ROOM AND TIME SCHEDULE
     # ------------------------------------------
-    complete_schedule, unscheduled_meetings, schedule_by_room, schedule_by_branch = create_schedule(
+    complete_schedule, unscheduled_meetings, schedule_by_room = create_schedule(
         faculty_load_result,
-        rooms,
-        branch_map
+        rooms
     )
  # Save schedule to Excel file
- 
+
     # Generate timestamp for filenames
     # Create output directory if it doesn't exist
     output_dir = "faculty_loading_output"
@@ -3311,23 +3050,25 @@ if __name__ == "__main__":
                            faculty_load_result, schedule_excel_filename)
 
     # Save schedule to JSON file (always overwrites with same filename)
-    json_output_dir = os.path.join("..", "backend", "src", "generated_scheduled", "json_output")
+    json_output_dir = os.path.join(
+        "..", "backend", "src", "generated_scheduled", "json_output")
     os.makedirs(json_output_dir, exist_ok=True)
     json_filename = os.path.join(json_output_dir, "faculty_loading.json")
-    save_schedule_to_json(complete_schedule, unscheduled_meetings, json_filename, schedule_by_room, schedule_by_branch)
+    save_schedule_to_json(
+        complete_schedule, unscheduled_meetings, json_filename, schedule_by_room)
 
     # Generate faculty core time schedule (time-in / time-out)
     faculty_core_time = generate_faculty_core_time(complete_schedule)
-    core_time_filename = os.path.join(json_output_dir, "faculty_core_time.json")
-    save_faculty_core_time_to_json(faculty_core_time, core_time_filename, complete_schedule, branch_map)
+    core_time_filename = os.path.join(
+        json_output_dir, "faculty_core_time.json")
+    save_faculty_core_time_to_json(faculty_core_time, core_time_filename)
 
     # ------------------------------------------
     # FINAL OUTPUT (FOR NESTJS)
     # ------------------------------------------
     output = {
         "scheduled_meetings": complete_schedule,
-        "unscheduled_meetings": unscheduled_meetings,
-        "schedule_by_branch": schedule_by_branch
+        "unscheduled_meetings": unscheduled_meetings
     }
 
     # IMPORTANT: markers help NestJS safely parse stdout

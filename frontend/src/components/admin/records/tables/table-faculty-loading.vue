@@ -1033,14 +1033,15 @@ export default {
             reason.push("Same Faculty + Same schedule_type");
           }
 
-          // ✅ ONLINE ROOM CONFLICT (NEW RULE)
+          // ✅ ONLINE CONFLICT (same program + same section only)
           if (
             (record.room_name || "").toLowerCase() === "online" &&
             (r.room_name || "").toLowerCase() === "online" &&
-            r.set_name === record.set_name
+            r.set_name === record.set_name &&
+            r.program_id === record.program_id
           ) {
             reason.push(
-              "ONLINE conflict: Same section cannot attend two online classes at the same time.",
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
             );
           }
 
