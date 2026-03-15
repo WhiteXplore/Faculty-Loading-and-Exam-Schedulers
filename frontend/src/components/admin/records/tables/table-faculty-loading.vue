@@ -527,11 +527,12 @@
                               {{ item.program_code }}-{{ item.set_name }}
                             </p>
                             <button
-                              v-if="hasRoomConflict(item)"
+                              v-if="hasRoomConflict(item) && !isJoined"
                               @click.stop="openConflictModal(item)"
-                              class="mt-1 w-full text-[10px] bg-red-100 text-red-600 rounded"
+                              class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                              title="View conflict"
                             >
-                              ⚠ View
+                              !
                             </button>
                           </div>
                         </div>
@@ -649,187 +650,13 @@
       </div>
     </div>
 
-    <div
-      v-if="conflictModalVisible"
-      class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center"
-    >
-      <div class="bg-white w-[900px] rounded-2xl p-6 shadow-xl">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-4 border-b pb-2">
-          <h3 class="text-lg font-semibold text-red-700">
-            Schedule Conflict Detected
-          </h3>
-          <button
-            @click="closeConflictModal"
-            class="text-gray-400 hover:text-gray-600"
-          >
-            ✕
-          </button>
-        </div>
-
-        <!-- Body -->
-        <div class="grid grid-cols-2 gap-6 mt-6">
-          <!-- LEFT: Selected Schedule -->
-          <div class="relative bg-white rounded-2xl p-5 border">
-            <!-- Badge -->
-            <span
-              class="absolute -top-3 left-4 bg-green-600 text-white text-xs px-3 py-1 rounded-full shadow"
-            >
-              Selected Schedule
-            </span>
-
-            <div class="mt-3 space-y-3 text-sm text-gray-800">
-              <div class="flex justify-between items-center">
-                <h4 class="font-semibold text-base">
-                  {{ selectedSchedule.course_code }}
-                </h4>
-                <span
-                  class="text-xs px-2 py-1 rounded-full font-medium"
-                  :class="{
-                    'bg-orange-5s00 text-white':
-                      selectedSchedule.mode === 'face to face',
-                    'bg-purple-700 text-white':
-                      selectedSchedule.mode === 'online',
-                  }"
-                >
-                  {{
-                    selectedSchedule.mode === "face to face"
-                      ? "Face to Face"
-                      : "Online"
-                  }}
-                </span>
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <p class="text-xs text-gray-500">Faculty</p>
-                  <p class="font-medium">{{ selectedSchedule.faculty_name }}</p>
-                </div>
-
-                <div>
-                  <p class="text-xs text-gray-500">Section</p>
-                  <p class="font-medium">{{ selectedSchedule.set_name }}</p>
-                </div>
-
-                <div>
-                  <p class="text-xs text-gray-500">Room</p>
-                  <p class="font-medium">{{ selectedSchedule.room_name }}</p>
-                </div>
-
-                <div>
-                  <p class="text-xs text-gray-500">Time</p>
-                  <p class="font-medium">
-                    {{ formatTime(selectedSchedule.start_hour) }} –
-                    {{
-                      formatTime(
-                        selectedSchedule.start_hour + selectedSchedule.duration,
-                      )
-                    }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500">Day</p>
-                  <p class="font-medium">{{ selectedSchedule.day }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT: Conflict Schedules -->
-          <div class="relative bg-white rounded-2xl p-5 border">
-            <!-- Badge -->
-            <span
-              class="absolute -top-3 left-4 bg-red-600 text-white text-xs px-3 py-1 rounded-full shadow"
-            >
-              Conflicting Schedules
-            </span>
-
-            <!-- Scrollable list -->
-            <div class="mt-3 space-y-4 max-h-[420px] overflow-y-auto p-2">
-              <div
-                v-for="conflict in conflictRecords"
-                :key="conflict.id"
-                class="relative bg-white rounded-xl p-4 ring-1 ring-red-200"
-              >
-                <div class="space-y-2 text-sm">
-                  <div class="flex justify-between items-center">
-                    <h5 class="font-semibold text-gray-800">
-                      {{ conflict.course_code }}
-                    </h5>
-                    <span
-                      class="text-xs px-2 py-1 rounded-full font-medium"
-                      :class="{
-                        'bg-orange-5s00 text-white':
-                          selectedSchedule.schedule_type === 'face to face',
-                        'bg-purple-700 text-white':
-                          selectedSchedule.schedule_type === 'online',
-                      }"
-                    >
-                      {{
-                        selectedSchedule.schedule_type === "face to face"
-                          ? "Face to Face"
-                          : "Online"
-                      }}
-                    </span>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-2 text-gray-700">
-                    <div>
-                      <p class="text-xs text-gray-500">Faculty</p>
-                      <p class="font-medium">{{ conflict.faculty_name }}</p>
-                    </div>
-
-                    <div>
-                      <p class="text-xs text-gray-500">Section</p>
-                      <p class="font-medium">{{ conflict.set_name }}</p>
-                    </div>
-
-                    <div>
-                      <p class="text-xs text-gray-500">Room</p>
-                      <p class="font-medium">{{ conflict.room_name }}</p>
-                    </div>
-
-                    <div>
-                      <p class="text-xs text-gray-500">Time</p>
-                      <p class="font-medium">
-                        {{ formatTime(conflict.start_hour) }} –
-                        {{
-                          formatTime(conflict.start_hour + conflict.duration)
-                        }}
-                      </p>
-                    </div>
-                    <div>
-                      <p class="text-xs text-gray-500">Day</p>
-                      <p class="font-medium">{{ selectedSchedule.day }}</p>
-                    </div>
-                  </div>
-
-                  <!-- Reason -->
-                  <div
-                    class="flex items-start gap-2 mt-2 p-2 rounded-lg bg-red-50 text-xs text-red-700"
-                  >
-                    <span>⚠</span>
-                    <span>
-                      {{ conflict.reason || "Schedule overlap detected" }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="flex justify-end mt-5">
-          <button
-            @click="closeConflictModal"
-            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
+    <ConflictModal
+      :visible="conflictModalVisible"
+      :schedule="selectedSchedule"
+      :conflicts="conflictRecords"
+      @close="closeConflictModal"
+      @cancel="closeConflictModal"
+    />
   </div>
 </template>
 
@@ -837,11 +664,12 @@
 import axios from "axios";
 import icon from "@/assets/icon.vue";
 import { useFetchDataStore } from "@/store/fetch-data-store";
+import ConflictModal from "@/components/program-chairperson/program-record/faculty-components/conflict-modal.vue";
 import { toast } from "vue3-toastify";
 // import sample_schedule from "./sample_schedule.json";
 export default {
   name: "FacultySchedule",
-  components: { icon },
+  components: { icon, ConflictModal },
 
   data() {
     return {
@@ -1081,8 +909,15 @@ export default {
       this.selectedProgramId = "";
       this.cardPage = 1;
     },
+
     selectedProgramId() {
       this.filterSchedules();
+      this.cardPage = 1;
+    },
+
+    // ✅ FINAL FIX
+    searchQuery() {
+      this.currentPage = 1;
       this.cardPage = 1;
     },
   },
@@ -1168,25 +1003,46 @@ export default {
           // Check for time overlap
           const rStart = this.normalizeHour(r.start_hour);
           const rEnd = rStart + Number(r.duration);
+
           if (Math.max(rStart, recordStart) >= Math.min(rEnd, recordEnd))
             return null;
 
           // Determine conflict reasons
           let reason = [];
-          if (r.class_id && record.class_id && r.class_id === record.class_id)
+
+          // SAME CLASS SECTION
+          if (r.class_id && record.class_id && r.class_id === record.class_id) {
             reason.push("Same class section in the same Day and Time");
+          }
+
+          // SAME ROOM (Face to Face)
           if (
-            record.schedule_type === "face to face" &&
-            r.schedule_type === "face to face" &&
+            (record.schedule_type || "").toLowerCase() === "face to face" &&
+            (r.schedule_type || "").toLowerCase() === "face to face" &&
             r.room_id === record.room_id
-          )
+          ) {
             reason.push("Same Room");
+          }
+
+          // SAME FACULTY
           if (
             r.faculty_id === record.faculty_id &&
             (r.schedule_type || "").toLowerCase() ===
               (record.schedule_type || "").toLowerCase()
-          )
+          ) {
             reason.push("Same Faculty + Same schedule_type");
+          }
+
+          // ✅ ONLINE ROOM CONFLICT (NEW RULE)
+          if (
+            (record.room_name || "").toLowerCase() === "online" &&
+            (r.room_name || "").toLowerCase() === "online" &&
+            r.set_name === record.set_name
+          ) {
+            reason.push(
+              "ONLINE conflict: Same section cannot attend two online classes at the same time.",
+            );
+          }
 
           if (!reason.length) return null;
 

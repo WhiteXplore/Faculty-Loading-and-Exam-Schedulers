@@ -86,8 +86,8 @@
                 class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
               >
                 <tr>
-                  <th class="px-4 py-3 text-left font-semibold w-[2%]">ID</th>
-                  <th class="px-4 py-3 text-center font-semibold w-[10%]">
+                  <!-- <th class="px-4 py-3 text-left font-semibold w-[2%]">ID</th> -->
+                  <th class="px-4 py-3 text-left font-semibold w-[10%]">
                     Year & Section
                   </th>
                   <th class="px-4 py-3 text-left font-semibold w-[20%]">
@@ -100,7 +100,7 @@
                     School Year
                   </th>
                   <th class="px-4 py-3 text-center font-semibold w-[15%]">
-                    Assigned Courses
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -108,14 +108,14 @@
               <!-- Table Body -->
               <tbody>
                 <tr
-                  v-for="(cls, index) in paginatedClasses"
+                  v-for="cls in paginatedClasses"
                   :key="cls.class_id"
                   class="hover:bg-green-50 transition-all border-t"
                 >
-                  <td class="px-4 py-3 text-gray-600">
+                  <!-- <td class="px-4 py-3 text-gray-600">
                     {{ classStartIndex + index }}
-                  </td>
-                  <td class="px-4 py-3 text-gray-800 text-center">
+                  </td> -->
+                  <td class="px-4 py-3 text-gray-800 text-left">
                     {{ cls.set_name }}
                   </td>
                   <td class="px-4 py-3">

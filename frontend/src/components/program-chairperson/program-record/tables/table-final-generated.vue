@@ -371,7 +371,16 @@
                         </div>
 
                         <!-- Conflict Button -->
-                        <div class="w-full flex justify-center mt-1">
+                        <!-- Conflict Icon -->
+                        <button
+                          v-if="hasRoomConflict(item) && !isJoined"
+                          @click.stop="openConflictModal(item)"
+                          class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                          title="View conflict"
+                        >
+                          !
+                        </button>
+                        <!-- <div class="w-full flex justify-center mt-1">
                           <button
                             v-if="hasRoomConflict(item) && !isJoined"
                             @click.stop="openConflictModal(item)"
@@ -379,7 +388,7 @@
                           >
                             ⚠ View
                           </button>
-                        </div>
+                        </div> -->
                       </div>
                     </template>
                   </td>
@@ -1107,27 +1116,31 @@ export default {
       return this.getConflictingRecords(clonedRecord);
     },
     showScheduleTooltip(event, item) {
-      // ✅ Don't show tooltip while dragging
-      if (this.draggedRecord) return;
+      const tooltipWidth = 260;
+      const tooltipHeight = 160;
 
-      const rect = event.currentTarget.getBoundingClientRect();
+      const padding = 20;
 
-      if (item.is_joined && item.join_group_id) {
-        const joinedItems = this.finalSchedules.filter(
-          (s) => s.join_group_id === item.join_group_id,
-        );
+      let x = event.clientX + 15;
+      let y = event.clientY + 15;
 
-        this.tooltipItem = {
-          ...item,
-          joinedItems,
-        };
-      } else {
-        this.tooltipItem = item;
+      const screenWidth = window.innerWidth;
+      const screenHeight = window.innerHeight;
+
+      // Prevent overflow on right side
+      if (x + tooltipWidth + padding > screenWidth) {
+        x = event.clientX - tooltipWidth - 15;
       }
 
+      // Prevent overflow bottom
+      if (y + tooltipHeight + padding > screenHeight) {
+        y = event.clientY - tooltipHeight - 15;
+      }
+
+      this.tooltipX = x;
+      this.tooltipY = y;
+      this.tooltipItem = item;
       this.scheduleTooltipVisible = true;
-      this.tooltipX = rect.right + 12;
-      this.tooltipY = rect.top;
     },
 
     hideScheduleTooltip() {
@@ -1168,8 +1181,7 @@ export default {
 
           if (!overlaps) return false;
 
-          // ✅ 1. FACULTY CONFLICT (ALWAYS conflict if same faculty & overlap)
-          // Same faculty
+          // ✅ 1. FACULTY CONFLICT (always conflict)
           const sameFaculty =
             (r.faculty_id &&
               record.faculty_id &&
@@ -1183,7 +1195,7 @@ export default {
             return true;
           }
 
-          // ✅ 2. ROOM CONFLICT (only if both Face-to-Face)
+          // ✅ 2. ROOM CONFLICT (Face to Face only)
           if (
             r.room_id &&
             record.room_id &&
@@ -1201,12 +1213,23 @@ export default {
             return true;
           }
 
+          // ✅ 4. ONLINE SECTION CONFLICT (NEW RULE)
+          if (
+            record.mode?.toLowerCase() === "online" &&
+            r.mode?.toLowerCase() === "online" &&
+            r.set_name &&
+            record.set_name &&
+            r.set_name === record.set_name
+          ) {
+            return true;
+          }
+
           return false;
         })
         .map((r) => {
           let reason = "";
 
-          // Faculty conflict (priority)
+          // Faculty conflict
           if (
             (r.faculty_id &&
               record.faculty_id &&
@@ -1219,6 +1242,7 @@ export default {
             reason =
               "Same faculty assigned to overlapping schedules (Mode does not matter)";
           }
+
           // Room conflict
           else if (
             r.room_id === record.room_id &&
@@ -1227,9 +1251,20 @@ export default {
           ) {
             reason = "Same room, same day, and overlapping time (Face-to-Face)";
           }
+
           // Class conflict
           else if (r.class_id === record.class_id) {
             reason = "Same class/section has overlapping schedules";
+          }
+
+          // ✅ Online conflict
+          else if (
+            record.mode?.toLowerCase() === "online" &&
+            r.mode?.toLowerCase() === "online" &&
+            r.set_name === record.set_name
+          ) {
+            reason =
+              "ONLINE conflict: Same section cannot attend two online classes at the same time.";
           }
 
           return { ...r, reason };

@@ -267,6 +267,13 @@ const routes = [
         meta: { requiresAuth: true, role: "Faculty" },
       },
       {
+        path: "/faculty-load",
+        name: "faculty-load",
+        component: () =>
+          import("../components/admin/records/ViewFacultyLoads.vue"),
+        meta: { requiresAuth: true, role: "Faculty" },
+      },
+      {
         path: "/profile-view",
         name: "profile-view",
         component: () =>

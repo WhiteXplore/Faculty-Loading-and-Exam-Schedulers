@@ -90,10 +90,7 @@
 
         <!-- Table -->
         <div v-if="!isLoading" class="w-full mt-3 rounded-t-lg overflow-x-auto">
-          <div
-            class="overflow-y-auto transition-all duration-300"
-            :class="tableHeightClass"
-          >
+          <div class="overflow-y-auto transition-all duration-300">
             <table
               class="min-w-full table-fixed border-collapse text-text text-[13px]"
             >

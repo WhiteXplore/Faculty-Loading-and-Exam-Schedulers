@@ -53,10 +53,7 @@
 
         <!-- Table -->
         <div class="w-full mt-3 rounded-xl shadow-md overflow-hidden">
-          <div
-            class="overflow-y-auto transition-all duration-300"
-            :class="tableHeightClass"
-          >
+          <div class="overflow-y-auto transition-all duration-300">
             <table
               class="min-w-full table-auto border-separate border-spacing-y-2 text-sm text-gray-700"
             >
