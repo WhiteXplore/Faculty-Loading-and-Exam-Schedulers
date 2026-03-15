@@ -179,7 +179,7 @@
                       class="w-[90px] h-8 border border-green-300 hover:bg-green-200 text-defaultGreen rounded-lg flex items-center justify-center gap-1 text-sm"
                       @click="openAddModal(user)"
                     >
-                      <icon name="eye" /> Add
+                      <icon name="edit" /> Update
                     </button>
                   </div>
                 </td>

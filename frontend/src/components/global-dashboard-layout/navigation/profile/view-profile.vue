@@ -132,7 +132,7 @@ export default {
           process.env.VUE_APP_API_BASE_URL + "/auth/me",
           {
             withCredentials: true,
-          }
+          },
         );
         if (response.data && response.data.sub) {
           this.subId = response.data.sub;
