@@ -26,6 +26,7 @@
             <th class="px-4 py-2 border">Day</th>
             <th class="px-4 py-2 border">Time</th>
             <th class="px-4 py-2 border">Room</th>
+            <th class="px-4 py-2 border">Conflict Type</th>
           </tr>
         </thead>
         <tbody>
@@ -37,11 +38,32 @@
             <td class="px-4 py-2 border">{{ item.course_code }}</td>
             <td class="px-4 py-2 border">{{ item.faculty_name }}</td>
             <td class="px-4 py-2 border">{{ item.day }}</td>
+
             <td class="px-4 py-2 border">
               {{ formatTime(item.start_hour) }} -
               {{ formatTime(item.start_hour + Number(item.duration)) }}
             </td>
-            <td class="px-4 py-2 border">{{ item.room_name }}</td>
+
+            <!-- ROOM -->
+            <td class="px-4 py-2 border">
+              <span
+                v-if="
+                  item.room_name && item.room_name.toLowerCase() === 'online'
+                "
+                class="px-2 py-1 text-[11px] bg-purple-500 text-white rounded-full"
+              >
+                ONLINE
+              </span>
+
+              <span v-else>
+                {{ item.room_name }}
+              </span>
+            </td>
+
+            <!-- CONFLICT TYPE -->
+            <td class="px-4 py-2 border text-red-600 font-medium">
+              {{ item.reason }}
+            </td>
           </tr>
         </tbody>
       </table>

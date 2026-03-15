@@ -75,10 +75,7 @@
 
       <!-- Table -->
       <div class="w-full rounded-xl shadow overflow-hidden">
-        <div
-          class="overflow-y-auto transition-all duration-300"
-          :class="tableHeightClass"
-        >
+        <div class="overflow-y-auto transition-all duration-300">
           <table
             class="min-w-full table-auto border-separate border-spacing-y-2 text-sm text-gray-700"
           >

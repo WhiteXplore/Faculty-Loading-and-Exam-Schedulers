@@ -1,158 +1,275 @@
 <template>
-  <div class="flex flex-col space-y-3 h-[83vh] overflow-hidden">
-    <!-- TABLE CONTAINER -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
-      <!-- TOP CONTROLS (SAME DESIGN AS ROOM TABLE) -->
+  <div class="p-3 h-[85vh] overflow-y-auto">
+    <div
+      v-if="Object.keys(groupedSchedule).length"
+      class="grid grid-cols-1 gap-3"
+    >
       <div
-        class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
+        v-for="(schedules, room) in groupedSchedule"
+        :key="room"
+        class="bg-white rounded-xl border flex flex-col"
       >
-        <!-- Items Per Page -->
-        <div class="flex items-center gap-2">
-          <div class="relative">
-            <select
-              v-model="itemsPerPage"
-              class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500"
-              @change="changePage(1)"
-            >
-              <option value="15">15</option>
-              <option value="20">20</option>
-            </select>
+        <!-- HEADER -->
+        <div class="bg-defaultGreen text-white px-4 py-3 rounded-t-xl">
+          <span class="text-lg font-bold">{{ room }}</span>
+        </div>
 
-            <div
-              class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen transition-colors"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+        <table class="w-full text-[12px] border-collapse table-fixed">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border p-2 w-[9%] text-center">Time</th>
+              <th v-for="day in days" :key="day" class="border p-2 text-center">
+                {{ day }}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="slot in timeSlots" :key="slot.start">
+              <!-- TIME -->
+              <td class="border p-2 text-center font-medium">
+                {{ formatTime(slot.start) }} -
+                {{ formatTime(slot.end) }}
+              </td>
+
+              <!-- DAYS -->
+              <td
+                v-for="day in days"
+                :key="day"
+                class="border relative h-[60px]"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
+                <!-- ONLINE ROOM -->
+                <div
+                  v-if="room === 'Online'"
+                  class="flex flex-col gap-1 p-1 w-full"
+                >
+                  <div
+                    v-for="item in getScheduleForCell(slot, day, room)"
+                    :key="item.id"
+                    class="relative rounded-lg p-1 text-[11px] bg-yellow-100 border border-yellow-400 w-full"
+                  >
+                    <p class="font-semibold">{{ item.course_code }}</p>
+                    <p class="text-gray-600">{{ item.faculty_name }}</p>
+                    <p class="text-gray-600">
+                      {{ item.program_code }} - {{ item.set_name }}
+                    </p>
+
+                    <button
+                      v-if="hasRoomConflict(item)"
+                      @click.stop="openConflictModal(item)"
+                      class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                    >
+                      !
+                    </button>
+                  </div>
+                </div>
+
+                <!-- NORMAL ROOM -->
+                <template v-else>
+                  <div
+                    v-for="item in getScheduleForCell(slot, day, room)"
+                    :key="item.id"
+                    class="absolute inset-x-1 rounded-lg p-1 text-[11px]"
+                    :style="{
+                      ...getRoomColor(room),
+                      height: getBlockHeight(item) + 'px',
+                      top: getBlockTop(item, slot) + 'px',
+                    }"
+                  >
+                    <p class="font-semibold">{{ item.course_code }}</p>
+                    <p class="text-gray-600">{{ item.faculty_name }}</p>
+                    <p class="text-gray-600">
+                      {{ item.program_code }} - {{ item.set_name }}
+                    </p>
+
+                    <button
+                      v-if="hasRoomConflict(item)"
+                      @click.stop="openConflictModal(item)"
+                      class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                    >
+                      !
+                    </button>
+                  </div>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div v-else class="flex items-center justify-center h-full text-gray-500">
+      No schedule available
+    </div>
+
+    <!-- CONFLICT MODAL -->
+    <div
+      v-if="showConflictModal"
+      class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center"
+    >
+      <div class="bg-white w-[900px] rounded-2xl p-6 shadow-xl">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <icon
+              name="exclamation-circle"
+              class="w-7 h-7 p-1 rounded-full bg-red-200 text-red-900 flex items-center justify-center"
+            />
+            <h3 class="text-lg font-semibold text-gray-800">
+              Scheduled Conflict Detected
+            </h3>
+          </div>
+
+          <button
+            @click="showConflictModal = false"
+            class="text-gray-400 hover:text-gray-600"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="grid grid-cols-2 gap-6 mt-6">
+          <!-- SELECTED SCHEDULE -->
+          <div class="relative bg-white rounded-2xl p-5 border">
+            <span
+              class="absolute -top-3 left-4 bg-green-600 text-white text-xs px-3 py-1 rounded-full shadow"
+            >
+              Selected Schedule
+            </span>
+
+            <div v-if="selectedSchedule" class="mt-3 space-y-3 text-sm">
+              <div class="flex justify-between items-center">
+                <h4 class="font-semibold text-base">
+                  {{ selectedSchedule.course_code }}
+                </h4>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <p class="text-xs text-gray-500">Faculty</p>
+                  <p class="font-medium">{{ selectedSchedule.faculty_name }}</p>
+                </div>
+
+                <div>
+                  <p class="text-xs text-gray-500">Section</p>
+                  <p class="font-medium">
+                    {{ selectedSchedule.program_code }} -
+                    {{ selectedSchedule.set_name }}
+                  </p>
+                </div>
+
+                <div>
+                  <p class="text-xs text-gray-500">Room</p>
+                  <p class="font-medium">{{ selectedSchedule.room_name }}</p>
+                </div>
+
+                <div>
+                  <p class="text-xs text-gray-500">Room Type</p>
+                  <p class="font-medium">
+                    {{ roomTypeMap[selectedSchedule.room_name] }}
+                  </p>
+                </div>
+
+                <div>
+                  <p class="text-xs text-gray-500">Day</p>
+                  <p class="font-medium">{{ selectedSchedule.day }}</p>
+                </div>
+
+                <div>
+                  <p class="text-xs text-gray-500">Time</p>
+                  <p class="font-medium">
+                    {{ formatTime(selectedSchedule.start_hour) }} –
+                    {{
+                      formatTime(
+                        selectedSchedule.start_hour + selectedSchedule.duration,
+                      )
+                    }}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <span class="text-sm font-medium text-gray-600">Per page</span>
-        </div>
-
-        <!-- SEARCH -->
-        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search room, faculty, course..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500"
-            @input="changePage(1)"
-          />
-
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none transition-colors"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+          <!-- CONFLICT LIST -->
+          <div class="relative bg-white rounded-2xl p-5 border">
+            <span
+              class="absolute -top-3 left-4 bg-red-600 text-white text-xs px-3 py-1 rounded-full shadow"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              Conflicting Schedules
+            </span>
+
+            <div class="mt-3 space-y-4 max-h-[420px] overflow-y-auto pr-2">
+              <div
+                v-for="conflict in conflictRecords"
+                :key="conflict.id"
+                class="rounded-xl p-4 ring-1 ring-red-200 bg-red-50"
+              >
+                <div class="space-y-2 text-sm">
+                  <h5 class="font-semibold text-gray-800">
+                    {{ conflict.course_code }}
+                  </h5>
+
+                  <div class="grid grid-cols-2 gap-2 text-gray-700">
+                    <div>
+                      <p class="text-xs text-gray-500">Faculty</p>
+                      <p class="font-medium">{{ conflict.faculty_name }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Section</p>
+                      <p class="font-medium">
+                        {{ conflict.program_code }} -
+                        {{ conflict.set_name }}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Room</p>
+                      <p class="font-medium">{{ conflict.room_name }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Room Type</p>
+                      <p class="font-medium">
+                        {{ roomTypeMap[conflict.room_name] }}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Day</p>
+                      <p class="font-medium">{{ conflict.day }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Time</p>
+                      <p class="font-medium">
+                        {{ formatTime(conflict.start_hour) }} –
+                        {{
+                          formatTime(conflict.start_hour + conflict.duration)
+                        }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex items-center gap-2 mt-2 text-xs text-red-700 bg-red-100 p-2 rounded-lg"
+                  >
+                    ⚠ Schedule overlap detected
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- TABLE -->
-      <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <div class="max-h-[69vh] overflow-y-auto">
-          <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead
-              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-            >
-              <tr>
-                <th class="px-4 py-3 text-left font-normal">Room</th>
-                <th class="px-4 py-3 text-center font-normal">Day</th>
-                <th class="px-4 py-3 text-center font-normal">Time</th>
-                <th class="px-4 py-3 text-center font-normal">Course</th>
-                <th class="px-4 py-3 text-center font-normal">Program</th>
-                <th class="px-4 py-3 text-center font-normal">Section</th>
-                <th class="px-4 py-3 text-center font-normal">Faculty</th>
-                <th class="px-4 py-3 text-center font-normal">Reason</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr
-                v-for="item in paginatedData"
-                :key="item.id"
-                class="hover:bg-green-50 transition-all border-t"
-              >
-                <td class="px-4 py-3">{{ item.room_name }}</td>
-                <td class="px-4 py-3 text-center">{{ item.day }}</td>
-
-                <td class="px-4 py-3 text-center">
-                  {{ formatTime(item.start_hour) }} -
-                  {{ formatTime(item.start_hour + item.duration) }}
-                </td>
-
-                <td class="px-4 py-3 text-center">{{ item.course_code }}</td>
-                <td class="px-4 py-3 text-center">{{ item.program_code }}</td>
-                <td class="px-4 py-3 text-center">{{ item.set_name }}</td>
-                <td class="px-4 py-3 text-center">{{ item.faculty_name }}</td>
-
-                <td class="px-4 py-3 text-center text-gray-400">-</td>
-              </tr>
-
-              <tr v-if="paginatedData.length === 0">
-                <td colspan="8" class="text-left py-6 text-gray-400">
-                  No schedules found
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- PAGINATION (EXACT DESIGN AS ROOM TABLE) -->
-      <div class="flex justify-between items-center mt-4">
-        <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
-        </div>
-
-        <div class="flex items-center gap-1 text-sm">
+        <!-- FOOTER -->
+        <div class="flex justify-end mt-5">
           <button
-            @click="changePage(currentPage - 1)"
-            :disabled="currentPage === 1"
-            class="px-3 py-1 bg-gray-300 text-gray-700 rounded-l-md hover:bg-gray-400"
+            @click="showConflictModal = false"
+            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm"
           >
-            &lt;
-          </button>
-
-          <span v-for="page in pageNumbers" :key="'page-' + page">
-            <button
-              @click="changePage(page)"
-              :class="{
-                'bg-defaultGreen text-white': currentPage === page,
-                'bg-gray-200 text-gray-700': currentPage !== page,
-              }"
-              class="px-3 py-1 rounded-md hover:bg-green-300"
-            >
-              {{ page }}
-            </button>
-          </span>
-
-          <button
-            @click="changePage(currentPage + 1)"
-            :disabled="currentPage === totalPages"
-            class="px-3 py-1 bg-gray-300 text-gray-700 rounded-r-md hover:bg-gray-400"
-          >
-            &gt;
+            Close
           </button>
         </div>
       </div>
@@ -164,15 +281,17 @@
 import { useFetchDataStore } from "@/store/fetch-data-store";
 
 export default {
+  name: "RoomScheduleCards",
+
   data() {
     return {
-      searchQuery: "",
-      currentPage: 1,
-      itemsPerPage: 15,
-
-      scheduleByRoom: {},
       groupedSchedule: {},
-      filteredGroupedSchedule: {},
+      rooms: [],
+      roomTypeMap: {},
+
+      showConflictModal: false,
+      conflictRecords: [],
+      selectedSchedule: null,
 
       days: [
         "Monday",
@@ -183,89 +302,15 @@ export default {
         "Saturday",
         "Sunday",
       ],
+
+      timeSlots: Array.from({ length: 14 }, (_, i) => ({
+        start: 7 + i,
+        end: 8 + i,
+      })),
     };
   },
 
-  computed: {
-    filteredData() {
-      let list = [];
-
-      Object.values(this.filteredGroupedSchedule).forEach((schedules) => {
-        if (!Array.isArray(schedules)) return;
-        schedules.forEach((item) => list.push(item));
-      });
-
-      if (this.searchQuery) {
-        const q = this.searchQuery.toLowerCase();
-
-        list = list.filter(
-          (s) =>
-            (s.room_name && s.room_name.toLowerCase().includes(q)) ||
-            (s.faculty_name && s.faculty_name.toLowerCase().includes(q)) ||
-            (s.course_code && s.course_code.toLowerCase().includes(q)) ||
-            (s.program_code && s.program_code.toLowerCase().includes(q)) ||
-            (s.set_name && s.set_name.toLowerCase().includes(q)),
-        );
-      }
-
-      return list.sort((a, b) => {
-        if (a.room_name !== b.room_name)
-          return a.room_name.localeCompare(b.room_name);
-
-        if (a.day !== b.day)
-          return this.days.indexOf(a.day) - this.days.indexOf(b.day);
-
-        return a.start_hour - b.start_hour;
-      });
-    },
-
-    totalPages() {
-      return Math.ceil(this.filteredData.length / this.itemsPerPage) || 1;
-    },
-
-    paginatedData() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.filteredData.slice(start, start + this.itemsPerPage);
-    },
-
-    startIndex() {
-      return this.filteredData.length === 0
-        ? 0
-        : (this.currentPage - 1) * this.itemsPerPage + 1;
-    },
-
-    endIndex() {
-      const end = this.currentPage * this.itemsPerPage;
-      return end > this.filteredData.length ? this.filteredData.length : end;
-    },
-
-    pageNumbers() {
-      const total = this.totalPages;
-
-      if (total <= 3) return Array.from({ length: total }, (_, i) => i + 1);
-
-      let start = this.currentPage - 1;
-      let end = this.currentPage + 1;
-
-      if (start < 1) {
-        start = 1;
-        end = 3;
-      }
-
-      if (end > total) {
-        end = total;
-        start = total - 2;
-      }
-
-      return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-    },
-  },
-
   methods: {
-    changePage(page) {
-      this.currentPage = Math.max(1, Math.min(page, this.totalPages));
-    },
-
     parseHour(timeStr) {
       const [time, modifier] = timeStr.split(" ");
       let [hours, minutes] = time.split(":").map(Number);
@@ -276,13 +321,20 @@ export default {
       return hours + minutes / 60;
     },
 
+    formatTime(h) {
+      const hour = Math.floor(h);
+      const minutes = Math.round((h - hour) * 60);
+      const period = hour >= 12 ? "PM" : "AM";
+      const hour12 = hour % 12 || 12;
+
+      return `${hour12}:${minutes.toString().padStart(2, "0")} ${period}`;
+    },
+
     transformRoomSchedule(roomData) {
       const result = {};
 
       Object.entries(roomData).forEach(([roomName, records]) => {
-        if (!Array.isArray(records)) return;
-
-        result[roomName] = records.map((r, index) => {
+        const parsed = records.map((r, index) => {
           const parts = r.day_time.split(" ");
 
           const day = parts[0];
@@ -299,39 +351,108 @@ export default {
             program_code: r.program_code,
             set_name: r.class_name,
             room_name: roomName,
-            day: day,
+            day,
             start_hour: startHour,
             duration: endHour - startHour,
           };
         });
+
+        result[roomName] = parsed;
       });
 
       return result;
     },
 
-    formatTime(h) {
-      const hour = Math.floor(h);
-      const minutes = Math.round((h - hour) * 60);
-      const period = hour >= 12 ? "PM" : "AM";
-      const hour12 = hour % 12 || 12;
+    getScheduleForCell(slot, day, room) {
+      const schedules = this.groupedSchedule[room] || [];
 
-      return `${hour12}:${minutes.toString().padStart(2, "0")} ${period}`;
+      return schedules.filter((item) => {
+        if (item.day !== day) return false;
+
+        return item.start_hour >= slot.start && item.start_hour < slot.end;
+      });
+    },
+
+    getBlockHeight(item) {
+      return item.duration * 60;
+    },
+
+    getBlockTop(item, slot) {
+      return (item.start_hour - slot.start) * 60;
+    },
+
+    getRoomColor(room) {
+      const type = this.roomTypeMap[room];
+
+      if (type === "Laboratory") {
+        return {
+          background: "#DBEAFE",
+          border: "1px solid #3B82F6",
+        };
+      }
+
+      return {
+        background: "#DCFCE7",
+        border: "1px solid #22C55E",
+      };
+    },
+
+    hasRoomConflict(record) {
+      const roomSchedules = this.groupedSchedule[record.room_name] || [];
+
+      return roomSchedules.some((r) => {
+        if (r.id === record.id) return false;
+
+        return (
+          r.day === record.day &&
+          r.start_hour === record.start_hour &&
+          r.duration === record.duration &&
+          r.set_name === record.set_name
+        );
+      });
+    },
+
+    openConflictModal(record) {
+      const roomSchedules = this.groupedSchedule[record.room_name] || [];
+
+      this.selectedSchedule = record;
+
+      this.conflictRecords = roomSchedules.filter((r) => {
+        return (
+          r.id !== record.id &&
+          r.day === record.day &&
+          r.start_hour === record.start_hour &&
+          r.duration === record.duration &&
+          r.set_name === record.set_name
+        );
+      });
+
+      this.showConflictModal = true;
     },
 
     async loadSchedules() {
       const store = useFetchDataStore();
-
       const data = await store.fetchGeneratedScheduled();
 
-      this.scheduleByRoom = data.schedule_by_room || {};
+      const scheduleByRoom = data.schedule_by_room || {};
+      this.groupedSchedule = this.transformRoomSchedule(scheduleByRoom);
+    },
 
-      this.groupedSchedule = this.transformRoomSchedule(this.scheduleByRoom);
+    async fetchRooms() {
+      const store = useFetchDataStore();
+      await store.fetchRooms();
 
-      this.filteredGroupedSchedule = this.groupedSchedule;
+      this.rooms = store.rooms || [];
+
+      this.roomTypeMap = this.rooms.reduce((map, room) => {
+        map[room.room_name] = room.room_type;
+        return map;
+      }, {});
     },
   },
 
   async mounted() {
+    await this.fetchRooms();
     await this.loadSchedules();
   },
 };
