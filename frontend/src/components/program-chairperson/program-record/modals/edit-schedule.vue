@@ -1754,43 +1754,77 @@ export default {
         .filter((r) => r.faculty_name !== instructor);
     },
     getConflictingRecords(record) {
-      return this.localData.filter((r) => {
-        // 🚫 Skip self
-        if (r.id === record.id) return false;
+      return this.localData
+        .map((r) => {
+          if (r.id === record.id) return null;
 
-        // 🚫 Skip conflict if same join group
-        if (
-          record.join_group_id &&
-          r.join_group_id &&
-          record.join_group_id === r.join_group_id
-        ) {
-          return false;
-        }
+          // Ignore joined schedules in the same group
+          if (
+            record.join_group_id &&
+            r.join_group_id &&
+            record.join_group_id === r.join_group_id
+          ) {
+            return null;
+          }
 
-        const recordEnd = record.start_hour + (record.duration || 0);
-        const rEnd = r.start_hour + (r.duration || 0);
+          if (r.day !== record.day) return null;
 
-        // ⏰ Time overlap check
-        const timeOverlap =
-          record.start_hour < rEnd && recordEnd > r.start_hour;
+          const recordStart = record.start_hour;
+          const recordEnd = recordStart + Number(record.duration || 0);
 
-        if (!timeOverlap) return false;
+          const rStart = r.start_hour;
+          const rEnd = rStart + Number(r.duration || 0);
 
-        // 👩‍🏫 Same faculty conflict
-        const sameFaculty =
-          r.faculty_name === record.faculty_name && r.day === record.day;
+          const overlap = recordStart < rEnd && recordEnd > rStart;
 
-        // 🏫 Same room conflict (only for face-to-face)
-        const sameRoom =
-          record.mode === "face to face" &&
-          r.mode === "face to face" &&
-          r.room_name &&
-          record.room_name &&
-          r.room_name === record.room_name &&
-          r.day === record.day;
+          if (!overlap) return null;
 
-        return sameFaculty || sameRoom;
-      });
+          let reason = [];
+
+          /* -----------------------------
+      SAME FACULTY
+      ------------------------------*/
+          if (r.faculty_id === record.faculty_id) {
+            reason.push("Same faculty assigned at the same time");
+          }
+
+          /* -----------------------------
+      SAME ROOM (Face to Face)
+      ------------------------------*/
+          if (
+            record.mode === "face to face" &&
+            r.mode === "face to face" &&
+            r.room_name &&
+            record.room_name &&
+            r.room_name === record.room_name
+          ) {
+            reason.push("Room already occupied");
+          }
+
+          /* -----------------------------
+      ONLINE SECTION CONFLICT
+      Same program + same section
+      ------------------------------*/
+          if (
+            record.mode === "online" &&
+            r.mode === "online" &&
+            r.program_id === record.program_id &&
+            r.college_branch_id === record.college_branch_id &&
+            r.set_name === record.set_name
+          ) {
+            reason.push(
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
+            );
+          }
+
+          if (!reason.length) return null;
+
+          return {
+            ...r,
+            reason: reason.join(", "),
+          };
+        })
+        .filter(Boolean);
     },
     openConflictModal(record) {
       this.selectedSchedule = {

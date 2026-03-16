@@ -19,6 +19,10 @@ export class CreateFinalGeneratedClassScheduleDto {
   course_id?: number;
 
   @IsOptional()
+  @IsInt()
+  college_branch_id?: number;
+
+  @IsOptional()
   @IsString()
   course_code?: string;
 
