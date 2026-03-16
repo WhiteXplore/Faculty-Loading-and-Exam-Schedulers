@@ -407,7 +407,8 @@ export default {
           r.day === record.day &&
           r.start_hour === record.start_hour &&
           r.duration === record.duration &&
-          r.set_name === record.set_name
+          r.set_name === record.set_name &&
+          r.program_code === record.program_code
         );
       });
     },
@@ -423,7 +424,8 @@ export default {
           r.day === record.day &&
           r.start_hour === record.start_hour &&
           r.duration === record.duration &&
-          r.set_name === record.set_name
+          r.set_name === record.set_name &&
+          r.program_code === record.program_code
         );
       });
 
