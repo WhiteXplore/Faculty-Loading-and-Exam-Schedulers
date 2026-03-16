@@ -109,7 +109,7 @@
               </tr>
 
               <tr v-if="paginatedData.length === 0">
-                <td colspan="8" class="text-left py-6 text-gray-400">
+                <td colspan="8" class="text-center py-6 text-gray-400">
                   No schedules found
                 </td>
               </tr>

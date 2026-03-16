@@ -1,107 +1,179 @@
 <template>
-  <div class="p-3 h-[85vh] overflow-y-auto">
-    <div
-      v-if="Object.keys(groupedSchedule).length"
-      class="grid grid-cols-1 gap-3"
-    >
-      <div
-        v-for="(schedules, room) in groupedSchedule"
-        :key="room"
-        class="bg-white rounded-xl border flex flex-col"
-      >
-        <!-- HEADER -->
-        <div class="bg-defaultGreen text-white px-4 py-3 rounded-t-xl">
-          <span class="text-lg font-bold">{{ room }}</span>
+  <div class="h-[83vh] overflow-y-auto">
+    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
+      <!-- FILTER BAR -->
+      <div class="flex justify-between items-center mb-3">
+        <!-- SHOW ENTRIES -->
+
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <select
+              v-model="entriesLimit"
+              class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
+            >
+              <option :value="5">5</option>
+              <option :value="10">10</option>
+              <option :value="15">15</option>
+              <option :value="20">20</option>
+              <option :value="999">All</option>
+            </select>
+
+            <!-- Custom Arrow -->
+            <div
+              class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
 
-        <table class="w-full text-[12px] border-collapse table-fixed">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="border p-2 w-[9%] text-center">Time</th>
-              <th v-for="day in days" :key="day" class="border p-2 text-center">
-                {{ day }}
-              </th>
-            </tr>
-          </thead>
+        <!-- SEARCH -->
 
-          <tbody>
-            <tr v-for="slot in timeSlots" :key="slot.start">
-              <!-- TIME -->
-              <td class="border p-2 text-center font-medium">
-                {{ formatTime(slot.start) }} -
-                {{ formatTime(slot.end) }}
-              </td>
+        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search..."
+            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
+            @input="changePage(1)"
+          />
+          <!-- Search icon -->
+          <div
+            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="Object.keys(groupedSchedule).length"
+        class="grid grid-cols-1 gap-3"
+      >
+        <div
+          v-for="(schedules, room) in filteredRooms"
+          :key="room"
+          class="bg-white rounded-xl border flex flex-col"
+        >
+          <!-- HEADER -->
+          <div class="bg-defaultGreen text-white px-4 py-3 rounded-t-xl">
+            <span class="text-lg font-bold">{{ room }}</span>
+          </div>
 
-              <!-- DAYS -->
-              <td
-                v-for="day in days"
-                :key="day"
-                class="border relative h-[60px]"
-              >
-                <!-- ONLINE ROOM -->
-                <div
-                  v-if="room === 'Online'"
-                  class="flex flex-col gap-1 p-1 w-full"
+          <table class="w-full text-[12px] border-collapse table-fixed">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="border p-2 w-[9%] text-center">Time</th>
+                <th
+                  v-for="day in days"
+                  :key="day"
+                  class="border p-2 text-center"
                 >
+                  {{ day }}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="slot in timeSlots" :key="slot.start">
+                <!-- TIME -->
+                <td class="border p-2 text-center font-medium">
+                  {{ formatTime(slot.start) }} -
+                  {{ formatTime(slot.end) }}
+                </td>
+
+                <!-- DAYS -->
+                <td
+                  v-for="day in days"
+                  :key="day"
+                  class="border relative h-[60px]"
+                >
+                  <!-- ONLINE ROOM -->
                   <div
-                    v-for="item in getScheduleForCell(slot, day, room)"
-                    :key="item.id"
-                    class="relative rounded-lg p-1 text-[11px] bg-yellow-100 border border-yellow-400 w-full"
+                    v-if="room === 'Online'"
+                    class="flex flex-col gap-1 p-1 w-full"
                   >
-                    <p class="font-semibold">{{ item.course_code }}</p>
-                    <p class="text-gray-600">{{ item.faculty_name }}</p>
-                    <p class="text-gray-600">
-                      {{ item.program_code }} - {{ item.set_name }}
-                    </p>
-
-                    <button
-                      v-if="hasRoomConflict(item)"
-                      @click.stop="openConflictModal(item)"
-                      class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                    <div
+                      v-for="item in getScheduleForCell(slot, day, room)"
+                      :key="item.id"
+                      class="relative rounded-lg p-1 text-[11px] bg-yellow-100 border border-yellow-400 w-full"
                     >
-                      !
-                    </button>
+                      <p class="font-semibold">{{ item.course_code }}</p>
+                      <p class="text-gray-600">{{ item.faculty_name }}</p>
+                      <p class="text-gray-600">
+                        {{ item.program_code }} - {{ item.set_name }}
+                      </p>
+
+                      <button
+                        v-if="hasRoomConflict(item)"
+                        @click.stop="openConflictModal(item)"
+                        class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                      >
+                        !
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                <!-- NORMAL ROOM -->
-                <template v-else>
-                  <div
-                    v-for="item in getScheduleForCell(slot, day, room)"
-                    :key="item.id"
-                    class="absolute inset-x-1 rounded-lg p-1 text-[11px]"
-                    :style="{
-                      ...getRoomColor(room),
-                      height: getBlockHeight(item) + 'px',
-                      top: getBlockTop(item, slot) + 'px',
-                    }"
-                  >
-                    <p class="font-semibold">{{ item.course_code }}</p>
-                    <p class="text-gray-600">{{ item.faculty_name }}</p>
-                    <p class="text-gray-600">
-                      {{ item.program_code }} - {{ item.set_name }}
-                    </p>
-
-                    <button
-                      v-if="hasRoomConflict(item)"
-                      @click.stop="openConflictModal(item)"
-                      class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                  <!-- NORMAL ROOM -->
+                  <template v-else>
+                    <div
+                      v-for="item in getScheduleForCell(slot, day, room)"
+                      :key="item.id"
+                      class="absolute inset-x-1 rounded-lg p-1 text-[11px]"
+                      :style="{
+                        ...getRoomColor(room),
+                        height: getBlockHeight(item) + 'px',
+                        top: getBlockTop(item, slot) + 'px',
+                      }"
                     >
-                      !
-                    </button>
-                  </div>
-                </template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                      <p class="font-semibold">{{ item.course_code }}</p>
+                      <p class="text-gray-600">{{ item.faculty_name }}</p>
+                      <p class="text-gray-600">
+                        {{ item.program_code }} - {{ item.set_name }}
+                      </p>
+
+                      <button
+                        v-if="hasRoomConflict(item)"
+                        @click.stop="openConflictModal(item)"
+                        class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                      >
+                        !
+                      </button>
+                    </div>
+                  </template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div v-else class="flex items-center justify-center h-full text-gray-500">
+        No schedule available
       </div>
     </div>
-
-    <div v-else class="flex items-center justify-center h-full text-gray-500">
-      No schedule available
-    </div>
-
     <!-- CONFLICT MODAL -->
     <div
       v-if="showConflictModal"
@@ -285,6 +357,8 @@ export default {
 
   data() {
     return {
+      searchQuery: "",
+      entriesLimit: 10,
       groupedSchedule: {},
       rooms: [],
       roomTypeMap: {},
@@ -308,6 +382,17 @@ export default {
         end: 8 + i,
       })),
     };
+  },
+  computed: {
+    filteredRooms() {
+      const query = this.searchQuery.toLowerCase();
+
+      const filtered = Object.entries(this.groupedSchedule).filter(([room]) =>
+        room.toLowerCase().includes(query),
+      );
+
+      return Object.fromEntries(filtered.slice(0, this.entriesLimit));
+    },
   },
 
   methods: {
