@@ -387,11 +387,9 @@ export default {
     filteredRooms() {
       const query = this.searchQuery.toLowerCase();
 
-      const filtered = Object.entries(this.groupedSchedule).filter(([room]) => {
-        return (
-          room.toLowerCase().includes(query) && room.toLowerCase() !== "online"
-        );
-      });
+      const filtered = Object.entries(this.groupedSchedule).filter(([room]) =>
+        room.toLowerCase().includes(query),
+      );
 
       return Object.fromEntries(filtered.slice(0, this.entriesLimit));
     },
