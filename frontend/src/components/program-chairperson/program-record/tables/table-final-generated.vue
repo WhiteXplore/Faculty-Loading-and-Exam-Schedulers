@@ -1262,7 +1262,8 @@ export default {
             record.mode?.toLowerCase() === "online" &&
             r.mode?.toLowerCase() === "online" &&
             r.set_name === record.set_name &&
-            r.program_id === record.program_id
+            r.program_id === record.program_id &&
+            r.college_branch_id === record.college_branch_id
           ) {
             reason =
               "ONLINE conflict: Same section cannot attend two online classes at the same time.";

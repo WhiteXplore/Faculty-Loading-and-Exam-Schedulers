@@ -601,6 +601,10 @@
                     }}
                   </p>
                   <p><strong>Type:</strong> {{ tooltipItem.type }}</p>
+                  <p>
+                    <strong>Campus Branch:</strong>
+                    {{ getCollegeBranchName(tooltipItem.college_branch_id) }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -754,7 +758,12 @@ export default {
     coursesList() {
       const store = useFetchDataStore();
       return store.courses || [];
-    }, // Total units per faculty
+    },
+    collegeBranches() {
+      const store = useFetchDataStore();
+      return store.college_branch || [];
+    },
+    // Total units per faculty
     facultyTotalUnits() {
       const result = {};
 
@@ -928,6 +937,14 @@ export default {
       await store.fetchPrograms();
       await store.fetchInstitutes();
       await store.fetchCourses();
+      await store.fetchCollegeBranch();
+    },
+    getCollegeBranchName(branchId) {
+      const branch = this.collegeBranches.find(
+        (b) => Number(b.college_branch_id) === Number(branchId),
+      );
+
+      return branch ? branch.college_branch_name : `Branch ${branchId}`;
     },
     showScheduleTooltip(event, item) {
       const tooltipWidth = 260;
@@ -1319,6 +1336,7 @@ export default {
           set_name: item.set_name,
           course_code: item.course_code,
           program_id: item.program_id,
+          college_branch_id: item.college_branch_id,
           program_code: item.program_code,
           institute_id: item.institute_id,
           type: item.type,
@@ -1388,6 +1406,7 @@ export default {
 
     await store.fetchInstitutes();
     await store.fetchPrograms();
+    await store.fetchCollegeBranch();
     await store.fetchCourses();
 
     const data = await store.fetchGeneratedScheduled();

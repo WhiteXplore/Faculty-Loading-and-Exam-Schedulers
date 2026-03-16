@@ -9,6 +9,9 @@ export class FinalGeneratedClassSchedule {
   class_id: number;
 
   @Column({ type: 'int', nullable: true })
+  college_branch_id: number;
+
+  @Column({ type: 'int', nullable: true })
   course_id: number;
 
   @Column({ type: 'varchar', length: 20, nullable: true })
