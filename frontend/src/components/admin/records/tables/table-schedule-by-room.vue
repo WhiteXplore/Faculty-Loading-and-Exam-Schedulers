@@ -362,7 +362,7 @@ export default {
       groupedSchedule: {},
       rooms: [],
       roomTypeMap: {},
-
+      currentPage: 1,
       showConflictModal: false,
       conflictRecords: [],
       selectedSchedule: null,
@@ -398,6 +398,9 @@ export default {
   },
 
   methods: {
+    changePage(page) {
+      this.currentPage = page;
+    },
     parseHour(timeStr) {
       const [time, modifier] = timeStr.split(" ");
       let [hours, minutes] = time.split(":").map(Number);

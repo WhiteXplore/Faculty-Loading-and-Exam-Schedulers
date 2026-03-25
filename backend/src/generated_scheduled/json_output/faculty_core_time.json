@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "generated_at": "2026-03-16T09:12:11.111159",
-    "total_faculty": 142,
+    "generated_at": "2026-03-25T08:46:18.751239",
+    "total_faculty": 155,
     "full_time_weekly_target": 40,
-    "faculty_with_multiple_branches_count": 8
+    "faculty_with_multiple_branches_count": 0
   },
   "faculty_schedules": [
     {
@@ -24,7 +24,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Wednesday",
@@ -38,12 +38,12 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -58,36 +58,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "5:00 PM",
+          "hours": 10.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "10:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 7.0,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_in": "11:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 6.0,
+          "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "10:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 7.0,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "5:00 PM",
+          "hours": 10.0,
           "has_classes": true
         }
       ]
@@ -100,37 +100,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "9:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "5:00 PM",
-          "hours": 8,
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "11:00 AM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "5:00 PM",
-          "hours": 8,
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 8,
+          "time_in": "7:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -143,37 +143,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "10:00 AM",
+          "time_out": "4:30 PM",
+          "hours": 6.5,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -186,37 +186,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "9:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 10,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "8:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 6,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "11:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
           "hours": 7,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "3:00 PM",
-          "hours": 6,
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "9:00 AM",
-          "time_out": "8:00 PM",
-          "hours": 11,
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -273,36 +273,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "11:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 3,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 7,
+          "time_in": "7:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "11:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -351,6 +351,49 @@
       ]
     },
     {
+      "faculty_id": 31,
+      "faculty_name": "Anababes Catala",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "1:00 PM",
+          "hours": 6.0,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 5.0,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12.0,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 5.0,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12.0,
+          "has_classes": true
+        }
+      ]
+    },
+    {
       "faculty_id": 40,
       "faculty_name": "Analiza Pana",
       "employment_type": "Full Time",
@@ -358,16 +401,16 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
@@ -380,8 +423,8 @@
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
@@ -402,36 +445,36 @@
         {
           "day": "Monday",
           "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 8,
+          "time_out": "2:39 PM",
+          "hours": 6.666666666666666,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 8,
+          "time_in": "12:00 PM",
+          "time_out": "7:30 PM",
+          "hours": 7.5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "10:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 8,
+          "time_in": "1:00 PM",
+          "time_out": "7:30 PM",
+          "hours": 6.5,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 9,
+          "time_in": "9:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -488,36 +531,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -531,8 +574,8 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
@@ -540,27 +583,27 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -573,37 +616,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 11,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
-          "time_in": "1:00 PM",
-          "time_out": "7:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "1:00 PM",
           "hours": 6,
           "has_classes": true
         },
         {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
           "day": "Wednesday",
-          "time_in": "8:00 AM",
-          "time_out": "5:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
           "hours": 9,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "1:00 PM",
-          "time_out": "6:00 PM",
-          "hours": 5,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "8:00 PM",
-          "hours": 12,
+          "time_in": "7:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -616,37 +659,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "9:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "11:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 4.5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "6:30 PM",
+          "hours": 9.5,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "12:00 PM",
+          "time_out": "3:30 PM",
+          "hours": 3.5,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -660,36 +703,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "11:00 AM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 3,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -703,36 +746,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "11:00 AM",
-          "hours": 4,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "10:00 AM",
-          "hours": 3,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -745,37 +788,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "9:00 PM",
-          "hours": 14,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "9:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 6,
-          "has_classes": true
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 5,
-          "has_classes": true
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": false
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
+          "time_in": "8:00 AM",
           "time_out": "8:00 PM",
-          "hours": 13,
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -805,7 +848,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Thursday",
@@ -848,7 +891,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
@@ -875,8 +918,8 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -896,15 +939,15 @@
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -925,8 +968,8 @@
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -946,8 +989,8 @@
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -961,36 +1004,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "9:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 6,
+          "time_in": "7:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
-          "time_out": "2:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "12:00 PM",
           "hours": 5,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -1003,37 +1046,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "12:00 PM",
+          "time_out": "8:00 PM",
+          "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_out": "2:00 PM",
+          "hours": 7.0,
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 11.0,
           "has_classes": true
         }
       ]
@@ -1047,36 +1090,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -1090,36 +1133,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         }
       ]
@@ -1132,9 +1175,9 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -1146,23 +1189,23 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "6:00 PM",
-          "time_out": "7:00 PM",
-          "hours": 1,
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -1176,29 +1219,29 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -1219,37 +1262,37 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_in": "9:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 10,
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_in": "9:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 9,
+          "has_classes": true
         }
       ]
     },
@@ -1261,37 +1304,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "9:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "12:00 PM",
-          "hours": 5,
+          "time_in": "10:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_in": "9:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -1305,36 +1348,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "11:00 AM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
           "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "8:00 PM",
+          "hours": 13,
           "has_classes": true
         }
       ]
@@ -1347,37 +1390,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "8:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": true
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": true
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -1390,37 +1433,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
+          "time_in": "12:00 PM",
           "time_out": "5:00 PM",
-          "hours": 10,
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:30 PM",
+          "hours": 11.5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "11:00 AM",
-          "hours": 4,
+          "time_in": "3:00 PM",
+          "time_out": "9:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "6:30 PM",
+          "hours": 11.5,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_in": "2:00 PM",
+          "time_out": "8:00 PM",
+          "hours": 6,
           "has_classes": true
         }
       ]
@@ -1434,22 +1477,22 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -1479,12 +1522,12 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Tuesday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -1493,12 +1536,12 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -1519,37 +1562,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "10:00 AM",
+          "time_out": "9:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
+          "time_in": "9:00 AM",
           "time_out": "3:00 PM",
-          "hours": 8,
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -1562,37 +1605,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "9:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 9,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
           "time_in": "7:00 AM",
           "time_out": "4:00 PM",
           "hours": 9,
           "has_classes": true
         },
         {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 9,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "9:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 9,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -1606,36 +1649,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
-          "has_classes": true
-        },
-        {
-          "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 8,
-          "has_classes": true
-        },
-        {
-          "day": "Thursday",
-          "time_in": "7:00 AM",
           "time_out": "4:00 PM",
           "hours": 9,
           "has_classes": true
         },
         {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "9:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 11,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "8:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 3,
+          "has_classes": true
+        },
+        {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         }
       ]
@@ -1658,7 +1701,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
@@ -1672,7 +1715,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
@@ -1692,36 +1735,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "9:00 AM",
+          "hours": 2,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "8:00 AM",
+          "hours": 1,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "8:00 PM",
+          "hours": 13,
           "has_classes": true
         }
       ]
@@ -1734,8 +1777,8 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -1762,8 +1805,8 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -1778,36 +1821,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
-          "has_classes": true
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": true
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": true
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -1821,36 +1864,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -1877,23 +1920,23 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "1:00 PM",
+          "time_out": "7:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -1906,37 +1949,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_in": "11:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "9:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 5,
+          "time_out": "6:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 7,
+          "time_in": "8:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "9:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 6,
+          "time_out": "5:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_in": "11:00 AM",
+          "time_out": "9:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -1957,15 +2000,15 @@
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -1992,16 +2035,16 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "3:30 PM",
+          "hours": 8.5,
           "has_classes": true
         },
         {
@@ -2013,15 +2056,15 @@
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 7.5,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -2045,28 +2088,28 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         }
       ]
     },
@@ -2078,9 +2121,9 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "8:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
@@ -2092,9 +2135,9 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "4:00 PM",
-          "hours": 7,
+          "hours": 9,
           "has_classes": true
         },
         {
@@ -2107,8 +2150,8 @@
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -2121,8 +2164,8 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -2131,12 +2174,12 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -2145,12 +2188,12 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -2167,14 +2210,14 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Wednesday",
@@ -2188,7 +2231,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Friday",
@@ -2208,16 +2251,16 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
@@ -2231,7 +2274,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
@@ -2251,36 +2294,79 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
-          "has_classes": true
-        },
-        {
-          "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "2:00 PM",
           "hours": 7,
           "has_classes": true
         },
         {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_out": "5:00 PM",
+          "hours": 10,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 95,
+      "faculty_name": "Hana Dacua",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "11:00 AM",
+          "time_out": "9:00 PM",
+          "hours": 10,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "11:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -2293,37 +2379,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "9:00 AM",
-          "time_out": "8:00 PM",
-          "hours": 11,
+          "time_in": "10:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "10:00 AM",
+          "time_out": "9:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "10:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 4,
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "10:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "9:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 10,
+          "time_in": "10:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 6,
           "has_classes": true
         }
       ]
@@ -2379,37 +2465,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 9,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
           "time_in": "7:00 AM",
           "time_out": "2:00 PM",
           "hours": 7,
           "has_classes": true
         },
         {
-          "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
-          "has_classes": true
-        },
-        {
-          "day": "Thursday",
+          "day": "Tuesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
-          "day": "Friday",
+          "day": "Wednesday",
           "time_in": "8:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 10,
+          "time_out": "5:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -2423,36 +2509,79 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "8:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "3:00 PM",
-          "hours": 7,
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "8:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 6,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 105,
+      "faculty_name": "Ian Delos Reyes",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
           "time_out": "6:00 PM",
-          "hours": 11,
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 7.5,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -2465,8 +2594,8 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -2493,8 +2622,8 @@
         },
         {
           "day": "Friday",
-          "time_in": "10:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -2508,52 +2637,9 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 9,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
-          "has_classes": true
-        },
-        {
-          "day": "Wednesday",
-          "time_in": "2:00 PM",
-          "time_out": "5:00 PM",
-          "hours": 3,
-          "has_classes": true
-        },
-        {
-          "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
-          "has_classes": true
-        },
-        {
-          "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 9,
-          "has_classes": true
-        }
-      ]
-    },
-    {
-      "faculty_id": 103,
-      "faculty_name": "Iris Salmorin",
-      "employment_type": "Full Time",
-      "weekly_hours": 40,
-      "schedule": [
-        {
-          "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -2566,22 +2652,65 @@
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 103,
+      "faculty_name": "Iris Salmorin",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 6,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 11,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
           "time_out": "2:00 PM",
-          "hours": 7,
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -2609,15 +2738,15 @@
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -2638,36 +2767,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "8:00 PM",
-          "hours": 13.0,
+          "time_out": "2:00 PM",
+          "hours": 7.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "10:00 AM",
-          "hours": 3,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8.0,
+          "time_out": "4:00 PM",
+          "hours": 9.0,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "10:00 AM",
-          "hours": 3,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "8:00 PM",
-          "hours": 13.0,
+          "time_out": "4:00 PM",
+          "hours": 9.0,
           "has_classes": true
         }
       ]
@@ -2680,23 +2809,23 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 2,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "8:30 PM",
+          "hours": 12.5,
           "has_classes": true
         },
         {
@@ -2708,9 +2837,9 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "8:30 PM",
+          "hours": 12.5,
           "has_classes": true
         }
       ]
@@ -2724,8 +2853,8 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -2737,9 +2866,9 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "11:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 6,
+          "time_in": "7:00 AM",
+          "time_out": "6:30 PM",
+          "hours": 11.5,
           "has_classes": true
         },
         {
@@ -2752,8 +2881,8 @@
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "6:30 PM",
+          "hours": 11.5,
           "has_classes": true
         }
       ]
@@ -2767,36 +2896,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
-          "time_in": "7:00 AM",
           "time_out": "2:00 PM",
           "hours": 7,
           "has_classes": true
         },
         {
-          "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 8,
-          "has_classes": true
-        },
-        {
-          "day": "Thursday",
+          "day": "Tuesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
-          "day": "Friday",
+          "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "5:00 PM",
           "hours": 10,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -2809,37 +2938,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 7,
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -2852,36 +2981,36 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 10,
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "9:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "2:00 PM",
-          "hours": 5,
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "8:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "5:00 PM",
           "hours": 10,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "3:00 PM",
-          "hours": 6,
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "5:00 PM",
           "hours": 10,
           "has_classes": true
         }
@@ -2896,36 +3025,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "5:30 PM",
+          "hours": 10.5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 5,
+          "time_in": "5:00 PM",
+          "time_out": "7:30 PM",
+          "hours": 2.5,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "5:30 PM",
+          "hours": 10.5,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "7:30 PM",
+          "hours": 12.5,
           "has_classes": true
         }
       ]
@@ -2981,37 +3110,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "12:00 PM",
-          "hours": 5,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -3025,15 +3154,15 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -3045,16 +3174,16 @@
         },
         {
           "day": "Thursday",
-          "time_in": "8:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "3:00 PM",
-          "hours": 7,
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -3075,14 +3204,14 @@
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "11:00 AM",
+          "time_out": "7:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -3091,13 +3220,13 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "11:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -3113,14 +3242,14 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Wednesday",
@@ -3134,7 +3263,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Friday",
@@ -3154,36 +3283,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "8:00 PM",
+          "hours": 13,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:30 PM",
+          "hours": 11.5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_out": "8:00 PM",
+          "hours": 13,
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:30 PM",
+          "hours": 11.5,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "8:00 PM",
+          "hours": 13,
           "has_classes": true
         }
       ]
@@ -3240,36 +3369,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "8:00 AM",
+          "hours": 1,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "9:00 AM",
+          "hours": 2,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         }
       ]
@@ -3296,8 +3425,8 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "11:00 AM",
+          "time_out": "7:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -3310,8 +3439,8 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -3335,26 +3464,69 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 138,
+      "faculty_name": "Jonilyn Dabalos",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "11:00 AM",
+          "time_out": "6:30 PM",
+          "hours": 7.5,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "11:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "11:00 AM",
+          "time_out": "6:30 PM",
+          "hours": 7.5,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "11:00 AM",
+          "time_out": "7:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -3376,8 +3548,8 @@
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:30 PM",
+          "hours": 7.5,
           "has_classes": true
         },
         {
@@ -3390,8 +3562,8 @@
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "3:30 PM",
+          "hours": 8.5,
           "has_classes": true
         },
         {
@@ -3411,30 +3583,30 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "6:00 PM",
           "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "8:00 AM",
-          "time_out": "10:00 AM",
-          "hours": 2,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
@@ -3455,36 +3627,79 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "9:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
           "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "10:00 AM",
-          "hours": 3,
+          "time_in": "10:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "8:00 PM",
-          "hours": 13,
+          "time_out": "5:00 PM",
+          "hours": 10,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 139,
+      "faculty_name": "Jumar Buladaco",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "2:40 PM",
+          "hours": 7.666666666666668,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 8.5,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 8.5,
           "has_classes": true
         }
       ]
@@ -3525,8 +3740,8 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -3541,28 +3756,71 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 12,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 10,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
           "time_out": "4:00 PM",
           "hours": 9,
           "has_classes": true
         },
         {
-          "day": "Tuesday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 11,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 151,
+      "faculty_name": "Keenly Pasion",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
-          "day": "Wednesday",
-          "time_in": "8:00 AM",
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
           "time_out": "2:00 PM",
-          "hours": 6,
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
           "hours": 7,
           "has_classes": true
         },
@@ -3627,8 +3885,8 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -3641,22 +3899,22 @@
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -3669,9 +3927,9 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -3684,15 +3942,15 @@
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -3713,36 +3971,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
-          "has_classes": true
-        },
-        {
-          "day": "Wednesday",
-          "time_in": "7:00 AM",
           "time_out": "2:00 PM",
           "hours": 7,
           "has_classes": true
         },
         {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 5,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "9:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 10,
+          "has_classes": true
+        },
+        {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
+          "time_out": "8:00 PM",
+          "hours": 13,
           "has_classes": true
         }
       ]
@@ -3841,37 +4099,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_out": "6:00 PM",
+          "hours": 11,
+          "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "1:00 PM",
+          "time_out": "9:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "time_out": "5:00 PM",
+          "hours": 10,
+          "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -3884,36 +4142,36 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
+          "time_in": "8:00 AM",
           "time_out": "3:00 PM",
-          "hours": 8,
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9.0,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": false
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9.0,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -3937,7 +4195,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
@@ -3951,7 +4209,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
@@ -3971,36 +4229,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "1:00 PM",
+          "hours": 6,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "1:00 PM",
+          "hours": 6,
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -4021,9 +4279,9 @@
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
@@ -4037,13 +4295,13 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -4056,8 +4314,8 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -4066,26 +4324,26 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -4152,21 +4410,21 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
@@ -4185,37 +4443,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9.0,
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8.0,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": false
         },
         {
-          "day": "Wednesday",
+          "day": "Thursday",
           "time_in": "9:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 7.0,
+          "time_out": "5:00 PM",
+          "hours": 8.0,
           "has_classes": true
         },
         {
-          "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": false
-        },
-        {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9.0,
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 8.0,
           "has_classes": true
         }
       ]
@@ -4228,17 +4486,17 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 9,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": false
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
         },
         {
           "day": "Wednesday",
@@ -4252,12 +4510,12 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -4271,8 +4529,8 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "10:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -4281,26 +4539,26 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -4315,8 +4573,8 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
@@ -4329,22 +4587,22 @@
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:30 PM",
+          "hours": 9.5,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -4357,37 +4615,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "5:00 PM",
           "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
+          "time_in": "10:00 AM",
           "time_out": "2:00 PM",
-          "hours": 7,
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "5:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -4436,6 +4694,92 @@
       ]
     },
     {
+      "faculty_id": 180,
+      "faculty_name": "Mayka Dumagil",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "8:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 10.0,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "11:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 7.0,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7.0,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "12:00 PM",
+          "time_out": "6:00 PM",
+          "hours": 6.0,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 10.0,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 172,
+      "faculty_name": "Michael Gatchalian",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "11:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 10,
+          "has_classes": true
+        }
+      ]
+    },
+    {
       "faculty_id": 171,
       "faculty_name": "Michel Esmalla",
       "employment_type": "Full Time",
@@ -4443,36 +4787,36 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "1:00 PM",
-          "time_out": "9:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 8.0,
-          "has_classes": true
-        },
-        {
-          "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8.0,
+          "has_classes": true
+        },
+        {
           "day": "Thursday",
-          "time_in": "9:00 AM",
-          "time_out": "5:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "1:00 PM",
-          "time_out": "9:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8.0,
           "has_classes": true
         }
@@ -4486,15 +4830,15 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "10:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "12:00 PM",
+          "time_out": "8:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
@@ -4502,20 +4846,20 @@
           "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "hours": 8.0,
+          "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "12:00 PM",
+          "time_out": "8:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "10:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8.0,
           "has_classes": true
         }
@@ -4532,7 +4876,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Tuesday",
@@ -4572,37 +4916,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "8:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 7,
+          "time_in": "7:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "6:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -4625,28 +4969,28 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         }
       ]
     },
@@ -4658,17 +5002,17 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "10:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 8.0,
-          "has_classes": true
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "hours": 8.0,
+          "has_classes": true
         },
         {
           "day": "Wednesday",
@@ -4681,15 +5025,15 @@
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
+          "hours": 8.0,
+          "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "10:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 8.0,
-          "has_classes": true
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         }
       ]
     },
@@ -4702,36 +5046,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": false
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
-          "has_classes": false
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -4744,37 +5088,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "10:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "3:00 PM",
+          "time_out": "6:00 PM",
+          "hours": 3.0,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "8:00 PM",
+          "hours": 13,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_in": "3:00 PM",
+          "time_out": "6:00 PM",
+          "hours": 3.0,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         }
       ]
@@ -4788,36 +5132,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_out": "8:00 PM",
+          "hours": 13,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "8:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 7,
+          "time_in": "1:00 PM",
+          "time_out": "6:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -4831,36 +5175,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "9:00 AM",
+          "hours": 2,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "9:00 AM",
+          "hours": 2,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -4873,38 +5217,81 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "9:00 AM",
-          "time_out": "9:00 PM",
-          "hours": 12.0,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
-          "has_classes": false
+          "time_out": "3:00 PM",
+          "hours": 8.0,
+          "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "4:00 PM",
-          "time_out": "9:00 PM",
-          "hours": 5.0,
-          "has_classes": true
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "12:00 PM",
-          "hours": 5,
-          "has_classes": false
+          "time_out": "3:00 PM",
+          "hours": 8.0,
+          "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "9:00 AM",
-          "time_out": "9:00 PM",
-          "hours": 12.0,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8.0,
           "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 196,
+      "faculty_name": "Queen Gado",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "8:00 AM",
+          "time_out": "4:30 PM",
+          "hours": 8.5,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "4:30 PM",
+          "hours": 7.5,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
         }
       ]
     },
@@ -4917,36 +5304,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "10:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 2,
           "has_classes": true
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_in": "10:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 1,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "9:00 PM",
+          "hours": 14,
           "has_classes": true
         }
       ]
@@ -4959,6 +5346,135 @@
       "schedule": [
         {
           "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 10,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": false
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 12,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 12,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 203,
+      "faculty_name": "Ray Gumapit",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 10,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 202,
+      "faculty_name": "Reban Fajardo",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 8.5,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:30 PM",
+          "hours": 7.5,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 210,
+      "faculty_name": "Renel Jugarap",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
           "time_in": "8:00 AM",
           "time_out": "6:00 PM",
           "hours": 10,
@@ -4967,14 +5483,14 @@
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "1:00 PM",
-          "hours": 6,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "11:00 AM",
-          "time_out": "6:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
           "hours": 7,
           "has_classes": true
         },
@@ -4988,94 +5504,8 @@
         {
           "day": "Friday",
           "time_in": "8:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 10,
-          "has_classes": true
-        }
-      ]
-    },
-    {
-      "faculty_id": 203,
-      "faculty_name": "Ray Gumapit",
-      "employment_type": "Full Time",
-      "weekly_hours": 40,
-      "schedule": [
-        {
-          "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "8:00 PM",
-          "hours": 12,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
-          "has_classes": true
-        },
-        {
-          "day": "Wednesday",
-          "time_in": "10:00 AM",
-          "time_out": "11:00 AM",
-          "hours": 1,
-          "has_classes": true
-        },
-        {
-          "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "6:00 PM",
-          "hours": 11,
-          "has_classes": true
-        },
-        {
-          "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 11,
-          "has_classes": true
-        }
-      ]
-    },
-    {
-      "faculty_id": 210,
-      "faculty_name": "Renel Jugarap",
-      "employment_type": "Full Time",
-      "weekly_hours": 40,
-      "schedule": [
-        {
-          "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
-        },
-        {
-          "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
-        },
-        {
-          "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
-        },
-        {
-          "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": false
-        },
-        {
-          "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "5:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -5088,9 +5518,9 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 8,
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -5102,9 +5532,9 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
@@ -5116,9 +5546,9 @@
         },
         {
           "day": "Friday",
-          "time_in": "9:00 AM",
+          "time_in": "7:00 AM",
           "time_out": "5:00 PM",
-          "hours": 8,
+          "hours": 10,
           "has_classes": true
         }
       ]
@@ -5191,7 +5621,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
@@ -5218,36 +5648,36 @@
         {
           "day": "Monday",
           "time_in": "8:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 7,
+          "time_out": "8:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "9:00 AM",
+          "time_in": "1:00 PM",
           "time_out": "7:00 PM",
-          "hours": 10.0,
+          "hours": 6.0,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 6,
+          "time_in": "7:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 5,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "9:00 AM",
+          "time_in": "1:00 PM",
           "time_out": "7:00 PM",
-          "hours": 10.0,
+          "hours": 6.0,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "8:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 7,
+          "time_out": "7:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -5288,8 +5718,8 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -5304,36 +5734,79 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9.0,
+          "time_out": "9:00 PM",
+          "hours": 14.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "11:00 AM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 7.0,
+          "time_in": "7:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "11:00 AM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9.0,
+          "time_out": "9:00 PM",
+          "hours": 14.0,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 215,
+      "faculty_name": "Rogelio Masangkay",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 11,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 4,
+          "has_classes": false
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 10,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -5346,9 +5819,9 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -5360,9 +5833,9 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -5374,9 +5847,9 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_in": "8:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 9,
           "has_classes": true
         }
       ]
@@ -5404,21 +5877,21 @@
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "8:00 AM",
-          "time_out": "4:00 PM",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -5432,23 +5905,23 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "11:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "9:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
@@ -5456,6 +5929,49 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 9,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 218,
+      "faculty_name": "Rosebud Padios",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "11:00 AM",
+          "time_out": "7:30 PM",
+          "hours": 8.5,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Thursday",
+          "time_in": "12:00 PM",
+          "time_out": "7:30 PM",
+          "hours": 7.5,
           "has_classes": true
         },
         {
@@ -5463,7 +5979,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         }
       ]
     },
@@ -5475,8 +5991,8 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -5489,9 +6005,9 @@
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "1:00 PM",
+          "time_out": "9:00 PM",
+          "hours": 8.0,
           "has_classes": true
         },
         {
@@ -5503,9 +6019,9 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "1:00 PM",
+          "time_out": "9:00 PM",
+          "hours": 8.0,
           "has_classes": true
         }
       ]
@@ -5562,22 +6078,22 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 7,
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -5590,8 +6106,8 @@
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -5604,36 +6120,36 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "11:00 AM",
+          "time_out": "7:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "11:00 AM",
+          "time_out": "7:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8.0,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "11:00 AM",
+          "time_out": "7:00 PM",
           "hours": 8.0,
           "has_classes": true
         }
@@ -5647,37 +6163,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 12,
+          "time_in": "8:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
-          "time_in": "7:00 AM",
+          "time_in": "10:00 AM",
           "time_out": "2:00 PM",
-          "hours": 7,
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "9:00 AM",
-          "time_out": "7:00 PM",
-          "hours": 10,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Thursday",
-          "time_in": "7:00 AM",
+          "time_in": "11:00 AM",
           "time_out": "3:00 PM",
-          "hours": 8,
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
+          "time_in": "8:00 AM",
           "time_out": "7:00 PM",
-          "hours": 12,
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -5690,37 +6206,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12.0,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9.0,
+          "time_out": "11:00 AM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "11:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 9.0,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9.0,
+          "time_out": "10:00 AM",
+          "hours": 3,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12.0,
           "has_classes": true
         }
       ]
@@ -5750,7 +6266,7 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Thursday",
@@ -5791,8 +6307,8 @@
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         },
         {
@@ -5805,8 +6321,8 @@
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_out": "3:00 PM",
+          "hours": 8,
           "has_classes": true
         }
       ]
@@ -5819,23 +6335,23 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "1:00 PM",
+          "time_out": "5:00 PM",
+          "hours": 4,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "2:00 PM",
+          "hours": 7,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
@@ -5847,9 +6363,9 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_in": "8:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 11,
           "has_classes": true
         }
       ]
@@ -5898,8 +6414,8 @@
       ]
     },
     {
-      "faculty_id": 235,
-      "faculty_name": "Stacey Monta",
+      "faculty_id": 240,
+      "faculty_name": "Sol Sotomil",
       "employment_type": "Full Time",
       "weekly_hours": 40,
       "schedule": [
@@ -5907,6 +6423,49 @@
           "day": "Monday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
+          "hours": 8.0,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": false
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8.0,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 235,
+      "faculty_name": "Stacey Monta",
+      "employment_type": "Full Time",
+      "weekly_hours": 40,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
           "hours": 8,
           "has_classes": true
         },
@@ -5933,8 +6492,8 @@
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
           "hours": 8,
           "has_classes": true
         }
@@ -5948,37 +6507,37 @@
       "schedule": [
         {
           "day": "Monday",
-          "time_in": "7:00 AM",
-          "time_out": "4:00 PM",
-          "hours": 9,
+          "time_in": "8:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 10,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_out": "10:00 AM",
+          "hours": 3,
           "has_classes": true
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "2:00 PM",
-          "hours": 7,
+          "time_in": "9:00 AM",
+          "time_out": "9:00 PM",
+          "hours": 12,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "10:00 AM",
+          "hours": 3,
           "has_classes": true
         },
         {
           "day": "Friday",
-          "time_in": "7:00 AM",
-          "time_out": "5:00 PM",
-          "hours": 10,
+          "time_in": "8:00 AM",
+          "time_out": "8:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -6001,21 +6560,21 @@
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Wednesday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": false
+          "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
           "time_out": "3:00 PM",
           "hours": 8,
-          "has_classes": true
+          "has_classes": false
         },
         {
           "day": "Friday",
@@ -6035,36 +6594,36 @@
         {
           "day": "Monday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "4:00 PM",
+          "hours": 9,
           "has_classes": true
         },
         {
           "day": "Tuesday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "12:00 PM",
+          "hours": 5,
+          "has_classes": false
         },
         {
           "day": "Wednesday",
-          "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
+          "time_in": "10:00 AM",
+          "time_out": "6:00 PM",
           "hours": 8,
           "has_classes": true
         },
         {
           "day": "Thursday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
-          "has_classes": true
+          "time_out": "1:00 PM",
+          "hours": 6,
+          "has_classes": false
         },
         {
           "day": "Friday",
           "time_in": "7:00 AM",
-          "time_out": "3:00 PM",
-          "hours": 8,
+          "time_out": "7:00 PM",
+          "hours": 12,
           "has_classes": true
         }
       ]
@@ -6113,225 +6672,5 @@
       ]
     }
   ],
-  "faculty_with_multiple_branches": {
-    "Carylmae Balmores": {
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Tuesday",
-          "Thursday",
-          "Friday"
-        ],
-        "courses": [
-          "PE2",
-          "PE2 NEW"
-        ],
-        "total_meetings": 8
-      },
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Monday",
-          "Wednesday",
-          "Friday"
-        ],
-        "courses": [
-          "PE2 NEW"
-        ],
-        "total_meetings": 3
-      }
-    },
-    "Analiza Pana": {
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
-        "courses": [
-          "MATH 121",
-          "Math 111"
-        ],
-        "total_meetings": 12
-      },
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Monday",
-          "Wednesday",
-          "Friday"
-        ],
-        "courses": [
-          "Math 111"
-        ],
-        "total_meetings": 3
-      }
-    },
-    "Jerson Viagedor": {
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
-        "courses": [
-          "IT 121",
-          "TLE 121"
-        ],
-        "total_meetings": 11
-      },
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Monday",
-          "Wednesday",
-          "Friday"
-        ],
-        "courses": [
-          "IT 121"
-        ],
-        "total_meetings": 3
-      }
-    },
-    "Joan Alipoyo": {
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Wednesday",
-          "Friday"
-        ],
-        "courses": [
-          "MB 121"
-        ],
-        "total_meetings": 5
-      },
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Tuesday",
-          "Thursday"
-        ],
-        "courses": [
-          "MB 121"
-        ],
-        "total_meetings": 2
-      }
-    },
-    "Moses Albarico": {
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
-        "courses": [
-          "Chem 100"
-        ],
-        "total_meetings": 5
-      },
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Tuesday",
-          "Thursday"
-        ],
-        "courses": [
-          "Chem 100"
-        ],
-        "total_meetings": 2
-      }
-    },
-    "Ronald Decano": {
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Wednesday",
-          "Friday"
-        ],
-        "courses": [
-          "Math"
-        ],
-        "total_meetings": 5
-      },
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Tuesday",
-          "Thursday"
-        ],
-        "courses": [
-          "Math"
-        ],
-        "total_meetings": 2
-      }
-    },
-    "Claire Garcia": {
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Monday",
-          "Wednesday",
-          "Friday"
-        ],
-        "courses": [
-          "Eng 111"
-        ],
-        "total_meetings": 3
-      },
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
-        "courses": [
-          "Eng 111",
-          "LIT 221"
-        ],
-        "total_meetings": 11
-      }
-    },
-    "Edison Molina": {
-      "Main": {
-        "branch_id": 1,
-        "days": [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday"
-        ],
-        "courses": [
-          "PHYSICS121"
-        ],
-        "total_meetings": 5
-      },
-      "Samal": {
-        "branch_id": 5,
-        "days": [
-          "Monday",
-          "Friday"
-        ],
-        "courses": [
-          "PHYSICS121"
-        ],
-        "total_meetings": 2
-      }
-    }
-  }
+  "faculty_with_multiple_branches": {}
 }

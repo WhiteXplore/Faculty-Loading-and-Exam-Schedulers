@@ -403,10 +403,6 @@
                     :checked="
                       form.interbranchCampus.includes(branch.college_branch_id)
                     "
-                    :disabled="
-                      form.interbranchCampus.length >= 2 &&
-                      !form.interbranchCampus.includes(branch.college_branch_id)
-                    "
                     @change="toggleBranch(branch.college_branch_id)"
                   />
                   {{ branch.college_branch_name }}
@@ -414,7 +410,7 @@
               </div>
             </div>
 
-            <p class="text-gray-500">You may select up to 2 campuses only.</p>
+            <p class="text-gray-500">You can select multiple campuses.</p>
 
             <!-- Selected Tags -->
             <div
@@ -617,7 +613,7 @@
 
 <script>
 import icon from "@/assets/icon.vue";
-// import { toast } from "vue3-toastify";
+import { toast } from "vue3-toastify";
 import { useFetchDataStore } from "../../../../store/fetch-data-store";
 import { mapState } from "pinia";
 import axios from "axios";
@@ -803,12 +799,6 @@ export default {
 
       return `${hours.toString().padStart(2, "0")}:${minutes}`;
     },
-    limitInterbranch() {
-      if (this.form.interbranchCampus.length > 2) {
-        this.form.interbranchCampus.pop();
-        alert("You can only select up to 2 campuses.");
-      }
-    },
 
     toggleBranch(id) {
       const index = this.form.interbranchCampus.indexOf(id);
@@ -816,14 +806,9 @@ export default {
       if (index > -1) {
         this.form.interbranchCampus.splice(index, 1);
       } else {
-        if (this.form.interbranchCampus.length >= 2) {
-          alert("Maximum of 2 campuses only.");
-          return;
-        }
         this.form.interbranchCampus.push(id);
       }
     },
-
     removeBranch(id) {
       this.form.interbranchCampus = this.form.interbranchCampus.filter(
         (b) => b !== id,
@@ -838,6 +823,7 @@ export default {
     async loadUsers() {
       const store = useFetchDataStore();
       await store.fetchRawUsers();
+      await store.fetchFacultyBranch();
     },
     formatTo12(time) {
       const [hour, minute] = time.split(":");
@@ -851,7 +837,7 @@ export default {
     openAddModal(user) {
       this.selectedFaculty = user;
 
-      // Reset form
+      // Reset form first
       this.form = {
         morningStart: "",
         morningEnd: "",
@@ -860,11 +846,15 @@ export default {
         interbranchCampus: [],
       };
 
-      // Populate existing preferred time
+      // =========================
+      // ✅ 1. POPULATE PREFERRED TIME
+      // =========================
       if (user.preffered_time) {
         const parts = user.preffered_time.split(",");
+
         parts.forEach((slot, index) => {
           const [start, end] = slot.trim().split(" - ");
+
           const start24 = this.convertTo24(start);
           const end24 = this.convertTo24(end);
 
@@ -878,12 +868,29 @@ export default {
         });
       }
 
-      // Populate inter-branch campuses from your store
+      // =========================
+      // ✅ 2. POPULATE INTER-BRANCH (FIXED)
+      // =========================
       this.form.interbranchCampus = (this.faculty_branch || [])
         .filter((fb) => fb.user.id === user.id)
         .map((fb) => fb.collegeBranch.college_branch_id);
 
-      this.updateMode = "";
+      // =========================
+      // ✅ 3. AUTO SELECT MODE (OPTIONAL BUT BETTER)
+      // =========================
+      if (user.preffered_time && this.form.interbranchCampus.length) {
+        this.updateMode = "all";
+      } else if (user.preffered_time) {
+        this.updateMode = "preffered_time";
+      } else if (this.form.interbranchCampus.length) {
+        this.updateMode = "interbranch";
+      } else {
+        this.updateMode = "";
+      }
+
+      // =========================
+      // ✅ 4. OPEN MODAL
+      // =========================
       this.showAddModal = true;
     },
     toggleView(user) {
@@ -938,7 +945,9 @@ export default {
             { withCredentials: true },
           );
 
-          alert("Preferred time updated successfully!");
+          toast.success("Preferred time updated successfully!");
+          this.showAddModal = false;
+          await this.loadUsers();
         }
 
         // ----- 2️⃣ Only Inter-branch -----
@@ -949,7 +958,11 @@ export default {
           }
 
           // Delete existing faculty branch records for this user
-          for (const fb of this.selectedFaculty.facultyBranches || []) {
+          const existingBranches = (this.faculty_branch || []).filter(
+            (fb) => fb.user.id === userId,
+          );
+
+          for (const fb of existingBranches) {
             await axios.delete(
               `${process.env.VUE_APP_API_BASE_URL}/faculty-branch/${fb.faculty_branch_id}`,
               { withCredentials: true },
@@ -965,7 +978,9 @@ export default {
             );
           }
 
-          alert("Inter-branch campuses updated successfully!");
+          toast.success("Inter branch updated successfully!");
+          this.showAddModal = false;
+          await this.loadUsers();
         }
 
         // ----- 3️⃣ Both Preferred Time and Inter-branch -----
@@ -998,9 +1013,11 @@ export default {
             );
           }
 
-          alert(
-            "Preferred time and inter-branch campuses updated successfully!",
+          toast.success(
+            "Preferred time and Inter Branch updated successfully!",
           );
+          this.showAddModal = false;
+          await this.loadUsers();
         }
 
         // Reload users after update
