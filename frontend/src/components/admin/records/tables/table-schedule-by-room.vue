@@ -118,9 +118,25 @@
                     <div
                       v-for="item in getScheduleForCell(slot, day, room)"
                       :key="item.id"
-                      class="relative rounded-lg p-1 text-[11px] bg-yellow-100 border border-yellow-400 w-full"
+                      class="absolute inset-x-1 rounded-lg p-1 text-[11px] relative"
+                      :style="{
+                        ...getProgramColor(item.program_code),
+                        height: getBlockHeight(item) + 'px',
+                        top: getBlockTop(item, slot) + 'px',
+                      }"
                     >
-                      <p class="font-semibold">{{ item.course_code }}</p>
+                      <!-- 🔥 BADGE -->
+                      <span
+                        v-if="getRoomBadge(room)"
+                        :class="[
+                          'absolute top-1 left-1 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
+                          getRoomBadge(room).class,
+                        ]"
+                      >
+                        {{ getRoomBadge(room).label }}
+                      </span>
+
+                      <p class="font-semibold mt-3">{{ item.course_code }}</p>
                       <p class="text-gray-600">{{ item.faculty_name }}</p>
                       <p class="text-gray-600">
                         {{ item.program_code }} - {{ item.set_name }}
@@ -143,11 +159,32 @@
                       :key="item.id"
                       class="absolute inset-x-1 rounded-lg p-1 text-[11px]"
                       :style="{
-                        ...getRoomColor(room),
+                        ...getProgramColor(item.program_code),
                         height: getBlockHeight(item) + 'px',
                         top: getBlockTop(item, slot) + 'px',
                       }"
                     >
+                      <span
+                        v-if="getRoomBadge(room)"
+                        :class="[
+                          'absolute top-1 right-1 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
+                          getRoomBadge(room).class,
+                        ]"
+                      >
+                        {{ getRoomBadge(room).label }}
+                      </span>
+
+                      <!-- ✅ INSTITUTE BADGE (FIXED) -->
+                      <span
+                        v-if="getInstituteBadge(item.program_code)"
+                        :class="[
+                          'absolute top-1 right-9 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
+                          getInstituteBadge(item.program_code).class,
+                        ]"
+                      >
+                        {{ getInstituteBadge(item.program_code).label }}
+                      </span>
+
                       <p class="font-semibold">{{ item.course_code }}</p>
                       <p class="text-gray-600">{{ item.faculty_name }}</p>
                       <p class="text-gray-600">
@@ -366,7 +403,8 @@ export default {
       showConflictModal: false,
       conflictRecords: [],
       selectedSchedule: null,
-
+      programs: [],
+      programMap: {},
       days: [
         "Monday",
         "Tuesday",
@@ -398,6 +436,63 @@ export default {
   },
 
   methods: {
+    getRoomBadge(room) {
+      const type = this.roomTypeMap[room];
+
+      if (type === "Lecture") {
+        return {
+          label: "Lec",
+          class: "bg-green-600 text-white",
+        };
+      }
+
+      if (type === "Laboratory") {
+        return {
+          label: "Lab",
+          class: "bg-blue-600 text-white",
+        };
+      }
+
+      return null;
+    },
+    getInstituteBadge(programCode) {
+      const instituteId = this.programMap[programCode];
+      const instituteName = this.instituteMap[instituteId];
+
+      if (!instituteName) return null;
+
+      const colors = {
+        63: "bg-blue-300 text-white",
+        64: "bg-purple-600 text-white",
+        65: "bg-blue-600 text-white",
+      };
+
+      return {
+        label: instituteName,
+        class: colors[instituteId] || "bg-gray-500 text-white",
+      };
+    },
+    getProgramColor(programCode) {
+      const instituteId = this.programMap[programCode];
+
+      const instituteColors = {
+        // IAAS -
+        63: "#76D2DB",
+        // IC - Violet
+        64: "#8100D1",
+        // ILEGG
+        65: "#3B82F6",
+        // ITED
+        66: "#3B82F6",
+      };
+
+      const color = instituteColors[instituteId];
+
+      return {
+        background: color ? color + "90" : "#DCFCE7",
+        border: `1px solid ${color || "#22C55E"}`,
+      };
+    },
     changePage(page) {
       this.currentPage = page;
     },
@@ -541,9 +636,30 @@ export default {
         return map;
       }, {});
     },
+    async fetchPrograms() {
+      const store = useFetchDataStore();
+      await store.fetchPrograms();
+
+      this.programs = store.programs || [];
+
+      // ✅ program_code -> institute_id
+      this.programMap = this.programs.reduce((map, p) => {
+        map[p.program_code] = p.institute_id;
+        return map;
+      }, {});
+
+      // ✅ institute_id -> institute_name (FIXED 🔥)
+      this.instituteMap = this.programs.reduce((map, p) => {
+        if (p.institute) {
+          map[p.institute.institute_id] = p.institute.institute_code;
+        }
+        return map;
+      }, {});
+    },
   },
 
   async mounted() {
+    await this.fetchPrograms();
     await this.fetchRooms();
     await this.loadSchedules();
   },
