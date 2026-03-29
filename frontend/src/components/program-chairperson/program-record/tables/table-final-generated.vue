@@ -717,10 +717,19 @@ export default {
             }
           });
 
+          // result[faculty] = {
+          //   lectureUnits: totalLecture,
+          //   labUnits: totalLab,
+          //   totalUnits: totalLecture + totalLab,
+          // };
+          const lectureUnits = Number(totalLecture.toFixed(2));
+          const labUnits = Number(totalLab.toFixed(2));
+          const totalUnits = Number((lectureUnits + labUnits).toFixed(2));
+
           result[faculty] = {
-            lectureUnits: totalLecture,
-            labUnits: totalLab,
-            totalUnits: totalLecture + totalLab,
+            lectureUnits,
+            labUnits,
+            totalUnits,
           };
         },
       );

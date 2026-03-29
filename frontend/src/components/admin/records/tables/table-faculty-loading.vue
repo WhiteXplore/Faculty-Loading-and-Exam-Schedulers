@@ -778,24 +778,27 @@ export default {
             );
             if (!course) return;
 
-            const duration = Number(sched.duration || 0); // e.g., 1.5
+            const duration = Number(sched.duration || 0);
+
             if (sched.type === "Lecture") {
-              // Standard lecture assumed 3 hours
               const unitsPerSlot =
                 (duration / 3) * Number(course.course_lec || 0);
               totalLecture += unitsPerSlot;
             } else if (sched.type === "Laboratory") {
-              // Standard lab assumed 3 hours
               const unitsPerSlot =
                 (duration / 3) * Number(course.course_lab || 0);
               totalLab += unitsPerSlot;
             }
           });
 
+          const lectureUnits = Number(totalLecture.toFixed(2));
+          const labUnits = Number(totalLab.toFixed(2));
+          const totalUnits = Number((lectureUnits + labUnits).toFixed(2));
+
           result[faculty] = {
-            lectureUnits: totalLecture,
-            labUnits: totalLab,
-            totalUnits: totalLecture + totalLab,
+            lectureUnits,
+            labUnits,
+            totalUnits,
           };
         },
       );
