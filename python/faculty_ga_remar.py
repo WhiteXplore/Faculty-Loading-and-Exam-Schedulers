@@ -17,7 +17,7 @@ DB_USER = "root"
 DB_PASS = "root"
 DB_HOST = "127.0.0.2"
 DB_PORT = 3306
-DB_NAME = "dnsc_class_scheduler_ga6"
+DB_NAME = "dnsc_class_scheduler_ga3"
 
 engine = create_engine(
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
@@ -40,6 +40,7 @@ metadata = MetaData()
 DAY_PATTERNS = {
     "TTH": ["Tuesday", "Thursday"],
     "MF": ["Monday", "Friday"],
+    "WF": ["Wednesday", "Friday"],
     "MWF": ["Monday", "Wednesday", "Friday"],
 }
 # Standalone fallback day used when no pattern can accommodate the class
@@ -86,6 +87,13 @@ FAR_BRANCH_ROUND_TRIP_LIMIT = 480  # minutes
 
 # Main branch ID — faculty can teach at Main + at most 1 other branch across the week
 MAIN_BRANCH_ID = 1
+
+# Branch-specific IDs for special scheduling rules
+SAMAL_BRANCH_ID = 5       # Samal: full-day f2f, vacant time filled with online Main classes
+DAPECOL_BRANCH_ID = 3     # DAPECOL: whole-day f2f, no online, compressed curriculum
+
+# IAAS institute ID — lab and lecture rooms are interchangeable for this institute
+IAAS_INSTITUTE_ID = 63
 
 
 def get_balanced_patterns(day_pattern_tracker, weekly_hours):
@@ -436,16 +444,24 @@ def is_branch_available(faculty_id, day, branch_id, faculty_branch_tracker, far_
     tracker = faculty_branch_tracker[faculty_id]
 
     # Rule 3: Far branch — entire day must be at that branch only
+    # Exception: Samal allows online Main classes on the same day (handled at scheduling level)
     if day in tracker:
         existing_branches = tracker[day]
-        # If the new class is at a far branch, no other branch can exist that day
+        # If the new class is at a far branch, check if mixing is allowed
         if branch_id in far_branch_set:
+            rules = get_branch_schedule_rules(branch_id)
             for eb in existing_branches:
                 if eb != branch_id:
+                    # Samal allows Main on same day (online fill)
+                    if rules["allow_online_main_fill"] and eb == MAIN_BRANCH_ID:
+                        continue
                     return False
-        # If the day already has a far branch, only that branch is allowed
+        # If the day already has a far branch, only that branch (+ allowed fills) is allowed
         for eb in existing_branches:
             if eb in far_branch_set and eb != branch_id:
+                rules = get_branch_schedule_rules(eb)
+                if rules["allow_online_main_fill"] and branch_id == MAIN_BRANCH_ID:
+                    continue
                 return False
 
     # Rule 2: Max 1 non-Main branch per week
@@ -506,6 +522,36 @@ def update_branch_tracker(faculty_id, days, branch_id, faculty_branch_tracker):
         if day not in faculty_branch_tracker[faculty_id]:
             faculty_branch_tracker[faculty_id][day] = set()
         faculty_branch_tracker[faculty_id][day].add(branch_id)
+
+
+def get_branch_schedule_rules(branch_id):
+    """
+    Return branch-specific scheduling rules as a dict.
+
+    Rules:
+    - force_f2f: If True, ALL meetings at this branch must be face-to-face (no online)
+    - allow_online_main_fill: If True, online classes from Main can fill vacant slots
+      on the same day (used for Samal — faculty stays on-site but can teach Main online)
+    - full_day_branch: If True, the faculty stays the whole day at this branch
+    """
+    if branch_id == SAMAL_BRANCH_ID:
+        return {
+            "force_f2f": True,
+            "allow_online_main_fill": True,
+            "full_day_branch": True,
+        }
+    elif branch_id == DAPECOL_BRANCH_ID:
+        return {
+            "force_f2f": True,
+            "allow_online_main_fill": False,
+            "full_day_branch": True,
+        }
+    else:
+        return {
+            "force_f2f": False,
+            "allow_online_main_fill": False,
+            "full_day_branch": False,
+        }
 
 
 def get_travel_gap_minutes(building1, travel1, building2, travel2):
@@ -639,17 +685,21 @@ def filter_rooms_by_type_and_institute(rooms, course_type, institute_id, branch_
     Filter rooms by type (Lecture/Laboratory), institute, and branch.
     - Lecture rooms: available to ALL institutes (no institute filter)
     - Laboratory rooms: strictly filtered by institute ownership
+    - IAAS (institute_id=IAAS_INSTITUTE_ID): Lab and Lecture rooms are interchangeable
     - All rooms: must belong to the same college branch as the class
     """
+    is_iaas = (institute_id == IAAS_INSTITUTE_ID)
     filtered = []
     for room in rooms:
         room_type = room.get("room_type", "").strip()
         room_institute = room.get("institute_id")
         room_branch = room.get("branch_id")
 
-        # Check room type match (case-insensitive)
-        if room_type.lower() != course_type.lower():
-            continue
+        # IAAS: lab and lecture rooms are interchangeable — skip type filter
+        # For all other institutes: room type must match course type
+        if not is_iaas:
+            if room_type.lower() != course_type.lower():
+                continue
 
         # All rooms must match the class's college branch
         if branch_id is not None:
@@ -658,10 +708,17 @@ def filter_rooms_by_type_and_institute(rooms, course_type, institute_id, branch_
 
         # Laboratory rooms are strictly owned by their institute
         # Lecture rooms are open to all institutes
-        if course_type.lower() == "laboratory":
-            if institute_id is not None and room_institute is not None:
-                if room_institute != institute_id:
+        # IAAS: all rooms owned by IAAS are available (both types)
+        if is_iaas:
+            if room_institute is not None and room_institute != institute_id:
+                # For IAAS, also allow lecture rooms (open to all) even from other institutes
+                if room_type.lower() == "laboratory":
                     continue
+        else:
+            if course_type.lower() == "laboratory":
+                if institute_id is not None and room_institute is not None:
+                    if room_institute != institute_id:
+                        continue
 
         filtered.append(room)
 
@@ -1247,31 +1304,36 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                 continue
 
             # --- Per-day face-to-face / online assignment ---
-            # Decide how many days in this pattern are f2f (standard rounding)
-            n = len(pattern_days)
-            num_f2f = int(n * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
-            num_f2f = max(0, min(n, num_f2f))
+            # Branch-specific rules override the default f2f/online logic
+            branch_rules = get_branch_schedule_rules(class_branch_id)
 
-            # When hours are uneven, assign longer-hour days to f2f so more
-            # contact time is spent face-to-face (e.g. [2h,1h] → 2h=f2f, 1h=online)
-            has_uneven_hours = len(set(hours_list)) > 1
-            if has_uneven_hours and num_f2f < n:
-                # Pair each day with its hours, sort by hours descending so
-                # the days with the most hours get f2f first
-                day_hour_pairs = list(zip(pattern_days, hours_list))
-                day_hour_pairs.sort(key=lambda dh: (-dh[1], day_f2f_tracker.get(dh[0], 0), random.random()))
-                f2f_day_set = set(d for d, _ in day_hour_pairs[:num_f2f])
+            if branch_rules["force_f2f"]:
+                # Samal / DAPECOL: ALL days must be face-to-face
+                num_f2f = n = len(pattern_days)
+                f2f_day_set = set(pattern_days)
             else:
-                # Equal hours — use fairness tracker (least f2f count gets priority)
-                days_sorted = sorted(pattern_days,
-                                     key=lambda d: (day_f2f_tracker.get(d, 0), random.random()))
-                f2f_day_set = set(days_sorted[:num_f2f])
+                # Standard f2f/online split
+                n = len(pattern_days)
+                num_f2f = int(n * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
+                num_f2f = max(0, min(n, num_f2f))
+
+                # When hours are uneven, assign longer-hour days to f2f
+                has_uneven_hours = len(set(hours_list)) > 1
+                if has_uneven_hours and num_f2f < n:
+                    day_hour_pairs = list(zip(pattern_days, hours_list))
+                    day_hour_pairs.sort(key=lambda dh: (-dh[1], day_f2f_tracker.get(dh[0], 0), random.random()))
+                    f2f_day_set = set(d for d, _ in day_hour_pairs[:num_f2f])
+                else:
+                    days_sorted = sorted(pattern_days,
+                                         key=lambda d: (day_f2f_tracker.get(d, 0), random.random()))
+                    f2f_day_set = set(days_sorted[:num_f2f])
 
             day_types = {d: ("face to face" if d in f2f_day_set else "online")
                          for d in pattern_days}
 
             # Find room for each f2f day independently (different days can have different rooms)
             day_rooms = {}
+            rooms_ok = True
             for i, day in enumerate(pattern_days):
                 if day_types[day] == "face to face":
                     room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
@@ -1279,7 +1341,14 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                     if room:
                         day_rooms[day] = room
                     else:
+                        # For force_f2f branches (Samal/DAPECOL), no room = cannot schedule
+                        if branch_rules["force_f2f"]:
+                            fail_reason = "No available room for mandatory f2f branch"
+                            rooms_ok = False
+                            break
                         day_types[day] = "online"  # fallback this specific day only
+            if not rooms_ok:
+                continue
 
             # Constraint: Check travel time compatibility on each day with its room
             # For online classes at non-Main branches, use the branch's travel time
@@ -1449,10 +1518,13 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             fail_reason = "Faculty branch conflict"
             continue
 
-        # Per-day f2f/online for Wednesday (single day, same fairness logic as pattern days)
-        # int(1 * pct + 0.5): 1 if pct >= 0.5 (50%+), 0 otherwise (below 50% -> online)
-        wed_num_f2f = int(1 * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
-        wed_schedule_type = "face to face" if wed_num_f2f == 1 else "online"
+        # Per-day f2f/online for Wednesday — branch rules override
+        wed_branch_rules = get_branch_schedule_rules(class_branch_id)
+        if wed_branch_rules["force_f2f"]:
+            wed_schedule_type = "face to face"
+        else:
+            wed_num_f2f = int(1 * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
+            wed_schedule_type = "face to face" if wed_num_f2f == 1 else "online"
 
         lecture_room = None
         schedule_type = wed_schedule_type
@@ -1461,8 +1533,10 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             lecture_room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
                                               wednesday, start_hour, wed_lecture_hours, schedule_tracker, class_branch_id)
             if not lecture_room:
+                if wed_branch_rules["force_f2f"]:
+                    fail_reason = "No available room for mandatory f2f branch"
+                    continue
                 schedule_type = "online"
-        # If target is online, no room needed
 
         # Constraint: Check travel time compatibility on Wednesday
         if lecture_room:
@@ -1972,7 +2046,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     # Track lecture hours for f2f/online percentage distribution
     lecture_type_tracker = {"face_to_face_hours": 0.0, "online_hours": 0.0, "total_lecture_hours": 0.0}
     # Track day pattern usage for fair distribution
-    day_pattern_tracker = {"TTH": 0, "MF": 0, "MWF": 0}
+    day_pattern_tracker = {name: 0 for name in DAY_PATTERNS}
     # Track per-day f2f assignment count so no single day always gets f2f
     day_f2f_tracker = {}
     faculty_branch_tracker = {}
@@ -3022,14 +3096,41 @@ def matches_expertise(course, faculty_course):
     )
 
 
+def parse_faculty_branches(branches_value):
+    """
+    Parse the 'branches' field from faculty_expertise_courses.
+    It's stored as a Python list repr string like "['1']" or "['2', '1']".
+    Returns a set of integer branch IDs.
+    """
+    if not branches_value:
+        return set()
+    if isinstance(branches_value, list):
+        return {int(b) for b in branches_value if str(b).strip()}
+    if isinstance(branches_value, str):
+        try:
+            import ast
+            parsed = ast.literal_eval(branches_value)
+            if isinstance(parsed, list):
+                return {int(b) for b in parsed if str(b).strip()}
+        except (ValueError, SyntaxError):
+            pass
+    return set()
+
+
 def assign_faculty(classes_courses, faculty_expertise_courses):
     """
     Assign classes to faculty based on matching expertise and load limit.
     Uses load_unit from faculty data (18 for full time, 9 for part time).
+
+    Inter-branch priority: For classes at non-Main branches, faculty who have
+    that branch in their 'branches' expertise field are tried first.
     """
 
     # Prepare load tracking structure
     faculty_loads = {}
+
+    # Build faculty branches lookup (fid → set of branch IDs)
+    faculty_branches_map = {}
 
     for f in faculty_expertise_courses:
         fid = f["faculty_id"]
@@ -3046,37 +3147,45 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
                 "total_lecture_hours": 0,
                 "total_lab_hours": 0,
             }
+            faculty_branches_map[fid] = parse_faculty_branches(f.get("branches"))
 
     # Assign classes
     for course in classes_courses:
         assigned = False
+        course_branch_id = course.get("branch_id")
 
-        for faculty in faculty_expertise_courses:
+        # For non-Main branches, sort matching faculty so those with the branch
+        # in their expertise are tried first (inter-branch priority)
+        matching_faculty = [
+            f for f in faculty_expertise_courses
+            if f.get("course_code") is not None and matches_expertise(course, f)
+        ]
 
-            # Skip faculty without expertise rows
-            if faculty["course_code"] is None:
-                continue
+        if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
+            # Prioritize faculty who have this branch in their expertise
+            matching_faculty.sort(
+                key=lambda f: (
+                    0 if course_branch_id in faculty_branches_map.get(f["faculty_id"], set()) else 1,
+                )
+            )
 
-            # Check if faculty expertise matches class
-            if matches_expertise(course, faculty):
+        for faculty in matching_faculty:
+            units = compute_load(course["course_lec"], course["course_lab"])
+            fid = faculty["faculty_id"]
 
-                units = compute_load(
-                    course["course_lec"], course["course_lab"])
-                fid = faculty["faculty_id"]
+            # Get faculty's specific load limit (18 for full time, 9 for part time)
+            faculty_max_load = faculty_loads[fid]["load_unit"]
 
-                # Get faculty's specific load limit (18 for full time, 9 for part time)
-                faculty_max_load = faculty_loads[fid]["load_unit"]
+            # Check if load limit allows assignment
+            if faculty_loads[fid]["total_units"] + units <= faculty_max_load:
 
-                # Check if load limit allows assignment
-                if faculty_loads[fid]["total_units"] + units <= faculty_max_load:
+                faculty_loads[fid]["assigned_classes"].append(course)
+                faculty_loads[fid]["total_units"] += units
+                faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
+                faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
 
-                    faculty_loads[fid]["assigned_classes"].append(course)
-                    faculty_loads[fid]["total_units"] += units
-                    faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
-                    faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
-
-                    assigned = True
-                    break
+                assigned = True
+                break
 
         if not assigned:
             print(
