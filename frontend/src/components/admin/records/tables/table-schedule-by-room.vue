@@ -477,7 +477,7 @@ export default {
         // IAAS - Sky Blue
         63: "bg-cyan-600 text-white",
         // IC - Violet
-        64: "bg-purple-600 text-white",
+        64: "bg-purple-800 text-white",
         // ILEGG - Maroon
         65: "bg-red-600 text-white",
         // ITED - Blue
@@ -494,7 +494,7 @@ export default {
 
       const instituteColors = {
         63: "118, 210, 219", // IAAS
-        64: "181, 0, 178", // IC
+        64: "166, 166, 237", // IC
         65: "168, 35, 35", // ILEGG
         66: "59, 130, 246", // ITED
       };
@@ -503,10 +503,10 @@ export default {
 
       return {
         background: rgb
-          ? `rgba(${rgb}, 0.2)` //
+          ? `rgba(${rgb}, 0.3)` //
           : "rgba(220, 252, 231, 0.5)",
 
-        border: rgb ? `1px solid rgba(${rgb}, 0.2)` : "1px solid #22C55E",
+        border: rgb ? `1px solid rgba(${rgb}, 1)` : "1px solid #22C55E",
       };
     },
     changePage(page) {

@@ -33,6 +33,7 @@ export class RoomsService {
     room.room_name = createRoomDto.room_name;
     room.room_capacity = createRoomDto.room_capacity;
     room.room_type = createRoomDto.room_type;
+    room.status = createRoomDto.status ; 
 
     // attach institute
     if (createRoomDto.institute_id) {
@@ -101,6 +102,7 @@ export class RoomsService {
     room.room_name = updateRoomDto.room_name ?? room.room_name;
     room.room_capacity = updateRoomDto.room_capacity ?? room.room_capacity;
     room.room_type = updateRoomDto.room_type ?? room.room_type;
+    room.status = updateRoomDto.status ?? room.status;
 
     // update institute
     if (updateRoomDto.institute_id !== undefined) {

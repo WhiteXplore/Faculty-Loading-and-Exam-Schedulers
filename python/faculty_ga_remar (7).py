@@ -27,6 +27,7 @@ engine = create_engine(
 metadata = MetaData()
 
 
+
 # ===========================================================   =
 # START CODE FOR SCHEDULING FUNCTIONS
 # ============================================================
@@ -61,6 +62,8 @@ LUNCH_END = 13
 AFTERNOON_START = 13  # 1 PM — classes at or after this hour count as "afternoon"
 MAX_CAPACITY_EXCESS = 5  # Allow up to 5 students over capacity
 FULL_TIME_WEEKLY_HOURS = 40  # Full-time faculty weekly presence at school
+MAX_DAILY_SPAN_HOURS = 9   # Max hours from first class start to last class end per day
+MIN_DAILY_SPAN_HOURS = 6   # Min hours from first class start to last class end per day
 
 # Unit to hour conversion constants (for scheduling contact hours)
 LECTURE_UNIT_TO_HOUR = 1.0  # 1 student unit = 1 contact hour
@@ -110,10 +113,14 @@ def get_balanced_patterns(day_pattern_tracker, weekly_hours):
         List of tuples: (pattern_name, pattern_days_list), sorted by least-used first, ties randomized.
     """
     # Filter to valid patterns only (each meeting must be at least 1 hour)
+    # 2-hour courses must strictly use 2-day pairs (not MWF or any 3+ day pattern)
     valid_patterns = []
     for pattern_name, pattern_days in DAY_PATTERNS.items():
         hours_per_meeting = weekly_hours / len(pattern_days)
         if hours_per_meeting >= 1.0:
+            # 2-hour weekly courses: only allow 2-day pairs
+            if weekly_hours == 2.0 and len(pattern_days) > 2:
+                continue
             valid_patterns.append((pattern_name, pattern_days))
 
     # Build count groups for sorting
@@ -309,6 +316,43 @@ def get_faculty_daily_hours(faculty_id, day, faculty_schedule_tracker):
         total_hours += scheduled_block["duration"]
 
     return total_hours
+
+
+def get_faculty_daily_span(faculty_id, day, faculty_schedule_tracker):
+    """
+    Calculate the span (earliest start to latest end) for a faculty on a day.
+    Returns (earliest_start, latest_end, span_hours) or (None, None, 0) if no classes.
+    """
+    if faculty_id not in faculty_schedule_tracker:
+        return None, None, 0
+    if day not in faculty_schedule_tracker[faculty_id]:
+        return None, None, 0
+    slots = faculty_schedule_tracker[faculty_id][day]
+    if not slots:
+        return None, None, 0
+    earliest = min(s["start_hour"] for s in slots)
+    latest = max(s["start_hour"] + s["duration"] for s in slots)
+    return earliest, latest, latest - earliest
+
+
+def check_daily_span_ok(faculty_id, day, new_start, new_duration, faculty_schedule_tracker):
+    """
+    Check if adding a new class at (new_start, new_duration) on this day would
+    keep the faculty's daily span within MAX_DAILY_SPAN_HOURS.
+    """
+    earliest, latest, _ = get_faculty_daily_span(faculty_id, day, faculty_schedule_tracker)
+    new_end = new_start + new_duration
+
+    if earliest is None:
+        # No existing classes — the new class alone can't exceed max span
+        return new_duration <= MAX_DAILY_SPAN_HOURS
+
+    # Compute what the span would be with the new class
+    combined_earliest = min(earliest, new_start)
+    combined_latest = max(latest, new_end)
+    combined_span = combined_latest - combined_earliest
+
+    return combined_span <= MAX_DAILY_SPAN_HOURS
 
 
 def get_faculty_next_start_hour(faculty_id, day, faculty_schedule_tracker, default_start):
@@ -806,6 +850,12 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
         lab_hours = lab_hours_per_week / num_meetings
         total_duration = lecture_hours + lab_hours
 
+        # Each component (lecture, lab) must be at least 1 hour per meeting
+        if lecture_hours_per_week > 0 and lecture_hours < 1.0:
+            continue
+        if lab_hours_per_week > 0 and lab_hours < 1.0:
+            continue
+
         # Get AM/PM-balanced slots for fair distribution across morning and afternoon
         available_slots = get_balanced_slots(
             faculty_id, pattern_days, total_duration,
@@ -828,6 +878,12 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
             if not all(get_faculty_daily_hours(faculty_id, day, faculty_schedule_tracker) + total_duration <= 8
                        for day in pattern_days):
                 fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
+                continue
+
+            # Constraint: Check faculty daily span (max MAX_DAILY_SPAN_HOURS from first to last class)
+            if not all(check_daily_span_ok(faculty_id, day, start_hour, total_duration, faculty_schedule_tracker)
+                       for day in pattern_days):
+                fail_reason = f"Faculty daily span would exceed {MAX_DAILY_SPAN_HOURS} hours"
                 continue
 
             # Constraint: Check class section availability on ALL days
@@ -1051,6 +1107,10 @@ def schedule_class_with_lab(cls, rooms, faculty_id, employment_type,
         faculty_hours_wed = get_faculty_daily_hours(faculty_id, wednesday, faculty_schedule_tracker)
         if faculty_hours_wed + wed_total_duration > 8:
             fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
+            continue
+
+        if not check_daily_span_ok(faculty_id, wednesday, start_hour, wed_total_duration, faculty_schedule_tracker):
+            fail_reason = f"Faculty daily span would exceed {MAX_DAILY_SPAN_HOURS} hours"
             continue
 
         class_id = cls["class_id"]
@@ -1290,6 +1350,12 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                 fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
                 continue
 
+            # Constraint: Check faculty daily span (max MAX_DAILY_SPAN_HOURS from first to last class)
+            if not all(check_daily_span_ok(faculty_id, day, start_hour, hours_list[i], faculty_schedule_tracker)
+                       for i, day in enumerate(pattern_days)):
+                fail_reason = f"Faculty daily span would exceed {MAX_DAILY_SPAN_HOURS} hours"
+                continue
+
             # Constraint: Check class section availability on ALL days (per-day duration)
             class_id = cls["class_id"]
             if not all(is_class_available(class_id, day, start_hour, hours_list[i], class_schedule_tracker)
@@ -1507,6 +1573,10 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         faculty_hours_wed = get_faculty_daily_hours(faculty_id, wednesday, faculty_schedule_tracker)
         if faculty_hours_wed + wed_lecture_hours > 8:
             fail_reason = "Faculty daily workload limit exceeded (max 8 hours)"
+            continue
+
+        if not check_daily_span_ok(faculty_id, wednesday, start_hour, wed_lecture_hours, faculty_schedule_tracker):
+            fail_reason = f"Faculty daily span would exceed {MAX_DAILY_SPAN_HOURS} hours"
             continue
 
         class_id = cls["class_id"]
@@ -2204,6 +2274,9 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                         continue
                     if get_faculty_daily_hours(faculty_id, f2f_day, faculty_schedule_tracker) + f2f_hours > 8:
                         fail_reason = "Faculty daily workload limit exceeded"
+                        continue
+                    if not check_daily_span_ok(faculty_id, f2f_day, start_hour, f2f_hours, faculty_schedule_tracker):
+                        fail_reason = f"Faculty daily span would exceed {MAX_DAILY_SPAN_HOURS} hours"
                         continue
                     if not is_class_available(class_id, f2f_day, start_hour,
                                              f2f_hours, class_schedule_tracker):

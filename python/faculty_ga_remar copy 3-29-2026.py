@@ -90,7 +90,7 @@ MAIN_BRANCH_ID = 1
 
 # Branch-specific IDs for special scheduling rules
 SAMAL_BRANCH_ID = 5       # Samal: full-day f2f, vacant time filled with online Main classes
-DAPECOL_BRANCH_ID = 6     # DAPECOL: whole-day f2f, no online, compressed curriculum
+DAPECOL_BRANCH_ID = 3     # DAPECOL: whole-day f2f, no online, compressed curriculum
 
 # IAAS institute ID — lab and lecture rooms are interchangeable for this institute
 IAAS_INSTITUTE_ID = 63
@@ -541,13 +541,10 @@ def get_branch_schedule_rules(branch_id):
             "full_day_branch": True,
         }
     elif branch_id == DAPECOL_BRANCH_ID:
-        # DAPECOL f2f/online is handled by Phase 1 compressed scheduling
-        # (2-day pair: 1 day f2f + 1 day online). If a DAPECOL class somehow
-        # reaches the normal scheduling path, treat it as standard.
         return {
-            "force_f2f": False,
+            "force_f2f": True,
             "allow_online_main_fill": False,
-            "full_day_branch": False,
+            "full_day_branch": True,
         }
     else:
         return {
@@ -2068,45 +2065,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     complete_schedule = []
     unscheduled_meetings = []
 
-    # ----------------------------------------------------------
-    # DAPECOL scheduling: assign a 2-day pair per program
-    # One day = face-to-face at DAPECOL (all faculty same day)
-    # Other day = online (faculty stays at Main/home)
-    # Only 2-day patterns allowed (MW, TTH, MF, WF — not MWF)
-    # ----------------------------------------------------------
-    # Available 2-day patterns for DAPECOL (exclude MWF and any 3+ day patterns)
-    DAPECOL_PATTERNS = {k: v for k, v in DAY_PATTERNS.items() if len(v) == 2}
-    dapecol_program_pattern = {}  # program_id → {"pattern_days": [...], "f2f_day": ..., "online_day": ...}
-    dapecol_programs_seen = {}  # program_id → list of (fid, finfo, cls)
-    for fid, finfo in faculty_loads.items():
-        for cls in finfo.get("assigned_classes", []):
-            if cls.get("branch_id") == DAPECOL_BRANCH_ID:
-                pid = cls.get("program_id")
-                if pid not in dapecol_programs_seen:
-                    dapecol_programs_seen[pid] = []
-                dapecol_programs_seen[pid].append((fid, finfo, cls))
-
-    if dapecol_programs_seen:
-        # ALL DAPECOL programs share the SAME single day pair
-        pattern_names = list(DAPECOL_PATTERNS.keys())
-        chosen_pattern = pattern_names[0]  # Use first 2-day pattern for all DAPECOL
-        pdays = DAPECOL_PATTERNS[chosen_pattern]
-        f2f_day = pdays[0]     # first day = face-to-face at DAPECOL
-        online_day = pdays[1]  # second day = online
-        print(f"[INFO] DAPECOL day pair: {chosen_pattern} (f2f={f2f_day}, online={online_day})")
-
-        for pid in sorted(dapecol_programs_seen.keys()):
-            dapecol_program_pattern[pid] = {
-                "pattern_name": chosen_pattern,
-                "pattern_days": pdays,
-                "f2f_day": f2f_day,
-                "online_day": online_day,
-            }
-            entries = dapecol_programs_seen[pid]
-            pcode = entries[0][2].get("program_code", "?")
-            level = entries[0][2].get("course_level", "?")
-            print(f"  DAPECOL {pcode}-{level}: {len(entries)} courses")
-
     print("\n" + "="*80)
     print(" " * 25 + "STARTING SCHEDULING PROCESS")
     print("="*80)
@@ -2114,7 +2072,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     print("  - Lecture: 1 student unit = 1 contact hour per week")
     print("  - Laboratory: 1 student unit = 3 contact hours per week")
     print("  - Teacher Units: Lecture 1:1, Lab 1:2.25")
-    print("  - Primary: Classes meet on day patterns (TTH, MF, WF, or MWF)")
+    print("  - Primary: Classes meet on day patterns (TTH, MF, or MWF)")
     print("  - Pattern valid only if weekly_hours / num_meetings >= 1h per meeting")
     print("  - Hours SPLIT equally between meetings of the chosen pattern")
     print("  - Fallback: Wednesday scheduling with FULL hours (not split)")
@@ -2123,7 +2081,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     print("  - Part-time faculty: Scheduled from 5:00 PM to 10:00 PM only")
     print("  - Full-time faculty: Scheduled anytime (7:00 AM to 9:00 PM)")
     print("  - Laboratory classes MUST be face-to-face")
-    print("  - DAPECOL: 2-day pair, 1 day f2f + 1 day online (all faculty same f2f day)")
     print(f"  - Lecture f2f target: {int(TARGET_FACE_TO_FACE_PERCENTAGE * 100)}% per meeting day "
           f"(e.g. MF: 1 day f2f + 1 online; MWF: 1 day f2f + 2 online at 30%)")
     print("  - Day patterns and time slots are RANDOMIZED for fair distribution")
@@ -2133,237 +2090,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     faculty_items = list(faculty_loads.items())
     random.shuffle(faculty_items)
 
-    # ==========================================================
-    # PHASE 1: Schedule DAPECOL classes (2-day pair: 1 f2f + 1 online)
-    # All faculty for the same program go to DAPECOL on the SAME
-    # f2f day. The other day in the pair is online.
-    # ==========================================================
-    dapecol_scheduled_keys = set()  # track (faculty_id, class_id, course_code) to skip in Phase 2
-
-    if dapecol_program_pattern:
-        print("\n--- DAPECOL 2-Day Pair Scheduling ---")
-        for pid, pat_info in dapecol_program_pattern.items():
-            f2f_day = pat_info["f2f_day"]
-            online_day = pat_info["online_day"]
-            pattern_days = pat_info["pattern_days"]
-            entries = dapecol_programs_seen.get(pid, [])
-
-            if not entries:
-                continue
-
-            pcode = entries[0][2].get("program_code", "?")
-            level = entries[0][2].get("course_level", "?")
-            print(f"  DAPECOL {pcode}-{level}: f2f={f2f_day}, online={online_day} ({len(entries)} courses)")
-
-            for faculty_id, faculty_info, cls in entries:
-                faculty_name = faculty_info["faculty_name"]
-                employment_type = faculty_info.get("employment_type", "full time")
-                institute_id = cls.get("institute_id")
-                class_size = cls.get("class_size", 30)
-                class_branch_id = cls.get("branch_id")
-                class_id = cls["class_id"]
-
-                lecture_units = cls.get("course_lec", 0)
-                lab_units = cls.get("course_lab", 0)
-                total_weekly_hours = lecture_units * LECTURE_UNIT_TO_HOUR + lab_units * LAB_UNIT_TO_HOUR
-
-                if total_weekly_hours <= 0:
-                    continue
-
-                # Split hours across 2 days (may be uneven)
-                hours_per_day = total_weekly_hours / 2
-                short_h = int(hours_per_day)
-                if short_h < hours_per_day:
-                    # Uneven: give f2f day more hours
-                    f2f_hours = short_h + 1
-                    online_hours = int(total_weekly_hours - f2f_hours)
-                else:
-                    f2f_hours = short_h
-                    online_hours = short_h
-
-                # Determine start/end hours
-                if employment_type.lower() == "part time":
-                    sched_start = PART_TIME_START_HOUR
-                    sched_end = PART_TIME_END_HOUR
-                else:
-                    sched_start = START_HOUR
-                    sched_end = END_HOUR
-
-                # --- Schedule FACE-TO-FACE day at DAPECOL ---
-                f2f_next_start = get_faculty_next_start_hour(
-                    faculty_id, f2f_day, faculty_schedule_tracker, sched_start)
-                f2f_slots = find_available_slots(f2f_next_start, sched_end, f2f_hours)
-
-                f2f_scheduled = False
-                fail_reason = "No available time slots on DAPECOL f2f day"
-
-                for start_hour in f2f_slots:
-                    if not is_faculty_available(faculty_id, f2f_day, start_hour,
-                                               f2f_hours, faculty_schedule_tracker):
-                        fail_reason = "Faculty time conflict on DAPECOL f2f day"
-                        continue
-                    if get_faculty_daily_hours(faculty_id, f2f_day, faculty_schedule_tracker) + f2f_hours > 8:
-                        fail_reason = "Faculty daily workload limit exceeded"
-                        continue
-                    if not is_class_available(class_id, f2f_day, start_hour,
-                                             f2f_hours, class_schedule_tracker):
-                        fail_reason = "Class section time conflict on f2f day"
-                        continue
-
-                    # Find room at DAPECOL
-                    lec_room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
-                                                   f2f_day, start_hour, f2f_hours,
-                                                   schedule_tracker, class_branch_id)
-                    if not lec_room:
-                        fail_reason = "No available room at DAPECOL"
-                        continue
-
-                    # F2F day booked — record it
-                    lec_room_id = lec_room["room_id"]
-                    if lec_room_id not in schedule_tracker:
-                        schedule_tracker[lec_room_id] = {}
-                    if f2f_day not in schedule_tracker[lec_room_id]:
-                        schedule_tracker[lec_room_id][f2f_day] = []
-                    schedule_tracker[lec_room_id][f2f_day].append({
-                        "start_hour": start_hour, "duration": f2f_hours,
-                        "class_id": class_id, "course_code": cls["course_code"]
-                    })
-
-                    if faculty_id not in faculty_schedule_tracker:
-                        faculty_schedule_tracker[faculty_id] = {}
-                    if f2f_day not in faculty_schedule_tracker[faculty_id]:
-                        faculty_schedule_tracker[faculty_id][f2f_day] = []
-                    faculty_schedule_tracker[faculty_id][f2f_day].append({
-                        "start_hour": start_hour, "duration": f2f_hours,
-                        "class_id": class_id, "course_code": cls["course_code"],
-                        "building_name": lec_room.get("building_name"),
-                        "travel_time": lec_room.get("time_travel", 0)
-                    })
-
-                    if class_id not in class_schedule_tracker:
-                        class_schedule_tracker[class_id] = {}
-                    if f2f_day not in class_schedule_tracker[class_id]:
-                        class_schedule_tracker[class_id][f2f_day] = []
-                    class_schedule_tracker[class_id][f2f_day].append({
-                        "start_hour": start_hour, "duration": f2f_hours,
-                        "faculty_id": faculty_id, "course_code": cls["course_code"]
-                    })
-
-                    update_branch_tracker(faculty_id, [f2f_day], DAPECOL_BRANCH_ID, faculty_branch_tracker)
-
-                    complete_schedule.append({
-                        "class_id": class_id, "set_name": cls["set_name"],
-                        "course_level": cls["course_level"], "course_code": cls["course_code"],
-                        "program_id": cls["program_id"],
-                        "program_name": cls.get("program_name", "Unknown"),
-                        "program_code": cls.get("program_code", "Unknown"),
-                        "institute_id": institute_id, "type": "Lecture",
-                        "day": f2f_day, "start_hour": start_hour,
-                        "duration": f2f_hours,
-                        "time_slot": format_time_slot(start_hour, f2f_hours),
-                        "room_id": lec_room_id, "room_name": lec_room.get("room_name", "Unknown"),
-                        "room_type": lec_room.get("room_type", "Unknown"),
-                        "room_capacity": lec_room.get("room_capacity", 0),
-                        "class_size": class_size, "schedule_type": "face to face",
-                        "faculty_id": faculty_id, "faculty_name": faculty_name,
-                        "employment_type": employment_type,
-                        "college_branch_id": DAPECOL_BRANCH_ID
-                    })
-
-                    lecture_type_tracker["face_to_face_hours"] += f2f_hours
-                    lecture_type_tracker["total_lecture_hours"] += f2f_hours
-
-                    print(f"    {cls['course_code']} -> {faculty_name} f2f {f2f_day} @ {format_time_slot(start_hour, f2f_hours)} [OK]")
-                    f2f_scheduled = True
-                    break
-
-                if not f2f_scheduled:
-                    print(f"    {cls['course_code']} -> {faculty_name} [FAILED f2f: {fail_reason}]")
-                    unscheduled_meetings.append({
-                        "class_id": class_id, "course_code": cls["course_code"],
-                        "course_id": cls.get("course_id"), "institute_id": institute_id,
-                        "class_size": class_size, "faculty_name": faculty_name,
-                        "program_id": cls["program_id"],
-                        "program_name": cls.get("program_name", "Unknown"),
-                        "program_code": cls.get("program_code", "Unknown"),
-                        "type": "Lecture", "hours": f"{total_weekly_hours}h (DAPECOL)",
-                        "reason": fail_reason
-                    })
-                    dapecol_scheduled_keys.add((faculty_id, class_id, cls["course_code"]))
-                    continue
-
-                # --- Schedule ONLINE day ---
-                online_next_start = get_faculty_next_start_hour(
-                    faculty_id, online_day, faculty_schedule_tracker, sched_start)
-                online_slots = find_available_slots(online_next_start, sched_end, online_hours)
-
-                online_scheduled = False
-                for ostart in online_slots:
-                    if not is_faculty_available(faculty_id, online_day, ostart,
-                                               online_hours, faculty_schedule_tracker):
-                        continue
-                    if get_faculty_daily_hours(faculty_id, online_day, faculty_schedule_tracker) + online_hours > 8:
-                        continue
-                    if not is_class_available(class_id, online_day, ostart,
-                                             online_hours, class_schedule_tracker):
-                        continue
-
-                    # Online — no room needed
-                    if faculty_id not in faculty_schedule_tracker:
-                        faculty_schedule_tracker[faculty_id] = {}
-                    if online_day not in faculty_schedule_tracker[faculty_id]:
-                        faculty_schedule_tracker[faculty_id][online_day] = []
-                    faculty_schedule_tracker[faculty_id][online_day].append({
-                        "start_hour": ostart, "duration": online_hours,
-                        "class_id": class_id, "course_code": cls["course_code"],
-                        "building_name": None, "travel_time": 0
-                    })
-
-                    if online_day not in class_schedule_tracker.get(class_id, {}):
-                        if class_id not in class_schedule_tracker:
-                            class_schedule_tracker[class_id] = {}
-                        class_schedule_tracker[class_id][online_day] = []
-                    class_schedule_tracker[class_id][online_day].append({
-                        "start_hour": ostart, "duration": online_hours,
-                        "faculty_id": faculty_id, "course_code": cls["course_code"]
-                    })
-
-                    complete_schedule.append({
-                        "class_id": class_id, "set_name": cls["set_name"],
-                        "course_level": cls["course_level"], "course_code": cls["course_code"],
-                        "program_id": cls["program_id"],
-                        "program_name": cls.get("program_name", "Unknown"),
-                        "program_code": cls.get("program_code", "Unknown"),
-                        "institute_id": institute_id, "type": "Lecture",
-                        "day": online_day, "start_hour": ostart,
-                        "duration": online_hours,
-                        "time_slot": format_time_slot(ostart, online_hours),
-                        "room_id": None, "room_name": "Online",
-                        "room_type": "Online", "room_capacity": 0,
-                        "class_size": class_size, "schedule_type": "online",
-                        "faculty_id": faculty_id, "faculty_name": faculty_name,
-                        "employment_type": employment_type,
-                        "college_branch_id": DAPECOL_BRANCH_ID
-                    })
-
-                    lecture_type_tracker["online_hours"] += online_hours
-                    lecture_type_tracker["total_lecture_hours"] += online_hours
-
-                    print(f"    {cls['course_code']} -> {faculty_name} online {online_day} @ {format_time_slot(ostart, online_hours)} [OK]")
-                    online_scheduled = True
-                    break
-
-                if not online_scheduled:
-                    print(f"    {cls['course_code']} -> {faculty_name} online day [FAILED]")
-
-                # Mark as handled so Phase 2 skips it
-                dapecol_scheduled_keys.add((faculty_id, class_id, cls["course_code"]))
-
-        print("--- End DAPECOL Scheduling ---\n")
-
-    # ==========================================================
-    # PHASE 2: Schedule all other classes (normal pattern-based)
-    # ==========================================================
     # Process each faculty's assigned classes
     for faculty_id, faculty_info in faculty_items:
         faculty_name = faculty_info["faculty_name"]
@@ -2373,19 +2099,11 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
         if len(faculty_info["assigned_classes"]) == 0:
             continue
 
-        # Filter out DAPECOL classes already scheduled in Phase 1
-        classes_to_schedule = [
-            cls for cls in faculty_info["assigned_classes"]
-            if (faculty_id, cls["class_id"], cls["course_code"]) not in dapecol_scheduled_keys
-        ]
-
-        if not classes_to_schedule:
-            continue
-
         print(
             f"\nScheduling classes for: {faculty_name} (ID: {faculty_id}) [{employment_type.title()}]")
 
         # Shuffle classes for fair distribution
+        classes_to_schedule = list(faculty_info["assigned_classes"])
         random.shuffle(classes_to_schedule)
 
         for cls in classes_to_schedule:
@@ -2816,8 +2534,7 @@ def save_schedule_to_text(schedule, unscheduled, filename):
     print(f"\n[INFO] Schedule saved to text file: {filename}")
 
 
-def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None,
-                          schedule_by_branch=None, branch_expertise_needed=None):
+def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None, schedule_by_branch=None):
     """Save schedule to a JSON file."""
     # Count full time and part time faculty in schedule
     faculty_types = {}
@@ -2845,8 +2562,7 @@ def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None
         "scheduled_meetings": schedule,
         "unscheduled_meetings": unscheduled,
         "schedule_by_room": schedule_by_room or {},
-        "schedule_by_branch": schedule_by_branch or {},
-        "branch_expertise_needed": branch_expertise_needed or {}
+        "schedule_by_branch": schedule_by_branch or {}
     }
 
     with open(filename, 'w', encoding='utf-8') as f:
@@ -3433,9 +3149,6 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
             }
             faculty_branches_map[fid] = parse_faculty_branches(f.get("branches"))
 
-    # Track unassigned non-Main branch courses for branch_expertise_needed output
-    unassigned_branch_courses = []
-
     # Assign classes
     for course in classes_courses:
         assigned = False
@@ -3477,11 +3190,8 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
         if not assigned:
             print(
                 f"[WARNING] No qualified faculty found for course: {course['course_code']}")
-            # Track non-Main unassigned courses for branch_expertise_needed
-            if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
-                unassigned_branch_courses.append(course)
 
-    return faculty_loads, unassigned_branch_courses
+    return faculty_loads
 
 
 def save_faculty_load_to_text(faculty_loads: Dict, filename: str):
@@ -3684,37 +3394,10 @@ if __name__ == "__main__":
     # ------------------------------------------
     # APPLY FACULTY LOAD ASSIGNMENT
     # ------------------------------------------
-    faculty_load_result, unassigned_branch_courses = assign_faculty(
+    faculty_load_result = assign_faculty(
         classes_course,
         faculty_expertise_courses
     )
-
-    # ------------------------------------------
-    # BUILD branch_expertise_needed
-    # ------------------------------------------
-    # Group unassigned non-Main branch courses by branch → program-year → courses
-    branch_expertise_needed = {}
-    for course in unassigned_branch_courses:
-        bid = course.get("branch_id")
-        bname = branch_map.get(bid, f"Branch {bid}")
-        program_code = course.get("program_code", "Unknown")
-        year_level = course.get("course_level", 0)
-        program_key = f"{program_code}-{year_level}"
-        course_code = course.get("course_code", "Unknown")
-
-        if bname not in branch_expertise_needed:
-            branch_expertise_needed[bname] = {}
-        if program_key not in branch_expertise_needed[bname]:
-            branch_expertise_needed[bname][program_key] = []
-        if course_code not in branch_expertise_needed[bname][program_key]:
-            branch_expertise_needed[bname][program_key].append(course_code)
-
-    if branch_expertise_needed:
-        print(f"\n[INFO] Branch expertise needed:")
-        for bname, programs in branch_expertise_needed.items():
-            print(f"  {bname}:")
-            for prog_key, courses in programs.items():
-                print(f"    {prog_key}: {', '.join(courses)}")
 
     # ------------------------------------------
     # CREATE ROOM AND TIME SCHEDULE
@@ -3724,7 +3407,8 @@ if __name__ == "__main__":
         rooms,
         branch_map
     )
-
+ # Save schedule to Excel file
+ 
     # Generate timestamp for filenames
     # Create output directory if it doesn't exist
     output_dir = "faculty_loading_output"
@@ -3739,8 +3423,7 @@ if __name__ == "__main__":
     json_output_dir = os.path.join("..", "backend", "src", "generated_scheduled", "json_output")
     os.makedirs(json_output_dir, exist_ok=True)
     json_filename = os.path.join(json_output_dir, "faculty_loading.json")
-    save_schedule_to_json(complete_schedule, unscheduled_meetings, json_filename,
-                          schedule_by_room, schedule_by_branch, branch_expertise_needed)
+    save_schedule_to_json(complete_schedule, unscheduled_meetings, json_filename, schedule_by_room, schedule_by_branch)
 
     # Generate faculty core time schedule (time-in / time-out)
     faculty_core_time = generate_faculty_core_time(complete_schedule)
@@ -3753,8 +3436,7 @@ if __name__ == "__main__":
     output = {
         "scheduled_meetings": complete_schedule,
         "unscheduled_meetings": unscheduled_meetings,
-        "schedule_by_branch": schedule_by_branch,
-        "branch_expertise_needed": branch_expertise_needed
+        "schedule_by_branch": schedule_by_branch
     }
 
     # IMPORTANT: markers help NestJS safely parse stdout

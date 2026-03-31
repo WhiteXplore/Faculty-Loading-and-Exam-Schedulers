@@ -99,7 +99,7 @@
                 </th>
 
                 <th class="px-4 py-3 text-left font-normal w-[30%]">
-                  Time Travel
+                   Travel Time 
                 </th>
 
                 <th class="px-4 py-3 text-center font-normal w-[30%]">

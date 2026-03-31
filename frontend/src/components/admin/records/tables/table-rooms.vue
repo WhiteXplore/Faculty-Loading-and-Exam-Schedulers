@@ -113,21 +113,24 @@
               class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
             >
               <tr>
-                <th class="px-4 py-3 text-left font-normal w-[8%]">
+                <th class="px-4 py-3 text-left font-normal w-[4%]">
                   Room Name
                 </th>
 
-                <th class="px-4 py-3 text-center font-normal w-[10%]">
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
                   Room Type
                 </th>
-                <th class="px-4 py-3 text-center font-normal w-[7%]">
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
                   Room Capacity
                 </th>
-                <th class="px-4 py-3 text-center font-normal w-[7%]">
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
                   Institute
                 </th>
-                <th class="px-4 py-3 text-left font-normal w-[15%]">
+                <th class="px-4 py-3 text-center font-normal w-[10%]">
                   Building Name
+                </th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
+                  Status
                 </th>
 
                 <th
@@ -156,8 +159,20 @@
                 <td class="px-4 py-3 text-center">
                   {{ rooms_data.institute?.institute_code || "-" }}
                 </td>
-                <td class="px-4 py-3 text-left">
+                <td class="px-4 py-3 text-center">
                   {{ rooms_data.building?.building_name }}
+                </td>
+
+                <td class="px-4 py-3 text-center">
+                  <span
+                    :class="{
+                      'bg-green-100 text-green-800': rooms_data.status === 'Active',
+                      'bg-red-100 text-red-800': rooms_data.status === 'Inactive',
+                    }"
+                    class="px-2 py-1 rounded-full text-xs font-semibold"
+                  >
+                    {{ rooms_data.status }}
+                  </span>
                 </td>
 
                 <td class="px-4 py-3 flex justify-center">
@@ -325,6 +340,7 @@ export default {
           item.room_type,
           item.room_capacity,
           item.institute?.institute_name,
+          item.status,
         ]
           .join(" ")
           .toLowerCase()
