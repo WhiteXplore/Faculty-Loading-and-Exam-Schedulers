@@ -23,6 +23,9 @@ export class Room {
   @Column({ type: 'varchar', length: 100 })
   room_type: string;
 
+  @Column({ type: 'varchar', length: 20, })
+  status: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 

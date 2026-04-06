@@ -1,6 +1,6 @@
 <template>
-  <div class="h-[83vh] overflow-y-auto">
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
+  <div class="overflow-y-auto">
+    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
       <!-- FILTER BAR -->
       <div class="flex justify-between items-center mb-3">
         <!-- SHOW ENTRIES -->
@@ -79,7 +79,9 @@
         >
           <!-- HEADER -->
           <div class="bg-defaultGreen text-white px-4 py-3 rounded-t-xl">
-            <span class="text-lg font-bold">{{ room }}</span>
+            <span class="text-lg font-bold">
+              {{ room }} - {{ roomTypeMap[room] || "Unknown" }}
+            </span>
           </div>
 
           <table class="w-full text-[12px] border-collapse table-fixed">
@@ -157,28 +159,28 @@
                     <div
                       v-for="item in getScheduleForCell(slot, day, room)"
                       :key="item.id"
-                      class="absolute inset-x-1 rounded-lg p-1 text-[11px]"
+                      class="absolute inset-x-1 rounded p-1 text-[11px]"
                       :style="{
                         ...getProgramColor(item.program_code),
                         height: getBlockHeight(item) + 'px',
                         top: getBlockTop(item, slot) + 'px',
                       }"
                     >
-                      <span
+                      <!-- <span
                         v-if="getRoomBadge(room)"
                         :class="[
-                          'absolute top-1 right-1 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
+                          'absolute top-1 right-1 text-[9px] px-1.5 py-[1px] rounded-full font-semibold shadow',
                           getRoomBadge(room).class,
                         ]"
                       >
                         {{ getRoomBadge(room).label }}
-                      </span>
+                      </span> -->
 
                       <!-- ✅ INSTITUTE BADGE (FIXED) -->
                       <span
                         v-if="getInstituteBadge(item.program_code)"
                         :class="[
-                          'absolute top-1 right-9 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
+                          'absolute top-1 right-2 text-[9px] px-1.5 py-[1px] rounded-full font-semibold shadow',
                           getInstituteBadge(item.program_code).class,
                         ]"
                       >
@@ -207,8 +209,16 @@
         </div>
       </div>
 
-      <div v-else class="flex items-center justify-center h-full text-gray-500">
-        No schedule available
+      <div
+        v-else
+        class="flex flex-col items-center justify-center min-h-[350px] text-center text-gray-500"
+      >
+        <p class="text-lg font-semibold mb-2">No schedule data available</p>
+        <p class="text-sm text-gray-400">
+          Please click
+          <span class="font-medium text-defaultGreen">"Generation"</span>
+          to generate schedule data.
+        </p>
       </div>
     </div>
     <!-- CONFLICT MODAL -->
@@ -424,13 +434,15 @@ export default {
   computed: {
     filteredRooms() {
       const query = this.searchQuery.toLowerCase();
-
       const filtered = Object.entries(this.groupedSchedule).filter(([room]) => {
+        const roomName = room.toLowerCase();
+        const roomType = (this.roomTypeMap[room] || "").toLowerCase();
+
         return (
-          room.toLowerCase().includes(query) && room.toLowerCase() !== "online"
+          (roomName.includes(query) || roomType.includes(query)) &&
+          roomName !== "online"
         );
       });
-
       return Object.fromEntries(filtered.slice(0, this.entriesLimit));
     },
   },
@@ -462,9 +474,14 @@ export default {
       if (!instituteName) return null;
 
       const colors = {
-        63: "bg-blue-300 text-white",
-        64: "bg-purple-600 text-white",
-        65: "bg-blue-600 text-white",
+        // IAAS - Sky Blue
+        63: "bg-cyan-600 text-white",
+        // IC - Violet
+        64: "bg-purple-800 text-white",
+        // ILEGG - Maroon
+        65: "bg-red-600 text-white",
+        // ITED - Blue
+        66: "bg-blue-600 text-white",
       };
 
       return {
@@ -476,21 +493,20 @@ export default {
       const instituteId = this.programMap[programCode];
 
       const instituteColors = {
-        // IAAS -
-        63: "#76D2DB",
-        // IC - Violet
-        64: "#8100D1",
-        // ILEGG
-        65: "#3B82F6",
-        // ITED
-        66: "#3B82F6",
+        63: "118, 210, 219", // IAAS
+        64: "166, 166, 237", // IC
+        65: "168, 35, 35", // ILEGG
+        66: "59, 130, 246", // ITED
       };
 
-      const color = instituteColors[instituteId];
+      const rgb = instituteColors[instituteId];
 
       return {
-        background: color ? color + "90" : "#DCFCE7",
-        border: `1px solid ${color || "#22C55E"}`,
+        background: rgb
+          ? `rgba(${rgb}, 0.3)` //
+          : "rgba(220, 252, 231, 0.5)",
+
+        border: rgb ? `1px solid rgba(${rgb}, 1)` : "1px solid #22C55E",
       };
     },
     changePage(page) {
@@ -613,15 +629,17 @@ export default {
           r.program_code === record.program_code
         );
       });
-
       this.showConflictModal = true;
     },
-
     async loadSchedules() {
       const store = useFetchDataStore();
       const data = await store.fetchGeneratedScheduled();
-
-      const scheduleByRoom = data.schedule_by_room || {};
+      const scheduleByRoom = data?.schedule_by_room;
+      // if wala unod ang json
+      if (!scheduleByRoom || Object.keys(scheduleByRoom).length === 0) {
+        this.groupedSchedule = {};
+        return;
+      }
       this.groupedSchedule = this.transformRoomSchedule(scheduleByRoom);
     },
 

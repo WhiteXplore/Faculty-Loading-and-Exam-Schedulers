@@ -132,6 +132,20 @@
                 </div>
               </div>
             </div>
+            <!-- Status -->
+<div class="w-full space-y-2">
+  <label class="font-bold">Status:</label>
+
+  <select
+    v-model="form.status"
+    required
+    class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
+  >
+    <option disabled value="">Select Status</option>
+    <option value="Active">Active</option>
+    <option value="Inactive">Inactive</option>
+  </select>
+</div>
           </div>
 
           <!-- Divider -->
@@ -238,6 +252,7 @@ export default {
         room_name: "",
         room_type: "",
         room_capacity: "",
+        status: "", 
       },
 
       searchInstituteQuery: "",
@@ -267,6 +282,10 @@ export default {
 
       this.showBuildingDropdown = false;
     },
+
+    formatBuilding(building) {
+  return `${building.buildingArea?.collegeBranch?.college_branch_name || ""} - ${building.buildingArea?.area_name || ""} - ${building.building_name || ""}`;
+},
 
     async submitData() {
       const form = this.$refs.roomsForm;
@@ -318,22 +337,30 @@ export default {
     },
   },
 
-  mounted() {
-    this.fetchInstitutes();
-    this.fetchBuildings();
+mounted() {
+  this.fetchInstitutes();
+  this.fetchBuildings();
 
-    if (this.isEditMode) {
-      this.form = {
-        institute_id: this.roomData.institute?.institute_id || "",
-        building_id: this.roomData.building?.building_id || "",
-        room_name: this.roomData.room_name,
-        room_type: this.roomData.room_type,
-        room_capacity: this.roomData.room_capacity,
-      };
+  if (this.isEditMode) {
+    this.form = {
+      institute_id: this.roomData.institute?.institute_id || "",
+      building_id: this.roomData.building?.building_id || "",
+      room_name: this.roomData.room_name,
+      room_type: this.roomData.room_type,
+      room_capacity: this.roomData.room_capacity,
+      status: this.roomData.status || "Active", 
+    };
 
-      this.searchInstituteQuery = this.roomData.institute?.institute_name || "";
-    }
-  },
+  
+    this.searchInstituteQuery =
+      this.roomData.institute?.institute_name || "";
+
+  
+    this.searchBuildingQuery = this.roomData.building
+      ? this.formatBuilding(this.roomData.building)
+      : "";
+  }
+}
 };
 </script>
 

@@ -341,7 +341,7 @@
     v-if="showImportSelector"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
   >
-    <div class="bg-white rounded-2xl shadow-xl w-[450px] p-1.5 animate-slideUp">
+    <div class="bg-white rounded-2xl shadow-xl w-[450px] p-0.5 animate-slideUp">
       <!-- Title -->
       <div
         class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[14px] flex justify-between items-center border-b shadow"
@@ -352,7 +352,7 @@
         </div>
         <icon
           :name="'circle-close3'"
-          @click="$emit('close')"
+       @click="showImportSelector = false"
           class="cursor-pointer"
         />
       </div>

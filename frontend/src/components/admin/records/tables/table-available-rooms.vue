@@ -150,8 +150,23 @@
               </tr>
 
               <tr v-if="paginatedData.length === 0">
-                <td colspan="4" class="text-center py-6 text-gray-400">
-                  No data found
+                <td colspan="8" class="text-center py-6 text-gray-400">
+                  <div
+                    class="flex flex-col items-center justify-center text-center text-gray-500"
+                  >
+                    <div class="text-center text-gray-500">
+                      <p class="text-lg font-semibold mb-2">
+                        No schedule data available
+                      </p>
+                      <p class="text-sm text-gray-400">
+                        Please click
+                        <span class="font-medium text-defaultGreen"
+                          >"Generate"</span
+                        >
+                        to generate schedule data.
+                      </p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -378,11 +393,16 @@ export default {
     async loadSchedules() {
       const store = useFetchDataStore();
       const data = await store.fetchGeneratedScheduled();
-
-      this.scheduleByRoom = data.schedule_by_room || {};
-      this.groupedSchedule = this.transformRoomSchedule(this.scheduleByRoom);
+      const scheduleByRoom = data?.schedule_by_room;
+      // If wala unod ang json
+      if (!scheduleByRoom || Object.keys(scheduleByRoom).length === 0) {
+        this.scheduleByRoom = {};
+        this.groupedSchedule = {};
+        return;
+      }
+      this.scheduleByRoom = scheduleByRoom;
+      this.groupedSchedule = this.transformRoomSchedule(scheduleByRoom);
     },
-
     async loadRooms() {
       const store = useFetchDataStore();
       await store.fetchRooms();
