@@ -595,11 +595,14 @@ export default {
         byClass: {},
       },
       joinIndex: {},
-      collegeBranches: [],
     };
   },
 
   computed: {
+    collegeBranches() {
+      const store = useFetchDataStore();
+      return store.college_branch || [];
+    },
     scheduleIndexByDay() {
       const map = {};
       this.finalSchedules.forEach((s) => {
