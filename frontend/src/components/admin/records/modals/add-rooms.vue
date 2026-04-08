@@ -19,11 +19,7 @@
             </h1>
           </div>
 
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <!-- BODY -->
@@ -122,9 +118,7 @@
                   class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                   @mousedown="selectBuilding(building)"
                 >
-                  {{
-                    building.buildingArea?.collegeBranch?.college_branch_name
-                  }}
+                  {{ building.buildingArea?.collegeBranch?.college_branch_name }}
                   -
                   {{ building.buildingArea?.area_name }}
                   -
@@ -133,19 +127,19 @@
               </div>
             </div>
             <!-- Status -->
-<div class="w-full space-y-2">
-  <label class="font-bold">Status:</label>
+            <div class="w-full space-y-2">
+              <label class="font-bold">Status:</label>
 
-  <select
-    v-model="form.status"
-    required
-    class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-  >
-    <option disabled value="">Select Status</option>
-    <option value="Active">Active</option>
-    <option value="Inactive">Inactive</option>
-  </select>
-</div>
+              <select
+                v-model="form.status"
+                required
+                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
+              >
+                <option disabled value="">Select Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
           </div>
 
           <!-- Divider -->
@@ -214,7 +208,7 @@ export default {
       return this.institutes.filter((institute) =>
         institute.institute_name
           .toLowerCase()
-          .includes(this.searchInstituteQuery.toLowerCase()),
+          .includes(this.searchInstituteQuery.toLowerCase())
       );
     },
 
@@ -225,16 +219,14 @@ export default {
         filtered = filtered.filter((building) =>
           building.building_name
             .toLowerCase()
-            .includes(this.searchBuildingQuery.toLowerCase()),
+            .includes(this.searchBuildingQuery.toLowerCase())
         );
       }
 
       // Sort by Area number (Area 1 → Area 7)
       return filtered.sort((a, b) => {
-        const areaA =
-          parseInt(a.buildingArea?.area_name?.replace("Area ", "")) || 0;
-        const areaB =
-          parseInt(b.buildingArea?.area_name?.replace("Area ", "")) || 0;
+        const areaA = parseInt(a.buildingArea?.area_name?.replace("Area ", "")) || 0;
+        const areaB = parseInt(b.buildingArea?.area_name?.replace("Area ", "")) || 0;
 
         return areaA - areaB;
       });
@@ -252,7 +244,7 @@ export default {
         room_name: "",
         room_type: "",
         room_capacity: "",
-        status: "", 
+        status: "",
       },
 
       searchInstituteQuery: "",
@@ -284,8 +276,10 @@ export default {
     },
 
     formatBuilding(building) {
-  return `${building.buildingArea?.collegeBranch?.college_branch_name || ""} - ${building.buildingArea?.area_name || ""} - ${building.building_name || ""}`;
-},
+      return `${building.buildingArea?.collegeBranch?.college_branch_name || ""} - ${
+        building.buildingArea?.area_name || ""
+      } - ${building.building_name || ""}`;
+    },
 
     async submitData() {
       const form = this.$refs.roomsForm;
@@ -299,26 +293,22 @@ export default {
         const payload = {
           ...this.form,
           room_capacity: Number(this.form.room_capacity),
-          institute_id: this.form.institute_id
-            ? Number(this.form.institute_id)
-            : null,
-          building_id: this.form.building_id
-            ? Number(this.form.building_id)
-            : null,
+          institute_id: this.form.institute_id ? Number(this.form.institute_id) : null,
+          building_id: this.form.building_id ? Number(this.form.building_id) : null,
         };
 
         if (this.isEditMode) {
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
               `/rooms/update-room/${this.roomData.room_id}`,
-            payload,
+            payload
           );
 
           toast.success("Room updated successfully!");
         } else {
           await axios.post(
             process.env.VUE_APP_API_BASE_URL + "/rooms/add-rooms",
-            payload,
+            payload
           );
 
           toast.success("Room added successfully!");
@@ -330,37 +320,32 @@ export default {
         this.$emit("refresh");
         this.$emit("close");
       } catch (error) {
-        toast.error(
-          this.isEditMode ? "Failed to update room" : "Failed to add room",
-        );
+        toast.error(this.isEditMode ? "Failed to update room" : "Failed to add room");
       }
     },
   },
 
-mounted() {
-  this.fetchInstitutes();
-  this.fetchBuildings();
+  mounted() {
+    this.fetchInstitutes();
+    this.fetchBuildings();
 
-  if (this.isEditMode) {
-    this.form = {
-      institute_id: this.roomData.institute?.institute_id || "",
-      building_id: this.roomData.building?.building_id || "",
-      room_name: this.roomData.room_name,
-      room_type: this.roomData.room_type,
-      room_capacity: this.roomData.room_capacity,
-      status: this.roomData.status || "Active", 
-    };
+    if (this.isEditMode) {
+      this.form = {
+        institute_id: this.roomData.institute?.institute_id || "",
+        building_id: this.roomData.building?.building_id || "",
+        room_name: this.roomData.room_name,
+        room_type: this.roomData.room_type,
+        room_capacity: this.roomData.room_capacity,
+        status: this.roomData.status || "Active",
+      };
 
-  
-    this.searchInstituteQuery =
-      this.roomData.institute?.institute_name || "";
+      this.searchInstituteQuery = this.roomData.institute?.institute_name || "";
 
-  
-    this.searchBuildingQuery = this.roomData.building
-      ? this.formatBuilding(this.roomData.building)
-      : "";
-  }
-}
+      this.searchBuildingQuery = this.roomData.building
+        ? this.formatBuilding(this.roomData.building)
+        : "";
+    }
+  },
 };
 </script>
 

@@ -1,9 +1,7 @@
 <template>
   <div v-if="isTable" class=" ">
     <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4 font-regular">
-        Pages / Curriculum Offers
-      </div>
+      <div class="text-[13px] text-text mt-4 font-regular">Pages / Curriculum Offers</div>
 
       <div
         @click="toggleAdd"
@@ -48,11 +46,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -89,25 +83,17 @@
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead
-            class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-          >
+          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
             <tr>
-              <th class="px-4 py-3 text-left font-normal w-[35%]">
-                Program Title
-              </th>
+              <th class="px-4 py-3 text-left font-normal w-[35%]">Program Title</th>
 
               <th class="px-4 py-3 font-normal text-center w-[33%]">
                 Effective Year From
               </th>
 
-              <th class="px-4 py-3 font-normal text-center w-[33%]">
-                Effective Year To
-              </th>
+              <th class="px-4 py-3 font-normal text-center w-[33%]">Effective Year To</th>
 
-              <th
-                class="px-4 py-3 text-center rounded-tr-lg font-normal w-[25%]"
-              >
+              <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
                 Actions
               </th>
             </tr>
@@ -129,25 +115,17 @@
               </td>
               <td class="px-4 py-3 text-left flex justify-center">
                 <div class="flex gap-2">
-                  <button
-                    class="w-[90px] h-8 border border-green-300 hover:bg-green-200 text-defaultGreen rounded-lg flex items-center justify-center gap-1 text-sm"
-                    @click="toggleEdit(curriculum_data)"
-                  >
+                  <button class="btn-edit" @click="toggleEdit(curriculum_data)">
                     <icon name="edit" /> Edit
                   </button>
-                  <button
-                    class="px-3 py-1 h-8 border border-red-300 hover:bg-red-200 text-red-800 rounded-lg flex items-center gap-1"
-                    @click="toggleDelete(curriculum_data)"
-                  >
+                  <button class="btn-delete" @click="toggleDelete(curriculum_data)">
                     <icon name="delete" /> Delete
                   </button>
                 </div>
               </td>
             </tr>
             <tr v-if="paginatedData.length === 0">
-              <td colspan="8" class="text-center py-8 text-gray-400">
-                No records found
-              </td>
+              <td colspan="8" class="text-center py-8 text-gray-400">No records found</td>
             </tr>
           </tbody>
         </table>
@@ -155,8 +133,7 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -190,12 +167,7 @@
     </div>
   </div>
 
-  <addCurriculum
-    v-if="isAdd"
-    mode="add"
-    @close="closeView"
-    @refresh="loadCurriculums"
-  />
+  <addCurriculum v-if="isAdd" mode="add" @close="closeView" @refresh="loadCurriculums" />
 
   <addCurriculum
     v-if="showEditModal && selectedCurriculum"
@@ -206,45 +178,30 @@
   />
 
   <!-- Delete Confirmation Modal -->
-  <div
-    v-if="showDeleteModal"
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50 w-min-screen"
-  ></div>
-  <div
-    v-if="showDeleteModal"
-    class="rounded-xl shadow-lg w-[300px] md:w-[400px] bg-white py-6 px-4 flex flex-col items-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
-  >
-    <div
-      class="rounded-full w-16 h-16 md:w-20 md:h-20 flex justify-center items-center bg-red-300 animate-pulse"
-    >
-      <icon
-        name="question"
-        class="w-8 h-8 md:w-10 md:h-10 text-white flex justify-center items-center"
-      />
-    </div>
+  <div v-if="showDeleteModal" class="delete-container">
+    <div class="delete-box">
+      <div class="delete-icon">
+        <icon name="question" class="text-red-600" />
+      </div>
 
-    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">
-      Delete Confirmation
-    </h1>
-    <p class="mt-2 text-[12px] md:text-[13px] text-center px-8">
-      Are you sure you want to delete this record? This action cannot be undone.
-    </p>
+      <h1 class="delete-title">Delete Confirmation</h1>
 
-    <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
+      <p class="delete-text">
+        Are you sure you want to delete
+        <b
+          >{{ recordToDelete?.program?.program_code }}S.Y
+          {{ recordToDelete?.curriculum_start_year }} -
+          {{ recordToDelete?.curriculum_end_year }}
+        </b>
+        ? This action cannot be undone.
+      </p>
 
-    <div class="tracking-wide flex gap-2 mt-4">
-      <button
-        class="bg-red-400 p-2 px-3 text-[11px] md:text-[13px] rounded-md text-white hover:bg-white border hover:border-red-800 hover:text-red-800 hover:shadow-md"
-        @click="showDeleteModal = false"
-      >
-        No, Cancel
-      </button>
-      <button
-        class="bg-green-400 p-2 px-3 text-[11px] md:text-[13px] rounded-md text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
-        @click="confirmDelete"
-      >
-        Yes, Delete
-      </button>
+      <!-- <div class="delete-divider"></div> -->
+
+      <div class="delete-actions">
+        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+      </div>
     </div>
   </div>
 </template>
@@ -364,8 +321,7 @@ export default {
 
       axios
         .delete(
-          process.env.VUE_APP_API_BASE_URL +
-            `/curriculums/delete-id/${curriculumId}`,
+          process.env.VUE_APP_API_BASE_URL + `/curriculums/delete-id/${curriculumId}`
         )
         .then(() => {
           this.recordToDelete = null;

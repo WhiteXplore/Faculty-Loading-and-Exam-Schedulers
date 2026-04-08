@@ -82,13 +82,13 @@
                   <td class="px-4 py-2 text-left">
                     <div class="flex gap-2">
                       <button
-                        class="w-[90px] h-8 border border-green-300 hover:bg-green-200 text-defaultGreen rounded-lg flex items-center justify-center gap-1 text-sm"
+                       class="btn-edit"
                         @click="toggleEdit(schedule)"
                       >
                         <icon name="edit" /> Edit
                       </button>
                       <button
-                        class="px-3 py-1 h-8 border border-red-300 hover:bg-red-200 text-red-800 rounded-lg flex items-center gap-1"
+                       class="btn-delete"
                         @click="toggleDelete(schedule)"
                       >
                         <icon name="delete" /> Delete

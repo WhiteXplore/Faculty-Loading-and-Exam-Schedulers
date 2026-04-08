@@ -1,9 +1,7 @@
 <template>
   <div v-if="isTable" class=" ">
     <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4 font-regular">
-        Pages / Faculty List
-      </div>
+      <div class="text-[13px] text-text mt-4 font-regular">Pages / Faculty List</div>
       <div
         @click="toggleAdd"
         class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
@@ -56,22 +54,14 @@
             <table
               class="min-w-full table-auto border-separate border-spacing-y-2 text-sm text-gray-700"
             >
-              <thead
-                class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-              >
+              <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
                 <tr>
-                  <th
-                    class="px-4 py-3 w-10 text-left rounded-tl-lg font-normal"
-                  >
-                    ID
-                  </th>
+                  <th class="px-4 py-3 w-10 text-left rounded-tl-lg font-normal">ID</th>
                   <th class="px-4 py-3 text-left font-normal">Instructors</th>
                   <th class="px-4 py-3 text-left font-normal">Instutute</th>
                   <th class="px-4 py-3 text-left font-normal">Program</th>
                   <th class="px-4 py-3 text-left font-normal">Job Status</th>
-                  <th class="px-4 py-3 text-left rounded-tr-lg font-normal">
-                    Actions
-                  </th>
+                  <th class="px-4 py-3 text-left rounded-tr-lg font-normal">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -99,16 +89,10 @@
                   </td>
                   <td class="px-4 py-2 text-left">
                     <div class="flex gap-2">
-                      <button
-                        class="w-[90px] h-8 border border-green-300 hover:bg-green-200 text-defaultGreen rounded-lg flex items-center justify-center gap-1 text-sm"
-                        @click="toggleEdit(instructor_data)"
-                      >
+                      <button class="btn-edit" @click="toggleEdit(instructor_data)">
                         <icon name="edit" /> Edit
                       </button>
-                      <button
-                        class="px-3 py-1 h-8 border border-red-300 hover:bg-red-200 text-red-800 rounded-lg flex items-center gap-1"
-                        @click="toggleDelete(instructor_data)"
-                      >
+                      <button class="btn-delete" @click="toggleDelete(instructor_data)">
                         <icon name="delete" /> Delete
                       </button>
                     </div>
@@ -165,11 +149,7 @@
     </div>
   </div>
 
-  <AddInstructor
-    v-if="isAddFacultyLoad"
-    @close="closeView"
-    @refresh="loadInstructors"
-  />
+  <AddInstructor v-if="isAddFacultyLoad" @close="closeView" @refresh="loadInstructors" />
   <EditInstructor
     v-if="showEditModal && selectedInstructor"
     :instructorData="selectedInstructor"
@@ -195,9 +175,7 @@
       />
     </div>
 
-    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">
-      Delete Confirmation
-    </h1>
+    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">Delete Confirmation</h1>
     <p class="mt-2 text-[12px] md:text-[13px] text-center px-8">
       Are you sure you want to delete this record? This action cannot be undone.
     </p>
@@ -260,7 +238,7 @@ export default {
       return this.instructors.filter((item) =>
         `${item.instructor_fname} ${item.instructor_mname} ${item.instructor_lname}`
           .toLowerCase()
-          .includes(query),
+          .includes(query)
       );
     },
     totalPages() {
@@ -321,7 +299,7 @@ export default {
       try {
         await axios.delete(
           process.env.VUE_APP_API_BASE_URL +
-            `/instructors/delete-id/${this.recordToDelete.instructor_id}`,
+            `/instructors/delete-id/${this.recordToDelete.instructor_id}`
         );
 
         // Play sound after successful delete

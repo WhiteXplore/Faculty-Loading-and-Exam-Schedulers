@@ -18,11 +18,7 @@
               {{ isEdit ? "Edit " : "Add " }} Course
             </h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <!-- Body -->
@@ -70,9 +66,7 @@
 
           <!-- Description -->
           <div class="w-full space-y-2">
-            <label for="course_title" class="font-bold"
-              >Course Description:</label
-            >
+            <label for="course_title" class="font-bold">Course Description:</label>
             <textarea
               v-model="form.course_title"
               id="course_title"
@@ -267,7 +261,7 @@ export default {
       return this.curriculums.filter(
         (c) =>
           c.curriculum_end_year?.toLowerCase().includes(q) ||
-          c.program.program_name?.toLowerCase().includes(q),
+          c.program.program_name?.toLowerCase().includes(q)
       );
     },
 
@@ -278,7 +272,7 @@ export default {
           (course.course_code?.toLowerCase().includes(q) ||
             course.course_title?.toLowerCase().includes(q)) &&
           this.form.curriculum_id === course.curriculum_id &&
-          !this.form.course_requisite.includes(course.course_code),
+          !this.form.course_requisite.includes(course.course_code)
       );
     },
   },
@@ -300,9 +294,7 @@ export default {
     },
 
     removeRequisite(code) {
-      this.form.course_requisite = this.form.course_requisite.filter(
-        (c) => c !== code,
-      );
+      this.form.course_requisite = this.form.course_requisite.filter((c) => c !== code);
     },
 
     cancelRequisites() {
@@ -321,13 +313,13 @@ export default {
         if (this.isEdit) {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/courses/update-course/${this.courseData.course_id}`,
-            payload,
+            payload
           );
           toast.success("Course updated successfully!");
         } else {
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/courses/add-courses`,
-            payload,
+            payload
           );
           toast.success("Course added successfully!");
         }
@@ -336,9 +328,7 @@ export default {
         this.$emit("close");
       } catch (err) {
         console.error(err);
-        toast.error(
-          this.isEdit ? "Failed to update course." : "Failed to add course.",
-        );
+        toast.error(this.isEdit ? "Failed to update course." : "Failed to add course.");
       }
     },
   },
