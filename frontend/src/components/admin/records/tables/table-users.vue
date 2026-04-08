@@ -216,7 +216,7 @@
                   </button>
 
                   <button
-                    class="px-3 py-1 h-8 border border-red-300 hover:bg-red-200 text-red-800 rounded-lg flex items-center gap-1"
+                   class="btn-delete"
                     @click="toggleDelete(user)"
                   >
                     <icon name="delete" /> Delete

@@ -4,7 +4,7 @@
     class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 w-screen"
   >
     <div
-      class="rounded-xl shadow-lg w-[19vw] h-[28vh] bg-white py-6 px-4 flex flex-col items-center animate-slideUp"
+      class="rounded-2xl shadow-lg w-[19vw] h-[28vh] bg-white py-6 px-4 flex flex-col items-center animate-slideUp"
     >
       <!-- Icon -->
       <div
@@ -17,12 +17,8 @@
       </div>
 
       <!-- Title -->
-      <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">
-        Log out Confirmation
-      </h1>
-      <p class="mt-2 text-[12px] md:text-[13px]">
-        Are you sure you want to log out ?
-      </p>
+      <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">Log out Confirmation</h1>
+      <p class="mt-2 text-[12px] md:text-[13px]">Are you sure you want to log out ?</p>
 
       <!-- Break Line -->
       <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>

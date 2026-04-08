@@ -46,11 +46,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -90,18 +86,14 @@
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead
-            class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-          >
+          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
             <tr>
               <th class="px-4 py-3 text-left w-[10%]">School Year</th>
               <!-- <th class="px-4 py-3 text-center">Start Year</th>
               <th class="px-4 py-3 text-center">End Year</th> -->
-              <th class="px-4 py-3 text-center w-[20%]">Semester</th>
-              <th class="px-4 py-3 text-center w-[20%]">Status</th>
-              <th class="px-4 py-3 text-center rounded-tr-lg w-[20%]">
-                Actions
-              </th>
+              <th class="px-4 py-3 text-center">Semester</th>
+              <th class="px-4 py-3 text-center">Status</th>
+              <th class="px-4 py-3 text-center rounded-tr-lg w-[10%]">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -130,25 +122,17 @@
               </td>
               <td class="px-4 py-3 flex justify-center">
                 <div class="flex gap-2">
-                  <button
-                    class="px-3 py-1 border border-green-300 hover:bg-green-200 text-green-800 rounded-lg flex items-center gap-1"
-                    @click="toggleEdit(sy)"
-                  >
+                  <button class="btn-edit" @click="toggleEdit(sy)">
                     <icon name="edit" /> Edit
                   </button>
-                  <button
-                    class="px-3 py-1 border border-red-300 hover:bg-red-200 text-red-800 rounded-lg flex items-center gap-1"
-                    @click="toggleDelete(sy)"
-                  >
+                  <button class="btn-delete" @click="toggleDelete(sy)">
                     <icon name="delete" /> Delete
                   </button>
                 </div>
               </td>
             </tr>
             <tr v-if="paginatedData.length === 0">
-              <td colspan="7" class="text-center py-8 text-gray-400">
-                No records found
-              </td>
+              <td colspan="7" class="text-center py-8 text-gray-400">No records found</td>
             </tr>
           </tbody>
         </table>
@@ -156,8 +140,7 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -192,11 +175,7 @@
   </div>
 
   <!-- Add / Edit Modals -->
-  <addSchoolYear
-    v-if="isAddSchoolYear"
-    @close="closeView"
-    @refresh="loadSchoolYears"
-  />
+  <addSchoolYear v-if="isAddSchoolYear" @close="closeView" @refresh="loadSchoolYears" />
   <addSchoolYear
     v-if="showEditModal && selectedSchoolYear"
     :schoolYearData="selectedSchoolYear"
@@ -205,37 +184,30 @@
   />
 
   <!-- Delete Confirmation -->
-  <div
-    v-if="showDeleteModal"
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  ></div>
-  <div
-    v-if="showDeleteModal"
-    class="rounded-xl shadow-lg w-[300px] md:w-[400px] bg-white py-6 px-4 flex flex-col items-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
-  >
-    <div
-      class="rounded-full w-16 h-16 flex justify-center items-center bg-red-300 animate-pulse"
-    >
-      <icon name="question" class="w-8 h-8 text-white" />
-    </div>
-    <h1 class="text-[16px] font-semibold mt-4">Delete Confirmation</h1>
-    <p class="mt-2 text-[13px] text-center px-8">
-      Are you sure you want to delete this record? This action cannot be undone.
-    </p>
-    <div class="w-full h-[1px] bg-gray-200 mt-4"></div>
-    <div class="flex gap-2 mt-4">
-      <button
-        class="bg-red-400 px-3 py-3 text-white rounded-md hover:bg-white hover:border hover:border-red-800 hover:text-red-800"
-        @click="showDeleteModal = false"
-      >
-        No, Cancel
-      </button>
-      <button
-        class="bg-green-400 px-3 py-3 text-white rounded-md hover:bg-white hover:border hover:border-green-800 hover:text-green-800"
-        @click="confirmDelete"
-      >
-        Yes, Delete
-      </button>
+  <div v-if="showDeleteModal" class="delete-container">
+    <div class="delete-box">
+      <div class="delete-icon">
+        <icon name="question" class="text-red-600" />
+      </div>
+
+      <h1 class="delete-title">Delete Confirmation</h1>
+
+      <p class="delete-text">
+        Are you sure you want to delete
+        <b>
+          {{ getSemesterLabel(recordToDelete?.semester) }} -
+          {{ recordToDelete?.start_year }} to
+          {{ recordToDelete?.end_year }}
+        </b>
+        ? This action cannot be undone.
+      </p>
+
+      <!-- <div class="delete-divider"></div> -->
+
+      <div class="delete-actions">
+        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+      </div>
     </div>
   </div>
 </template>
@@ -273,7 +245,7 @@ export default {
           (sy) =>
             sy.school_year_name?.toLowerCase().includes(query) ||
             String(sy.start_year).includes(query) ||
-            String(sy.end_year).includes(query),
+            String(sy.end_year).includes(query)
         );
       }
 
@@ -320,7 +292,7 @@ export default {
     async loadSchoolYears() {
       try {
         const response = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years"
         );
         this.schoolYears = response.data;
       } catch (error) {
@@ -349,7 +321,7 @@ export default {
       axios
         .delete(
           process.env.VUE_APP_API_BASE_URL +
-            `/school-year/delete-id/${this.recordToDelete.school_year_id}`,
+            `/school-year/delete-id/${this.recordToDelete.school_year_id}`
         )
         .then(() => {
           this.showDeleteModal = false;

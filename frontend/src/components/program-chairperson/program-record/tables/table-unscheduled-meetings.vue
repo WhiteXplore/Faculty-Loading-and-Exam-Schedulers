@@ -32,6 +32,7 @@
         <table class="min-w-full text-sm text-gray-700">
           <thead class="bg-defaultGreen text-white">
             <tr>
+              <th class="px-4 py-3 text-left">Campus</th>
               <th class="px-4 py-3 text-left">Course</th>
               <th class="px-4 py-3 text-center">Program</th>
               <th class="px-4 py-3 text-center">Type</th>
@@ -48,6 +49,9 @@
               :key="item.id"
               class="border-t hover:bg-green-50"
             >
+              <td class="px-4 py-3 font-semibold">
+                {{ item.inter_branch || "-" }}
+              </td>
               <td class="px-4 py-3 font-semibold">
                 {{ item.course_code }}
               </td>
@@ -89,8 +93,7 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
         </div>
 
         <div class="flex items-center gap-1 text-sm">
@@ -205,10 +208,7 @@ export default {
     },
 
     endIndex() {
-      return Math.min(
-        this.currentPage * this.itemsPerPage,
-        this.filteredData.length,
-      );
+      return Math.min(this.currentPage * this.itemsPerPage, this.filteredData.length);
     },
   },
 
@@ -227,10 +227,9 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(
-          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
-          { withCredentials: true },
-        );
+        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
+          withCredentials: true,
+        });
         this.user = res.data || {};
       } catch {
         this.user = {};

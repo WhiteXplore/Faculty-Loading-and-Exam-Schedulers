@@ -2,9 +2,7 @@
   <div v-if="isTable" class=" ">
     <div class="flex justify-between items-center px-1 text-sm">
       <!-- LEFT (Pages Title) -->
-      <div class="text-[13px] text-text font-regular">
-        Pages / Rooms Availability
-      </div>
+      <div class="text-[13px] text-text font-regular">Pages / Rooms Availability</div>
 
       <!-- RIGHT (Buttons) -->
       <div class="flex gap-2">
@@ -67,11 +65,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -109,33 +103,16 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead
-              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-            >
+            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
               <tr>
-                <th class="px-4 py-3 text-left font-normal w-[4%]">
-                  Room Name
-                </th>
+                <th class="px-4 py-3 text-left font-normal w-[4%]">Room Name</th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">Room Type</th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">Room Capacity</th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">Institute</th>
+                <th class="px-4 py-3 text-center font-normal w-[10%]">Building Name</th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">Status</th>
 
-                <th class="px-4 py-3 text-center font-normal w-[4%]">
-                  Room Type
-                </th>
-                <th class="px-4 py-3 text-center font-normal w-[4%]">
-                  Room Capacity
-                </th>
-                <th class="px-4 py-3 text-center font-normal w-[4%]">
-                  Institute
-                </th>
-                <th class="px-4 py-3 text-center font-normal w-[10%]">
-                  Building Name
-                </th>
-                <th class="px-4 py-3 text-center font-normal w-[4%]">
-                  Status
-                </th>
-
-                <th
-                  class="px-4 py-3 text-center rounded-tr-lg font-normal w-[1%]"
-                >
+                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[1%]">
                   Actions
                 </th>
               </tr>
@@ -177,26 +154,18 @@
 
                 <td class="px-4 py-3 flex justify-center">
                   <div class="flex gap-2 justify-center">
-                    <button
-                      class="w-[90px] h-8 border border-green-300 hover:bg-green-200 text-defaultGreen rounded-lg flex items-center justify-center gap-1 text-sm"
-                      @click="toggleEdit(rooms_data)"
-                    >
+                    <button class="btn-edit" @click="toggleEdit(rooms_data)">
                       <icon name="edit" /> Edit
                     </button>
 
-                    <button
-                      class="w-[90px] h-8 border border-red-300 hover:bg-red-200 text-red-800 rounded-lg flex items-center justify-center gap-1 text-sm"
-                      @click="toggleDelete(rooms_data)"
-                    >
+                    <button class="btn-delete" @click="toggleDelete(rooms_data)">
                       <icon name="delete" /> Delete
                     </button>
                   </div>
                 </td>
               </tr>
               <tr v-if="paginatedData.length === 0">
-                <td colspan="6" class="text-left py-6 text-gray-400">
-                  No records found
-                </td>
+                <td colspan="6" class="text-left py-6 text-gray-400">No records found</td>
               </tr>
             </tbody>
           </table>
@@ -205,8 +174,7 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -247,51 +215,27 @@
     @close="closeModal"
     @refresh="loadRooms"
   />
-  <uploadRooms
-    v-if="isUploadModal"
-    @close="isUploadModal = false"
-    @refresh="loadRooms"
-  />
+  <uploadRooms v-if="isUploadModal" @close="isUploadModal = false" @refresh="loadRooms" />
 
   <!-- Delete Confirmation Modal -->
-
-  <!-- DELETE CONFIRMATION MODAL -->
-  <div
-    v-if="showDeleteModal"
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
-    <div
-      class="rounded-xl shadow-lg w-[320px] md:w-[420px] bg-white py-6 px-4 flex flex-col items-center"
-    >
-      <div
-        class="rounded-full w-20 h-20 flex justify-center items-center bg-red-300 animate-pulse"
-      >
-        <icon name="question" class="w-10 h-10 text-white" />
+  <div v-if="showDeleteModal" class="delete-container">
+    <div class="delete-box">
+      <div class="delete-icon">
+        <icon name="question" class="text-red-600" />
       </div>
 
-      <h1 class="text-[16px] font-semibold mt-4">Delete Confirmation</h1>
+      <h1 class="delete-title">Delete Confirmation</h1>
 
-      <p class="mt-2 text-[13px] text-center px-8">
+      <p class="delete-text">
         Are you sure you want to delete
         <b>{{ recordToDelete?.room_name }}</b> ? This action cannot be undone.
       </p>
 
-      <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
+      <!-- <div class="delete-divider"></div> -->
 
-      <div class="tracking-wide flex gap-2 mt-4">
-        <button
-          class="bg-red-400 p-2 px-3 text-[13px] rounded-md text-white hover:bg-white border hover:border-red-800 hover:text-red-800 hover:shadow-md"
-          @click="showDeleteModal = false"
-        >
-          No, Cancel
-        </button>
-
-        <button
-          class="bg-green-400 p-2 px-3 text-[13px] rounded-md text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
-          @click="confirmDelete"
-        >
-          Yes, Delete
-        </button>
+      <div class="delete-actions">
+        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
       </div>
     </div>
   </div>
@@ -344,7 +288,7 @@ export default {
         ]
           .join(" ")
           .toLowerCase()
-          .includes(query),
+          .includes(query)
       );
     },
 

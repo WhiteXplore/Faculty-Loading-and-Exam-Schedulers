@@ -45,24 +45,12 @@
             name="exclamation-circle"
             class="w-7 h-7 p-1 rounded-full bg-green-200 text-green-900 flex items-center justify-center"
           />
-          <h3 class="text-lg font-semibold text-gray-800 leading-none">
-            Confirm Save
-          </h3>
+          <h3 class="text-lg font-semibold text-gray-800 leading-none">Confirm Save</h3>
         </div>
-
-        <!-- Right: Close Button -->
-        <button
-          @click="showConfirmSaved = false"
-          class="text-gray-400 hover:text-gray-600 transition leading-none"
-        >
-          ✕
-        </button>
       </div>
 
       <!-- TODO  Message -->
-      <p class="text-gray-600 mb-6">
-        Are you sure you want to save this schedule?
-      </p>
+      <p class="text-gray-600 mb-6">Are you sure you want to save this schedule?</p>
 
       <!-- TODO  Buttons -->
       <div class="flex justify-center gap-2 text-sm">
@@ -81,9 +69,7 @@
       </div>
     </div>
   </div>
-  <div
-    class="flex flex-col space-y-1 h-[calc(100vh-180px)] overflow-hidden px-2"
-  >
+  <div class="flex flex-col space-y-1 h-[calc(100vh-180px)] overflow-hidden px-2">
     <!-- TODO  Top Controls -->
     <div class="flex flex-wrap items-center justify-between">
       <!-- LEFT : Faculty Search -->
@@ -141,11 +127,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -177,11 +159,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -194,9 +172,7 @@
             @click="generateSchedule"
             class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-600 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg transition duration-200"
           >
-            <div
-              class="p-1 bg-blue-800/20 rounded-full flex items-center justify-center"
-            >
+            <div class="p-1 bg-blue-800/20 rounded-full flex items-center justify-center">
               <icon name="arrow-path" />
             </div>
             <span class="font-medium text-sm">Generate</span>
@@ -254,9 +230,7 @@
               <table class="w-full text-left border-collapse text-[11px]">
                 <thead class="sticky top-0 bg-gray-100 z-10">
                   <tr class="text-gray-700">
-                    <th
-                      class="px-4 py-2 border border-gray-200 w-24 text-center"
-                    >
+                    <th class="px-4 py-2 border border-gray-200 w-24 text-center">
                       Time
                     </th>
                     <th
@@ -285,14 +259,8 @@
                       class="relative border border-gray-200 text-left align-top h-[60px] p-0"
                     >
                       <template
-                        v-for="item in getScheduleForCell(
-                          slot,
-                          day,
-                          instructor,
-                        )"
-                        :key="
-                          item.course_name + item.start_hour + item.room_name
-                        "
+                        v-for="item in getScheduleForCell(slot, day, instructor)"
+                        :key="item.course_name + item.start_hour + item.room_name"
                       >
                         <div
                           v-if="isStartingSlot(item, slot)"
@@ -324,16 +292,10 @@
                               item.schedule_type === 'face to face'
                                 ? 'bg-orange-500'
                                 : '',
-                              item.schedule_type === 'online'
-                                ? 'bg-purple-500'
-                                : '',
+                              item.schedule_type === 'online' ? 'bg-purple-500' : '',
                             ]"
                           >
-                            {{
-                              item.schedule_type === "face to face"
-                                ? "F2F"
-                                : "OL"
-                            }}
+                            {{ item.schedule_type === "face to face" ? "F2F" : "OL" }}
                           </span>
                           <div class="p-2 leading-snug truncate">
                             <p class="font-semibold truncate">
@@ -371,12 +333,8 @@
                 maxWidth: '260px',
               }"
             >
-              <div
-                class="bg-white border border-gray-300 rounded-xl p-3 scale-125"
-              >
-                <div
-                  class="flex items-center justify-between gap-2 mb-2 w-full"
-                >
+              <div class="bg-white border border-gray-300 rounded-xl p-3 scale-125">
+                <div class="flex items-center justify-between gap-2 mb-2 w-full">
                   <!-- Course Code -->
                   <div class="text-sm font-bold text-defaultGreen leading-none">
                     {{ tooltipItem.course_code }}
@@ -401,9 +359,7 @@
                 </div>
 
                 <div class="text-[10px] text-gray-700 space-y-0.5">
-                  <p>
-                    <strong>Faculty:</strong> {{ tooltipItem.faculty_name }}
-                  </p>
+                  <p><strong>Faculty:</strong> {{ tooltipItem.faculty_name }}</p>
                   <p>
                     <strong>Year & Section:</strong>
                     {{ tooltipItem.program_code }}-{{ tooltipItem.set_name }}
@@ -414,9 +370,7 @@
                     <strong>Time:</strong>
                     {{ formatTime(tooltipItem.start_hour) }} –
                     {{
-                      formatTime(
-                        tooltipItem.start_hour + Number(tooltipItem.duration),
-                      )
+                      formatTime(tooltipItem.start_hour + Number(tooltipItem.duration))
                     }}
                   </p>
                   <p><strong>Type:</strong> {{ tooltipItem.type }}</p>
@@ -550,9 +504,7 @@ export default {
 
       if (this.searchQuery) {
         const q = this.searchQuery.toLowerCase();
-        entries = entries.filter(([faculty]) =>
-          faculty.toLowerCase().includes(q),
-        );
+        entries = entries.filter(([faculty]) => faculty.toLowerCase().includes(q));
       }
 
       const start = (this.cardPage - 1) * this.cardsPerPage;
@@ -565,7 +517,7 @@ export default {
 
       const filtered = this.searchQuery
         ? entries.filter(([faculty]) =>
-            faculty.toLowerCase().includes(this.searchQuery.toLowerCase()),
+            faculty.toLowerCase().includes(this.searchQuery.toLowerCase())
           )
         : entries;
 
@@ -584,41 +536,37 @@ export default {
     facultyTotalUnits() {
       const result = {};
 
-      Object.entries(this.filteredGroupedSchedule).forEach(
-        ([faculty, schedules]) => {
-          let totalLecture = 0;
-          let totalLab = 0;
+      Object.entries(this.filteredGroupedSchedule).forEach(([faculty, schedules]) => {
+        let totalLecture = 0;
+        let totalLab = 0;
 
-          schedules.forEach((sched) => {
-            const course = this.coursesList.find(
-              (c) => c.course_code === sched.course_code,
-            );
-            if (!course) return;
+        schedules.forEach((sched) => {
+          const course = this.coursesList.find(
+            (c) => c.course_code === sched.course_code
+          );
+          if (!course) return;
 
-            const duration = Number(sched.duration || 0);
+          const duration = Number(sched.duration || 0);
 
-            if (sched.type === "Lecture") {
-              const unitsPerSlot =
-                (duration / 3) * Number(course.course_lec || 0);
-              totalLecture += unitsPerSlot;
-            } else if (sched.type === "Laboratory") {
-              const unitsPerSlot =
-                (duration / 3) * Number(course.course_lab || 0);
-              totalLab += unitsPerSlot;
-            }
-          });
+          if (sched.type === "Lecture") {
+            const unitsPerSlot = (duration / 3) * Number(course.course_lec || 0);
+            totalLecture += unitsPerSlot;
+          } else if (sched.type === "Laboratory") {
+            const unitsPerSlot = (duration / 3) * Number(course.course_lab || 0);
+            totalLab += unitsPerSlot;
+          }
+        });
 
-          const lectureUnits = Number(totalLecture.toFixed(2));
-          const labUnits = Number(totalLab.toFixed(2));
-          const totalUnits = Number((lectureUnits + labUnits).toFixed(2));
+        const lectureUnits = Number(totalLecture.toFixed(2));
+        const labUnits = Number(totalLab.toFixed(2));
+        const totalUnits = Number((lectureUnits + labUnits).toFixed(2));
 
-          result[faculty] = {
-            lectureUnits,
-            labUnits,
-            totalUnits,
-          };
-        },
-      );
+        result[faculty] = {
+          lectureUnits,
+          labUnits,
+          totalUnits,
+        };
+      });
 
       return result;
     },
@@ -627,9 +575,7 @@ export default {
       const store = useFetchDataStore();
       const institutes = store.institutes || [];
 
-      const ids = [
-        ...new Set(this.schedule.map((s) => Number(s.institute_id))),
-      ];
+      const ids = [...new Set(this.schedule.map((s) => Number(s.institute_id)))];
 
       return ids.map((id) => {
         const inst = institutes.find((i) => Number(i.institute_id) === id);
@@ -654,11 +600,8 @@ export default {
         ids = [
           ...new Set(
             this.schedule
-              .filter(
-                (s) =>
-                  Number(s.institute_id) === Number(this.selectedInstituteId),
-              )
-              .map((s) => Number(s.program_id)),
+              .filter((s) => Number(s.institute_id) === Number(this.selectedInstituteId))
+              .map((s) => Number(s.program_id))
           ),
         ];
       }
@@ -679,9 +622,7 @@ export default {
       const activeYears = this.schoolYears.filter((y) => y.is_active);
       if (!activeYears.length) return null;
       return activeYears.reduce((latest, current) =>
-        new Date(current.updated_at) > new Date(latest.updated_at)
-          ? current
-          : latest,
+        new Date(current.updated_at) > new Date(latest.updated_at) ? current : latest
       );
     },
     startIndex() {
@@ -691,13 +632,13 @@ export default {
     endIndex() {
       return Math.min(
         this.currentPage * this.itemsPerPage,
-        Object.keys(this.filteredGroupedSchedule).length,
+        Object.keys(this.filteredGroupedSchedule).length
       );
     },
 
     totalPages() {
       return Math.ceil(
-        Object.keys(this.filteredGroupedSchedule).length / this.itemsPerPage,
+        Object.keys(this.filteredGroupedSchedule).length / this.itemsPerPage
       );
     },
 
@@ -721,9 +662,7 @@ export default {
 
       if (this.searchQuery) {
         const q = this.searchQuery.toLowerCase();
-        entries = entries.filter(([faculty]) =>
-          faculty.toLowerCase().includes(q),
-        );
+        entries = entries.filter(([faculty]) => faculty.toLowerCase().includes(q));
       }
 
       const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -761,7 +700,7 @@ export default {
     },
     getCollegeBranchName(branchId) {
       const branch = this.collegeBranches.find(
-        (b) => Number(b.college_branch_id) === Number(branchId),
+        (b) => Number(b.college_branch_id) === Number(branchId)
       );
 
       return branch ? branch.college_branch_name : `Branch ${branchId}`;
@@ -841,8 +780,7 @@ export default {
           const rStart = this.normalizeHour(r.start_hour);
           const rEnd = rStart + Number(r.duration);
 
-          if (Math.max(rStart, recordStart) >= Math.min(rEnd, recordEnd))
-            return null;
+          if (Math.max(rStart, recordStart) >= Math.min(rEnd, recordEnd)) return null;
 
           // Determine conflict reasons
           let reason = [];
@@ -880,7 +818,7 @@ export default {
             r.college_branch_id === record.college_branch_id
           ) {
             reason.push(
-              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time."
             );
           }
 
@@ -980,15 +918,15 @@ export default {
       if (this.selectedInstituteId)
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
-            schedules.some((s) => s.institute_id == this.selectedInstituteId),
-          ),
+            schedules.some((s) => s.institute_id == this.selectedInstituteId)
+          )
         );
 
       if (this.selectedProgramId)
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
-            schedules.some((s) => s.program_id == this.selectedProgramId),
-          ),
+            schedules.some((s) => s.program_id == this.selectedProgramId)
+          )
         );
 
       this.filteredGroupedSchedule = filtered;
@@ -1024,10 +962,9 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(
-          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
-          { withCredentials: true },
-        );
+        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
+          withCredentials: true,
+        });
         this.user = res.data || {};
       } catch {
         this.user = {};
@@ -1043,7 +980,7 @@ export default {
 
       try {
         const res = await axios.get(
-          `${process.env.VUE_APP_API_BASE_URL}/generated-scheduled/load`,
+          `${process.env.VUE_APP_API_BASE_URL}/generated-scheduled/load`
         );
 
         const data = res.data.data || {};
@@ -1127,7 +1064,7 @@ export default {
     async fetchSchoolYears() {
       try {
         const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years"
         );
         this.schoolYears = res.data.map((y) => ({ ...y }));
       } catch (err) {
@@ -1164,7 +1101,7 @@ export default {
           start_hour: item.start_hour,
           duration: item.duration,
           time_slot: `${this.formatTime(item.start_hour)} - ${this.formatTime(
-            item.start_hour + Number(item.duration),
+            item.start_hour + Number(item.duration)
           )}`,
           room_id: item.room_id,
           room_name: item.room_name,
@@ -1182,7 +1119,7 @@ export default {
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
             scheduledPayload,
-            { withCredentials: true },
+            { withCredentials: true }
           );
         }
 
@@ -1207,13 +1144,11 @@ export default {
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/unscheduled-meetings/add-unscheduled-meetings`,
             unscheduledPayload,
-            { withCredentials: true },
+            { withCredentials: true }
           );
         }
 
-        toast.success(
-          "✅ Schedule and unscheduled meetings saved successfully!",
-        );
+        toast.success("✅ Schedule and unscheduled meetings saved successfully!");
       } catch (error) {
         console.error(error);
         alert("❌ Failed to save schedule.");
