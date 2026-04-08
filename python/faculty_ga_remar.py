@@ -2889,7 +2889,7 @@ def save_schedule_to_text(schedule, unscheduled, filename):
 
 
 def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None,
-                          schedule_by_branch=None, branch_expertise_needed=None):
+                          schedule_by_branch=None):
     """Save schedule to a JSON file."""
     # Count full time and part time faculty in schedule
     faculty_types = {}
@@ -2917,8 +2917,7 @@ def save_schedule_to_json(schedule, unscheduled, filename, schedule_by_room=None
         "scheduled_meetings": schedule,
         "unscheduled_meetings": unscheduled,
         "schedule_by_room": schedule_by_room or {},
-        "schedule_by_branch": schedule_by_branch or {},
-        "branch_expertise_needed": branch_expertise_needed or {}
+        "schedule_by_branch": schedule_by_branch or {}
     }
 
     with open(filename, 'w', encoding='utf-8') as f:
@@ -3797,6 +3796,27 @@ if __name__ == "__main__":
         branch_map
     )
 
+    # Append branch expertise needed courses to unscheduled_meetings
+    for course in unassigned_branch_courses:
+        bid = course.get("branch_id")
+        bname = branch_map.get(bid, f"Branch {bid}")
+        program_code = course.get("program_code", "Unknown")
+        year_level = course.get("course_level", 0)
+        unscheduled_meetings.append({
+            "class_id": course.get("class_id"),
+            "course_code": course.get("course_code", "Unknown"),
+            "course_id": course.get("course_id"),
+            "institute_id": course.get("institute_id"),
+            "class_size": course.get("class_size", 0),
+            "faculty_name": "Unassigned",
+            "program_id": course.get("program_id"),
+            "program_name": course.get("program_name", "Unknown"),
+            "program_code": program_code,
+            "type": "Lecture" if course.get("course_lab", 0) == 0 else "Lecture+Lab",
+            "hours": f"{course.get('course_lec', 0)}h lec + {course.get('course_lab', 0)}h lab",
+            "reason": f"No qualified faculty - branch expertise needed ({bname}, {program_code}-{year_level})"
+        })
+
     # Generate timestamp for filenames
     # Create output directory if it doesn't exist
     output_dir = "faculty_loading_output"
@@ -3812,7 +3832,7 @@ if __name__ == "__main__":
     os.makedirs(json_output_dir, exist_ok=True)
     json_filename = os.path.join(json_output_dir, "faculty_loading.json")
     save_schedule_to_json(complete_schedule, unscheduled_meetings, json_filename,
-                          schedule_by_room, schedule_by_branch, branch_expertise_needed)
+                          schedule_by_room, schedule_by_branch)
 
     # Generate faculty core time schedule (time-in / time-out)
     faculty_core_time = generate_faculty_core_time(complete_schedule)
@@ -3825,8 +3845,7 @@ if __name__ == "__main__":
     output = {
         "scheduled_meetings": complete_schedule,
         "unscheduled_meetings": unscheduled_meetings,
-        "schedule_by_branch": schedule_by_branch,
-        "branch_expertise_needed": branch_expertise_needed
+        "schedule_by_branch": schedule_by_branch
     }
 
     # IMPORTANT: markers help NestJS safely parse stdout
