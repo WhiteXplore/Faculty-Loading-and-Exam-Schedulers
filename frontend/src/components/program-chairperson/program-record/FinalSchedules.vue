@@ -1,10 +1,8 @@
 <template>
-  <div class="px-4 mt-4">
+  <div class="p-2">
     <!-- Header -->
     <div class="flex justify-between items-center">
-      <h1 class="font-semibold tracking-wide text-sm px-1">
-        Generated Schedules
-      </h1>
+      <h1 class="font-semibold tracking-wide text-sm px-1">Generated Schedules</h1>
     </div>
 
     <!-- Tabs -->
@@ -24,11 +22,11 @@
           {{ tab.label }}
         </button>
       </div>
-      <div class="text-[13px] text-gray-700 px-6 flex justify-end">
+      <!-- <div class="text-[13px] text-gray-700 px-6 flex justify-end">
         Pages / Generated Schedules
         <span class="text-gray-400 mx-1">/</span>
         <span class="font-semibold text-defaultGreen">{{ activeTab }}</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- Content Card -->

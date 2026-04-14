@@ -22,7 +22,7 @@
     </div>
 
     <!-- Table -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
+    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
       <!-- Controls -->
       <div
         class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
@@ -93,17 +93,11 @@
 
                 <td class="px-4 py-3 flex justify-center">
                   <div class="flex gap-2">
-                    <button
-                     class="btn-edit"
-                      @click="openEditModal(branch)"
-                    >
+                    <button class="btn-edit" @click="openEditModal(branch)">
                       <icon name="edit" /> Edit
                     </button>
 
-                    <button
-                     class="btn-delete"
-                      @click="openDeleteModal(branch)"
-                    >
+                    <button class="btn-delete" @click="openDeleteModal(branch)">
                       <icon name="delete" /> Delete
                     </button>
                   </div>

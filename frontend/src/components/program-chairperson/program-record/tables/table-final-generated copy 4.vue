@@ -3,7 +3,6 @@
     <!-- TODO  Top Controls -->
 
     <FacultyTopControls
-      v-model:searchQuery="searchQuery"
       v-model:isJoined="isJoined"
       :showFacultyTable="showFacultyTable"
       :showCompareSelection="showCompareSelection"
@@ -16,17 +15,184 @@
       @backFromCompare="backFromCompare"
     />
 
+    <div class="flex flex-wrap items-center gap-4 px-2 mt-2">
+      <!-- TODO  Back Button -->
+      <button
+        v-if="!showFacultyTable && Object.keys(filteredGroupedSchedule).length === 1"
+        @click="backToFacultyTable"
+        class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
+      >
+        <icon name="arrow-left" class="w-4 h-4" />
+        <span class="font-medium text-sm">Back to Table</span>
+      </button>
+    </div>
+
     <!-- TODO  Scrollable Content -->
-    <div class="flex-1 overflow-y-auto mt-2">
+    <div class="flex-1 overflow-y-auto">
+      <!-- TODO  Faculty Table -->
+      <div v-if="showFacultyTable">
+        <div class="overflow-x-auto border rounded-xl bg-white">
+          <div
+            class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
+          >
+            <!-- TODO  Items per page -->
+            <div class="flex items-center gap-2">
+              <div class="relative">
+                <select
+                  v-model="itemsPerPage"
+                  class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
+                  @change="changePage(1)"
+                >
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                </select>
+                <div
+                  class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <span class="text-sm font-medium text-gray-600">Per page</span>
+            </div>
+
+            <!-- TODO  Search -->
+            <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search faculty..."
+                class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
+                @input="changePage(1)"
+              />
+              <div
+                class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- TODO  Faculty Table -->
+          <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
+            <div class="max-h-[69vh] overflow-y-auto">
+              <table class="min-w-full text-sm text-gray-700 border-collapse">
+                <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+                  <tr>
+                    <th class="px-5 py-3 text-left font-semibold whitespace-nowrap">
+                      Faculty Name
+                    </th>
+                    <th
+                      class="px-5 py-3 text-center font-semibold w-[150px] whitespace-nowrap"
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="(slots, instructor) in paginatedFaculty"
+                    :key="instructor"
+                    class="hover:bg-green-50 border-t transition-colors"
+                  >
+                    <td class="px-5 py-3 font-medium text-gray-800 whitespace-nowrap">
+                      {{ instructor }}
+                    </td>
+                    <td class="px-5 py-3 text-center">
+                      <button
+                        @click="viewFacultySchedule(instructor)"
+                        class="flex items-center justify-center gap-1 mx-auto px-3 py-1.5 border border-blue-400 text-blue-700 hover:bg-blue-100 rounded-lg text-sm font-medium transition"
+                      >
+                        <icon name="eye" class="w-4 h-4" /> View
+                      </button>
+                    </td>
+                  </tr>
+                  <tr
+                    v-if="!Object.keys(filteredGroupedSchedule).length"
+                    class="text-center bg-gray-50"
+                  >
+                    <td colspan="2" class="py-5 text-gray-500">No faculty found.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TODO  Pagination -->
+          <div class="flex justify-between items-center mt-4">
+            <div class="text-gray-700 text-sm">
+              Showing {{ startIndex }} to {{ endIndex }} of
+              {{ Object.keys(filteredGroupedSchedule).length }} faculty
+            </div>
+
+            <div class="flex items-center gap-1">
+              <!-- Previous -->
+              <button
+                @click="changePage(currentPage - 1)"
+                :disabled="currentPage === 1"
+                class="px-3 py-1 bg-gray-300 text-gray-700 rounded-l-md hover:bg-gray-400 disabled:opacity-50"
+              >
+                &lt;
+              </button>
+
+              <!-- Page Numbers -->
+              <span v-for="page in pageNumbers" :key="'page-' + page">
+                <button
+                  @click="changePage(page)"
+                  :class="{
+                    'bg-defaultGreen text-white': currentPage === page,
+                    'bg-gray-200 text-gray-700': currentPage !== page,
+                  }"
+                  class="px-3 py-1 rounded-md hover:bg-green-300"
+                >
+                  {{ page }}
+                </button>
+              </span>
+
+              <!-- Next -->
+              <button
+                @click="changePage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1 bg-gray-300 text-gray-700 rounded-r-md hover:bg-gray-400 disabled:opacity-50"
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- TODO  Faculty Cards -->
       <div
+        v-else
         :class="[
-          'gap-2 grid h-auto',
+          'gap-2 grid  h-auto',
           showCompareView
-            ? 'grid-cols-1 md:grid-cols-2 h-[87vh] overflow-y-auto'
-            : Object.keys(filteredBySearch).length === 1
-            ? 'grid-cols-1'
-            : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 overflow-y-auto',
+            ? 'grid-cols-1 md:grid-cols-2 h-[87vh]  overflow-y-auto'
+            : Object.keys(filteredGroupedSchedule).length === 1
+            ? 'grid-cols-1 '
+            : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2  overflow-y-auto  ',
         ]"
         class="overflow-y-auto scrollbar-hide"
       >
@@ -340,7 +506,7 @@
 
 <script>
 import axios from "axios";
-// import icon from "@/assets/icon.vue";
+import icon from "@/assets/icon.vue";
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import editSchedule from "../modals/edit-schedule.vue";
 import { toast } from "vue3-toastify";
@@ -351,7 +517,7 @@ import JoinValidationModal from "../faculty-components/join-validation-modal.vue
 export default {
   name: "FacultySchedule",
   components: {
-    // icon,
+    icon,
     editSchedule,
     FacultyTopControls,
     ConflictModal,
@@ -429,29 +595,10 @@ export default {
         byClass: {},
       },
       joinIndex: {},
-      searchQuery: "",
     };
   },
 
   computed: {
-    filteredBySearch() {
-      if (!this.searchQuery) return this.filteredGroupedSchedule;
-
-      const q = this.searchQuery.toLowerCase();
-
-      return Object.fromEntries(
-        Object.entries(this.filteredGroupedSchedule).filter(
-          ([name, schedules]) =>
-            name.toLowerCase().includes(q) ||
-            schedules.some((s) =>
-              [s.course_code, s.room_name, s.set_name, s.day]
-                .join(" ")
-                .toLowerCase()
-                .includes(q)
-            )
-        )
-      );
-    },
     collegeBranches() {
       const store = useFetchDataStore();
       return store.college_branch || [];
@@ -469,8 +616,9 @@ export default {
       return !(this.isJoined && Number(record.class_size) >= 30);
     },
     paginatedFacultyCards() {
-      const entries = Object.entries(this.filteredBySearch); // ✅ FIXED
+      const entries = Object.entries(this.filteredGroupedSchedule);
 
+      // ✅ Always show both in compare mode
       if (this.showCompareView) {
         return Object.fromEntries(entries);
       }
@@ -481,7 +629,9 @@ export default {
       return Object.fromEntries(entries.slice(start, end));
     },
     totalCardPages() {
-      return Math.ceil(Object.keys(this.filteredBySearch).length / this.cardsPerPage);
+      return Math.ceil(
+        Object.keys(this.filteredGroupedSchedule).length / this.cardsPerPage
+      );
     },
     paginatedSource() {
       if (!this.searchQuery) return this.filteredGroupedSchedule;
@@ -494,11 +644,11 @@ export default {
       );
     },
     visibleFacultyCards() {
-      return Object.entries(this.filteredBySearch).slice(0, this.visibleCardCount);
+      return Object.entries(this.filteredGroupedSchedule).slice(0, this.visibleCardCount);
     },
 
     hasMoreCards() {
-      return Object.keys(this.filteredBySearch).length > this.visibleCardCount;
+      return Object.keys(this.filteredGroupedSchedule).length > this.visibleCardCount;
     },
     coursesList() {
       const store = useFetchDataStore();
@@ -592,7 +742,9 @@ export default {
       );
     },
     totalPages() {
-      return Math.ceil(Object.keys(this.filteredBySearch).length / this.itemsPerPage);
+      return Math.ceil(
+        Object.keys(this.filteredGroupedSchedule).length / this.itemsPerPage
+      );
     },
     startIndex() {
       return (this.currentPage - 1) * this.itemsPerPage + 1;
@@ -619,11 +771,9 @@ export default {
     },
 
     paginatedFaculty() {
-      const entries = Object.entries(this.filteredBySearch);
-
+      const entries = Object.entries(this.paginatedSource);
       const start = (this.currentPage - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-
       return Object.fromEntries(entries.slice(start, end));
     },
 

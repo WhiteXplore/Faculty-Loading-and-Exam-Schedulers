@@ -152,7 +152,7 @@ const routes = [
       },
     ],
   },
-  // Program Chair
+  // Program Chair View
   {
     path: "/progchair-navigation",
     name: "progchair-navigation",
@@ -252,6 +252,7 @@ const routes = [
       },
     ],
   },
+  // Faculty View
   {
     path: "/faculty-navigation",
     name: "faculty-navigation",
@@ -270,7 +271,14 @@ const routes = [
         path: "/faculty-load",
         name: "faculty-load",
         component: () =>
-          import("../components/admin/records/ViewFacultyLoads.vue"),
+          import("../components/faculty/faculty-records/loading.vue"),
+        meta: { requiresAuth: true, role: "Faculty" },
+      },
+       {
+        path: "/faculty-preference",
+        name: "faculty-preference",
+        component: () =>
+          import("../components/faculty/faculty-records/preference.vue"),
         meta: { requiresAuth: true, role: "Faculty" },
       },
       {

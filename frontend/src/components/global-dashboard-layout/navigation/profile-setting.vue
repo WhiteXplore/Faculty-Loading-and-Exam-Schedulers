@@ -7,7 +7,7 @@
     @click.stop
   >
     <div
-      class="bg-white rounded-xl shadow-lg w-[280px] max-h-[27.5vh] p-4 flex flex-col gap-2 overflow-y-auto border text-gray-700"
+      class="bg-white rounded-xl shadow-lg w-[280px] max-h-[27.5vh] p-2 flex flex-col gap-2 overflow-y-auto border text-gray-700"
     >
       <!-- User Info -->
       <div class="flex items-center gap-3">
@@ -51,7 +51,7 @@
       <!-- Logout -->
       <div
         @click="toggleOpenLogout"
-        class="py-2 px-4 text-center border hover:bg-blue-100 rounded-lg cursor-pointer"
+        class="py-2 px-4 text-center border hover:bg-defaultGreen hover:text-white rounded-lg cursor-pointer"
       >
         <div class="text-sm">Logout</div>
       </div>

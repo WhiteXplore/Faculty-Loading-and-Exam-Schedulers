@@ -1,11 +1,9 @@
 <template>
   <div class="overflow-y-auto">
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
+    <div class="mt-2 overflow-x-auto bg-white">
       <!-- FILTER BAR -->
       <div class="flex justify-between items-center mb-3">
-        <!-- SHOW ENTRIES -->
-
-        <div class="flex items-center gap-2">
+        <!-- <div class="flex items-center gap-2">
           <div class="relative">
             <select
               v-model="entriesLimit"
@@ -18,7 +16,7 @@
               <option :value="999">All</option>
             </select>
 
-            <!-- Custom Arrow -->
+
             <div
               class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
             >
@@ -29,17 +27,19 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
 
           <span class="text-sm font-medium text-gray-600">Per page</span>
-        </div>
+        </div> -->
+        <!-- SHOW ENTRIES -->
+        <span v-for="(schedules, room) in filteredRooms" :key="room" class="text-lg">
+          <span class="font-bold text-defaultGreen"
+            >{{ room }} - {{ roomTypeMap[room] || "Unknown" }}</span
+          >
+        </span>
 
         <!-- SEARCH -->
 
@@ -47,8 +47,8 @@
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Search..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
+            placeholder="Search room..."
+            class="rounded-xl border border-green-600 bg-white px-4 py-2.5 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
             @input="changePage(1)"
           />
           <!-- Search icon -->
@@ -68,105 +68,91 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="Object.keys(groupedSchedule).length"
-        class="grid grid-cols-1 gap-3"
-      >
+      <div v-if="Object.keys(groupedSchedule).length" class="grid grid-cols-1 gap-3">
         <div
           v-for="(schedules, room) in filteredRooms"
           :key="room"
-          class="bg-white rounded-xl border flex flex-col"
+          class="bg-white rounded-xl border flex flex-col h-[75vh]"
         >
           <!-- HEADER -->
-          <div class="bg-defaultGreen text-white px-4 py-3 rounded-t-xl">
+          <!-- <div class="bg-defaultGreen text-white px-4 py-3 rounded-t-xl">
             <span class="text-lg font-bold">
               {{ room }} - {{ roomTypeMap[room] || "Unknown" }}
             </span>
-          </div>
+          </div> -->
+          <div class="overflow-auto border bg-white h-[83vh] rounded-t-xl">
+            <table class="w-full text-[13px] border-collapse table-fixed">
+              <thead class="bg-defaultGreen text-white sticky top-0 z-20">
+                <tr>
+                  <th class="py-3 w-[9%] text-center">Time</th>
+                  <th v-for="day in days" :key="day" class="p-2 text-center">
+                    {{ day }}
+                  </th>
+                </tr>
+              </thead>
 
-          <table class="w-full text-[12px] border-collapse table-fixed">
-            <thead class="bg-gray-100">
-              <tr>
-                <th class="border p-2 w-[9%] text-center">Time</th>
-                <th
-                  v-for="day in days"
-                  :key="day"
-                  class="border p-2 text-center"
-                >
-                  {{ day }}
-                </th>
-              </tr>
-            </thead>
+              <tbody>
+                <tr v-for="slot in timeSlots" :key="slot.start">
+                  <!-- TIME -->
+                  <td class="border p-2 text-center font-medium">
+                    {{ formatTime(slot.start) }} -
+                    {{ formatTime(slot.end) }}
+                  </td>
 
-            <tbody>
-              <tr v-for="slot in timeSlots" :key="slot.start">
-                <!-- TIME -->
-                <td class="border p-2 text-center font-medium">
-                  {{ formatTime(slot.start) }} -
-                  {{ formatTime(slot.end) }}
-                </td>
-
-                <!-- DAYS -->
-                <td
-                  v-for="day in days"
-                  :key="day"
-                  class="border relative h-[60px]"
-                >
-                  <!-- ONLINE ROOM -->
-                  <div
-                    v-if="room === 'Online'"
-                    class="flex flex-col gap-1 p-1 w-full"
-                  >
-                    <div
-                      v-for="item in getScheduleForCell(slot, day, room)"
-                      :key="item.id"
-                      class="absolute inset-x-1 rounded-lg p-1 text-[11px] relative"
-                      :style="{
-                        ...getProgramColor(item.program_code),
-                        height: getBlockHeight(item) + 'px',
-                        top: getBlockTop(item, slot) + 'px',
-                      }"
-                    >
-                      <!-- 🔥 BADGE -->
-                      <span
-                        v-if="getRoomBadge(room)"
-                        :class="[
-                          'absolute top-1 left-1 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
-                          getRoomBadge(room).class,
-                        ]"
+                  <!-- DAYS -->
+                  <td v-for="day in days" :key="day" class="border relative h-[60px]">
+                    <!-- ONLINE ROOM -->
+                    <div v-if="room === 'Online'" class="flex flex-col gap-1 p-1 w-full">
+                      <div
+                        v-for="item in getScheduleForCell(slot, day, room)"
+                        :key="item.id"
+                        class="absolute inset-x-1 rounded-lg p-1 text-[11px] relative"
+                        :style="{
+                          ...getProgramColor(item.program_code),
+                          height: getBlockHeight(item) + 'px',
+                          top: getBlockTop(item, slot) + 'px',
+                        }"
                       >
-                        {{ getRoomBadge(room).label }}
-                      </span>
+                        <!-- 🔥 BADGE -->
+                        <span
+                          v-if="getRoomBadge(room)"
+                          :class="[
+                            'absolute top-1 left-1 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
+                            getRoomBadge(room).class,
+                          ]"
+                        >
+                          {{ getRoomBadge(room).label }}
+                        </span>
 
-                      <p class="font-semibold mt-3">{{ item.course_code }}</p>
-                      <p class="text-gray-600">{{ item.faculty_name }}</p>
-                      <p class="text-gray-600">
-                        {{ item.program_code }} - {{ item.set_name }}
-                      </p>
+                        <p class="font-semibold mt-3">{{ item.course_code }}</p>
+                        <p class="text-gray-600">{{ item.faculty_name }}</p>
+                        <p class="text-gray-600">
+                          {{ item.program_code }} - {{ item.set_name }}
+                        </p>
 
-                      <button
-                        v-if="hasRoomConflict(item)"
-                        @click.stop="openConflictModal(item)"
-                        class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
-                      >
-                        !
-                      </button>
+                        <button
+                          v-if="hasRoomConflict(item)"
+                          @click.stop="openConflictModal(item)"
+                          class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                        >
+                          !
+                        </button>
+                      </div>
                     </div>
-                  </div>
 
-                  <!-- NORMAL ROOM -->
-                  <template v-else>
-                    <div
-                      v-for="item in getScheduleForCell(slot, day, room)"
-                      :key="item.id"
-                      class="absolute inset-x-1 rounded p-1 text-[11px]"
-                      :style="{
-                        ...getProgramColor(item.program_code),
-                        height: getBlockHeight(item) + 'px',
-                        top: getBlockTop(item, slot) + 'px',
-                      }"
-                    >
-                      <!-- <span
+                    <!-- NORMAL ROOM -->
+                    <template v-else>
+                      <div
+                        v-for="item in getScheduleForCell(slot, day, room)"
+                        :key="item.id"
+                        class="absolute inset-x-1 rounded p-1 text-[11px]"
+                        :style="{
+                          ...getProgramColor(item.program_code),
+                          height: getBlockHeight(item) + 'px',
+                          top: getBlockTop(item, slot) + 'px',
+                        }"
+                      >
+                        <!-- <span
                         v-if="getRoomBadge(room)"
                         :class="[
                           'absolute top-1 right-1 text-[9px] px-1.5 py-[1px] rounded-full font-semibold shadow',
@@ -176,36 +162,37 @@
                         {{ getRoomBadge(room).label }}
                       </span> -->
 
-                      <!-- ✅ INSTITUTE BADGE (FIXED) -->
-                      <span
-                        v-if="getInstituteBadge(item.program_code)"
-                        :class="[
-                          'absolute top-1 right-2 text-[9px] px-1.5 py-[1px] rounded-full font-semibold shadow',
-                          getInstituteBadge(item.program_code).class,
-                        ]"
-                      >
-                        {{ getInstituteBadge(item.program_code).label }}
-                      </span>
+                        <!-- ✅ INSTITUTE BADGE (FIXED) -->
+                        <span
+                          v-if="getInstituteBadge(item.program_code)"
+                          :class="[
+                            'absolute top-1 right-2 text-[9px] px-1.5 py-[1px] rounded-full font-semibold shadow',
+                            getInstituteBadge(item.program_code).class,
+                          ]"
+                        >
+                          {{ getInstituteBadge(item.program_code).label }}
+                        </span>
 
-                      <p class="font-semibold">{{ item.course_code }}</p>
-                      <p class="text-gray-600">{{ item.faculty_name }}</p>
-                      <p class="text-gray-600">
-                        {{ item.program_code }} - {{ item.set_name }}
-                      </p>
+                        <p class="font-semibold">{{ item.course_code }}</p>
+                        <p class="text-gray-600">{{ item.faculty_name }}</p>
+                        <p class="text-gray-600">
+                          {{ item.program_code }} - {{ item.set_name }}
+                        </p>
 
-                      <button
-                        v-if="hasRoomConflict(item)"
-                        @click.stop="openConflictModal(item)"
-                        class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
-                      >
-                        !
-                      </button>
-                    </div>
-                  </template>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                        <button
+                          v-if="hasRoomConflict(item)"
+                          @click.stop="openConflictModal(item)"
+                          class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                        >
+                          !
+                        </button>
+                      </div>
+                    </template>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -300,9 +287,7 @@
                   <p class="font-medium">
                     {{ formatTime(selectedSchedule.start_hour) }} –
                     {{
-                      formatTime(
-                        selectedSchedule.start_hour + selectedSchedule.duration,
-                      )
+                      formatTime(selectedSchedule.start_hour + selectedSchedule.duration)
                     }}
                   </p>
                 </div>
@@ -364,9 +349,7 @@
                       <p class="text-xs text-gray-500">Time</p>
                       <p class="font-medium">
                         {{ formatTime(conflict.start_hour) }} –
-                        {{
-                          formatTime(conflict.start_hour + conflict.duration)
-                        }}
+                        {{ formatTime(conflict.start_hour + conflict.duration) }}
                       </p>
                     </div>
                   </div>
@@ -405,7 +388,7 @@ export default {
   data() {
     return {
       searchQuery: "",
-      entriesLimit: 10,
+      entriesLimit: 1,
       groupedSchedule: {},
       rooms: [],
       roomTypeMap: {},
@@ -439,8 +422,7 @@ export default {
         const roomType = (this.roomTypeMap[room] || "").toLowerCase();
 
         return (
-          (roomName.includes(query) || roomType.includes(query)) &&
-          roomName !== "online"
+          (roomName.includes(query) || roomType.includes(query)) && roomName !== "online"
         );
       });
       return Object.fromEntries(filtered.slice(0, this.entriesLimit));

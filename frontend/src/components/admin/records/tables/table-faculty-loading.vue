@@ -69,108 +69,108 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col space-y-1 h-[calc(100vh-180px)] overflow-hidden px-2">
+  <div class="flex flex-col h-[calc(100vh-180px)] overflow-hidden">
     <!-- TODO  Top Controls -->
     <div class="flex flex-wrap items-center justify-between">
-      <!-- LEFT : Faculty Search -->
-      <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search faculty..."
-          class="rounded-xl border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
-        />
-
-        <div
-          class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Institute -->
+        <div class="relative">
+          <select
+            v-model="selectedInstituteId"
+            class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md"
           >
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
+            <option value="">All Institutes</option>
+            <option
+              v-for="institute in uniqueInstitutes"
+              :key="institute.id"
+              :value="institute.id"
+            >
+              {{ institute.name }}
+            </option>
+          </select>
+
+          <div
+            class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Program -->
+        <div class="relative">
+          <select
+            v-model="selectedProgramId"
+            :disabled="!selectedInstituteId"
+            class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+          >
+            <option value="">All Programs</option>
+            <option
+              v-for="program in filteredPrograms"
+              :key="program.id"
+              :value="program.id"
+            >
+              {{ program.name }}
+            </option>
+          </select>
+
+          <div
+            class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </div>
       </div>
 
       <!-- RIGHT SIDE -->
-      <div class="flex flex-wrap items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2">
         <!-- Filters -->
-        <div class="flex flex-wrap items-center gap-3">
-          <!-- Institute -->
-          <div class="relative">
-            <select
-              v-model="selectedInstituteId"
-              class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md"
-            >
-              <option value="">All Institutes</option>
-              <option
-                v-for="institute in uniqueInstitutes"
-                :key="institute.id"
-                :value="institute.id"
-              >
-                {{ institute.name }}
-              </option>
-            </select>
 
-            <div
-              class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
+        <!-- LEFT : Faculty Search -->
+        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search faculty..."
+            class="rounded-xl border border-green-600 bg-white px-4 py-2.5 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+          />
 
-          <!-- Program -->
-          <div class="relative">
-            <select
-              v-model="selectedProgramId"
-              :disabled="!selectedInstituteId"
-              class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
+          <div
+            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
-              <option value="">All Programs</option>
-              <option
-                v-for="program in filteredPrograms"
-                :key="program.id"
-                :value="program.id"
-              >
-                {{ program.name }}
-              </option>
-            </select>
-
-            <div
-              class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
           </div>
         </div>
-
         <!-- Actions -->
         <div class="flex items-center gap-2">
           <!-- Generate -->
           <button
             @click="generateSchedule"
-            class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-600 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg transition duration-200"
+            class="flex items-center gap-2 px-3 py-2.5 border bg-blue-700 text-white border-blue-600 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg transition duration-200"
           >
             <div class="p-1 bg-blue-800/20 rounded-full flex items-center justify-center">
               <icon name="arrow-path" />
@@ -181,7 +181,7 @@
           <!-- Save -->
           <button
             @click="showConfirmSaved = true"
-            class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg transition duration-200"
+            class="flex items-center gap-2 px-3 py-2.5 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg transition duration-200"
           >
             <div
               class="p-1 bg-defaultGreen/20 rounded-full flex items-center justify-center"
@@ -201,7 +201,7 @@
         <div
           v-if="Object.keys(filteredFacultyCards).length"
           :class="[
-            'gap-2 overflow-hidden  grid h-full',
+            'gap-2 grid  overflow-hidden mt-2',
             Object.keys(filteredFacultyCards).length === 1
               ? 'grid-cols-1'
               : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2',
@@ -228,7 +228,8 @@
             <!-- TODO  Schedule Table -->
             <div class="flex-1">
               <table class="w-full text-left border-collapse text-[11px]">
-                <thead class="sticky top-0 bg-gray-100 z-10">
+                <!-- <thead class="sticky top-0 bg-gray-100 z-10"></thead> -->
+                <thead class="top-0 bg-gray-100 z-10">
                   <tr class="text-gray-700">
                     <th class="px-4 py-2 border border-gray-200 w-24 text-center">
                       Time
@@ -249,7 +250,7 @@
                     class="odd:bg-white even:bg-gray-50"
                   >
                     <td
-                      class="px-4 py-4 border border-gray-200 font-medium text-center whitespace-nowrap"
+                      class="px-3 border border-gray-200 font-medium text-center whitespace-nowrap"
                     >
                       {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
                     </td>
@@ -269,7 +270,7 @@
                           @mouseleave="hideScheduleTooltip"
                           @click="highlightRow(item)"
                           :class="[
-                            'absolute inset-x-1 border rounded-md text-[11px] p-1 shadow-sm truncate cursor-pointer',
+                            'absolute inset-x-1 border rounded text-[11px] p-1 shadow-sm truncate cursor-pointer',
                             item.id?.toString().startsWith('temp-')
                               ? 'bg-purple-200 border-purple-400 text-purple-900'
                               : getTypeColor(item.type),
@@ -288,7 +289,7 @@
                           <span
                             v-if="item.schedule_type"
                             :class="[
-                              'absolute top-2 right-2 w-auto h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center text-white',
+                              'absolute top-1 right-1 w-auto h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center text-white',
                               item.schedule_type === 'face to face'
                                 ? 'bg-orange-500'
                                 : '',
@@ -297,7 +298,7 @@
                           >
                             {{ item.schedule_type === "face to face" ? "F2F" : "OL" }}
                           </span>
-                          <div class="p-2 leading-snug truncate">
+                          <div class="leading-snug truncate">
                             <p class="font-semibold truncate">
                               {{ item.course_code }}
                             </p>
@@ -340,7 +341,6 @@
                     {{ tooltipItem.course_code }}
                   </div>
 
-                  <!-- Schedule Type Badge -->
                   <span
                     v-if="tooltipItem.schedule_type"
                     class="inline-flex items-center justify-center px-2 py-1 text-[8px] leading-none rounded-full text-white"
@@ -400,7 +400,7 @@
         </div>
         <div
           v-if="totalCardPages > 1"
-          class="flex justify-center items-center gap-3 mt-4"
+          class="flex justify-center items-center gap-2 mt-4"
         >
           <button
             @click="cardPage--"
@@ -706,25 +706,26 @@ export default {
       return branch ? branch.college_branch_name : `Branch ${branchId}`;
     },
     showScheduleTooltip(event, item) {
+      const rect = event.currentTarget.getBoundingClientRect();
+
       const tooltipWidth = 260;
       const tooltipHeight = 160;
+      const padding = 10;
 
-      const padding = 20;
-
-      let x = event.clientX + 15;
-      let y = event.clientY + 15;
+      let x = rect.right + padding;
+      let y = rect.top;
 
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
 
-      // Prevent overflow on right side
-      if (x + tooltipWidth + padding > screenWidth) {
-        x = event.clientX - tooltipWidth - 15;
+      // Prevent overflow right
+      if (x + tooltipWidth > screenWidth) {
+        x = rect.left - tooltipWidth - padding;
       }
 
       // Prevent overflow bottom
-      if (y + tooltipHeight + padding > screenHeight) {
-        y = event.clientY - tooltipHeight - 15;
+      if (y + tooltipHeight > screenHeight) {
+        y = screenHeight - tooltipHeight - padding;
       }
 
       this.tooltipX = x;
@@ -948,9 +949,9 @@ export default {
       if (!room_type) return "bg-green-100 border-green-400";
       const normalized = room_type.toLowerCase();
       if (normalized === "laboratory" || normalized === "lab") {
-        return "bg-blue-100 border-blue-400";
+        return "bg-blue-200 border-blue-300";
       }
-      return "bg-green-100 border-green-400";
+      return "bg-green-200 border-green-300";
     },
 
     viewFacultySchedule(instructor) {
