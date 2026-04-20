@@ -27,7 +27,12 @@ async function bootstrap() {
     const curdate = new Date();
 
     // 🔹 CORS configuration
-    const whiteList = ['http://localhost:8080', 'http://localhost:5173'];
+ const whiteList = [
+  'http://localhost:8080',
+  'http://localhost:5173',
+  'http://192.168.2.176:8080',
+  'http://192.168.1.57:8080'
+];
     app.enableCors({
       origin: (origin, callback) => {
         if (!origin || whiteList.includes(origin)) {
@@ -50,8 +55,8 @@ async function bootstrap() {
 
     // 🔹 Listen on environment port or fallback to 8000
     const port = process.env.PORT || 8000;
-    await app.listen(port);
-
+    // await app.listen(port);
+await app.listen(port, '0.0.0.0');
     console.log(`Application is running on: http://localhost:${port}`);
   } catch (error) {
     console.error('Error starting application:', error);

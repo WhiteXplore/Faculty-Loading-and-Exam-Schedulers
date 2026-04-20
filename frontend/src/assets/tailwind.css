@@ -89,6 +89,10 @@
     @apply text-[12px] py-2.5 px-3 rounded-xl text-gray-700 hover:bg-white border hover:border-gray-800 hover:text-gray-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;
   }
 
+   .btn-save {
+    @apply text-[12px] py-2.5 px-3 rounded-xl bg-defaultGreen text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;
+  }
+
   .btn-cancel-confirm {
     @apply text-[12px] py-2.5 px-3 rounded-xl bg-red-500 text-white hover:bg-white border hover:border-red-800 hover:text-red-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;
   }

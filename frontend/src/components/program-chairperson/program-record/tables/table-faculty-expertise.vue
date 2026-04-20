@@ -53,11 +53,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -94,9 +90,7 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead
-              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-            >
+            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
               <tr>
                 <th class="px-4 py-3 text-left w-[3%] rounded-tl-lg">No.</th>
                 <th class="px-4 py-3 text-left w-[20%]">
@@ -170,8 +164,7 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredUsers.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -233,32 +226,38 @@ export default {
       let users = this.rawusers || [];
       const query = this.searchQuery.toLowerCase();
 
-      // Filter only Faculty & Program Chairperson
+      // ✅ Filter only Faculty & Program Chairperson
       users = users.filter(
-        (u) => u.role === "Faculty" || u.role === "Program Chairperson",
+        (u) => u.role === "Faculty" || u.role === "Program Chairperson"
       );
 
-      // Limit by logged-in user's institute/program
+      // ✅ Safe filtering by logged-in user
       if (this.user) {
         if (this.user.role === "Program Chairperson") {
           users = users.filter(
-            (u) => u.institute?.institute_id === this.user.institute_id,
+            (u) =>
+              u.institute?.institute_id &&
+              u.institute?.institute_id === this.user.institute_id
           );
         } else {
           users = users.filter(
             (u) =>
               u.institute?.institute_id === this.user.institute_id &&
-              u.program?.program_id === this.user.program_id,
+              u.program?.program_id === this.user.program_id
           );
         }
       }
 
       let expanded = [];
 
-      // 🔹 Expertise Tab
+      // ===============================
+      // 🔹 EXPERTISE TAB
+      // ===============================
       if (this.activeTab === "Expertise") {
         users.forEach((u) => {
-          u.expertise.forEach((e) => {
+          (u.expertise || []).forEach((e) => {
+            if (!e?.course) return; // ✅ CRITICAL FIX
+
             expanded.push({
               ...u,
               type: "Expertise",
@@ -270,10 +269,14 @@ export default {
         });
       }
 
-      // 🔹 Other Expertise Tab
+      // ===============================
+      // 🔹 OTHER EXPERTISE TAB
+      // ===============================
       if (this.activeTab === "Other Expertise") {
         users.forEach((u) => {
-          u.other_expertise.forEach((e) => {
+          (u.other_expertise || []).forEach((e) => {
+            if (!e?.course) return; // ✅ CRITICAL FIX
+
             expanded.push({
               ...u,
               type: "Other Expertise",
@@ -285,28 +288,34 @@ export default {
         });
       }
 
-      // 🔹 Not Selected Expertise Tab
+      // ===============================
+      // 🔹 NOT SELECTED EXPERTISE
+      // ===============================
       if (this.activeTab === "Not Selected Expertise") {
         const selected = new Set();
 
         users.forEach((u) => {
-          u.expertise.forEach((e) => selected.add(e.course.course_id));
-          u.other_expertise.forEach((e) => selected.add(e.course.course_id));
+          (u.expertise || []).forEach((e) => {
+            if (e?.course) selected.add(e.course.course_id);
+          });
+
+          (u.other_expertise || []).forEach((e) => {
+            if (e?.course) selected.add(e.course.course_id);
+          });
         });
 
-        // Filter only courses belonging to the same institute and program as the logged-in user
-        expanded = this.allCourses
+        expanded = (this.allCourses || [])
           .filter((c) => {
+            if (!c?.curriculum?.program) return false; // ✅ safety
+
             const programMatch =
               this.user?.program_id &&
-              c.curriculum?.program?.program_id === this.user.program_id;
+              c.curriculum.program.program_id === this.user.program_id;
 
             const instituteMatch =
               this.user?.institute_id &&
-              c.curriculum?.program?.institute?.institute_id ===
-                this.user.institute_id;
+              c.curriculum.program.institute?.institute_id === this.user.institute_id;
 
-            // Only show courses under the same institute and program, and not yet selected
             return !selected.has(c.course_id) && programMatch && instituteMatch;
           })
           .map((c) => ({
@@ -315,20 +324,22 @@ export default {
           }));
       }
 
-      // 🔍 Search filter
+      // ===============================
+      // 🔍 SEARCH FILTER
+      // ===============================
       if (query) {
         expanded = expanded.filter((u) => {
           if (this.activeTab === "Not Selected Expertise") {
             return (
-              u.course_code.toLowerCase().includes(query) ||
-              u.course_title.toLowerCase().includes(query)
+              u.course_code?.toLowerCase().includes(query) ||
+              u.course_title?.toLowerCase().includes(query)
             );
           } else {
             return (
-              u.first_name.toLowerCase().includes(query) ||
-              u.last_name.toLowerCase().includes(query) ||
+              u.first_name?.toLowerCase().includes(query) ||
+              u.last_name?.toLowerCase().includes(query) ||
               u.program?.program_name?.toLowerCase().includes(query) ||
-              u.course_code.toLowerCase().includes(query)
+              u.course_code?.toLowerCase().includes(query)
             );
           }
         });
@@ -380,12 +391,9 @@ export default {
   methods: {
     async fetchUser() {
       try {
-        const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/auth/me",
-          {
-            withCredentials: true,
-          },
-        );
+        const res = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
+          withCredentials: true,
+        });
         this.user = res.data;
       } catch (err) {
         console.error("Failed to fetch user:", err);
@@ -400,7 +408,7 @@ export default {
     async fetchAllCourses() {
       try {
         const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/courses/get-courses",
+          process.env.VUE_APP_API_BASE_URL + "/courses/get-courses"
         );
         this.allCourses = res.data;
       } catch (err) {

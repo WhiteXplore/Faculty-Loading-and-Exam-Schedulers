@@ -19,7 +19,7 @@
     </div>
 
     <!-- Controls -->
-    <div class="mt-4 overflow-x-auto border p-3 rounded-xl bg-white">
+    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
       <div
         class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
       >

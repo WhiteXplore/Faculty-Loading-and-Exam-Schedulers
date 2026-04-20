@@ -135,7 +135,7 @@
             <!-- Next Button -->
             <div class="flex justify-end pt-2">
               <button
-                class="bg-defaultGreen p-2 px-4 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
+                class="btn-save"
                 type="button"
                 @click="goToStep2"
               >
@@ -175,14 +175,14 @@
             <!-- Buttons -->
             <div class="tracking-wide flex justify-between gap-2 pt-4">
               <button
-                class="bg-gray-400 p-2 px-4 rounded-lg text-white hover:bg-white border hover:border-gray-600 hover:text-gray-700 hover:shadow-md"
+                class="btn-cancel"
                 type="button"
                 @click="currentStep = 1"
               >
                 Back
               </button>
               <button
-                class="bg-defaultGreen p-2 px-4 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
+                class="btn-save"
                 type="submit"
               >
                 {{ isEditMode ? "Save Changes" : "Submit" }}

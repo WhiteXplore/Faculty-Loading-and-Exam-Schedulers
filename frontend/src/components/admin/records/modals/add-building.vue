@@ -19,11 +19,7 @@
             </h1>
           </div>
 
-          <icon
-            name="circle-close3"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon name="circle-close3" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <!-- FORM -->
@@ -71,18 +67,11 @@
 
           <!-- BUTTONS -->
           <div class="tracking-wide flex justify-end gap-2 pt-3">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="bg-gray-400 p-2 px-4 rounded-lg text-white hover:bg-white border hover:border-gray-600 hover:text-gray-700 hover:shadow-md"
-            >
+            <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
 
-            <button
-              type="submit"
-              class="bg-defaultGreen p-2 px-4 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
-            >
+            <button type="submit" class="btn-save">
               {{ isEditMode ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -169,19 +158,16 @@ export default {
 
         if (this.isEditMode) {
           await axios.patch(
-            process.env.VUE_APP_API_BASE_URL +
-              `/buildings/${this.form.building_id}`,
+            process.env.VUE_APP_API_BASE_URL + `/buildings/${this.form.building_id}`,
             payload,
-            { withCredentials: true },
+            { withCredentials: true }
           );
 
           toast.success("Building updated successfully!");
         } else {
-          await axios.post(
-            process.env.VUE_APP_API_BASE_URL + "/buildings",
-            payload,
-            { withCredentials: true },
-          );
+          await axios.post(process.env.VUE_APP_API_BASE_URL + "/buildings", payload, {
+            withCredentials: true,
+          });
 
           toast.success("Building created successfully!");
         }
@@ -189,9 +175,7 @@ export default {
         this.$emit("refresh");
         this.$emit("close");
       } catch (error) {
-        toast.error(
-          error?.response?.data?.message || "Failed to save building",
-        );
+        toast.error(error?.response?.data?.message || "Failed to save building");
       }
     },
   },
@@ -208,8 +192,7 @@ export default {
       this.searchAreaQuery =
         this.buildingData?.buildingArea?.area_name +
           " - " +
-          this.buildingData?.buildingArea?.collegeBranch?.college_branch_name ||
-        "";
+          this.buildingData?.buildingArea?.collegeBranch?.college_branch_name || "";
     }
   },
 };

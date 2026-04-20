@@ -158,10 +158,6 @@
                     <button class="btn-edit" @click="openAssignModal(user)">
                       <icon name="edit" /> Assign
                     </button>
-                    <!-- ✅ NEW BUTTON -->
-                    <button class="btn-edit" @click="openCrossAssignModal(user)">
-                      <icon name="shuffle" /> Cross Assign
-                    </button>
                   </div>
                 </td>
               </tr>
@@ -482,17 +478,22 @@
           <div class="flex-1">
             <h3 class="font-semibold text-gray-800 mb-2">Expertise</h3>
 
-            <div v-if="filteredExpertise.primary.length" class="space-y-3">
+            <div
+              v-if="selectedFaculty.expertise && selectedFaculty.expertise.length"
+              class="space-y-3"
+            >
               <div
-                v-for="(group, key) in groupByYearSemester(filteredExpertise.primary)"
+                v-for="(group, key) in groupByYearSemester(selectedFaculty.expertise)"
                 :key="key"
               >
+                <!-- 🔥 Badge Header -->
                 <div class="mb-2">
                   <span class="text-green-800 text-xs font-semibold">
                     {{ key }}
                   </span>
                 </div>
 
+                <!-- Course List -->
                 <ul class="list-disc list-inside ml-2 text-gray-700 space-y-1">
                   <li v-for="(exp, i) in group" :key="i">
                     {{ exp.course?.course_code }} -
@@ -509,61 +510,36 @@
           <div class="flex-1">
             <h3 class="font-semibold text-gray-800 mb-2">Other Expertise</h3>
 
-            <div v-if="filteredExpertise.other.length" class="space-y-3">
+            <div
+              v-if="
+                selectedFaculty.other_expertise && selectedFaculty.other_expertise.length
+              "
+              class="space-y-3"
+            >
               <div
-                v-for="(group, key) in groupByYearSemester(filteredExpertise.other)"
+                v-for="(group, key) in groupByYearSemester(
+                  selectedFaculty.other_expertise
+                )"
                 :key="key"
               >
+                <!-- 🔥 Badge Header -->
                 <div class="mb-2">
-                  <span class="text-orange-700 text-xs font-semibold">
+                  <span class="text-green-800 text-xs font-semibold">
                     {{ key }}
                   </span>
                 </div>
 
+                <!-- Course List -->
                 <ul class="list-disc list-inside ml-2 text-gray-700 space-y-1">
-                  <li v-for="(exp, i) in group" :key="i">
-                    <span class="text-defaultGreen font-extrabold">
-                      {{ getProgramCode(exp.course?.program_id) }}
-                    </span>
-                    -
-                    {{ exp.course?.course_code }} -
-                    {{ exp.course?.course_title }}
+                  <li v-for="(other, i) in group" :key="i">
+                    {{ other.course?.course_code }} -
+                    {{ other.course?.course_title }}
                   </li>
-                  s
                 </ul>
               </div>
             </div>
 
             <p v-else class="text-gray-500 italic">None other expertise added</p>
-          </div>
-
-          <div class="flex-1">
-            <h3 class="font-semibold text-gray-800 mb-2">Cross Expertise</h3>
-
-            <div v-if="filteredExpertise.cross.length" class="space-y-3">
-              <div
-                v-for="(group, key) in groupByYearSemester(filteredExpertise.cross)"
-                :key="key"
-              >
-                <div class="mb-2">
-                  <span class="text-blue-700 text-xs font-semibold">
-                    {{ key }}
-                  </span>
-                </div>
-
-                <ul class="list-disc list-inside ml-2 text-gray-700 space-y-1">
-                  <li v-for="(exp, i) in group" :key="i">
-                    <span class="text-defaultGreen font-extrabold">
-                      {{ getProgramCode(exp.course?.program_id) }}
-                    </span>
-                    {{ exp.course?.course_code }} -
-                    {{ exp.course?.course_title }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <p v-else class="text-gray-500 italic">No cross expertise assigned</p>
           </div>
         </div>
 
@@ -611,8 +587,7 @@
 
   <addExpertise
     v-if="showExpertiseModal"
-    :userData="selectedFaculty"
-    :mode="modalMode"
+    :userData="selectedFacultyForExpertise"
     @close="showExpertiseModal = false"
     @updated="loadUsers"
   />
@@ -625,7 +600,6 @@ import { useFetchDataStore } from "../../../../store/fetch-data-store";
 import { mapState } from "pinia";
 import axios from "axios";
 import addExpertise from "../modals/add-expertise.vue";
-
 export default {
   name: "TableFaculty",
   components: { icon, addExpertise },
@@ -653,29 +627,12 @@ export default {
       showBranchDropdown: false,
       showExpertiseModal: false,
       selectedFacultyForExpertise: null,
-      showCrossAssignModal: false,
-      selectedFacultyForCross: null,
       facultyBranches: [],
     };
   },
 
   computed: {
-    ...mapState(useFetchDataStore, [
-      "rawusers",
-      "college_branch",
-      "faculty_branch",
-      "programs",
-    ]),
-
-    filteredExpertise() {
-      const list = this.selectedFaculty?.expertise || [];
-
-      return {
-        primary: list.filter((e) => e.status === "PRIMARY"),
-        other: list.filter((e) => e.status === "OTHER"),
-        cross: list.filter((e) => e.status === "CROSS"),
-      };
-    },
+    ...mapState(useFetchDataStore, ["rawusers", "college_branch", "faculty_branch"]),
     filteredSlots() {
       if (this.form.period === "morning") {
         return this.morningSlots;
@@ -808,10 +765,6 @@ export default {
   },
 
   methods: {
-    getProgramCode(programId) {
-      const program = (this.programs || []).find((p) => p.program_id === programId);
-      return program?.program_code || "-";
-    },
     groupByYearSemester(list) {
       const grouped = {};
 
@@ -898,14 +851,14 @@ export default {
       return `${h}:${minute.padStart(2, "0")} ${ampm}`; // ✅ FIX
     },
     openAssignModal(user) {
-      this.selectedFaculty = user;
-      this.modalMode = "assign";
-      this.showExpertiseModal = true;
-    },
+      this.selectedFacultyForExpertise = {
+        ...user,
+        program: user.program || {},
+        institute: user.institute || {},
+        expertise: user.expertise || [],
+        other_expertise: user.other_expertise || [],
+      };
 
-    openCrossAssignModal(user) {
-      this.selectedFaculty = user;
-      this.modalMode = "cross";
       this.showExpertiseModal = true;
     },
     openAddModal(user) {

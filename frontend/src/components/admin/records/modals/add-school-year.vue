@@ -17,11 +17,7 @@
               {{ isEdit ? "Edit" : "Add" }} School Year
             </h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <!-- Body -->
@@ -88,17 +84,10 @@
           </div>
 
           <div class="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="bg-red-600 p-2 px-3 rounded-lg text-white"
-            >
+            <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
-            <button
-              type="submit"
-              class="bg-defaultGreen p-2 px-3 rounded-lg text-white"
-            >
+            <button type="submit" class="btn-save">
               {{ isEdit ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -139,7 +128,14 @@ export default {
     },
   },
   mounted() {
-    if (this.isEdit) this.form = { ...this.schoolYearData };
+    if (this.isEdit)
+      this.form = {
+        school_year_name: this.schoolYearData.school_year_name,
+        start_year: this.schoolYearData.start_year,
+        end_year: this.schoolYearData.end_year,
+        semester: this.schoolYearData.semester,
+        is_active: this.schoolYearData.is_active,
+      };
   },
   methods: {
     async submitData() {
@@ -149,18 +145,24 @@ export default {
           return;
         }
 
-        const payload = { ...this.form, school_year_name: this.schoolYearName };
+        const payload = {
+          school_year_name: this.schoolYearName,
+          start_year: Number(this.form.start_year),
+          end_year: Number(this.form.end_year),
+          semester: Number(this.form.semester),
+          is_active: Boolean(this.form.is_active),
+        };
         if (this.isEdit) {
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
               `/school-year/update-school-year/${this.schoolYearData.school_year_id}`,
-            payload,
+            payload
           );
           toast.success("School Year updated successfully!");
         } else {
           await axios.post(
             process.env.VUE_APP_API_BASE_URL + "/school-year/add-school-year",
-            payload,
+            payload
           );
           toast.success("School Year added successfully!");
         }
@@ -183,9 +185,7 @@ export default {
         this.$emit("close");
       } catch (err) {
         toast.error(
-          this.isEdit
-            ? "Failed to update school year."
-            : "Failed to add school year.",
+          this.isEdit ? "Failed to update school year." : "Failed to add school year."
         );
       }
     },

@@ -21,9 +21,12 @@ export class ProgramYearCoursesService {
     return await this.programYearCourseRepository.save(programYearCourse);
   }
 
+
   async syncProgramYearCoursesFromClasses(): Promise<void> {
+    const dbName = process.env.DATABASE_NAME;
+
     const sql = `
- INSERT INTO dnsc_class_scheduler.program_year_courses
+ INSERT INTO ${dbName}.program_year_courses
     (program_id, course_id, year_level, school_year_id, created_at, updated_at)
 SELECT
     cl.program_id,
@@ -37,8 +40,8 @@ SELECT
     cl.school_year_id,
     NOW() AS created_at,
     NOW() AS updated_at
-FROM dnsc_class_scheduler.classes cl
-JOIN dnsc_class_scheduler.courses cr
+FROM ${dbName}.classes cl
+JOIN ${dbName}.courses cr
     ON cr.program_id = cl.program_id
     AND cr.course_level = CASE
         WHEN cl.set_name LIKE '1st Year%' THEN 1
@@ -48,7 +51,7 @@ JOIN dnsc_class_scheduler.courses cr
     END
 WHERE NOT EXISTS (
     SELECT 1
-    FROM dnsc_class_scheduler.program_year_courses pyc
+    FROM ${dbName}.program_year_courses pyc
     WHERE pyc.program_id = cl.program_id
       AND pyc.course_id = cr.course_id
       AND pyc.year_level = CASE
@@ -88,7 +91,7 @@ WHERE NOT EXISTS (
   }
 
   async findFromView(): Promise<any[]> {
-    const sql = 'SELECT * FROM dnsc_class_scheduler.vw_program_year_courses';
+    const sql = 'SELECT * FROM dnsc_class_scheduler2.vw_program_year_courses';
     return await this.dataSource.query(sql);
   }
 

@@ -54,22 +54,12 @@
 
       <!-- TODO  Buttons -->
       <div class="flex justify-center gap-2 text-sm">
-        <button
-          @click="showConfirmSaved = false"
-          class="bg-gray-200 p-2 px-3 rounded-lg text-gray-700 hover:bg-white border hover:border-gray-800 hover:text-gray-800 hover:shadow-md transform transition-all duration-300 hover:scale-105"
-        >
-          Cancel
-        </button>
-        <button
-          @click="saveScheduledConfirmed"
-          class="bg-defaultGreen p-2 px-3 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105"
-        >
-          Yes, Save
-        </button>
+        <button @click="showConfirmSaved = false" class="btn-cancel">Cancel</button>
+        <button @click="saveScheduledConfirmed" class="btn-save">Yes, Save</button>
       </div>
     </div>
   </div>
-  <div class="flex flex-col h-[calc(100vh-180px)] overflow-hidden">
+  <div class="flex flex-col h-[83vh] overflow-hidden">
     <!-- TODO  Top Controls -->
     <div class="flex flex-wrap items-center justify-between">
       <div class="flex flex-wrap items-center gap-2">

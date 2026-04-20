@@ -6,11 +6,16 @@
     <!-- Header / Edit Button -->
     <div class="flex justify-end mb-2">
       <div
-        class="gap-1 flex cursor-pointer border border-green-600 text-defaultGreen px-2 py-1 rounded-lg hover:bg-green-50 transition"
         @click="showExpertiseModal = true"
+        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
       >
-        <icon :name="'edit'" />
-        <span>Edit Expertise</span>
+        <div
+          class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+        >
+          <icon name="edit" />
+        </div>
+
+        <span class="font-medium text-sm">Edit Expertise</span>
       </div>
     </div>
 

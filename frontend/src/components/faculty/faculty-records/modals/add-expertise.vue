@@ -15,22 +15,30 @@
             <icon :name="'edit'" />
             <h1 class="font-bold tracking-wide text-lg">Edit Expertise</h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
-        <!-- Form Content -->
+        <!-- Content -->
         <div class="p-5 w-[32vw] space-y-6">
-          <!-- Semester Tabs -->
-          <!-- Semester Dropdown -->
-          <div class="w-full mx-auto space-y-1">
+          <!-- ✅ YEAR LEVEL -->
+          <div>
+            <label class="font-bold text-sm">Select Year Level:</label>
+            <select
+              v-model="selectedYearLevel"
+              class="w-full border px-3 py-2.5 rounded-md text-sm"
+            >
+              <option v-for="y in [1, 2, 3, 4]" :key="y" :value="y">
+                {{ getYearLevelName(y) }}
+              </option>
+            </select>
+          </div>
+
+          <!-- SEMESTER -->
+          <div>
             <label class="font-bold text-sm">Select Semester:</label>
             <select
               v-model="selectedSemester"
-              class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none"
+              class="w-full border px-3 py-2.5 rounded-md text-sm"
             >
               <option v-for="sem in [1, 2, 3]" :key="sem" :value="sem">
                 {{ getSemesterName(sem) }}
@@ -38,199 +46,133 @@
             </select>
           </div>
 
-          <!-- Semester View -->
-          <transition name="fade" mode="out-in">
-            <div
-              v-if="selectedSemester"
-              :key="selectedSemester"
-              class="space-y-5"
-            >
-              <!-- Expertise -->
-              <div class="relative space-y-2">
-                <label class="font-bold"
-                  >Field of Expertise ({{
-                    getSemesterName(selectedSemester)
-                  }}):</label
+          <!-- CONTENT -->
+          <div class="space-y-5">
+            <!-- ===================== -->
+            <!-- EXPERTISE -->
+            <!-- ===================== -->
+            <div class="space-y-2 relative">
+              <label class="font-bold">
+                Expertise ({{ getSemesterName(selectedSemester) }})
+              </label>
+
+              <input
+                v-model="searchQuery"
+                @focus="dropdownOpen = true"
+                placeholder="Search courses..."
+                class="w-full border px-3 py-2.5 rounded-md"
+              />
+
+              <!-- DROPDOWN -->
+              <ul
+                v-if="dropdownOpen && filteredCourses.length"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
+              >
+                <li
+                  v-for="course in filteredCourses"
+                  :key="course.course_id"
+                  @click="addCourse(course)"
+                  class="px-3 py-2 hover:bg-green-100 cursor-pointer"
                 >
+                  <span>
+                    {{ course.course_code }} - {{ course.course_title }}
 
-                <!-- Searchable input -->
-                <input
-                  v-model="searchQuery"
-                  @focus="dropdownOpen = true"
-                  type="text"
-                  placeholder="Search courses..."
-                  class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none"
-                />
-
-                <!-- Dropdown -->
-                <ul
-                  v-if="dropdownOpen && filteredCourses.length"
-                  @mouseleave="dropdownOpen = false"
-                  class="animate-slideUp absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md"
-                >
-                  <li
-                    v-for="course in filteredCourses"
-                    :key="course.course_id"
-                    :class="[
-                      'px-3 py-2 text-sm flex justify-between items-center cursor-pointer transition',
-                      currentSemesterData.expertise.some(
-                        (c) => c.course_id === course.course_id,
-                      )
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-800 hover:bg-green-100',
-                    ]"
-                    @click="
-                      !currentSemesterData.expertise.some(
-                        (c) => c.course_id === course.course_id,
-                      ) && addCourse(course)
-                    "
-                  >
-                    <span>
-                      {{ course.curriculum?.program?.program_code }}
-                      ( {{ course.course_level }} ) - {{ course.course_code }} -
-                      {{ course.course_title }}
+                    <!-- ✅ CURRICULUM DISPLAY -->
+                    <span v-if="course.curriculum" class="text-xs text-gray-500 ml-2">
+                      ({{ course.curriculum.curriculum_start_year }} -
+                      {{ course.curriculum.curriculum_end_year }})
                     </span>
-                    <span
-                      v-if="
-                        currentSemesterData.expertise.some(
-                          (c) => c.course_id === course.course_id,
-                        )
-                      "
-                      class="text-xs text-red-500"
-                    >
-                      (Already selected)
-                    </span>
-                  </li>
-                </ul>
+                  </span>
+                </li>
+              </ul>
 
-                <!-- No results -->
+              <!-- SELECTED -->
+              <div
+                v-if="currentSemesterData.expertise.length"
+                class="border rounded-md mt-2"
+              >
                 <div
-                  v-if="dropdownOpen && !filteredCourses.length && searchQuery"
-                  class="absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 px-3 py-2 text-gray-500 text-sm"
+                  v-for="(item, i) in currentSemesterData.expertise"
+                  :key="i"
+                  class="flex justify-between px-3 py-2 bg-green-50"
                 >
-                  No results found
-                </div>
+                  <span>
+                    {{ item.course_code }} - {{ item.course_title }}
 
-                <!-- Selected list -->
-                <div
-                  v-if="currentSemesterData.expertise.length"
-                  class="mt-3 border border-gray-200 rounded-md divide-y shadow-sm"
-                >
-                  <div
-                    v-for="(item, index) in currentSemesterData.expertise"
-                    :key="index"
-                    class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer"
-                  >
-                    <span>
-                      {{ item.curriculum?.program?.program_code }}
-                      ({{ item.course_level }}) - {{ item.course_code }} -
-                      {{ item.course_title }}
+                    <span v-if="item.curriculum" class="text-xs text-gray-500 ml-2">
+                      ({{ item.curriculum.curriculum_start_year }} -
+                      {{ item.curriculum.curriculum_end_year }})
                     </span>
-                    <button
-                      type="button"
-                      @click="removeCourse(index)"
-                      class="text-red-500 hover:text-red-700 hover:scale-125 duration-200 leading-none"
-                    >
-                      <icon :name="'delete'" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+                  </span>
 
-              <!-- Non-specialized Subjects -->
-              <div class="relative space-y-2">
-                <label class="font-bold"
-                  >Non-specialized Subjects ({{
-                    getSemesterName(selectedSemester)
-                  }}):</label
-                >
-
-                <!-- Searchable input -->
-                <input
-                  v-model="otherSearchQuery"
-                  @focus="otherDropdownOpen = true"
-                  type="text"
-                  placeholder="Search other courses..."
-                  class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none"
-                />
-
-                <!-- Dropdown -->
-                <ul
-                  v-if="otherDropdownOpen && filteredOtherCourses.length"
-                  @mouseleave="otherDropdownOpen = false"
-                  class="animate-slideUp absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md"
-                >
-                  <li
-                    v-for="course in filteredOtherCourses"
-                    :key="course.course_id"
-                    :class="[
-                      'px-3 py-2 text-sm flex justify-between items-center transition',
-                      currentSemesterData.other_expertise.some(
-                        (c) => c.course_id === course.course_id,
-                      )
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-800 hover:bg-green-100 cursor-pointer',
-                    ]"
-                    @click="
-                      !currentSemesterData.other_expertise.some(
-                        (c) => c.course_id === course.course_id,
-                      ) && addOtherCourse(course)
-                    "
-                  >
-                    <span>
-                      {{ course.curriculum?.program?.program_code }}
-                      ( {{ course.course_level }} ) - {{ course.course_code }} -
-                      {{ course.course_title }}
-                    </span>
-                    <span
-                      v-if="
-                        currentSemesterData.other_expertise.some(
-                          (c) => c.course_id === course.course_id,
-                        )
-                      "
-                      class="text-xs text-red-500"
-                    >
-                      (Already Selected)
-                    </span>
-                  </li>
-                </ul>
-
-                <!-- Selected list -->
-                <div
-                  v-if="currentSemesterData.other_expertise.length"
-                  class="mt-3 border border-gray-200 rounded-md divide-y shadow-sm"
-                >
-                  <div
-                    v-for="(item, index) in currentSemesterData.other_expertise"
-                    :key="index"
-                    class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer"
-                  >
-                    <span>
-                      {{ item.curriculum?.program?.program_code }}
-                      ({{ item.course_level }}) - {{ item.course_code }} -
-                      {{ item.course_title }}
-                    </span>
-                    <button
-                      type="button"
-                      @click="removeOtherCourse(index)"
-                      class="text-red-500 hover:text-red-700 hover:scale-125 duration-200 leading-none"
-                    >
-                      <icon :name="'delete'" />
-                    </button>
-                  </div>
+                  <button type="button" @click="removeCourse(i)">❌</button>
                 </div>
               </div>
             </div>
-          </transition>
 
-          <!-- Save -->
-          <div class="flex justify-end pt-4">
-            <button
-              class="bg-defaultGreen p-2 px-3 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transition tracking-wider"
-              type="submit"
-            >
-              Save Changes
-            </button>
+            <!-- ===================== -->
+            <!-- OTHER -->
+            <!-- ===================== -->
+            <div class="space-y-2 relative">
+              <label class="font-bold">
+                Other Expertise ({{ getSemesterName(selectedSemester) }})
+              </label>
+
+              <input
+                v-model="otherSearchQuery"
+                @focus="otherDropdownOpen = true"
+                placeholder="Search courses..."
+                class="w-full border px-3 py-2.5 rounded-md"
+              />
+
+              <ul
+                v-if="otherDropdownOpen && filteredOtherCourses.length"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
+              >
+                <li
+                  v-for="course in filteredOtherCourses"
+                  :key="course.course_id"
+                  @click="addOtherCourse(course)"
+                  class="px-3 py-2 hover:bg-green-100 cursor-pointer"
+                >
+                  <span>
+                    {{ course.course_code }} - {{ course.course_title }}
+
+                    <span v-if="course.curriculum" class="text-xs text-gray-500 ml-2">
+                      ({{ course.curriculum.curriculum_start_year }} -
+                      {{ course.curriculum.curriculum_end_year }})
+                    </span>
+                  </span>
+                </li>
+              </ul>
+
+              <div
+                v-if="currentSemesterData.other_expertise.length"
+                class="border rounded-md mt-2"
+              >
+                <div
+                  v-for="(item, i) in currentSemesterData.other_expertise"
+                  :key="i"
+                  class="flex justify-between px-3 py-2 bg-green-50"
+                >
+                  <span>
+                    {{ item.course_code }} - {{ item.course_title }}
+
+                    <span v-if="item.curriculum" class="text-xs text-gray-500 ml-2">
+                      ({{ item.curriculum.curriculum_start_year }} -
+                      {{ item.curriculum.curriculum_end_year }})
+                    </span>
+                  </span>
+
+                  <button type="button" @click="removeOtherCourse(i)">❌</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SAVE -->
+          <div class="flex justify-end">
+            <button class="bg-green-600 text-white px-4 py-2 rounded">Save</button>
           </div>
         </div>
       </form>
@@ -239,20 +181,22 @@
 </template>
 
 <script>
-import icon from "@/assets/icon.vue";
+import { useFetchDataStore } from "@/store/fetch-data-store";
+import { mapState, mapActions } from "pinia";
 import axios from "axios";
 import { toast } from "vue3-toastify";
-import { useFetchDataStore } from "../../../../store/fetch-data-store";
-import { mapState } from "pinia";
-
 export default {
-  name: "EditExpertiseModal",
-  components: { icon },
-  props: {
-    userData: { type: Object, required: true },
-  },
+  props: { userData: Object },
+
   data() {
     return {
+      selectedSemester: 1,
+      selectedYearLevel: 1,
+      searchQuery: "",
+      otherSearchQuery: "",
+      dropdownOpen: false,
+      otherDropdownOpen: false,
+
       form: {
         semesters: {
           1: { expertise: [], other_expertise: [] },
@@ -260,79 +204,156 @@ export default {
           3: { expertise: [], other_expertise: [] },
         },
       },
-      selectedSemester: 1,
-      searchQuery: "",
-      dropdownOpen: false,
-      otherSearchQuery: "",
-      otherDropdownOpen: false,
-      isLoadingCourses: false,
     };
   },
+
   computed: {
     ...mapState(useFetchDataStore, ["courses"]),
+
     currentSemesterData() {
       return this.form.semesters[this.selectedSemester];
     },
-    filteredCourses() {
-      if (!this.courses?.length) return [];
-      return this.courses.filter(
-        (c) =>
-          c.course_semester === this.selectedSemester &&
-          c.curriculum?.program?.institute_id ===
-            this.userData?.institute?.institute_id &&
-          c.curriculum?.program_id === this.userData?.program?.program_id &&
-          !this.currentSemesterData.other_expertise.some(
-            (e) => e.course_id === c.course_id,
-          ) &&
-          ((c.course_code?.toLowerCase() || "").includes(
-            this.searchQuery.toLowerCase(),
-          ) ||
-            (c.course_title?.toLowerCase() || "").includes(
-              this.searchQuery.toLowerCase(),
-            )),
-      );
+
+    // ✅ Get latest curriculum year
+    latestCurriculumYear() {
+      const years = this.courses
+        .map((c) => c.curriculum?.curriculum_start_year)
+        .filter(Boolean);
+
+      return years.length ? Math.max(...years) : null;
     },
-    filteredOtherCourses() {
-      if (!this.courses?.length) return [];
-      return this.courses.filter(
-        (c) =>
+
+    // ✅ TRUE only if BOTH old and new curriculum exist
+    hasNewCurriculum() {
+      const years = this.courses
+        .map((c) => c.curriculum?.curriculum_start_year)
+        .filter(Boolean);
+
+      const unique = [...new Set(years)];
+
+      return unique.length > 1;
+    },
+
+    // =========================
+    // EXPERTISE FILTER (FIXED)
+    // =========================
+    filteredCourses() {
+      return this.courses.filter((c) => {
+        const year = c.curriculum?.curriculum_start_year;
+
+        let validCurriculum = true;
+
+        if (this.hasNewCurriculum) {
+          if (this.selectedYearLevel === 1) {
+            validCurriculum = year === this.latestCurriculumYear;
+          } else {
+            validCurriculum = year !== this.latestCurriculumYear;
+          }
+        }
+
+        return (
           c.course_semester === this.selectedSemester &&
-          c.curriculum?.program?.institute_id ===
-            this.userData?.institute?.institute_id &&
-          !this.currentSemesterData.expertise.some(
-            (e) => e.course_id === c.course_id,
-          ) &&
-          ((c.course_code?.toLowerCase() || "").includes(
-            this.otherSearchQuery.toLowerCase(),
-          ) ||
-            (c.course_title?.toLowerCase() || "").includes(
-              this.otherSearchQuery.toLowerCase(),
-            )),
-      );
+          c.course_level === this.selectedYearLevel &&
+          validCurriculum &&
+          c.curriculum?.program_id === this.userData.program.program_id &&
+          c.curriculum?.program?.institute_id === this.userData.institute.institute_id &&
+          c.course_code.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+      });
+    },
+
+    // =========================
+    // OTHER EXPERTISE FILTER (FIXED)
+    // =========================
+    filteredOtherCourses() {
+      return this.courses.filter((c) => {
+        const year = c.curriculum?.curriculum_start_year;
+
+        let validCurriculum = true;
+
+        if (this.hasNewCurriculum) {
+          if (this.selectedYearLevel === 1) {
+            validCurriculum = year === this.latestCurriculumYear;
+          } else {
+            validCurriculum = year !== this.latestCurriculumYear;
+          }
+        }
+
+        return (
+          c.course_semester === this.selectedSemester &&
+          c.course_level === this.selectedYearLevel &&
+          validCurriculum &&
+          c.curriculum?.program?.institute_id === this.userData.institute.institute_id &&
+          c.course_code.toLowerCase().includes(this.otherSearchQuery.toLowerCase())
+        );
+      });
     },
   },
-  methods: {
-    getSemesterName(sem) {
-      if (sem === 1) return "1st Semester";
-      if (sem === 2) return "2nd Semester";
-      if (sem === 3) return "Summer";
-      return "N/A";
+
+  watch: {
+    userData: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          this.loadExistingData(val);
+        }
+      },
     },
-    addCourse(course) {
-      this.currentSemesterData.expertise.push(course);
-      this.searchQuery = "";
+  },
+
+  methods: {
+    ...mapActions(useFetchDataStore, ["fetchCourses"]),
+
+    getSemesterName(s) {
+      return s === 1 ? "1st" : s === 2 ? "2nd" : "Summer";
+    },
+
+    getYearLevelName(y) {
+      return `${y}${["st", "nd", "rd", "th"][y - 1]} Year`;
+    },
+
+    // =========================
+    // LOAD EXISTING DATA (SAFE)
+    // =========================
+    loadExistingData(user) {
+      const semesters = {
+        1: { expertise: [], other_expertise: [] },
+        2: { expertise: [], other_expertise: [] },
+        3: { expertise: [], other_expertise: [] },
+      };
+
+      const groupBySemester = (list, target) => {
+        (list || []).forEach((item) => {
+          const sem = item.course?.course_semester;
+
+          if (sem && semesters[sem]) {
+            semesters[sem][target].push(item.course);
+          }
+        });
+      };
+
+      groupBySemester(user.expertise, "expertise");
+      groupBySemester(user.other_expertise, "other_expertise");
+
+      this.form.semesters = semesters;
+    },
+
+    addCourse(c) {
+      this.currentSemesterData.expertise.push(c);
       this.dropdownOpen = false;
     },
-    addOtherCourse(course) {
-      this.currentSemesterData.other_expertise.push(course);
-      this.otherSearchQuery = "";
+
+    addOtherCourse(c) {
+      this.currentSemesterData.other_expertise.push(c);
       this.otherDropdownOpen = false;
     },
-    removeCourse(index) {
-      this.currentSemesterData.expertise.splice(index, 1);
+
+    removeCourse(i) {
+      this.currentSemesterData.expertise.splice(i, 1);
     },
-    removeOtherCourse(index) {
-      this.currentSemesterData.other_expertise.splice(index, 1);
+
+    removeOtherCourse(i) {
+      this.currentSemesterData.other_expertise.splice(i, 1);
     },
     async submitExpertise() {
       try {
@@ -348,85 +369,20 @@ export default {
         await axios.patch(
           process.env.VUE_APP_API_BASE_URL + `/auth/update/${this.userData.id}`,
           payload,
-          { withCredentials: true },
+          { withCredentials: true }
         );
 
         toast.success("Expertise updated successfully!");
         this.$emit("updated");
         this.$emit("close");
       } catch (error) {
-        toast.error(
-          error?.response?.data?.message || "Failed to update expertise",
-        );
+        toast.error(error?.response?.data?.message || "Failed to update expertise");
       }
-    },
-    async ensureCoursesLoaded() {
-      const store = useFetchDataStore();
-      if (!store.courses.length) {
-        this.isLoadingCourses = true;
-        await store.fetchCourses();
-        this.isLoadingCourses = false;
-      }
-    },
-
-    // ✅ FIXED METHOD
-    loadExistingExpertise() {
-      if (!this.courses.length) return;
-
-      const mapCourse = (id) =>
-        this.courses.find((c) => c.course_id === id) || null;
-
-      // ✅ Load regular expertise
-      this.userData.expertise?.forEach((ex) => {
-        const courseData = ex.course || ex; // handle nested 'course'
-        const matched = mapCourse(courseData.course_id);
-
-        const courseObj = matched
-          ? matched
-          : {
-              course_id: courseData.course_id,
-              course_code: courseData.course_code,
-              course_title: courseData.course_title,
-              course_semester: courseData.course_semester || 1,
-            };
-
-        const sem = courseObj.course_semester || 1;
-        this.form.semesters[sem].expertise.push(courseObj);
-      });
-
-      // ✅ Load "other expertise"
-      this.userData.other_expertise?.forEach((ex) => {
-        const courseData = ex.course || ex;
-        const matched = mapCourse(courseData.course_id);
-
-        const courseObj = matched
-          ? matched
-          : {
-              course_id: courseData.course_id,
-              course_code: courseData.course_code,
-              course_title: courseData.course_title,
-              course_semester: courseData.course_semester || 1,
-            };
-
-        const sem = courseObj.course_semester || 1;
-        this.form.semesters[sem].other_expertise.push(courseObj);
-      });
     },
   },
+
   async mounted() {
-    await this.ensureCoursesLoaded();
-    this.loadExistingExpertise();
+    await this.fetchCourses();
   },
 };
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

@@ -45,14 +45,14 @@
             <button
               type="button"
               @click="$emit('close')"
-              class="bg-gray-400 p-2 px-4 rounded-lg text-white hover:bg-white border hover:border-gray-600 hover:text-gray-700 hover:shadow-md"
+              class="btn-cancel"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              class="bg-defaultGreen p-2 px-4 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
+              class="btn-save"
             >
               {{ isEditMode ? "Save Changes" : "Submit" }}
             </button>
