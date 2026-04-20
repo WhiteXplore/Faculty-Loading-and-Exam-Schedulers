@@ -3,10 +3,7 @@
     <!-- SELECTOR -->
     <div class="flex justify-between">
       <div class="flex items-center gap-3">
-        <select
-          v-model="activeView"
-          class="border rounded-lg px-3 py-2 text-sm"
-        >
+        <select v-model="activeView" class="border rounded-lg px-3 py-2 text-sm">
           <option value="used">Used Rooms</option>
           <option value="unused">Unused Rooms</option>
         </select>
@@ -32,7 +29,7 @@
     </div>
 
     <!-- Table -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
+    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
       <!-- Top Controls -->
       <div
         class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
@@ -59,11 +56,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -111,10 +104,7 @@
                   Used Count
                 </th>
 
-                <th
-                  v-if="activeView === 'unused'"
-                  class="px-4 py-3 text-center"
-                >
+                <th v-if="activeView === 'unused'" class="px-4 py-3 text-center">
                   Capacity
                 </th>
               </tr>
@@ -141,10 +131,7 @@
                   {{ room.count }}
                 </td>
 
-                <td
-                  v-if="activeView === 'unused'"
-                  class="px-4 py-3 text-center"
-                >
+                <td v-if="activeView === 'unused'" class="px-4 py-3 text-center">
                   {{ room.room_capacity }}
                 </td>
               </tr>
@@ -155,14 +142,10 @@
                     class="flex flex-col items-center justify-center text-center text-gray-500"
                   >
                     <div class="text-center text-gray-500">
-                      <p class="text-lg font-semibold mb-2">
-                        No schedule data available
-                      </p>
+                      <p class="text-lg font-semibold mb-2">No schedule data available</p>
                       <p class="text-sm text-gray-400">
                         Please click
-                        <span class="font-medium text-defaultGreen"
-                          >"Generate"</span
-                        >
+                        <span class="font-medium text-defaultGreen">"Generate"</span>
                         to generate schedule data.
                       </p>
                     </div>
@@ -177,8 +160,7 @@
       <!-- PAGINATION -->
       <div class="flex justify-between items-center mt-2">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
         </div>
 
         <div class="flex items-center gap-1 text-sm">
@@ -240,9 +222,7 @@ export default {
       Object.values(this.groupedSchedule).forEach((records) => {
         records.forEach((r) => {
           if (!roomCounts[r.room_name]) {
-            const room = this.roomsFromAPI.find(
-              (x) => x.room_name === r.room_name,
-            );
+            const room = this.roomsFromAPI.find((x) => x.room_name === r.room_name);
 
             roomCounts[r.room_name] = {
               room_name: r.room_name,
@@ -263,9 +243,7 @@ export default {
     },
 
     availableRooms() {
-      return this.roomsFromAPI.filter(
-        (r) => !this.usedRooms.includes(r.room_name),
-      );
+      return this.roomsFromAPI.filter((r) => !this.usedRooms.includes(r.room_name));
     },
 
     lectureRooms() {
@@ -283,9 +261,7 @@ export default {
     },
 
     tableData() {
-      return this.activeView === "used"
-        ? this.usedRoomList
-        : this.filteredAvailableRooms;
+      return this.activeView === "used" ? this.usedRoomList : this.filteredAvailableRooms;
     },
 
     filteredData() {
@@ -294,7 +270,7 @@ export default {
       const q = this.searchQuery.toLowerCase();
 
       return this.tableData.filter((row) =>
-        Object.values(row).some((v) => String(v).toLowerCase().includes(q)),
+        Object.values(row).some((v) => String(v).toLowerCase().includes(q))
       );
     },
 
@@ -328,10 +304,7 @@ export default {
     },
 
     endIndex() {
-      return Math.min(
-        this.currentPage * this.itemsPerPage,
-        this.filteredData.length,
-      );
+      return Math.min(this.currentPage * this.itemsPerPage, this.filteredData.length);
     },
   },
 

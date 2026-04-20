@@ -51,22 +51,16 @@
           </div>
 
           <!-- Header -->
-          <div
-            class="flex flex-col items-center text-center border-b pb-4 mb-4"
-          >
+          <div class="flex flex-col items-center text-center border-b pb-4 mb-4">
             <img
               src="@/assets/img/dnsc_logo.png"
               alt="School Logo"
               class="w-20 h-20 object-contain mb-2"
             />
-            <h1
-              class="text-2xl font-extrabold text-gray-800 uppercase tracking-wide"
-            >
+            <h1 class="text-2xl font-extrabold text-gray-800 uppercase tracking-wide">
               Davao del Norte State College
             </h1>
-            <p class="text-sm text-gray-600 mt-1">
-              Panabo City, Davao del Norte
-            </p>
+            <p class="text-sm text-gray-600 mt-1">Panabo City, Davao del Norte</p>
           </div>
 
           <!-- Content -->
@@ -84,9 +78,7 @@
               <table
                 class="min-w-full table-auto border border-gray-300 shadow-sm rounded-md overflow-hidden text-sm mt-5"
               >
-                <thead
-                  class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold"
-                >
+                <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
                   <tr>
                     <th class="px-4 py-3 border">Offer Code</th>
                     <th class="px-4 py-2 border">Code</th>
@@ -126,17 +118,14 @@
                       {{ load.course?.course_requisite }}
                     </td>
                     <td class="px-4 py-2 border text-center">
-                      {{ load.schedule_days }} |
-                      {{ formatTime(load.time_start) }} -
+                      {{ load.schedule_days }} | {{ formatTime(load.time_start) }} -
                       {{ formatTime(load.time_end) }} | {{ load.room?.room_name
                       }}{{ load.room?.room_number }}
                     </td>
                   </tr>
 
                   <tr class="font-semibold bg-gray-100 text-center">
-                    <td colspan="5" class="px-4 py-2 border text-right">
-                      TOTAL UNITS
-                    </td>
+                    <td colspan="5" class="px-4 py-2 border text-right">TOTAL UNITS</td>
                     <td class="px-4 py-2 border">{{ totalUnits }}</td>
                     <td class="px-4 py-2 border"></td>
                     <td class="px-4 py-2 border"></td>
@@ -145,9 +134,7 @@
               </table>
 
               <div class="flex justify-between items-start w-full mt-8 px-10">
-                <div
-                  class="grid grid-cols-2 gap-x-10 gap-y-2 text-sm text-gray-500"
-                >
+                <div class="grid grid-cols-2 gap-x-10 gap-y-2 text-sm text-gray-500">
                   <div>Total Preparation: 3</div>
                   <div>Overload Units: 3</div>
                   <div>Minor Subjects: 3</div>

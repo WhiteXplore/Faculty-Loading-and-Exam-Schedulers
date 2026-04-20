@@ -18,11 +18,7 @@
               {{ isEdit ? "Edit Curriculum" : "Add Curriculum" }}
             </h1>
           </div>
-          <icon
-            name="circle-close3"
-            class="cursor-pointer"
-            @click="$emit('close')"
-          />
+          <icon name="circle-close3" class="cursor-pointer" @click="$emit('close')" />
         </div>
 
         <!-- Body -->
@@ -103,17 +99,10 @@
 
           <!-- Buttons -->
           <div class="flex justify-end gap-2">
-            <button
-              type="button"
-              class="bg-gray-200 p-2 px-3 rounded-lg text-gray-700 hover:bg-white border hover:border-gray-800 hover:text-gray-800 hover:shadow-md transition-all duration-300 hover:scale-105"
-              @click="$emit('close')"
-            >
+            <button type="button" class="btn-cancel" @click="$emit('close')">
               Cancel
             </button>
-            <button
-              type="submit"
-              class="bg-defaultGreen p-2 px-3 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transition-all duration-300 hover:scale-105"
-            >
+            <button type="submit" class="btn-save">
               {{ isEdit ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -164,17 +153,13 @@ export default {
     filteredPrograms() {
       if (!this.searchProgramQuery) return this.programs;
       return this.programs.filter((p) =>
-        p.program_name
-          .toLowerCase()
-          .includes(this.searchProgramQuery.toLowerCase()),
+        p.program_name.toLowerCase().includes(this.searchProgramQuery.toLowerCase())
       );
     },
 
     formattedCurriculumName() {
       if (!this.form.program_id || !this.form.curriculum_start_year) return "";
-      const program = this.programs.find(
-        (p) => p.program_id === this.form.program_id,
-      );
+      const program = this.programs.find((p) => p.program_id === this.form.program_id);
       return program
         ? `${this.form.curriculum_start_year} - ${program.program_name}`
         : "";
@@ -191,9 +176,7 @@ export default {
           this.form.curriculum_start_year = newVal.curriculum_start_year;
           this.form.curriculum_end_year = newVal.curriculum_end_year;
 
-          const program = this.programs.find(
-            (p) => p.program_id === newVal.program_id,
-          );
+          const program = this.programs.find((p) => p.program_id === newVal.program_id);
 
           if (program) {
             this.searchProgramQuery = program.program_name;
@@ -224,13 +207,13 @@ export default {
         if (this.isEdit) {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/curriculums/update-curriculum/${this.curriculumData.curriculum_id}`,
-            this.form,
+            this.form
           );
           toast.success("Curriculum updated successfully!");
         } else {
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/curriculums/add-curriculums`,
-            this.form,
+            this.form
           );
           toast.success("Curriculum added successfully!");
         }

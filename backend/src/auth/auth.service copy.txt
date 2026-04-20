@@ -205,118 +205,113 @@ export class AuthService {
     });
   }
 
-async updateUser(
-  id: number,
-  updates: UpdateUserDto,
-): Promise<Partial<User_Accounts>> {
-  const user = await this.userRepository.findOne({
-    where: { id },
-    relations: [
-      'institute',
-      'program',
-      'school_year',
-      'expertise',
-    ],
-  });
-
-  if (!user) {
-    throw new BadRequestException(`User with ID ${id} not found`);
-  }
-
-  // =========================
-  // PASSWORD UPDATE
-  // =========================
-  if (updates.password) {
-    updates.password = await bcrypt.hash(updates.password, 10);
-  }
-
-  // =========================
-  // INSTITUTE
-  // =========================
-  if (updates.institute_id) {
-    const institute = await this.userRepository.manager.findOne(Institute, {
-      where: { institute_id: updates.institute_id },
+  async updateUser(
+    id: number,
+    updates: UpdateUserDto,
+  ): Promise<Partial<User_Accounts>> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: [
+        'institute',
+        'program',
+        'school_year',
+        'expertise',
+        'other_expertise',
+      ],
     });
 
-    if (!institute) {
-      throw new BadRequestException(
-        `Institute with ID ${updates.institute_id} not found`,
+    if (!user) {
+      throw new BadRequestException(`User with ID ${id} not found`);
+    }
+
+    // Handle password change
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
+    // Handle institute relation
+    if (updates.institute_id) {
+      const institute = await this.userRepository.manager.findOne(Institute, {
+        where: { institute_id: updates.institute_id },
+      });
+      if (!institute) {
+        throw new BadRequestException(
+          `Institute with ID ${updates.institute_id} not found`,
+        );
+      }
+      user.institute = institute;
+    }
+
+    // Handle program relation
+    if (updates.program_id) {
+      const program = await this.userRepository.manager.findOne(Program, {
+        where: { program_id: updates.program_id },
+      });
+      if (!program) {
+        throw new BadRequestException(
+          `Program with ID ${updates.program_id} not found`,
+        );
+      }
+      user.program = program;
+    }
+
+    // ✅ Handle school year relation
+    if (updates.school_year_id) {
+      const schoolYear = await this.userRepository.manager.findOne(SchoolYear, {
+        where: { school_year_id: updates.school_year_id },
+      });
+      if (!schoolYear) {
+        throw new BadRequestException(
+          `School Year with ID ${updates.school_year_id} not found`,
+        );
+      }
+      user.school_year = schoolYear;
+    }
+
+    // Handle expertise updates
+    if (updates.expertise) {
+      await this.userRepository.manager.delete(UserExpertise, {
+        user: { id: user.id },
+      });
+
+      user.expertise = updates.expertise.map((courseId) =>
+        this.userRepository.manager.create(UserExpertise, {
+          course: { course_id: courseId },
+          user,
+        }),
       );
     }
 
-    user.institute = institute;
-  }
+    // Handle other_expertise updates
+    if (updates.other_expertise) {
+      await this.userRepository.manager.delete(UserOtherExpertise, {
+        user: { id: user.id },
+      });
 
-  // =========================
-  // PROGRAM
-  // =========================
-  if (updates.program_id) {
-    const program = await this.userRepository.manager.findOne(Program, {
-      where: { program_id: updates.program_id },
-    });
-
-    if (!program) {
-      throw new BadRequestException(
-        `Program with ID ${updates.program_id} not found`,
+      user.other_expertise = updates.other_expertise.map((courseId) =>
+        this.userRepository.manager.create(UserOtherExpertise, {
+          course: { course_id: courseId },
+          user,
+        }),
       );
     }
 
-    user.program = program;
+    // Assign the rest of the fields
+    const {
+      institute_id,
+      program_id,
+      school_year_id,
+      expertise,
+      other_expertise,
+      ...rest
+    } = updates;
+    Object.assign(user, rest);
+
+    const savedUser = await this.userRepository.save(user);
+    const { password, ...userWithoutPassword } = savedUser;
+
+    return userWithoutPassword;
   }
-
-  // =========================
-  // SCHOOL YEAR
-  // =========================
-  if (updates.school_year_id) {
-    const schoolYear = await this.userRepository.manager.findOne(SchoolYear, {
-      where: { school_year_id: updates.school_year_id },
-    });
-
-    if (!schoolYear) {
-      throw new BadRequestException(
-        `School Year with ID ${updates.school_year_id} not found`,
-      );
-    }
-
-    user.school_year = schoolYear;
-  }
-
-  // =========================
-  // 🔥 UNIFIED EXPERTISE (FIXED)
-  // =========================
- if (updates.expertise) {
-  await this.userRepository.manager.delete(UserExpertise, {
-    user: { id: user.id },
-  });
-
-  user.expertise = updates.expertise.map((item) =>
-    this.userRepository.manager.create(UserExpertise, {
-      user,
-      course: { course_id: item.course_id },
-      status: item.status,
-    }),
-  );
-}
-
-  // =========================
-  // ASSIGN REMAINING FIELDS
-  // =========================
-  const {
-    institute_id,
-    program_id,
-    school_year_id,
-    expertise,
-    ...rest
-  } = updates;
-
-  Object.assign(user, rest);
-
-  const savedUser = await this.userRepository.save(user);
-
-  const { password, ...userWithoutPassword } = savedUser;
-
-  return userWithoutPassword;
-}
 
   async removeUser(id: number): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({ where: { id } });

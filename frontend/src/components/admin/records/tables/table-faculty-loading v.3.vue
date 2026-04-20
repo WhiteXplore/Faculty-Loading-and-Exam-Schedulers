@@ -68,13 +68,13 @@
       <div class="flex justify-center gap-2 text-sm">
         <button
           @click="showConfirmSaved = false"
-          class="bg-gray-200 p-2 px-3 rounded-lg text-gray-700 hover:bg-white border hover:border-gray-800 hover:text-gray-800 hover:shadow-md transform transition-all duration-300 hover:scale-105"
+          class="btn-cancel"
         >
           Cancel
         </button>
         <button
           @click="saveScheduledConfirmed"
-          class="bg-defaultGreen p-2 px-3 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105"
+         class="btn-save"
         >
           Yes, Save
         </button>

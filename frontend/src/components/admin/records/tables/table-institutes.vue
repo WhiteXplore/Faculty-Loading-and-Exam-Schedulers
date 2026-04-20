@@ -18,7 +18,7 @@
     </div>
 
     <!-- Table -->
-    <div class="mt-4 overflow-x-auto border p-3 rounded-xl bg-white">
+    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
       <!-- Top Controls -->
       <div class="table-controls">
         <!-- Items per page -->

@@ -4,26 +4,7 @@ import {
   IsEmail,
   IsNumber,
   IsArray,
-  ValidateNested,
-  IsEnum,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-
-// ✅ Define allowed status values
-export enum ExpertiseStatus {
-  PRIMARY = 'PRIMARY',
-  OTHER = 'OTHER',
-  CROSS = 'CROSS',
-}
-
-// ✅ Nested DTO for each expertise item
-export class ExpertiseItemDto {
-  @IsNumber()
-  course_id: number;
-
-  @IsEnum(ExpertiseStatus)
-  status: ExpertiseStatus;
-}
 
 export class UpdateUserDto {
   @IsOptional()
@@ -58,10 +39,13 @@ export class UpdateUserDto {
   @IsNumber()
   school_year_id?: number;
 
-  // ✅ NEW STRUCTURE (REPLACES BOTH expertise + other_expertise)
+  // ✅ Allow array of course IDs for expertise
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ExpertiseItemDto)
-  expertise?: ExpertiseItemDto[];
+  expertise?: number[];
+
+  // ✅ Allow array of course IDs for other expertise
+  @IsOptional()
+  @IsArray()
+  other_expertise?: number[];
 }

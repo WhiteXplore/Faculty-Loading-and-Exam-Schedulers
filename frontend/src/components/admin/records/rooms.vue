@@ -11,12 +11,8 @@
       <div class="w-60 bg-white border-r pr-1">
         <ul class="space-y-1">
           <li @click="activeTab = 'room'" :class="tabClass('room')">Room</li>
-          <li @click="activeTab = 'building'" :class="tabClass('building')">
-            Building
-          </li>
-          <li @click="activeTab = 'setup'" :class="tabClass('setup')">
-            Setup Time
-          </li>
+          <li @click="activeTab = 'building'" :class="tabClass('building')">Building</li>
+          <li @click="activeTab = 'setup'" :class="tabClass('setup')">Setup Time</li>
           <li @click="activeTab = 'branch'" :class="tabClass('branch')">
             College Branch
           </li>

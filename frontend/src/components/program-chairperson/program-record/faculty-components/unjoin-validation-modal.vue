@@ -32,7 +32,7 @@
       <div class="flex justify-center gap-2 text-sm">
         <button
           @click="$emit('close')"
-          class="bg-gray-200 p-2 px-3 rounded-lg text-gray-700 hover:bg-white border hover:border-gray-800 hover:text-gray-800 hover:shadow-md transform transition-all duration-300 hover:scale-105"
+          class="btn-cancel"
         >
           Cancel
         </button>

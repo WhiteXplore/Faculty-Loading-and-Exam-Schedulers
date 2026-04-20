@@ -2,7 +2,7 @@
   <div class="flex justify-between items-center">
     <!-- LEFT: JOIN TOGGLE -->
     <div
-      class="flex items-center gap-4 py-2 px-3 ml-2 rounded-full border w-max bg-white text-sm"
+      class="flex items-center gap-4 py-2 px-3 rounded-full border w-max bg-white text-sm"
     >
       <span class="font-medium text-gray-700">Join Scheduled:</span>
 
@@ -30,22 +30,33 @@
     </div>
 
     <!-- RIGHT SIDE -->
-    <div class="flex items-center gap-3 flex-wrap mr-4">
+    <div class="flex items-center gap-2 flex-wrap">
       <!-- VIEW TOGGLE -->
-      <div
-        @click="$emit('toggleFacultyTable')"
-        class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
-      >
-        <div
-          class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
-        >
-          <icon name="users" />
-        </div>
-        <span class="font-medium text-sm">
-          {{ showFacultyTable ? "View Cards" : "View Faculty" }}
-        </span>
-      </div>
+      <!-- SEARCH INPUT -->
 
+      <div class="relative w-full sm:w-[280px]">
+        <input
+          :value="searchQuery"
+          @input="$emit('update:searchQuery', $event.target.value)"
+          type="text"
+          placeholder="Search faculty..."
+          class="rounded-xl border border-defaultGreen px-4 py-2.5 pl-10 text-sm shadow-sm w-full"
+        />
+        <div
+          class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+        </div>
+      </div>
       <!-- COMPARE BUTTON -->
       <div
         v-show="!showCompareSelection"
@@ -61,10 +72,7 @@
       </div>
 
       <!-- COMPARE SECTION -->
-      <div
-        v-show="showCompareSelection"
-        class="flex items-center gap-3 flex-wrap"
-      >
+      <div v-show="showCompareSelection" class="flex items-center gap-2 flex-wrap">
         <div class="flex gap-2 items-center">
           <!-- Instructor A -->
           <select
@@ -143,6 +151,7 @@ export default {
     compareInstructorA: String,
     compareInstructorB: String,
     instructorList: Array,
+    searchQuery: String,
   },
   computed: {
     canCompare() {

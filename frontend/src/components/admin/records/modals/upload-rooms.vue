@@ -66,7 +66,7 @@
         <!-- Actions -->
         <div class="tracking-wide flex justify-end gap-2 mt-4">
           <button
-            class="bg-gray-200 p-2 px-3 rounded-lg text-gray-700 hover:bg-white border hover:border-gray-800 hover:text-gray-800 hover:shadow-md transform transition-all duration-300 hover:scale-105"
+            class="btn-cancel"
             @click="$emit('close')"
           >
             Cancel

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { User_Accounts } from 'src/user/entities/user.entity';
 import { Course } from 'src/courses/entities/course.entity';
 
@@ -16,4 +16,13 @@ export class UserExpertise {
   @ManyToOne(() => Course, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'course_id' })
   course: Course;
+
+  // ✅ NEW COLUMN
+
+  @Column({
+    type: 'enum',
+    enum: ['PRIMARY', 'OTHER', 'CROSS'],
+    default: 'PRIMARY',
+  })
+  status: 'PRIMARY' | 'OTHER' | 'CROSS';
 }

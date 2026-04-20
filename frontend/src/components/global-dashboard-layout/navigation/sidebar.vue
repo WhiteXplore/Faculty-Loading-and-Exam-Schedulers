@@ -102,11 +102,7 @@
                 ]"
               >
                 <div
-                  :class="[
-                    !isExpanded
-                      ? 'justify-center w-full'
-                      : 'justify-start gap-5',
-                  ]"
+                  :class="[!isExpanded ? 'justify-center w-full' : 'justify-start gap-5']"
                   class="flex items-center"
                 >
                   <icon :name="item.icon" />
@@ -179,11 +175,7 @@
                 ]"
               >
                 <div
-                  :class="[
-                    !isExpanded
-                      ? 'justify-center w-full'
-                      : 'justify-start gap-5',
-                  ]"
+                  :class="[!isExpanded ? 'justify-center w-full' : 'justify-start gap-5']"
                   class="flex items-center"
                 >
                   <icon :name="item.icon" />
@@ -427,7 +419,7 @@ export default {
             title: "My Load",
             items: [
               {
-                name: "Loading",
+                name: "My Loading",
                 icon: "users",
                 route: "/faculty-load",
               },
@@ -437,7 +429,7 @@ export default {
             title: "Setting",
             items: [
               {
-                name: "Preference",
+                name: "My Preference",
                 icon: "setting",
                 route: "/faculty-preference",
               },
@@ -453,13 +445,13 @@ export default {
     },
     topMenuItems() {
       return this.roleMenuSections.flatMap((section) =>
-        section.items.filter((item) => !item.bottom),
+        section.items.filter((item) => !item.bottom)
       );
     },
 
     bottomMenuItems() {
       return this.roleMenuSections.flatMap((section) =>
-        section.items.filter((item) => item.bottom),
+        section.items.filter((item) => item.bottom)
       );
     },
   },
@@ -476,9 +468,8 @@ export default {
     async syncProgramYearCourses(route) {
       try {
         const response = await axios.post(
-          process.env.VUE_APP_API_BASE_URL +
-            "/program-year-courses/sync-from-classes",
-          { withCredentials: true },
+          process.env.VUE_APP_API_BASE_URL + "/program-year-courses/sync-from-classes",
+          { withCredentials: true }
         );
         console.log("Sync successful:", response.data);
         this.$router.push(route);
@@ -507,9 +498,7 @@ export default {
       });
       for (const item of allDropdownItems) {
         if (item.children) {
-          const match = item.children.find((child) =>
-            path.startsWith(child.route),
-          );
+          const match = item.children.find((child) => path.startsWith(child.route));
           if (match || path.startsWith(item.route)) {
             this.isExpanded = true;
             this.isDropdownOpen = item.name;
@@ -520,12 +509,9 @@ export default {
     },
     async fetchUser() {
       try {
-        const response = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/auth/me",
-          {
-            withCredentials: true,
-          },
-        );
+        const response = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
+          withCredentials: true,
+        });
         if (response.data) {
           this.user = response.data;
           console.log("Authenticated User:", this.user);
