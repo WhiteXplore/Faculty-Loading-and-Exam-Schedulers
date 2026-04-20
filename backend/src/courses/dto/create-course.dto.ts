@@ -30,15 +30,4 @@ export class CreateCourseDto {
   @IsString()
   course_requisite?: string;
 
-  @IsOptional()
-  @IsInt()
-  institute_id?: number;
-
-  @IsOptional()
-  @IsInt()
-  program_id?: number;
-
-  @IsOptional()
-  @IsInt()
-  curriculum_id?: number;
 }

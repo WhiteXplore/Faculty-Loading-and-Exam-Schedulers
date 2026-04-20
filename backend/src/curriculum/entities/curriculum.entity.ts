@@ -9,8 +9,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Program } from 'src/programs/entities/program.entity';
-import { Course } from 'src/courses/entities/course.entity';
 import { Institute } from 'src/institute/entities/institute.entity';
+import { CurriculumCourse } from 'src/curriculum_courses/entities/curriculum_course.entity';
 
 @Entity('curricula')
 export class Curriculum {
@@ -48,6 +48,10 @@ export class Curriculum {
   @JoinColumn({ name: 'program_id' })
   program: Program;
 
-  @OneToMany(() => Course, (course) => course.curriculum)
-  courses: Course[];
+  @OneToMany(
+    () => CurriculumCourse,
+    (curriculumCourse) => curriculumCourse.curriculum,
+  )
+  curriculumCourses: CurriculumCourse[];
+
 }

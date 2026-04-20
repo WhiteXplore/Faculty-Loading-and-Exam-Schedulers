@@ -17,18 +17,20 @@ export class AssignClassService {
     return this.assignClassRepo.save(newAssignClass);
   }
 
-  findAll() {
-    return this.assignClassRepo.find({
-      relations: {
-        program: {
-          institute: true, // <-- nested relation
-        },
-        course: {
+findAll() {
+  return this.assignClassRepo.find({
+    relations: {
+      program: {
+        institute: true,
+      },
+      course: {
+        curriculumCourses: {
           curriculum: true,
         },
       },
-    });
-  }
+    },
+  });
+}
 
   findOne(id: number) {
     return this.assignClassRepo.findOne({

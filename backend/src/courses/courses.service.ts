@@ -44,9 +44,10 @@ export class CoursesService {
   async findAll(): Promise<Course[]> {
     return await this.courseRepository.find({
       relations: [
-        'curriculum',
-        'curriculum.program',
-        'curriculum.program.institute',
+        'curriculumCourses',
+        'curriculumCourses.curriculum',
+        'curriculumCourses.curriculum.program',
+        'curriculumCourses.curriculum.program.institute',
       ],
     });
   }
@@ -54,7 +55,12 @@ export class CoursesService {
   async findOne(id: number): Promise<Course> {
     const course = await this.courseRepository.findOne({
       where: { course_id: id },
-      relations: ['curriculum'],
+      relations: [
+        'curriculumCourses',
+        'curriculumCourses.curriculum',
+        'curriculumCourses.curriculum.program',
+        'curriculumCourses.curriculum.program.institute',
+      ],
     });
 
     if (!course) {
@@ -93,7 +99,8 @@ SELECT
   GROUP_CONCAT(DISTINCT c.course_code ORDER BY c.course_code SEPARATOR ', ') AS course_codes,
   GROUP_CONCAT(DISTINCT cu.curriculum_id ORDER BY cu.curriculum_id SEPARATOR ', ') AS curriculum_ids
 FROM courses c
-JOIN curricula cu ON c.curriculum_id = cu.curriculum_id
+JOIN curriculum_courses cc ON c.course_id = cc.course_id
+JOIN curricula cu ON cc.curriculum_id = cu.curriculum_id
 JOIN programs p ON cu.program_id = p.program_id
 JOIN institutes i ON p.institute_id = i.institute_id
 GROUP BY i.institute_id, i.institute_name, i.institute_code;

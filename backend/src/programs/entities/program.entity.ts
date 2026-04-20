@@ -13,7 +13,6 @@ import { Institute } from 'src/institute/entities/institute.entity';
 import { Calendar } from 'src/calendar/entities/calendar.entity';
 import { User_Accounts } from 'src/user/entities/user.entity';
 import { AssignClass } from 'src/assign_class/entities/assign_class.entity';
-import { Course } from 'src/courses/entities/course.entity';
 
 @Entity('programs')
 export class Program {
@@ -52,8 +51,6 @@ export class Program {
   @OneToMany(() => User_Accounts, (user) => user.program)
   users: User_Accounts[];
 
-  @OneToMany(() => Course, (course) => course.program)
-  courses: Course[];
 
   @OneToMany(() => AssignClass, (assignClass) => assignClass.course)
   assignClasses: AssignClass[];

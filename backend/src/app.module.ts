@@ -21,6 +21,7 @@ import { UnscheduledMeetingsModule } from './unscheduled_meetings/unscheduled_me
 import { FacultyBranchModule } from './faculty_branch/faculty_branch.module';
 import { BuildingsModule } from './buildings/buildings.module';
 import { BuildingAreasModule } from './building_areas/building_areas.module';
+import { CurriculumCoursesModule } from './curriculum_courses/curriculum_courses.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { BuildingAreasModule } from './building_areas/building_areas.module';
     FacultyBranchModule,
     BuildingsModule,
     BuildingAreasModule,
+    CurriculumCoursesModule,
   ],
 })
 export class AppModule {}
