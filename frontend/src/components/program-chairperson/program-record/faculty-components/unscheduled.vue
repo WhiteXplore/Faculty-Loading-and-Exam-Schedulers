@@ -8,7 +8,7 @@
     >
       <h3 class="font-semibold text-base ml-2">Unscheduled Courses</h3>
 
-      <div class="flex items-center gap-2">
+ <div class="per-page-container">
         <input
           v-model="searchQuery"
           @input="changePage(1)"

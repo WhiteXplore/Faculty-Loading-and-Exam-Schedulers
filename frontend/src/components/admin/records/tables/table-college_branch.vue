@@ -24,14 +24,12 @@
     <!-- Table -->
     <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
       <!-- Controls -->
-      <div
-        class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
-      >
+        <div class="table-controls">
         <!-- Per page -->
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <select
             v-model="itemsPerPage"
-            class="rounded-full border border-green-600 bg-white px-3 py-1 text-sm font-semibold"
+            class="select-input"
             @change="changePage(1)"
           >
             <option value="10">10</option>
@@ -43,12 +41,12 @@
         </div>
 
         <!-- Search -->
-        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full"
+            class="search-input"
             @input="changePage(1)"
           />
 

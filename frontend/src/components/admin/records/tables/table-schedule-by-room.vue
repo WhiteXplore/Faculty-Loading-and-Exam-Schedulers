@@ -4,7 +4,7 @@
       <!-- FILTER BAR -->
       <div class="flex justify-between items-center mb-3">
         <!-- <div class="flex items-center gap-2">
-          <div class="relative">
+           <div class="select-wrapper">
             <select
               v-model="entriesLimit"
               class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
@@ -43,7 +43,7 @@
 
         <!-- SEARCH -->
 
-        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             type="text"
@@ -216,7 +216,7 @@
       <div class="bg-white w-[900px] rounded-2xl p-6 shadow-xl">
         <!-- Header -->
         <div class="flex items-center justify-between border-b pb-3 mb-4">
-          <div class="flex items-center gap-2">
+     <div class="per-page-container">
             <icon
               name="exclamation-circle"
               class="w-7 h-7 p-1 rounded-full bg-red-200 text-red-900 flex items-center justify-center"

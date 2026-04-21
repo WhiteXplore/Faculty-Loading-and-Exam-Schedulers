@@ -71,7 +71,7 @@
       </div>
 
       <!-- All Day Checkbox -->
-      <div class="flex items-center gap-2">
+ <div class="per-page-container">
         <input
           type="checkbox"
           id="allDay"

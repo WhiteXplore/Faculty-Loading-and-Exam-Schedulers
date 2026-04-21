@@ -94,7 +94,7 @@
               @click="toggleYearDisplay(year)"
               class="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer border-b"
             >
-              <div class="flex items-center gap-2">
+         <div class="per-page-container">
                 <icon
                   :name="
                     expandedYears.includes(year) ? 'arrow-down' : 'arrow-right'
@@ -187,7 +187,7 @@
             @click="toggleYearDisplay(year)"
             class="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer border-b"
           >
-            <div class="flex items-center gap-2">
+       <div class="per-page-container">
               <icon
                 :name="
                   expandedYears.includes(year) ? 'arrow-down' : 'arrow-right'

@@ -127,7 +127,7 @@
                   <div
                     class="flex justify-between items-center px-5 py-3 bg-gray-50 border-b rounded-t-xl"
                   >
-                    <div class="flex items-center gap-2">
+               <div class="per-page-container">
                       <icon name="calendar" class="size-5 text-green-700" />
                       <h4 class="font-semibold text-green-800">
                         {{ year.label }}
@@ -171,7 +171,7 @@
                         </span>
                       </div>
 
-                      <div class="flex items-center gap-2">
+                 <div class="per-page-container">
                         <icon name="users" class="size-4 text-defaultGreen" />
 
                         <input

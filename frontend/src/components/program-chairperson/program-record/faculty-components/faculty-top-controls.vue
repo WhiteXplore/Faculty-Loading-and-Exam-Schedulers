@@ -6,7 +6,7 @@
     >
       <span class="font-medium text-gray-700">Join Scheduled:</span>
 
-      <div class="flex items-center gap-2">
+ <div class="per-page-container">
         <span
           class="font-semibold"
           :class="isJoined ? 'text-green-600' : 'text-gray-400'"

@@ -125,7 +125,7 @@
             class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
           >
             <!-- TODO  Items per page -->
-            <div class="flex items-center gap-2">
+       <div class="per-page-container">
               <div class="relative">
                 <select
                   v-model="itemsPerPage"
@@ -158,12 +158,12 @@
             </div>
 
             <!-- TODO  Search -->
-            <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+            <div class="search-wrapper">
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search faculty..."
-                class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
+                class="search-input"
                 @input="changePage(1)"
               />
               <div

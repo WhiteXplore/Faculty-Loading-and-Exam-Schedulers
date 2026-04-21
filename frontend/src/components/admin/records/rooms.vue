@@ -1,31 +1,35 @@
 <template>
-  <div class="px-2 mt-2">
+  <div class="p-2">
     <!-- Header -->
-    <div class="flex justify-between items-start">
+    <div class="flex justify-between items-center">
       <h1 class="font-semibold tracking-wide text-sm px-1">Room Utilities</h1>
     </div>
 
-    <!-- Main Layout -->
-    <div class="mt-3 flex">
-      <!-- LEFT SIDE (Tabs List) -->
-      <div class="w-60 bg-white border-r pr-1">
-        <ul class="space-y-1">
-          <li @click="activeTab = 'room'" :class="tabClass('room')">Room</li>
-          <li @click="activeTab = 'building'" :class="tabClass('building')">Building</li>
-          <li @click="activeTab = 'setup'" :class="tabClass('setup')">Setup Time</li>
-          <li @click="activeTab = 'branch'" :class="tabClass('branch')">
-            College Branch
-          </li>
-        </ul>
+    <!-- Tabs -->
+    <div class="mt-2 justify-between flex items-center">
+      <div class="flex gap-1">
+        <button
+          v-for="tab in tabs"
+          :key="tab.value"
+          @click="activeTab = tab.value"
+          :class="[
+            'px-4 py-2 rounded-t-lg font-normal text-sm',
+            activeTab === tab.value
+              ? 'bg-defaultGreen text-white border border-gray-300 border-b-white shadow-sm'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+          ]"
+        >
+          {{ tab.label }}
+        </button>
       </div>
+    </div>
 
-      <!-- RIGHT SIDE (Table Content) -->
-      <div class="flex-1 bg-white pl-2">
-        <tableRooms v-if="activeTab === 'room'" />
-        <tableBuildings v-if="activeTab === 'building'" />
-        <tableCollegeBranch v-if="activeTab === 'branch'" />
-        <tableBuildingAreas v-if="activeTab === 'setup'" />
-      </div>
+    <!-- Content Card -->
+    <div class="bg-white border-t-0 mt-2">
+      <tableRooms v-if="activeTab === 'room'" />
+      <tableBuildings v-if="activeTab === 'building'" />
+      <tableBuildingAreas v-if="activeTab === 'setup'" />
+      <tableCollegeBranch v-if="activeTab === 'branch'" />
     </div>
   </div>
 </template>
@@ -49,20 +53,17 @@ export default {
   data() {
     return {
       activeTab: "room",
+      tabs: [
+        { label: "Room", value: "room" },
+        { label: "Building", value: "building" },
+        { label: "Setup Time", value: "setup" },
+        { label: "College Branch", value: "branch" },
+      ],
     };
-  },
-
-  methods: {
-    tabClass(tab) {
-      return [
-        "cursor-pointer px-3 py-2 rounded-md text-sm transition",
-        this.activeTab === tab
-          ? "bg-defaultGreen text-white"
-          : "hover:bg-gray-100 text-gray-700",
-      ];
-    },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Optional styling */
+</style>
