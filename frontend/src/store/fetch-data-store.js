@@ -7,6 +7,7 @@ export const useFetchDataStore = defineStore("fetchData", {
     instructors: [],
     courses: [],
     curriculums: [],
+    curriculum_courses: [],
     programs: [],
     sections: [],
     rooms: [],
@@ -40,9 +41,27 @@ export const useFetchDataStore = defineStore("fetchData", {
     loading: false,
     error: null,
     activeYearInterval: null, // for polling
+    
   }),
 
   actions: {
+  async fetchCurriculumCourses() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const { data } = await axios.get(
+          process.env.VUE_APP_API_BASE_URL +
+            "/curriculum-courses/get-all-curriculum-courses",
+        );
+        this.curriculum_courses = data;
+      } catch (err) {
+        this.error = err.message || "Failed to fetch curriculum_courses";
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    
     async runScheduler() {
       await axios.get(
         process.env.VUE_APP_API_BASE_URL + "/generated-scheduled/load",

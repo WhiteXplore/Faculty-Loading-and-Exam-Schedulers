@@ -44,9 +44,9 @@
               class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
               @change="changePage(1)"
             >
-              <option :value="10">10</option>
-              <option :value="15">15</option>
-              <option :value="20">20</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
             </select>
             <div
               class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
@@ -64,7 +64,6 @@
           </div>
           <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
-
         <div class="flex gap-2">
           <!-- Curriculum filter -->
           <div class="relative" v-if="user?.role === 'Admin'">
@@ -126,32 +125,23 @@
                 </th>
               </tr>
             </thead>
-
             <tbody>
               <tr
                 v-for="c in paginatedData"
-                :key="c.curriculum_course_id"
+                :key="c.course_id"
                 class="hover:bg-green-50 border-t transition-all"
               >
-                <td class="px-4 py-3">{{ c.course?.course_code || "-" }}</td>
-                <td class="px-4 py-3">{{ c.course?.course_title || "-" }}</td>
+                <td class="px-4 py-3">{{ c.course_code }}</td>
+                <td class="px-4 py-3">{{ c.course_title }}</td>
+                <td class="px-4 py-3 text-center">{{ c.course_semester }}</td>
+                <td class="px-4 py-3 text-center">{{ c.course_level }}</td>
+                <td class="px-4 py-3 text-center">{{ c.course_lec }}</td>
+                <td class="px-4 py-3 text-center">{{ c.course_lab }}</td>
                 <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_semester || "-" }}
+                  {{ c.course_lec + c.course_lab }}
                 </td>
                 <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_level || "-" }}
-                </td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_lec ?? 0 }}
-                </td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_lab ?? 0 }}
-                </td>
-                <td class="px-4 py-3 text-center">
-                  {{ (c.course?.course_lec ?? 0) + (c.course?.course_lab ?? 0) }}
-                </td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_requisite || "-" }}
+                  {{ c.course_requisite || "-" }}
                 </td>
                 <td class="px-4 py-3 flex justify-center">
                   <div class="flex gap-2">
@@ -164,7 +154,6 @@
                   </div>
                 </td>
               </tr>
-
               <tr v-if="paginatedData.length === 0">
                 <td colspan="9" class="text-center py-8 text-gray-400">
                   No records found
@@ -181,7 +170,6 @@
           Showing {{ startIndex }} to {{ endIndex }} of
           {{ filteredCourses.length }} entries
         </div>
-
         <div class="flex items-center gap-1 text-sm">
           <button
             @click="changePage(currentPage - 1)"
@@ -190,7 +178,6 @@
           >
             &lt;
           </button>
-
           <button
             v-for="page in pageNumbers"
             :key="'page-' + page"
@@ -203,7 +190,6 @@
           >
             {{ page }}
           </button>
-
           <button
             @click="changePage(currentPage + 1)"
             :disabled="currentPage === totalPages"
@@ -227,11 +213,13 @@
       <p class="delete-text">
         Are you sure you want to delete
         <b>
-          {{ recordToDelete?.course?.course_code }} -
-          {{ recordToDelete?.course?.course_title }}
+          {{ recordToDelete?.course_code }} -
+          {{ recordToDelete?.course_title }}
         </b>
         ? This action cannot be undone.
       </p>
+
+      <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
         <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
@@ -241,13 +229,13 @@
   </div>
 
   <!-- Add/Edit/Upload Modals -->
+
   <addCourses
     v-if="(showEditModal && selectedCourse) || isAddCourses"
-    :courseData="selectedCourse?.course || selectedCourse"
+    :courseData="selectedCourse"
     @close="closeModal"
     @refresh="loadCourses"
   />
-
   <uploadCourses
     v-if="isUploadModal"
     @close="isUploadModal = false"
@@ -262,6 +250,7 @@ import uploadCourses from "../modals/upload-course.vue";
 import { useFetchDataStore } from "../../../../store/fetch-data-store";
 import { mapState } from "pinia";
 import axios from "axios";
+// import { eventBus } from "@/bus/event-bus";
 
 export default {
   name: "TableCourses",
@@ -279,78 +268,60 @@ export default {
       showEditModal: false,
       selectedCourse: null,
       user: null,
+      activeSchoolYear: null,
+      stopEventBus: null,
       showDeleteModal: false,
       recordToDelete: null,
     };
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["curriculum_courses"]),
+    ...mapState(useFetchDataStore, ["courses", "activeYear"]),
 
     uniqueCurriculums() {
-      const names = (this.curriculum_courses || [])
-        .map((c) => {
-          return (
-            c.curriculum?.program?.program_code ||
-            c.curriculum?.program?.program_name ||
-            `Curriculum ${c.curriculum_id}`
-          );
-        })
+      const names = this.courses
+        .map((c) => c.curriculum?.program?.program_code)
         .filter(Boolean);
-
       return [...new Set(names)];
     },
 
     filteredCourses() {
-      let result = this.curriculum_courses || [];
+      let result = this.courses || [];
 
-      // Program Chair filter
       if (this.user?.role === "Program Chairperson") {
-        result = result.filter((c) => {
-          const instituteId =
-            c.curriculum?.program?.institute?.institute_id || c.curriculum?.institute_id;
-
-          const programId = c.curriculum?.program?.program_id || c.curriculum?.program_id;
-
-          return (
-            String(instituteId) === String(this.user.institute_id) &&
-            String(programId) === String(this.user.program_id)
-          );
-        });
+        result = result.filter(
+          (c) =>
+            String(c.curriculum?.program?.institute?.institute_id) ===
+              String(this.user.institute_id) &&
+            String(c.curriculum?.program_id) === String(this.user.program_id)
+        );
       }
 
-      // Curriculum filter
+      if (this.activeSchoolYear) {
+        result = result.filter(
+          (c) =>
+            String(c.curriculum?.curriculum_start_year) ===
+              String(this.activeSchoolYear.start_year) &&
+            String(c.curriculum?.curriculum_end_year) ===
+              String(this.activeSchoolYear.end_year) &&
+            Number(c.course_semester) === Number(this.activeSchoolYear.semester)
+        );
+      }
+
       if (this.selectedCurriculum) {
-        result = result.filter((c) => {
-          const curriculumLabel =
-            c.curriculum?.program?.program_code ||
-            c.curriculum?.program?.program_name ||
-            `Curriculum ${c.curriculum_id}`;
-
-          return curriculumLabel === this.selectedCurriculum;
-        });
+        result = result.filter(
+          (c) => c.curriculum?.program?.program_name === this.selectedCurriculum
+        );
       }
 
-      // Search filter
       if (this.searchQuery) {
         const q = this.searchQuery.toLowerCase();
-
-        result = result.filter((c) => {
-          const courseCode = c.course?.course_code?.toLowerCase() || "";
-          const courseTitle = c.course?.course_title?.toLowerCase() || "";
-          const requisite = c.course?.course_requisite?.toLowerCase() || "";
-          const curriculumText =
-            c.curriculum?.program?.program_code?.toLowerCase() ||
-            c.curriculum?.program?.program_name?.toLowerCase() ||
-            "";
-
-          return (
-            courseCode.includes(q) ||
-            courseTitle.includes(q) ||
-            requisite.includes(q) ||
-            curriculumText.includes(q)
-          );
-        });
+        result = result.filter(
+          (c) =>
+            c.course_code?.toLowerCase().includes(q) ||
+            c.course_title?.toLowerCase().includes(q) ||
+            c.curriculum?.curriculum_name?.toLowerCase().includes(q)
+        );
       }
 
       return result;
@@ -368,20 +339,10 @@ export default {
     pageNumbers() {
       const total = this.totalPages;
       if (total <= 3) return Array.from({ length: total }, (_, i) => i + 1);
-
       let start = this.currentPage - 1;
       let end = this.currentPage + 1;
-
-      if (start < 1) {
-        start = 1;
-        end = 3;
-      }
-
-      if (end > total) {
-        end = total;
-        start = total - 2;
-      }
-
+      if (start < 1) start = 1;
+      if (end > total) end = total;
       return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     },
 
@@ -403,15 +364,14 @@ export default {
           withCredentials: true,
         });
         this.user = res.data || null;
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
+      } catch {
         this.$router.push("/");
       }
     },
 
     async loadCourses() {
       const store = useFetchDataStore();
-      await store.fetchCurriculumCourses();
+      await store.fetchCourses();
     },
 
     toggleAdd() {
@@ -419,13 +379,11 @@ export default {
       this.showEditModal = false;
       this.isAddCourses = true;
     },
-
     toggleEdit(course) {
       this.isAddCourses = false;
       this.selectedCourse = course;
       this.showEditModal = true;
     },
-
     toggleDelete(course) {
       this.recordToDelete = course;
       this.showDeleteModal = true;
@@ -433,17 +391,17 @@ export default {
 
     async confirmDelete() {
       try {
-        const courseId = this.recordToDelete?.course?.course_id;
-
-        if (!courseId) return;
+        if (!this.recordToDelete?.course_id) return;
 
         await axios.delete(
-          `${process.env.VUE_APP_API_BASE_URL}/courses/delete-id/${courseId}`,
+          `${process.env.VUE_APP_API_BASE_URL}/courses/delete-id/${this.recordToDelete.course_id}`,
           { withCredentials: true }
         );
 
+        // refresh table
         await this.loadCourses();
 
+        // close modal
         this.showDeleteModal = false;
         this.recordToDelete = null;
       } catch (error) {
@@ -451,21 +409,30 @@ export default {
         alert("Failed to delete course");
       }
     },
-
     closeModal() {
       this.isAddCourses = false;
       this.showEditModal = false;
       this.selectedCourse = null;
     },
-
     changePage(page) {
       this.currentPage = Math.max(1, Math.min(page, this.totalPages));
     },
   },
 
-  async mounted() {
-    await this.fetchUser();
-    await this.loadCourses();
+  mounted() {
+    this.fetchUser();
+    this.loadCourses();
+
+    // this.stopEventBus = eventBus.on((newYear) => {
+    //   if (!newYear) return;
+    //   this.activeSchoolYear = newYear;
+    //   this.currentPage = 1;
+    //   this.loadCourses();
+    // });
+  },
+
+  beforeUnmount() {
+    this.stopEventBus?.();
   },
 };
 </script>

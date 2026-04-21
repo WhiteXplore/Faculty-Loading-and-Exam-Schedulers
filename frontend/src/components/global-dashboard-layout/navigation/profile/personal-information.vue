@@ -9,7 +9,7 @@
       />
       <div class="flex justify-between items-center w-full">
         <div class="text-left">
-          <div class="flex items-center gap-2">
+     <div class="per-page-container">
             <p class="text-lg font-semibold">
               {{ matchedUser.first_name }} {{ matchedUser.last_name }}
             </p>

@@ -70,7 +70,7 @@
     >
       <!-- Header  -->
       <div class="flex gap-2 border-b-2 border-gray-300 pb-2 mb-4">
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <img src="@/assets/img/dnsc_logo.png" alt="" class="w-28" />
           <div class="flex flex-col text-left gap-1 font-poppins">
             <h1 class="text-2xl font-bold">DAVAO DEL NORTE</h1>

@@ -4,7 +4,7 @@
     <div class="overflow-x-auto border p-3 bg-white">
       <div class="flex justify-between items-center flex-wrap gap-3">
         <!-- Per Page -->
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <select
             v-model.number="itemsPerPage"
             @change="changePage(1)"

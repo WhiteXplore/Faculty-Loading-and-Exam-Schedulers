@@ -38,15 +38,13 @@
     <!-- TABLE CONTAINER -->
     <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
       <!-- CONTROLS -->
-      <div
-        class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
-      >
+        <div class="table-controls">
         <!-- PER PAGE -->
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <select
             v-model="itemsPerPage"
             @change="changePage(1)"
-            class="rounded-full border border-green-600 bg-white px-3 py-1 text-sm font-semibold"
+            class="select-input"
           >
             <option value="10">10</option>
             <option value="15">15</option>
@@ -57,13 +55,13 @@
         </div>
 
         <!-- SEARCH -->
-        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             @input="changePage(1)"
             type="text"
             placeholder="Search..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full"
+            class="search-input"
           />
 
           <div class="absolute inset-y-0 left-3 flex items-center text-defaultGreen">

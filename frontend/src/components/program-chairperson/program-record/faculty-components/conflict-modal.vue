@@ -6,7 +6,7 @@
     <div class="bg-white w-[900px] rounded-2xl p-6 shadow-xl">
       <!-- Header -->
       <div class="flex items-center justify-between border-b pb-3 mb-4">
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <icon
             name="exclamation-circle"
             class="w-7 h-7 p-1 rounded-full bg-red-200 text-red-900 flex items-center justify-center"

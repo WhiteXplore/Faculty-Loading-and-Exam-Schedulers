@@ -3,9 +3,7 @@
     <!-- Header -->
     <!-- Header -->
     <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4 font-regular">
-        Pages / User Accounts
-      </div>
+      <div class="text-[13px] text-text mt-4 font-regular">Pages / User Accounts</div>
 
       <div class="flex gap-2">
         <!-- IMPORT DROPDOWN -->
@@ -74,17 +72,15 @@
     </div>
 
     <!-- Table -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
+    <div class="table-container">
       <!-- Top controls -->
-      <div
-        class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
-      >
+        <div class="table-controls">
         <!-- Items per page -->
-        <div class="flex items-center gap-2">
-          <div class="relative">
+   <div class="per-page-container">
+           <div class="select-wrapper">
             <select
               v-model="itemsPerPage"
-              class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+              class="select-input" 
               @change="changePage(1)"
             >
               <option value="10">10</option>
@@ -102,11 +98,7 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </div>
           </div>
@@ -140,12 +132,10 @@
         </div>
       </div>
 
-      <!-- Data Table -->
+      <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead
-            class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-          >
+          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
             <tr>
               <th class="px-4 py-3 text-left font-normal w-[15%]">Name</th>
               <th class="px-4 py-3 text-left font-normal w-[25%]">Email</th>
@@ -153,9 +143,7 @@
               <th class="px-4 py-3 text-left font-normal">Program</th>
               <th class="px-4 py-3 text-left font-normal">Position</th>
 
-              <th
-                class="px-4 py-3 text-center rounded-tr-lg font-normal w-[20%]"
-              >
+              <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
                 Actions
               </th>
             </tr>
@@ -178,56 +166,48 @@
               </td>
               <td class="px-4 py-3 text-left">{{ user.role }}</td>
 
-              <td class="px-4 py-3">
-                <div class="flex gap-2 flex-wrap justify-center items-center">
+              <td class="px-4 py-3 items-center justify-center flex relative">
+           <div class="per-page-container">
+                  <!-- Always visible -->
+                  <button class="btn-view" @click="toggleViewExpertise(user)">
+                    See Details
+                  </button>
+
+                  <!-- 3 dots button -->
                   <button
-                    class="w-[90px] h-8 border border-purple-300 hover:bg-purple-200 text-purple-700 rounded-lg flex items-center justify-center gap-1"
-                    @click="toggleViewExpertise(user)"
-                    title="View Expertise"
+                    class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                    @click.stop="toggleActionMenu(user.id)"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                      />
-                    </svg>
-                    View
+                    <icon name="3dots" class="rotate-90" />
+                  </button>
+                </div>
+
+                <!-- Dropdown actions -->
+                <div
+                  v-if="openActionMenuId === user.id"
+                  @mouseleave="openActionMenuId = false"
+                  class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
+                >
+                  <button
+                    class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                    @click="toggleEdit('edit', user)"
+                  >
+                    <icon name="edit" class="rounded-lg bg-defaultGreen text-white p-1" />
+                    Edit
                   </button>
 
                   <button
-                    class="w-[90px] h-8 border border-green-300 hover:bg-green-200 text-defaultGreen rounded-lg flex items-center justify-center gap-1"
-                    @click="toggleEdit(user)"
+                    class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                    @click="toggleDelete('delete', user)"
                   >
-                    <icon name="edit" /> Edit
-                  </button>
-
-                  <button
-                   class="btn-delete"
-                    @click="toggleDelete(user)"
-                  >
-                    <icon name="delete" /> Delete
+                    <icon name="delete" class="rounded-lg bg-red-800 text-white p-1" />
+                    Delete
                   </button>
                 </div>
               </td>
             </tr>
             <tr v-if="paginatedData.length === 0">
-              <td colspan="7" class="text-center py-6 text-gray-400">
-                No records found
-              </td>
+              <td colspan="7" class="text-center py-6 text-gray-400">No records found</td>
             </tr>
           </tbody>
         </table>
@@ -235,8 +215,7 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -278,11 +257,7 @@
     @close="closeModal"
     @refresh="loadUsers"
   />
-  <importUsers
-    v-if="showImportModal"
-    @close="closeImportModal"
-    @refresh="loadUsers"
-  />
+  <importUsers v-if="showImportModal" @close="closeImportModal" @refresh="loadUsers" />
   <importExpertise
     v-if="showImportExpertiseModal"
     @close="closeImportExpertiseModal"
@@ -312,9 +287,7 @@
       />
     </div>
 
-    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">
-      Delete Confirmation
-    </h1>
+    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">Delete Confirmation</h1>
     <p class="mt-2 text-[12px] md:text-[13px] text-center px-8">
       Are you sure you want to delete this record? This action cannot be undone.
     </p>
@@ -352,7 +325,7 @@
         </div>
         <icon
           :name="'circle-close3'"
-       @click="showImportSelector = false"
+          @click="showImportSelector = false"
           class="cursor-pointer"
         />
       </div>
@@ -381,13 +354,9 @@
             </svg>
           </div>
 
-          <span class="text-sm font-semibold text-gray-700">
-            Import Users
-          </span>
+          <span class="text-sm font-semibold text-gray-700"> Import Users </span>
 
-          <p class="text-xs text-gray-500 text-center mt-1">
-            Upload user accounts CSV
-          </p>
+          <p class="text-xs text-gray-500 text-center mt-1">Upload user accounts CSV</p>
         </div>
 
         <!-- Import Expertise -->
@@ -412,13 +381,9 @@
             </svg>
           </div>
 
-          <span class="text-sm font-semibold text-gray-700">
-            Import Expertise
-          </span>
+          <span class="text-sm font-semibold text-gray-700"> Import Expertise </span>
 
-          <p class="text-xs text-gray-500 text-center mt-1">
-            Upload expertise data CSV
-          </p>
+          <p class="text-xs text-gray-500 text-center mt-1">Upload expertise data CSV</p>
         </div>
       </div>
 
@@ -464,17 +429,20 @@ export default {
       isAdd: false,
       isTable: true,
 
-      showImportSelector: false, // NEW
+      showImportSelector: false,
+      showImportMenu: false,
       showImportModal: false,
       showImportExpertiseModal: false,
 
       showDeleteModal: false,
       showViewExpertiseModal: false,
+      showEditModal: false,
+
+      openActionMenuId: null,
 
       recordToDelete: null,
       selectedUser: null,
       selectedUserExpertise: null,
-      showEditModal: false,
       isDeleting: false,
     };
   },
@@ -485,7 +453,7 @@ export default {
       return this.users.filter((user) =>
         `${user.first_name} ${user.last_name} ${user.role} ${user.email}`
           .toLowerCase()
-          .includes(query),
+          .includes(query)
       );
     },
     totalPages() {
@@ -524,6 +492,10 @@ export default {
     },
   },
   methods: {
+    toggleActionMenu(userId) {
+      this.openActionMenuId = this.openActionMenuId === userId ? null : userId;
+    },
+
     openImportUsers() {
       this.showImportSelector = false;
       this.showImportModal = true;
@@ -533,6 +505,7 @@ export default {
       this.showImportSelector = false;
       this.showImportExpertiseModal = true;
     },
+
     toggleImportMenu() {
       this.showImportMenu = !this.showImportMenu;
     },
@@ -542,28 +515,38 @@ export default {
       await store.fetchUsers();
       await store.fetchPrograms();
     },
+
     toggleAdd() {
       this.isAdd = true;
       this.isTable = true;
     },
+
     toggleImport() {
       this.showImportModal = true;
     },
+
     toggleImportExpertise() {
       this.showImportExpertiseModal = true;
     },
+
     toggleViewExpertise(user) {
       this.selectedUserExpertise = user;
       this.showViewExpertiseModal = true;
+      this.openActionMenuId = null;
     },
+
     toggleEdit(user) {
-      this.selectedUser = user; // ✅ fixed
+      this.selectedUser = user;
       this.showEditModal = true;
+      this.openActionMenuId = null;
     },
+
     toggleDelete(user) {
       this.recordToDelete = user;
       this.showDeleteModal = true;
+      this.openActionMenuId = null;
     },
+
     async confirmDelete() {
       if (!this.recordToDelete || isNaN(this.recordToDelete.id)) {
         toast.error("Invalid user ID.");
@@ -574,9 +557,7 @@ export default {
       this.isDeleting = true;
 
       try {
-        await axios.delete(
-          process.env.VUE_APP_API_BASE_URL + `/auth/remove/${userId}`,
-        );
+        await axios.delete(process.env.VUE_APP_API_BASE_URL + `/auth/remove/${userId}`);
         this.recordToDelete = null;
         this.showDeleteModal = false;
 
@@ -594,22 +575,28 @@ export default {
         this.isDeleting = false;
       }
     },
+
     changePage(page) {
       this.currentPage = Math.max(1, Math.min(page, this.totalPages));
     },
+
     closeView() {
       this.isAdd = false;
     },
+
     closeModal() {
       this.showEditModal = false;
       this.selectedUser = null;
     },
+
     closeImportModal() {
       this.showImportModal = false;
     },
+
     closeImportExpertiseModal() {
       this.showImportExpertiseModal = false;
     },
+
     closeViewExpertiseModal() {
       this.showViewExpertiseModal = false;
       this.selectedUserExpertise = null;

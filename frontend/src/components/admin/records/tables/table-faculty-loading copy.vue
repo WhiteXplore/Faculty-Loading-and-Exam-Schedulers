@@ -68,9 +68,9 @@
         class="flex flex-wrap items-center justify-between gap-4 mb-3 text-gray-700"
       >
         <!-- Items per page -->
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <label class="text-sm font-medium">Show:</label>
-          <div class="relative">
+           <div class="select-wrapper">
             <select
               v-model="itemsPerPage"
               @change="changePage(1)"
@@ -105,7 +105,7 @@
         <!-- Institute & Program Filter Dropdowns -->
         <div class="flex flex-wrap items-center gap-4">
           <!-- Institute Filter -->
-          <div class="flex items-center gap-2">
+     <div class="per-page-container">
             <label
               for="instituteFilter"
               class="text-sm text-gray-600 font-medium"
@@ -129,7 +129,7 @@
           </div>
 
           <!-- Program Filter -->
-          <div class="flex items-center gap-2">
+     <div class="per-page-container">
             <label
               for="programFilter"
               class="text-sm text-gray-600 font-medium"

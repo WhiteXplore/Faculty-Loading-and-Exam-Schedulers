@@ -12,7 +12,7 @@
         <div
           class="flex items-center justify-between bg-defaultGreen text-white px-6 py-3 rounded-t-lg"
         >
-          <div class="flex items-center gap-2">
+     <div class="per-page-container">
             <icon name="edit" />
             <h3 class="text-lg font-bold">Edit Schedules</h3>
           </div>
@@ -60,7 +60,7 @@
                       >Join Scheduled:</span
                     >
 
-                    <div class="flex items-center gap-2">
+               <div class="per-page-container">
                       <span
                         class="font-semibold"
                         :class="isJoined ? 'text-green-600' : 'text-gray-400'"

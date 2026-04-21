@@ -2,9 +2,7 @@
   <div>
     <!-- Header -->
     <div class="flex justify-between items-center mt-6 mb-2">
-      <div class="text-[13px] text-gray-700">
-        Pages / Class & Assigned Courses
-      </div>
+      <div class="text-[13px] text-gray-700">Pages / Class & Assigned Courses</div>
       <span class="text-sm bg-defaultGreen text-white px-3 py-1 rounded-full">
         {{ filteredClasses.length }} Classes
       </span>
@@ -79,22 +77,14 @@
         <div class="w-full mt-1 rounded-xl border bg-white overflow-hidden">
           <div class="max-h-[69vh] overflow-y-auto">
             <table class="min-w-full text-sm text-gray-700 border-collapse">
-              <thead
-                class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
-              >
+              <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
                 <tr>
                   <th class="px-4 py-3 text-left font-semibold w-[10%]">
                     Year & Section
                   </th>
-                  <th class="px-4 py-3 text-left font-semibold w-[20%]">
-                    Program
-                  </th>
-                  <th class="px-4 py-3 text-center font-semibold w-[10%]">
-                    Class Size
-                  </th>
-                  <th class="px-4 py-3 text-center font-semibold w-[15%]">
-                    School Year
-                  </th>
+                  <th class="px-4 py-3 text-left font-semibold w-[20%]">Program</th>
+                  <th class="px-4 py-3 text-center font-semibold w-[10%]">Class Size</th>
+                  <th class="px-4 py-3 text-center font-semibold w-[15%]">School Year</th>
                   <th class="px-4 py-3 text-center font-semibold w-[15%]">
                     Assigned Courses
                   </th>
@@ -198,19 +188,12 @@
       class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
       @click.self="closeCoursesModal"
     >
-      <div
-        class="bg-white rounded-xl shadow-2xl w-[800px] max-h-[80vh] overflow-y-auto"
-      >
+      <div class="bg-white rounded-xl shadow-2xl w-[800px] max-h-[80vh] overflow-y-auto">
         <div
           class="bg-defaultGreen text-white px-6 py-4 flex justify-between items-center sticky top-0"
         >
-          <h3 class="font-bold text-lg">
-            Courses for {{ selectedClass?.set_name }}
-          </h3>
-          <button
-            @click="closeCoursesModal"
-            class="text-white hover:text-gray-200"
-          >
+          <h3 class="font-bold text-lg">Courses for {{ selectedClass?.set_name }}</h3>
+          <button @click="closeCoursesModal" class="text-white hover:text-gray-200">
             <icon name="close" class="w-6 h-6" />
           </button>
         </div>
@@ -231,10 +214,7 @@
                     {{ course.course?.course_description }}
                   </p>
                   <div class="mt-2 flex gap-4 text-xs text-gray-500">
-                    <span
-                      >Year Level:
-                      {{ getYearLevelLabel(course.year_level) }}</span
-                    >
+                    <span>Year Level: {{ getYearLevelLabel(course.year_level) }}</span>
                     <span>Lec: {{ course.course?.course_lec || 0 }} hrs</span>
                     <span>Lab: {{ course.course?.course_lab || 0 }} hrs</span>
                     <span>Units: {{ course.course?.course_credit || 0 }}</span>
@@ -244,10 +224,7 @@
             </div>
           </div>
           <div v-else class="text-center py-8 text-gray-500">
-            <icon
-              name="question"
-              class="w-16 h-16 text-gray-300 mx-auto mb-4"
-            />
+            <icon name="question" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p>No courses assigned to this class yet.</p>
           </div>
         </div>
@@ -289,15 +266,11 @@ export default {
 
       if (this.classSearch) {
         const query = this.classSearch.toLowerCase();
-        result = result.filter((c) =>
-          c.set_name?.toLowerCase().includes(query),
-        );
+        result = result.filter((c) => c.set_name?.toLowerCase().includes(query));
       }
 
       if (this.selectedProgram) {
-        result = result.filter(
-          (c) => c.program?.program_name === this.selectedProgram,
-        );
+        result = result.filter((c) => c.program?.program_name === this.selectedProgram);
       }
 
       if (this.user?.role === "Program Chairperson" && this.user?.program_id) {
@@ -360,9 +333,7 @@ export default {
       return Math.min(end, this.filteredClasses.length);
     },
     uniquePrograms() {
-      const programs = this.classes
-        .map((c) => c.program?.program_name)
-        .filter(Boolean);
+      const programs = this.classes.map((c) => c.program?.program_name).filter(Boolean);
       return [...new Set(programs)];
     },
   },
@@ -373,12 +344,9 @@ export default {
     },
     async fetchUser() {
       try {
-        const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/auth/me",
-          {
-            withCredentials: true,
-          },
-        );
+        const res = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
+          withCredentials: true,
+        });
         this.user = res.data;
       } catch (err) {
         console.error("Failed to fetch user:", err);
@@ -387,7 +355,7 @@ export default {
     async loadClasses() {
       try {
         const response = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
+          process.env.VUE_APP_API_BASE_URL + "/class/get-classes"
         );
         this.classes = response.data;
       } catch (error) {
@@ -408,7 +376,7 @@ export default {
               program_id: cls.program_id, // courses for this program
               school_year_id: cls.school_year_id,
             },
-          },
+          }
         );
 
         const yearLevel = this.extractYearLevel(cls.set_name);

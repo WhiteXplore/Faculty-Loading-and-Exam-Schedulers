@@ -22,17 +22,31 @@ export class CurriculumCoursesController {
     return this.curriculumCoursesService.create(createCurriculumCourseDto);
   }
 
-  @Get('get-curriculum-courses')
+  @Post('submit-curriculum-courses')
+  submit(
+    @Body()
+    body:
+      | CreateCurriculumCourseDto
+      | CreateCurriculumCourseDto[]
+      | {
+          links: CreateCurriculumCourseDto[];
+          raw_payload?: any[];
+        },
+  ) {
+    return this.curriculumCoursesService.submit(body);
+  }
+
+  @Get('get-all-curriculum-courses')
   findAll() {
     return this.curriculumCoursesService.findAll();
   }
 
-  @Get('get-id/:id')
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.curriculumCoursesService.findOne(+id);
   }
 
-  @Patch('update-curriculum-course/:id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateCurriculumCourseDto: UpdateCurriculumCourseDto,
@@ -40,7 +54,7 @@ export class CurriculumCoursesController {
     return this.curriculumCoursesService.update(+id, updateCurriculumCourseDto);
   }
 
-  @Delete('delete-id/:id')
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.curriculumCoursesService.remove(+id);
   }

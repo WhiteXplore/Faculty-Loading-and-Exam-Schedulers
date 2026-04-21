@@ -40,7 +40,7 @@
       <!-- TODO  Header -->
       <div class="flex items-center justify-between border-b pb-3 mb-4">
         <!-- Left: Icon + Title -->
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <icon
             name="exclamation-circle"
             class="w-7 h-7 p-1 rounded-full bg-green-200 text-green-900 flex items-center justify-center"
@@ -132,7 +132,7 @@
         <!-- Filters -->
 
         <!-- LEFT : Faculty Search -->
-        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             type="text"
@@ -156,7 +156,7 @@
           </div>
         </div>
         <!-- Actions -->
-        <div class="flex items-center gap-2">
+   <div class="per-page-container">
           <!-- Generate -->
           <button
             @click="generateSchedule"

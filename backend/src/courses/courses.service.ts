@@ -14,28 +14,101 @@ export class CoursesService {
   ) {}
 
   // 🔹 BULK INSERT COURSES
-  async createMany(createCourseDtos: CreateCourseDto[]) {
-    const queryRunner = this.dataSource.createQueryRunner();
+  // async createMany(createCourseDtos: CreateCourseDto[]) {
+  //   const queryRunner = this.dataSource.createQueryRunner();
 
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
 
-    try {
-      await queryRunner.manager.insert(Course, createCourseDtos);
+  //   try {
+  //     await queryRunner.manager.insert(Course, createCourseDtos);
 
+  //     await queryRunner.commitTransaction();
+
+  //     return {
+  //       message: `${createCourseDtos.length} courses uploaded successfully`,
+  //     };
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     throw error;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
+// 🔹 BULK INSERT COURSES
+async createMany(createCourseDtos: CreateCourseDto[]): Promise<Course[]> {
+  const queryRunner = this.dataSource.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    if (!createCourseDtos?.length) {
       await queryRunner.commitTransaction();
-
-      return {
-        message: `${createCourseDtos.length} courses uploaded successfully`,
-      };
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
+      return [];
     }
-  }
 
+    const normalize = (val: string) =>
+      String(val || '')
+        .replace(/\s+/g, '')
+        .toUpperCase()
+        .trim();
+
+    // remove duplicate course_code inside uploaded file
+    const uniqueDtos = Array.from(
+      new Map(
+        createCourseDtos.map((item) => [normalize(item.course_code), item]),
+      ).values(),
+    );
+
+    const courseCodes = uniqueDtos
+      .map((item) => item.course_code)
+      .filter(Boolean);
+
+    // find already existing courses
+    const existingCourses = await queryRunner.manager.find(Course, {
+      where: courseCodes.map((code) => ({ course_code: code })),
+    });
+
+    const existingMap = new Map(
+      existingCourses.map((course) => [normalize(course.course_code), course]),
+    );
+
+    // only insert new course_code
+    const toInsert = uniqueDtos.filter(
+      (item) => !existingMap.has(normalize(item.course_code)),
+    );
+
+    if (toInsert.length) {
+      const newCourses = queryRunner.manager.create(
+        Course,
+        toInsert.map((item) => ({
+          course_level: item.course_level,
+          course_semester: item.course_semester,
+          course_code: item.course_code,
+          course_title: item.course_title,
+          course_lec: item.course_lec,
+          course_lab: item.course_lab,
+        })),
+      );
+
+      await queryRunner.manager.save(Course, newCourses);
+    }
+
+    // return all matched/saved courses so frontend gets course_id
+    const finalCourses = await queryRunner.manager.find(Course, {
+      where: courseCodes.map((code) => ({ course_code: code })),
+    });
+
+    await queryRunner.commitTransaction();
+    return finalCourses;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw error;
+  } finally {
+    await queryRunner.release();
+  }
+}
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
     const course = this.courseRepository.create(createCourseDto);
     return await this.courseRepository.save(course);

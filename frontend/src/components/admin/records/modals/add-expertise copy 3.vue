@@ -1,3 +1,6 @@
+Note: 1. Expertise - Filter course under its institute and program 2. Other Expertise -
+Filter all courses in every programs under its institute 3. Cross Expertuse - Filter all
+courses in all institute and program.
 <template>
   <div
     class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"

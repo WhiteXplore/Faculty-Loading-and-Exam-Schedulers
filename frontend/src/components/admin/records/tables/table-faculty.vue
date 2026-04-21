@@ -15,13 +15,11 @@
     </div>
 
     <!-- Table Container -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
-      <div
-        class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
-      >
+    <div class="table-container">
+        <div class="table-controls">
         <!-- Items per page -->
-        <div class="flex items-center gap-2">
-          <div class="relative">
+   <div class="per-page-container">
+           <div class="select-wrapper">
             <select
               v-model="itemsPerPage"
               class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
@@ -49,12 +47,12 @@
         </div>
 
         <!-- Search -->
-        <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search faculty..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
+            class="search-input"
             @input="changePage(1)"
           />
           <div
@@ -116,12 +114,13 @@
                 <td class="px-4 py-3 text-center">
                   <span
                     :class="{
-                      'bg-green-100 text-green-800': user.employment_type === 'Full Time',
-                      'bg-orange-100 text-orange-800':
+                      'border border-green-600 text-green-800':
+                        user.employment_type === 'Full Time',
+                      ' border border-orange-600 text-orange-800':
                         user.employment_type === 'Part Time',
                       'text-gray-400 ': !user.employment_type,
                     }"
-                    class="px-2 py-1 rounded-full text-xs font-semibold"
+                    class="border border-green-600 text-green-800 text-xs px-2 py-1 rounded-full"
                   >
                     {{ user.employment_type || "-" }}
                   </span>
@@ -139,7 +138,7 @@
                     <span
                       v-for="(branchName, idx) in facultyBranchesByUser[user.id]"
                       :key="idx"
-                      class="bg-gray-100 text-green-800 text-xs px-2 py-1 rounded-full"
+                      class="border border-green-600 text-green-800 text-xs px-2 py-1 rounded-full"
                     >
                       {{ branchName }}
                     </span>
@@ -147,20 +146,59 @@
                   <span v-else class="text-gray-400">-</span>
                 </td>
 
-                <td class="px-4 py-3 items-center justify-center flex">
-                  <div class="flex gap-2">
+                <td class="px-4 py-3 items-center justify-center flex relative">
+             <div class="per-page-container">
+                    <!-- Always visible -->
                     <button class="btn-view" @click="toggleView(user)">
-                      <icon name="eye" /> View
+                      See Details
                     </button>
-                    <button class="btn-edit" @click="openAddModal(user)">
-                      <icon name="edit" /> Update
+
+                    <!-- 3 dots button -->
+                    <button
+                      class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                      @click.stop="toggleActionMenu(user.id)"
+                    >
+                      <icon name="3dots" class="rotate-90" />
                     </button>
-                    <button class="btn-edit" @click="openAssignModal(user)">
-                      <icon name="edit" /> Assign
+                  </div>
+
+                  <!-- Dropdown actions -->
+                  <div
+                    v-if="openActionMenuId === user.id"
+                    @mouseleave="openActionMenuId = false"
+                    class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
+                  >
+                    <button
+                      class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                      @click="handleAction('update', user)"
+                    >
+                      <icon
+                        name="edit"
+                        class="rounded-lg bg-defaultGreen text-white p-1"
+                      />
+                      Update
                     </button>
-                    <!-- ✅ NEW BUTTON -->
-                    <button class="btn-edit" @click="openCrossAssignModal(user)">
-                      <icon name="shuffle" /> Cross Assign
+
+                    <button
+                      class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                      @click="handleAction('assign', user)"
+                    >
+                      <icon
+                        name="edit"
+                        class="rounded-lg bg-defaultGreen text-white p-1"
+                      />
+                      Assign
+                    </button>
+
+                    <button
+                      class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                      @click="handleAction('cross', user)"
+                    >
+                      <icon
+                        name="edit"
+                        class="rounded-lg bg-defaultGreen text-white p-1"
+                      />
+                      Cross Assign
                     </button>
                   </div>
                 </td>
@@ -639,13 +677,15 @@ export default {
       showViewModal: false,
       showAddModal: false,
       user: null,
+      openActionMenuId: null,
+      modalMode: "",
 
       form: {
         morningStart: "",
         morningEnd: "",
         afternoonStart: "",
         afternoonEnd: "",
-        interbranchCampus: [], // ← make it array
+        interbranchCampus: [],
       },
 
       selectedOption: "",
@@ -808,6 +848,21 @@ export default {
   },
 
   methods: {
+    toggleActionMenu(userId) {
+      this.openActionMenuId = this.openActionMenuId === userId ? null : userId;
+    },
+
+    handleAction(action, user) {
+      this.openActionMenuId = null;
+
+      if (action === "update") {
+        this.openAddModal(user);
+      } else if (action === "assign") {
+        this.openAssignModal(user);
+      } else if (action === "cross") {
+        this.openCrossAssignModal(user);
+      }
+    },
     getProgramCode(programId) {
       const program = (this.programs || []).find((p) => p.program_id === programId);
       return program?.program_code || "-";
@@ -879,6 +934,7 @@ export default {
     handleClickOutside(event) {
       if (!this.$el.contains(event.target)) {
         this.showBranchDropdown = false;
+        this.openActionMenuId = null;
       }
     },
     async loadUsers() {

@@ -18,7 +18,7 @@
     </div>
 
     <!-- Table -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white">
+    <div class="table-container">
       <!-- Top Controls -->
       <div class="table-controls">
         <!-- Items per page -->
@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <!-- Data Table -->
+      <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
