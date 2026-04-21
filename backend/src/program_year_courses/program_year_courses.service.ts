@@ -21,12 +21,11 @@ export class ProgramYearCoursesService {
     return await this.programYearCourseRepository.save(programYearCourse);
   }
 
-
   async syncProgramYearCoursesFromClasses(): Promise<void> {
     const dbName = process.env.DATABASE_NAME;
 
     const sql = `
- INSERT INTO ${dbName}.program_year_courses
+INSERT INTO ${dbName}.program_year_courses
     (program_id, course_id, year_level, school_year_id, created_at, updated_at)
 SELECT
     cl.program_id,
@@ -41,8 +40,14 @@ SELECT
     NOW() AS created_at,
     NOW() AS updated_at
 FROM ${dbName}.classes cl
+JOIN ${dbName}.curriculum_courses cc
+    ON cc.curriculum_id IN (
+        SELECT cu.curriculum_id
+        FROM ${dbName}.curricula cu
+        WHERE cu.program_id = cl.program_id
+    )
 JOIN ${dbName}.courses cr
-    ON cr.program_id = cl.program_id
+    ON cr.course_id = cc.course_id
     AND cr.course_level = CASE
         WHEN cl.set_name LIKE '1st Year%' THEN 1
         WHEN cl.set_name LIKE '2nd Year%' THEN 2
@@ -62,8 +67,6 @@ WHERE NOT EXISTS (
       END
       AND pyc.school_year_id = cl.school_year_id
 );
-
-
     `;
 
     await this.dataSource.query(sql);
@@ -85,7 +88,8 @@ WHERE NOT EXISTS (
         'program.institute',
         'course',
         'schoolYear',
-        'course.curriculum',
+        'course.curriculumCourses',
+        'course.curriculumCourses.curriculum',
       ],
     });
   }
@@ -106,7 +110,8 @@ WHERE NOT EXISTS (
         'program.institute',
         'course',
         'schoolYear',
-        'course.curriculum',
+        'course.curriculumCourses',
+        'course.curriculumCourses.curriculum',
       ],
       order: {
         year_level: 'ASC',
@@ -131,7 +136,8 @@ WHERE NOT EXISTS (
         'program.institute',
         'course',
         'schoolYear',
-        'course.curriculum',
+        'course.curriculumCourses',
+        'course.curriculumCourses.curriculum',
       ],
     });
   }
@@ -170,11 +176,13 @@ WHERE NOT EXISTS (
   // 🔹 AUTOMATIC SYNC METHOD
   async syncFromCourses(): Promise<ProgramYearCourse[]> {
     const courses: any[] = await this.dataSource.query(`
-      SELECT 
+      SELECT
         c.course_id,
-        c.program_id
+        cu.program_id
       FROM courses c
-      WHERE c.program_id IS NOT NULL
+      JOIN curriculum_courses cc ON cc.course_id = c.course_id
+      JOIN curricula cu ON cu.curriculum_id = cc.curriculum_id
+      WHERE cu.program_id IS NOT NULL
     `);
 
     if (!courses.length) return [];
@@ -182,11 +190,12 @@ WHERE NOT EXISTS (
     const programYearCourses = courses.map((c) => ({
       program_id: c.program_id,
       course_id: c.course_id,
-      year_level: 1, // You can adjust logic based on course or curriculum
-      school_year_id: 1, // Replace with current school year ID dynamically if needed
+      year_level: 1,
+      school_year_id: 1,
     }));
 
-    const created = this.programYearCourseRepository.create(programYearCourses);
+    const created =
+      this.programYearCourseRepository.create(programYearCourses);
     return await this.programYearCourseRepository.save(created);
   }
 }
