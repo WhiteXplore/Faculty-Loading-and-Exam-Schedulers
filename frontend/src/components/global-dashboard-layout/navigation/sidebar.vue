@@ -359,7 +359,7 @@ export default {
                 children: [
                   { name: "Courses", route: "/program-chair-courses" },
                   {
-                    name: "Year & Section",
+                    name: "Class & Assigned Courses",
                     route: "/program-chair-year-section",
                   },
                   // {

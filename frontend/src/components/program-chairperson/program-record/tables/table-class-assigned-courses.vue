@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center mt-6 mb-2">
       <div class="text-[13px] text-gray-700">
-        Pages / Class & Assigned Courses ssss ssss
+        Pages / Class & Assigned Courses Overview
       </div>
       <span class="text-sm bg-defaultGreen text-white px-3 py-1 rounded-full">
         {{ filteredClasses.length }} Classes
@@ -85,6 +85,7 @@
                   <th class="px-4 py-3 text-left font-semibold w-[20%]">Program</th>
                   <th class="px-4 py-3 text-center font-semibold w-[10%]">Class Size</th>
                   <th class="px-4 py-3 text-center font-semibold w-[15%]">School Year</th>
+                  <th class="px-4 py-3 text-center w-[5%]">Campus</th>
                   <th class="px-4 py-3 text-center font-semibold w-[6%]">
                     Assigned Courses
                   </th>
@@ -116,6 +117,13 @@
                   </td>
                   <td class="px-4 py-3 text-center">
                     {{ cls.schoolYear?.school_year_name || "N/A" }}
+                  </td>
+                  <td class="text-center">
+                    <span
+                      class="border border-green-600 text-green-800 text-xs px-2 py-1 rounded-full"
+                    >
+                      {{ cls.colleges?.college_branch_name || "N/A" }}
+                    </span>
                   </td>
                   <td class="px-4 py-3 flex justify-center items-center">
                     <button @click="showClassCourses(cls)" class="btn-view">
@@ -263,9 +271,15 @@ export default {
 
       if (this.classSearch) {
         const query = this.classSearch.toLowerCase();
-        result = result.filter((c) => c.set_name?.toLowerCase().includes(query));
+        result = result.filter((c) => {
+          return (
+            c.set_name?.toLowerCase().includes(query) || // Year & Section
+            c.program?.program_name?.toLowerCase().includes(query) || // Program
+            c.schoolYear?.school_year_name?.toLowerCase().includes(query) || // School Year
+            c.colleges?.college_branch_name?.toLowerCase().includes(query) // ✅ Campus FIX
+          );
+        });
       }
-
       if (this.selectedProgram) {
         result = result.filter((c) => c.program?.program_name === this.selectedProgram);
       }
