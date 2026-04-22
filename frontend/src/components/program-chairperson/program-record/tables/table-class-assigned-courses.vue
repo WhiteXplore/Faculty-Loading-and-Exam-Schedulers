@@ -2,7 +2,9 @@
   <div>
     <!-- Header -->
     <div class="flex justify-between items-center mt-6 mb-2">
-      <div class="text-[13px] text-gray-700">Pages / Class & Assigned Courses</div>
+      <div class="text-[13px] text-gray-700">
+        Pages / Class & Assigned Courses ssss ssss
+      </div>
       <span class="text-sm bg-defaultGreen text-white px-3 py-1 rounded-full">
         {{ filteredClasses.length }} Classes
       </span>
@@ -79,13 +81,11 @@
             <table class="min-w-full text-sm text-gray-700 border-collapse">
               <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
                 <tr>
-                  <th class="px-4 py-3 text-left font-semibold w-[10%]">
-                    Year & Section
-                  </th>
+                  <th class="px-4 py-3 text-left font-semibold w-[7%]">Year & Section</th>
                   <th class="px-4 py-3 text-left font-semibold w-[20%]">Program</th>
                   <th class="px-4 py-3 text-center font-semibold w-[10%]">Class Size</th>
                   <th class="px-4 py-3 text-center font-semibold w-[15%]">School Year</th>
-                  <th class="px-4 py-3 text-center font-semibold w-[15%]">
+                  <th class="px-4 py-3 text-center font-semibold w-[6%]">
                     Assigned Courses
                   </th>
                 </tr>
@@ -118,11 +118,8 @@
                     {{ cls.schoolYear?.school_year_name || "N/A" }}
                   </td>
                   <td class="px-4 py-3 flex justify-center items-center">
-                    <button
-                      @click="showClassCourses(cls)"
-                      class="px-3 py-2 h-8 border border-blue-300 hover:bg-blue-200 text-blue-800 rounded-lg flex items-center gap-1"
-                    >
-                      <icon name="eye" /> View
+                    <button @click="showClassCourses(cls)" class="btn-view">
+                      See Details
                     </button>
                   </td>
                 </tr>

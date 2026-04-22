@@ -2,15 +2,13 @@
   <div class="space-y-6 text-[13px]">
     <!-- HEADER -->
     <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4">Pages / Assigned Course</div>
+      <div class="text-[13px] text-text mt-4">Pages / Assigned Coursesss</div>
       <button
         v-if="user?.role !== 'Admin'"
         @click="openAssignCoursesModal"
         class="flex items-center gap-2 px-4 py-2 text-defaultGreen bg-white border border-green-500 rounded-xl shadow-sm hover:bg-green-600 hover:text-white transition-all duration-300"
       >
-        <div
-          class="flex items-center justify-center w-5 h-5 bg-green-100 rounded-full"
-        >
+        <div class="flex items-center justify-center w-5 h-5 bg-green-100 rounded-full">
           <icon name="circle-add" class="w-4 h-4" />
         </div>
         <span class="font-medium">Assign Course</span>
@@ -39,9 +37,9 @@
               :key="index"
               class="border-b hover:bg-gray-50 transition"
             >
-              <td class="py-3 px-4">{{ group.institute }}</td>
-              <td class="py-3 px-4">{{ group.program }}</td>
-              <td class="py-3 px-4 text-center">{{ group.schoolYear }}</td>
+              <td>{{ group.institute }}</td>
+              <td>{{ group.program }}</td>
+              <td class="text-center">{{ group.schoolYear }}</td>
               <td class="py-3 px-4 flex justify-center">
                 <button
                   class="px-3 py-1 h-8 border border-blue-300 hover:bg-blue-200 text-blue-800 rounded-lg flex items-center gap-1"
@@ -60,10 +58,7 @@
       </div>
 
       <!-- DETAILED VIEW -->
-      <div
-        v-else
-        class="bg-white border rounded-2xl p-5 mt-5 shadow-sm animate-fadeIn"
-      >
+      <div v-else class="bg-white border rounded-2xl p-5 mt-5 shadow-sm animate-fadeIn">
         <!-- Header -->
         <div class="flex justify-between items-center mb-4">
           <div>
@@ -94,11 +89,9 @@
               @click="toggleYearDisplay(year)"
               class="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer border-b"
             >
-         <div class="per-page-container">
+              <div class="per-page-container">
                 <icon
-                  :name="
-                    expandedYears.includes(year) ? 'arrow-down' : 'arrow-right'
-                  "
+                  :name="expandedYears.includes(year) ? 'arrow-down' : 'arrow-right'"
                   class="w-4 h-4 text-gray-600"
                 />
                 <h4 class="font-semibold text-sm text-gray-800">
@@ -118,28 +111,19 @@
             <transition name="fade">
               <div v-if="expandedYears.includes(year)" class="p-2 bg-white">
                 <div
-                  v-if="
-                    getCoursesByYear(selectedGroup.courses, year).length > 0
-                  "
+                  v-if="getCoursesByYear(selectedGroup.courses, year).length > 0"
                   class="overflow-x-auto border rounded-lg"
                 >
                   <table class="min-w-full border rounded-lg overflow-hidden">
                     <thead class="bg-defaultGreen text-white text-sm">
                       <tr>
-                        <th class="px-4 py-2 border-b text-left w-1/4">
-                          Course Code
-                        </th>
-                        <th class="px-4 py-2 border-b text-left">
-                          Course Description
-                        </th>
+                        <th class="px-4 py-2 border-b text-left w-1/4">Course Code</th>
+                        <th class="px-4 py-2 border-b text-left">Course Description</th>
                       </tr>
                     </thead>
                     <tbody class="text-gray-700 text-sm">
                       <tr
-                        v-for="course in getCoursesByYear(
-                          selectedGroup.courses,
-                          year,
-                        )"
+                        v-for="course in getCoursesByYear(selectedGroup.courses, year)"
                         :key="course.id"
                         class="border-b hover:bg-gray-50 transition"
                       >
@@ -165,10 +149,7 @@
     </div>
 
     <!-- ===================== PROGRAM CHAIRPERSON VIEW ===================== -->
-    <div
-      v-else-if="userProgram"
-      class="bg-white border p-5 rounded-2xl shadow-sm"
-    >
+    <div v-else-if="userProgram" class="bg-white border p-5 rounded-2xl shadow-sm">
       <h2 class="text-lg font-bold text-gray-800">
         {{ userProgram.program_name }}
       </h2>
@@ -187,11 +168,9 @@
             @click="toggleYearDisplay(year)"
             class="flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer border-b"
           >
-       <div class="per-page-container">
+            <div class="per-page-container">
               <icon
-                :name="
-                  expandedYears.includes(year) ? 'arrow-down' : 'arrow-right'
-                "
+                :name="expandedYears.includes(year) ? 'arrow-down' : 'arrow-right'"
                 class="w-4 h-4 text-gray-600"
               />
               <h4 class="font-semibold text-sm text-gray-800">
@@ -213,17 +192,11 @@
                 v-if="getCoursesByYear(assignedCourses, year).length > 0"
                 class="overflow-x-auto border rounded-lg"
               >
-                <table
-                  class="min-w-full border rounded-lg overflow-hidden text-sm"
-                >
+                <table class="min-w-full border rounded-lg overflow-hidden text-sm">
                   <thead class="bg-defaultGreen text-white">
                     <tr>
-                      <th class="px-4 py-2 border-b text-left w-1/4">
-                        Course Code
-                      </th>
-                      <th class="px-4 py-2 border-b text-left">
-                        Course Description
-                      </th>
+                      <th class="px-4 py-2 border-b text-left w-1/4">Course Code</th>
+                      <th class="px-4 py-2 border-b text-left">Course Description</th>
                     </tr>
                   </thead>
                   <tbody class="text-gray-700">
@@ -301,21 +274,18 @@ export default {
   },
   methods: {
     async fetchUser() {
-      const { data } = await axios.get(
-        process.env.VUE_APP_API_BASE_URL + "/auth/me",
-        {
-          withCredentials: true,
-        },
-      );
+      const { data } = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
+        withCredentials: true,
+      });
       this.user = data;
     },
     async loadUserProgram() {
       if (this.user?.role !== "Program Chairperson") return;
       const { data } = await axios.get(
-        process.env.VUE_APP_API_BASE_URL + "/programs/get-programs",
+        process.env.VUE_APP_API_BASE_URL + "/programs/get-programs"
       );
       this.userProgram = data.find(
-        (p) => String(p.program_id) === String(this.user.program_id),
+        (p) => String(p.program_id) === String(this.user.program_id)
       );
     },
     async loadAssignedCourses() {
@@ -336,7 +306,7 @@ export default {
     },
     async loadSchoolYears() {
       const { data } = await axios.get(
-        process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
+        process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years"
       );
       const active = data.find((s) => s.is_active);
       if (active) this.activeSchoolYearId = active.school_year_id;

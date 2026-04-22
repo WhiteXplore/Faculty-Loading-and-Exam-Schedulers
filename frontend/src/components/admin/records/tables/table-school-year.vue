@@ -20,15 +20,11 @@
 
     <!-- Controls -->
     <div class="table-container">
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="select-input" 
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -110,10 +106,10 @@
                 <span
                   :class="
                     sy.is_active
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-gray-100 text-gray-800'
+                      ? 'border-green-600 text-green-600 '
+                      : 'border-gray-600 text-gray-800'
                   "
-                  class="px-2 py-1 rounded-full text-xs font-semibold"
+                  class="font-semibold text-xs px-2 py-1 rounded-full border"
                 >
                   {{ sy.is_active ? "Active" : "Inactive" }}
                 </span>

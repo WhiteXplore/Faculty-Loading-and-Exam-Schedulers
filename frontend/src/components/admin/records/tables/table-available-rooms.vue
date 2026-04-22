@@ -29,12 +29,12 @@
     </div>
 
     <!-- Table -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
+    <div class="table-container">
       <!-- Top Controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
+        <div class="per-page-container">
+          <div class="select-wrapper">
             <select
               v-model="itemsPerPage"
               class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer"
@@ -114,22 +114,22 @@
                 :key="room.room_name || room.id"
                 class="border-t hover:bg-green-50"
               >
-                <td class="px-4 py-3">
+                <td>
                   {{ room.room_name }}
                 </td>
 
-                <td class="px-4 py-3 text-center">
+                <td class="text-center">
                   {{ room.room_type }}
                 </td>
 
                 <td
                   v-if="activeView === 'used'"
-                  class="px-4 py-3 text-center font-semibold text-green-700"
+                  class="text-center font-semibold text-green-700"
                 >
                   {{ room.count }}
                 </td>
 
-                <td v-if="activeView === 'unused'" class="px-4 py-3 text-center">
+                <td v-if="activeView === 'unused'" class="text-center">
                   {{ room.room_capacity }}
                 </td>
               </tr>

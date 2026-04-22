@@ -37,17 +37,13 @@
     </div>
 
     <!-- Table -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
+    <div class="table-container">
       <!-- Top Controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -99,7 +95,7 @@
 
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <div class="max-h-[69vh] overflow-y-auto">
+        <div class="max-h-[65vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
               <tr>
@@ -141,12 +137,12 @@
                 <td class="px-4 py-3 text-center">
                   <span
                     :class="{
-                      'bg-green-100 text-green-800': rooms_data.status === 'Active',
-                      'bg-red-100 text-red-800': rooms_data.status === 'Inactive',
+                      'border-green-600 text-green-600': rooms_data.status === 'Active',
+                      'border-gray-600 text-gray-600': rooms_data.status === 'Inactive',
                     }"
-                    class="px-2 py-1 rounded-full text-xs font-semibold"
+                    class="font-semibold text-xs px-2 py-1 rounded-full border"
                   >
-                    {{ rooms_data.status }}
+                    {{ rooms_data.status || "Inactive" }}
                   </span>
                 </td>
 

@@ -16,15 +16,11 @@
 
     <!-- Table Container -->
     <div class="table-container">
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -147,7 +143,7 @@
                 </td>
 
                 <td class="px-4 py-3 items-center justify-center flex relative">
-             <div class="per-page-container">
+                  <div class="per-page-container">
                     <!-- Always visible -->
                     <button class="btn-view" @click="toggleView(user)">
                       See Details
@@ -291,12 +287,12 @@
           </div>
 
           <!-- Update Mode Selection -->
-          <div class="space-y-2">
+          <div class="space-y-2 text-[13px] text-gray-600y">
             <label class="font-normal block mb-1">Select Update Type</label>
 
             <select
               v-model="updateMode"
-              class="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 cursor-pointer"
+              class="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 cursor-pointer font-normal"
             >
               <option disabled value="">-- Select Option --</option>
               <option value="preffered_time">Preferred Time</option>
@@ -324,11 +320,11 @@
 
             <!-- MORNING -->
             <div class="rounded-lg space-y-3">
-              <h3 class="font-bold text-green-800 text-sm">Morning Schedule</h3>
+              <h3 class="font-normal text-green-800 text-sm">Morning Schedule</h3>
 
               <div class="flex gap-4">
                 <div class="flex-1">
-                  <label class="font-semibold block mb-1">Start</label>
+                  <label class="font-normal block mb-1">Start</label>
                   <input
                     type="time"
                     v-model="form.morningStart"
@@ -337,7 +333,7 @@
                 </div>
 
                 <div class="flex-1">
-                  <label class="font-semibold block mb-1">End</label>
+                  <label class="font-normal block mb-1">End</label>
                   <input
                     type="time"
                     v-model="form.morningEnd"
@@ -349,11 +345,11 @@
 
             <!-- AFTERNOON -->
             <div class="rounded-lg space-y-3">
-              <h3 class="font-bold text-green-800 text-sm">Afternoon Schedule</h3>
+              <h3 class="font-nromal text-green-800 text-sm">Afternoon Schedule</h3>
 
               <div class="flex gap-4">
                 <div class="flex-1">
-                  <label class="font-semibold block mb-1">Start</label>
+                  <label class="font-normal block mb-1">Start</label>
                   <input
                     type="time"
                     v-model="form.afternoonStart"
@@ -362,7 +358,7 @@
                 </div>
 
                 <div class="flex-1">
-                  <label class="font-semibold block mb-1">End</label>
+                  <label class="font-normal block mb-1">End</label>
                   <input
                     type="time"
                     v-model="form.afternoonEnd"
@@ -378,7 +374,7 @@
           <!-- ===================== -->
           <div
             v-if="updateMode === 'interbranch' || updateMode === 'all'"
-            class="space-y-3"
+            class="space-y-3 text-[13px]"
           >
             <label class="font-normal block mb-1">Select Inter-branch Campus</label>
 
@@ -387,7 +383,7 @@
               <button
                 type="button"
                 @click="showBranchDropdown = !showBranchDropdown"
-                class="w-full border px-3 py-2 rounded-md bg-white text-left flex justify-between items-center"
+                class="w-full border px-3 py-2 rounded-md bg-white text-left flex justify-between items-center font-normal"
               >
                 <span v-if="form.interbranchCampus.length">
                   {{ form.interbranchCampus.length }} campus(es) selected
@@ -425,7 +421,7 @@
               <div
                 v-for="id in form.interbranchCampus"
                 :key="id"
-                class="flex items-center gap-2 bg-defaultGreen text-white px-3 py-1 rounded-full text-sm"
+                class="flex items-center gap-2 bg-defaultGreen text-white px-3 py-1 rounded-full text-[13px] font-normal"
               >
                 {{
                   college_branch.find((b) => b.college_branch_id === id)
@@ -437,7 +433,7 @@
                   @click="removeBranch(id)"
                   class="text-white hover:text-red-600"
                 >
-                  ✕
+                  <icon name="delete" />
                 </button>
               </div>
             </div>

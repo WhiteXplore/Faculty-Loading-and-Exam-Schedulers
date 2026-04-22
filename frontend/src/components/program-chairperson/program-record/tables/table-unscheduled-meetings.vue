@@ -1,134 +1,163 @@
 <template>
-  <div>
-    <!-- Controls -->
-    <div class="overflow-x-auto border p-3 bg-white">
-      <div class="flex justify-between items-center flex-wrap gap-3">
-        <!-- Per Page -->
-   <div class="per-page-container">
+  <!-- Controls -->
+  <div class="table-container">
+    <div class="table-controls">
+      <!-- Per Page -->
+      <div class="per-page-container">
+        <div class="select-wrapper">
           <select
             v-model.number="itemsPerPage"
             @change="changePage(1)"
-            class="rounded-full border border-green-600 px-3 py-1 text-sm"
+            class="select-input"
           >
             <option :value="10">10</option>
             <option :value="15">15</option>
             <option :value="20">20</option>
           </select>
-          <span class="text-sm">Per page</span>
+          <div
+            class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </div>
+        <span class="text-sm">Per page</span>
+      </div>
 
-        <!-- Search -->
+      <!-- Search -->
+      <div class="search-wrapper">
         <input
           v-model="searchQuery"
-          @input="changePage(1)"
           type="text"
           placeholder="Search course, program, SY..."
-          class="rounded-full border border-green-600 px-4 py-2 text-sm w-[280px]"
+          class="search-input"
+          @input="changePage(1)"
         />
+        <div
+          class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
+      <table class="min-w-full text-sm text-gray-700">
+        <thead class="bg-defaultGreen text-white">
+          <tr>
+            <th class="px-4 py-3 text-left">Campus</th>
+            <th class="px-4 py-3 text-left">Course</th>
+            <th class="px-4 py-3 text-center">Program</th>
+            <th class="px-4 py-3 text-center">Type</th>
+            <th class="px-4 py-3 text-center">School Year</th>
+            <th class="px-4 py-3 text-center">Semester</th>
+            <th class="px-4 py-3 text-center">Reason</th>
+            <th class="px-4 py-3 text-center">Created</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            v-for="item in paginatedData"
+            :key="item.id"
+            class="border-t hover:bg-green-50"
+          >
+            <td class="px-4 py-3 font-semibold">
+              {{ item.inter_branch || "-" }}
+            </td>
+            <td class="px-4 py-3 font-semibold">
+              {{ item.course_code }}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+              {{ item.program_name }}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+              {{ item.type }}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+              {{ item.school_year }}
+            </td>
+
+            <td class="px-4 py-3 text-center">
+              {{ semesterLabel(item.semester) }}
+            </td>
+
+            <td class="px-4 py-3 text-xs text-red-600 max-w-xs">
+              {{ item.reason }}
+            </td>
+
+            <td class="px-4 py-3 text-center text-xs text-gray-500">
+              {{ formatDate(item.created_at) }}
+            </td>
+          </tr>
+
+          <tr v-if="paginatedData.length === 0">
+            <td colspan="7" class="text-center py-8 text-gray-400">
+              No unscheduled meetings found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-between items-center mt-4">
+      <div class="text-gray-700 text-sm">
+        Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
       </div>
 
-      <!-- Table -->
-      <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <table class="min-w-full text-sm text-gray-700">
-          <thead class="bg-defaultGreen text-white">
-            <tr>
-              <th class="px-4 py-3 text-left">Campus</th>
-              <th class="px-4 py-3 text-left">Course</th>
-              <th class="px-4 py-3 text-center">Program</th>
-              <th class="px-4 py-3 text-center">Type</th>
-              <th class="px-4 py-3 text-center">School Year</th>
-              <th class="px-4 py-3 text-center">Semester</th>
-              <th class="px-4 py-3 text-center">Reason</th>
-              <th class="px-4 py-3 text-center">Created</th>
-            </tr>
-          </thead>
+      <div class="flex items-center gap-1 text-sm">
+        <!-- Prev -->
+        <button
+          @click="changePage(currentPage - 1)"
+          :disabled="currentPage === 1"
+          class="px-3 py-1 bg-gray-300 text-gray-700 rounded-l-md hover:bg-gray-400"
+        >
+          &lt;
+        </button>
 
-          <tbody>
-            <tr
-              v-for="item in paginatedData"
-              :key="item.id"
-              class="border-t hover:bg-green-50"
-            >
-              <td class="px-4 py-3 font-semibold">
-                {{ item.inter_branch || "-" }}
-              </td>
-              <td class="px-4 py-3 font-semibold">
-                {{ item.course_code }}
-              </td>
-
-              <td class="px-4 py-3 text-center">
-                {{ item.program_name }}
-              </td>
-
-              <td class="px-4 py-3 text-center">
-                {{ item.type }}
-              </td>
-
-              <td class="px-4 py-3 text-center">
-                {{ item.school_year }}
-              </td>
-
-              <td class="px-4 py-3 text-center">
-                {{ semesterLabel(item.semester) }}
-              </td>
-
-              <td class="px-4 py-3 text-xs text-red-600 max-w-xs">
-                {{ item.reason }}
-              </td>
-
-              <td class="px-4 py-3 text-center text-xs text-gray-500">
-                {{ formatDate(item.created_at) }}
-              </td>
-            </tr>
-
-            <tr v-if="paginatedData.length === 0">
-              <td colspan="7" class="text-center py-8 text-gray-400">
-                No unscheduled meetings found
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="flex justify-between items-center mt-4">
-        <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
-        </div>
-
-        <div class="flex items-center gap-1 text-sm">
-          <!-- Prev -->
+        <!-- Page Numbers -->
+        <span v-for="page in pageNumbers" :key="'page-' + page">
           <button
-            @click="changePage(currentPage - 1)"
-            :disabled="currentPage === 1"
-            class="px-3 py-1 bg-gray-300 text-gray-700 rounded-l-md hover:bg-gray-400"
+            @click="changePage(page)"
+            :class="{
+              'bg-defaultGreen text-white': currentPage === page,
+              'bg-gray-200 text-gray-700': currentPage !== page,
+            }"
+            class="px-3 py-1 rounded-md hover:bg-green-300"
           >
-            &lt;
+            {{ page }}
           </button>
+        </span>
 
-          <!-- Page Numbers -->
-          <span v-for="page in pageNumbers" :key="'page-' + page">
-            <button
-              @click="changePage(page)"
-              :class="{
-                'bg-defaultGreen text-white': currentPage === page,
-                'bg-gray-200 text-gray-700': currentPage !== page,
-              }"
-              class="px-3 py-1 rounded-md hover:bg-green-300"
-            >
-              {{ page }}
-            </button>
-          </span>
-
-          <!-- Next -->
-          <button
-            @click="changePage(currentPage + 1)"
-            :disabled="currentPage === totalPages"
-            class="px-3 py-1 bg-gray-300 text-gray-700 rounded-r-md hover:bg-gray-400"
-          >
-            &gt;
-          </button>
-        </div>
+        <!-- Next -->
+        <button
+          @click="changePage(currentPage + 1)"
+          :disabled="currentPage === totalPages"
+          class="px-3 py-1 bg-gray-300 text-gray-700 rounded-r-md hover:bg-gray-400"
+        >
+          &gt;
+        </button>
       </div>
     </div>
   </div>

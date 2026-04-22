@@ -4,7 +4,7 @@
 
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4 font-regular">
-        Pages / Class & Assigned Courses
+        Pages / Class & Assigned Coursessss ssssss sss
       </div>
       <span
         class="text-sm bg-defaultGreen text-white px-4 py-1 rounded-full flex text-center items-center"
@@ -78,12 +78,12 @@
             <table class="min-w-full text-sm text-gray-700 border-collapse">
               <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
                 <tr>
-                  <!-- <th class="px-4 py-3 text-left font-semibold w-[2%]">ID</th> -->
-                  <th class="px-4 py-3 text-left font-semibold w-[5%]">Year & Section</th>
-                  <th class="px-4 py-3 text-left font-semibold w-[20%]">Program</th>
-                  <th class="px-4 py-3 text-center font-semibold w-[10%]">Class Size</th>
-                  <th class="px-4 py-3 text-center font-semibold w-[15%]">School Year</th>
-                  <th class="px-4 py-3 text-center font-semibold w-[1%]">Action</th>
+                  <!-- <th class="px-4 py-3 text-left    w-[2%]">ID</th> -->
+                  <th class="px-4 py-3 text-left w-[5%]">Year & Section</th>
+                  <th class="px-4 py-3 text-left w-[20%]">Program</th>
+                  <th class="px-4 py-3 text-center w-[10%]">Class Size</th>
+                  <th class="px-4 py-3 text-center w-[15%]">School Year</th>
+                  <th class="px-4 py-3 text-center w-[5%]">Action</th>
                 </tr>
               </thead>
 
@@ -97,28 +97,25 @@
                   <!-- <td class="px-4 py-3 text-gray-600">
                     {{ classStartIndex + index }}
                   </td> -->
-                  <td class="px-4 py-3 text-gray-800 text-left">
+                  <td class="text-left">
                     {{ cls.set_name }}
                   </td>
-                  <td class="px-4 py-3">
+                  <td>
                     {{ cls.program?.program_name || "N/A" }}
                   </td>
-                  <td class="px-4 py-3 text-center">
+                  <td class="text-center">
                     <span
                       class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full"
                     >
                       {{ cls.class_size }} students
                     </span>
                   </td>
-                  <td class="px-4 py-3 text-center">
+                  <td class="text-center">
                     {{ cls.schoolYear?.school_year_name || "N/A" }}
                   </td>
-                  <td class="px-4 py-3 flex justify-center items-center">
-                    <button
-                      @click="showClassCourses(cls)"
-                      class="px-3 py-2 h-8 border border-blue-300 hover:bg-blue-200 text-blue-800 rounded-lg flex items-center gap-1"
-                    >
-                      <icon name="eye" /> View
+                  <td class="flex justify-center items-center">
+                    <button @click="showClassCourses(cls)" class="btn-view">
+                      See Details
                     </button>
                   </td>
                 </tr>

@@ -12,7 +12,7 @@
         <div
           class="flex items-center justify-between bg-defaultGreen text-white px-6 py-3 rounded-t-lg"
         >
-     <div class="per-page-container">
+          <div class="per-page-container">
             <icon name="edit" />
             <h3 class="text-lg font-bold">Edit Schedules</h3>
           </div>
@@ -44,7 +44,7 @@
                   class="py-3 px-4 border-b bg-gray-100 flex items-center justify-between"
                 >
                   <div class="flex flex-col">
-                    <span class="text-md font-bold">{{ instructor }}</span>
+                    <span class="text-xs font-bold">{{ instructor }}</span>
 
                     <div v-if="facultyTotalUnits[instructor]">
                       <p class="font-normal text-xs">
@@ -53,41 +53,38 @@
                       </p>
                     </div>
                   </div>
-                  <div
-                    class="flex items-center gap-4 py-2 px-3 ml-2 rounded-full border w-max bg-gray-50 text-xs"
-                  >
-                    <span class="font-medium text-gray-700"
-                      >Join Scheduled:</span
+                  <div class="flex gap-1 items-center">
+                    <div
+                      class="flex items-center gap-4 py-2 px-3 ml-2 rounded-full border w-max bg-gray-50 text-xs"
                     >
+                      <span class="font-medium text-gray-700">Join Scheduled:</span>
 
-               <div class="per-page-container">
-                      <span
-                        class="font-semibold"
-                        :class="isJoined ? 'text-green-600' : 'text-gray-400'"
-                      >
-                        {{ isJoined ? "YES" : "NOT" }}
-                      </span>
-
-                      <button
-                        @click="toggleJoin"
-                        :class="[
-                          'w-12 h-6 rounded-full p-1 flex items-center transition-colors duration-300 focus:outline-none',
-                          isJoined ? 'bg-green-500' : 'bg-gray-300',
-                        ]"
-                      >
+                      <div class="per-page-container">
                         <span
-                          class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300"
-                          :class="isJoined ? 'translate-x-6' : 'translate-x-0'"
-                        ></span>
-                      </button>
+                          class="font-semibold"
+                          :class="isJoined ? 'text-green-600' : 'text-gray-400'"
+                        >
+                          {{ isJoined ? "YES" : "NOT" }}
+                        </span>
+
+                        <button
+                          @click="toggleJoin"
+                          :class="[
+                            'w-12 h-6 rounded-full p-1 flex items-center transition-colors duration-300 focus:outline-none',
+                            isJoined ? 'bg-green-500' : 'bg-gray-300',
+                          ]"
+                        >
+                          <span
+                            class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300"
+                            :class="isJoined ? 'translate-x-6' : 'translate-x-0'"
+                          ></span>
+                        </button>
+                      </div>
                     </div>
+                    <button @click="openAddSchedulePanel(instructor)" class="btn-save">
+                      Add
+                    </button>
                   </div>
-                  <button
-                    @click="openAddSchedulePanel(instructor)"
-                    class="px-3 py-1 text-xs font-bold text-defaultGreen rounded-full border border-defaultGreen hover:bg-defaultGreen hover:text-white"
-                  >
-                    Add
-                  </button>
                 </div>
 
                 <!-- TABLE -->
@@ -132,7 +129,7 @@
                                 draggedRecord,
                                 instructor,
                                 day,
-                                slot.start,
+                                slot.start
                               ).length,
                           }"
                           :style="{ height: timeSlotHeight + 'px' }"
@@ -140,18 +137,12 @@
                           @drop="onDrop($event, instructor, day, slot.start)"
                         >
                           <template
-                            v-for="item in getScheduleForCell(
-                              slot,
-                              day,
-                              instructor,
-                            )"
+                            v-for="item in getScheduleForCell(slot, day, instructor)"
                             :key="item.id || item.tempId"
                           >
                             <div
                               v-if="isStartingSlot(item, slot)"
-                              :draggable="
-                                !(isJoined && Number(item.class_size) >= 30)
-                              "
+                              :draggable="!(isJoined && Number(item.class_size) >= 30)"
                               @mouseenter="showScheduleTooltip($event, item)"
                               @mouseleave="hideScheduleTooltip"
                               @dragstart="onDragStart($event, item)"
@@ -165,9 +156,7 @@
                                 hasRoomConflict(item)
                                   ? 'bg-red-300 border-red-500 text-red-900'
                                   : '',
-                                item.is_joined
-                                  ? 'bg-blue-100 border-blue-400'
-                                  : '',
+                                item.is_joined ? 'bg-blue-100 border-blue-400' : '',
                                 isJoined && Number(item.class_size) >= 30
                                   ? 'opacity-50 pointer-events-none cursor-not-allowed'
                                   : '',
@@ -185,17 +174,11 @@
                                 v-if="item.mode"
                                 :class="[
                                   'absolute top-2 right-2 w-auto h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center text-white',
-                                  item.mode === 'face to face'
-                                    ? 'bg-orange-500'
-                                    : '',
+                                  item.mode === 'face to face' ? 'bg-orange-500' : '',
                                   item.mode === 'online' ? 'bg-purple-500' : '',
                                 ]"
                               >
-                                {{
-                                  item.mode === "face to face"
-                                    ? "F2F"
-                                    : "Online"
-                                }}
+                                {{ item.mode === "face to face" ? "F2F" : "Online" }}
                               </span>
                               <span
                                 v-if="item.is_joined"
@@ -234,9 +217,7 @@
         </div>
 
         <!-- FOOTER -->
-        <div
-          class="flex justify-end gap-2 p-4 bg-white border-t shadow-md text-xs"
-        >
+        <div class="flex justify-end gap-2 p-4 bg-white border-t shadow-md text-xs">
           <button
             @click="$emit('close')"
             class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200"
@@ -264,9 +245,7 @@
             <div
               class="flex items-center justify-between px-4 py-3 bg-defaultGreen text-white rounded-t-lg"
             >
-              <h3 class="font-semibold">
-                Add Schedule — {{ selectedInstructorName }}
-              </h3>
+              <h3 class="font-semibold">Add Schedule</h3>
               <icon
                 name="circle-close3"
                 @click="closeAddSchedulePanel"
@@ -287,7 +266,7 @@
                     <th class="px-4 py-3 border w-[10%]">Start</th>
                     <th class="px-4 py-3 border w-[10%]">Hours</th>
                     <th class="px-4 py-3 border w-[18%]">Set Up</th>
-                    <th class="px-4 py-3 border text-center">Action</th>
+                    <th class="px-4 py-3 border text-center w-[2%]">Action</th>
                   </tr>
                 </thead>
 
@@ -313,14 +292,13 @@
                         v-model="record.searchSectionQuery"
                         type="text"
                         placeholder="Select section..."
-                        class="px-3 py-2 w-full rounded-md text-md"
+                        class="px-3 py-2 w-full rounded-md text-xs"
                         @focus="record.showSectionDropdown = true"
                         @input="record.class_id = null"
                       />
                       <div
                         v-if="
-                          record.showSectionDropdown &&
-                          filteredSections(record).length
+                          record.showSectionDropdown && filteredSections(record).length
                         "
                         class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
@@ -341,15 +319,12 @@
                         v-model="record.searchCourseQuery"
                         type="text"
                         placeholder="Select course..."
-                        class="px-3 py-2 w-full rounded-md text-md"
+                        class="px-3 py-2 w-full rounded-md text-xs"
                         @focus="record.showCourseDropdown = true"
                         @input="record.course_id = null"
                       />
                       <div
-                        v-if="
-                          record.showCourseDropdown &&
-                          filteredCourses(record).length
-                        "
+                        v-if="record.showCourseDropdown && filteredCourses(record).length"
                         class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
                         <div
@@ -369,15 +344,12 @@
                         v-model="record.searchRoomQuery"
                         type="text"
                         placeholder="Select room..."
-                        class="px-3 py-2 w-full rounded-md text-md"
+                        class="px-3 py-2 w-full rounded-md text-xs"
                         @focus="record.showRoomDropdown = true"
                         @input="record.room_id = null"
                       />
                       <div
-                        v-if="
-                          record.showRoomDropdown &&
-                          filteredRooms(record).length
-                        "
+                        v-if="record.showRoomDropdown && filteredRooms(record).length"
                         class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
                         <div
@@ -395,7 +367,7 @@
                     <td class="px-2 py-2 border">
                       <input
                         v-model="record.day"
-                        class="w-full px-3 py-2 boder rounded-md text-center"
+                        class="w-full px-3 py-2 boder rounded-md text-center text-xs"
                       />
                     </td>
 
@@ -407,7 +379,7 @@
                         step="0.5"
                         min="8"
                         max="20"
-                        class="w-full px-3 py-2 rounded-md text-center"
+                        class="w-full px-3 py-2 boder rounded-md text-center text-xs"
                       />
                     </td>
 
@@ -416,7 +388,7 @@
                       <input
                         v-model.number="record.duration"
                         type="number"
-                        class="w-full px-3 py-2 rounded-md text-center"
+                        class="w-full px-3 py-2 boder rounded-md text-center text-xs"
                       />
                     </td>
 
@@ -425,7 +397,7 @@
                       <select
                         v-model="record.mode"
                         @change="onModeChange(record)"
-                        class="w-full rounded px-2 py-1 text-sm"
+                        class="w-full rounded px-2 py-1 text-xs"
                       >
                         <option value="" disabled selected>Select mode</option>
                         <option value="face to face">Face to face</option>
@@ -435,11 +407,8 @@
 
                     <!-- Action -->
                     <td class="px-2 py-3 border text-center">
-                      <button
-                        @click="toggleDelete(record)"
-                        class="bg-red-500 text-white px-3 py-1 rounded-full hover:bg-red-600"
-                      >
-                        Delete
+                      <button @click="toggleDelete(record)" class="hover:text-red-900">
+                        <icon name="delete" />
                       </button>
                     </td>
                   </tr>
@@ -479,13 +448,8 @@
       <div class="bg-white w-[900px] rounded-2xl p-6 shadow-xl">
         <!-- Header -->
         <div class="flex justify-between items-center mb-4 border-b pb-2">
-          <h3 class="text-lg font-semibold text-red-700">
-            Schedule Conflict Detected
-          </h3>
-          <button
-            @click="closeConflictModal"
-            class="text-gray-400 hover:text-gray-600"
-          >
+          <h3 class="text-lg font-semibold text-red-700">Schedule Conflict Detected</h3>
+          <button @click="closeConflictModal" class="text-gray-400 hover:text-gray-600">
             ✕
           </button>
         </div>
@@ -500,7 +464,7 @@
               Selected Schedule
             </span>
 
-            <div class="mt-3 space-y-3 text-sm text-gray-800">
+            <div class="mt-3 space-y-3 text-xs text-gray-800">
               <div class="flex justify-between items-center">
                 <h4 class="font-semibold text-base">
                   {{ selectedSchedule.course_code || "No Course Selected" }}
@@ -508,16 +472,12 @@
                 <span
                   class="text-xs px-2 py-1 rounded-full font-medium"
                   :class="{
-                    'bg-orange-500 text-white':
-                      selectedSchedule.mode === 'face to face',
-                    'bg-purple-700 text-white':
-                      selectedSchedule.mode === 'online',
+                    'bg-orange-500 text-white': selectedSchedule.mode === 'face to face',
+                    'bg-purple-700 text-white': selectedSchedule.mode === 'online',
                   }"
                 >
                   {{
-                    selectedSchedule.mode === "face to face"
-                      ? "Face to Face"
-                      : "Online"
+                    selectedSchedule.mode === "face to face" ? "Face to Face" : "Online"
                   }}
                 </span>
               </div>
@@ -531,9 +491,7 @@
                 <div>
                   <p class="text-xs text-gray-500">Section</p>
                   <p class="font-medium">
-                    {{ selectedSchedule.program_code }}-{{
-                      selectedSchedule.set_name
-                    }}
+                    {{ selectedSchedule.program_code }}-{{ selectedSchedule.set_name }}
                   </p>
                 </div>
 
@@ -576,22 +534,17 @@
                 :key="conflict.id"
                 class="bg-white rounded-xl p-8 ring-1 ring-red-200"
               >
-                <div class="space-y-2 text-sm">
+                <div class="space-y-2 text-xs">
                   <div class="flex justify-between items-center">
                     <h5 class="font-semibold">{{ conflict.course_code }}</h5>
                     <span
                       class="text-xs px-2 py-1 rounded-full font-medium"
                       :class="{
-                        'bg-orange-500 text-white':
-                          conflict.mode === 'face to face',
+                        'bg-orange-500 text-white': conflict.mode === 'face to face',
                         'bg-purple-700 text-white': conflict.mode === 'online',
                       }"
                     >
-                      {{
-                        conflict.mode === "face to face"
-                          ? "Face to Face"
-                          : "Online"
-                      }}
+                      {{ conflict.mode === "face to face" ? "Face to Face" : "Online" }}
                     </span>
                   </div>
 
@@ -621,9 +574,7 @@
                       <p class="text-xs text-gray-500">Time</p>
                       <p class="font-medium">
                         {{ formatTime(conflict.start_hour) }} –
-                        {{
-                          formatTime(conflict.start_hour + conflict.duration)
-                        }}
+                        {{ formatTime(conflict.start_hour + conflict.duration) }}
                       </p>
                     </div>
 
@@ -648,7 +599,7 @@
         <div class="flex justify-end mt-5">
           <button
             @click="closeConflictModal"
-            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm"
+            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs"
           >
             Close
           </button>
@@ -687,7 +638,7 @@
         </p>
 
         <!-- TODO  Buttons -->
-        <div class="flex justify-center gap-2 text-sm">
+        <div class="flex justify-center gap-2 text-xs">
           <button
             @click="cancelDelete"
             class="px-4 py-2 border rounded-xl hover:bg-gray-100 transition"
@@ -715,7 +666,7 @@
     >
       <!-- Header -->
       <div class="flex items-center justify-between gap-2 mb-2 w-full">
-        <div class="text-sm font-bold text-defaultGreen leading-none truncate">
+        <div class="text-xs font-bold text-defaultGreen leading-none truncate">
           {{ tooltipItem.course_code }}
         </div>
         <div class="relative flex gap-1 items-center py-1 text-[8px]">
@@ -731,14 +682,10 @@
             v-if="tooltipItem.mode"
             class="inline-flex items-center justify-center px-2 py-1 rounded-full text-white"
             :class="
-              tooltipItem.mode === 'face to face'
-                ? 'bg-orange-500'
-                : 'bg-purple-500'
+              tooltipItem.mode === 'face to face' ? 'bg-orange-500' : 'bg-purple-500'
             "
           >
-            {{
-              tooltipItem.mode === "face to face" ? "Face to Face" : "Online"
-            }}
+            {{ tooltipItem.mode === "face to face" ? "Face to Face" : "Online" }}
           </span>
         </div>
       </div>
@@ -771,9 +718,7 @@
         <p>
           <strong>Time:</strong>
           {{ formatTime(tooltipItem.start_hour) }} –
-          {{
-            formatTime(tooltipItem.start_hour + Number(tooltipItem.duration))
-          }}
+          {{ formatTime(tooltipItem.start_hour + Number(tooltipItem.duration)) }}
         </p>
         <p><strong>Type:</strong> {{ tooltipItem.type }}</p>
       </div>
@@ -907,7 +852,7 @@ export default {
 
         schedules.forEach((sched) => {
           const course = this.coursesList.find(
-            (c) => c.course_code === sched.course_code,
+            (c) => c.course_code === sched.course_code
           );
           if (course) {
             if (sched.type === "Lecture") {
@@ -931,13 +876,13 @@ export default {
     },
     unscheduledCourses() {
       const scheduledCourseIds = new Set(
-        this.localData.map((r) => r.course_id).filter(Boolean),
+        this.localData.map((r) => r.course_id).filter(Boolean)
       );
 
       const fetchDataStore = useFetchDataStore();
 
       let courses = fetchDataStore.courses.filter(
-        (c) => !scheduledCourseIds.has(c.course_id),
+        (c) => !scheduledCourseIds.has(c.course_id)
       );
 
       // Only show courses matching user's institute & program if Program Chairperson
@@ -945,7 +890,7 @@ export default {
         courses = courses.filter(
           (c) =>
             c.institute_id === this.user.institute_id &&
-            c.program_id === this.user.program_id,
+            c.program_id === this.user.program_id
         );
       }
 
@@ -1113,9 +1058,7 @@ export default {
       const groupId = record.join_group_id;
 
       // Find all schedules in this join group
-      const groupRecords = this.localData.filter(
-        (r) => r.join_group_id === groupId,
-      );
+      const groupRecords = this.localData.filter((r) => r.join_group_id === groupId);
 
       // Reset join info for the entire group
       groupRecords.forEach((r) => {
@@ -1139,9 +1082,9 @@ export default {
                 is_joined: false,
                 join_group_id: null,
                 joined_with: [],
-              },
-            ),
-          ),
+              }
+            )
+          )
         );
         toast.success("All schedules in the join group have been unjoined!");
       } catch (err) {
@@ -1151,9 +1094,7 @@ export default {
         groupRecords.forEach((r) => {
           r.is_joined = true;
           r.join_group_id = groupId;
-          r.joined_with = groupRecords
-            .filter((x) => x.id !== r.id)
-            .map((x) => x.id);
+          r.joined_with = groupRecords.filter((x) => x.id !== r.id).map((x) => x.id);
         });
       } finally {
         this.unjoinModalVisible = false;
@@ -1187,9 +1128,7 @@ export default {
       let joinedItems = [];
 
       if (item.is_joined && item.join_group_id) {
-        joinedItems = schedules.filter(
-          (s) => s.join_group_id === item.join_group_id,
-        );
+        joinedItems = schedules.filter((s) => s.join_group_id === item.join_group_id);
       }
 
       this.tooltipItem = {
@@ -1202,10 +1141,7 @@ export default {
       const tooltipWidth = 260;
       const tooltipHeight = 200;
 
-      this.tooltipX = Math.min(
-        rect.right + 12,
-        window.innerWidth - tooltipWidth,
-      );
+      this.tooltipX = Math.min(rect.right + 12, window.innerWidth - tooltipWidth);
 
       this.tooltipY = Math.min(rect.top, window.innerHeight - tooltipHeight);
     },
@@ -1280,7 +1216,7 @@ export default {
 
       // Filter only valid join targets
       const validTargets = this.pendingJoinTargets.filter((target) =>
-        this.canJoin(baseRecord, target),
+        this.canJoin(baseRecord, target)
       );
 
       if (!validTargets.length) {
@@ -1338,20 +1274,18 @@ export default {
             join_group_id: s.join_group_id,
             is_joined: s.is_joined,
             joined_with: s.joined_with,
-          })),
+          }))
         )
         .catch((err) => console.error("Failed to save joined schedules:", err));
 
       toast.success(
         `Classes joined! Total students: ${allToJoin.reduce(
           (a, s) => a + Number(s.class_size || 0),
-          0,
-        )}`,
+          0
+        )}`
       );
-    },
-    /* ------------------ 1. UTILITY ------------------ */ // called whenever mode changes
-
-    sanitizePayload(record) {
+    }, // called whenever mode changes
+    /* ------------------ 1. UTILITY ------------------ */ sanitizePayload(record) {
       const allowed = [
         "class_id",
         "course_id",
@@ -1387,10 +1321,7 @@ export default {
       });
 
       // ✅ ALWAYS regenerate time_slot
-      payload.time_slot = this.generateTimeSlot(
-        record.start_hour,
-        record.duration,
-      );
+      payload.time_slot = this.generateTimeSlot(record.start_hour, record.duration);
 
       return payload;
     },
@@ -1455,25 +1386,21 @@ export default {
       try {
         const fetchDataStore = useFetchDataStore();
         await fetchDataStore.fetchFinalSchedules();
-        this.fullSchedules = (fetchDataStore.final_schedules || []).map(
-          (rec) => {
-            const cloned = JSON.parse(JSON.stringify(rec)); // deep clone
-            if (!cloned.id && !cloned.tempId) {
-              cloned.tempId = `temp-${Date.now()}-${Math.floor(
-                Math.random() * 1000,
-              )}`;
-            }
-            return {
-              ...cloned,
-              searchRoomQuery: cloned.room_name || "",
-              showRoomDropdown: false,
-              searchCourseQuery: cloned.course_code || "",
-              showCourseDropdown: false,
-              searchSectionQuery: cloned.set_name || "",
-              showSectionDropdown: false,
-            };
-          },
-        );
+        this.fullSchedules = (fetchDataStore.final_schedules || []).map((rec) => {
+          const cloned = JSON.parse(JSON.stringify(rec)); // deep clone
+          if (!cloned.id && !cloned.tempId) {
+            cloned.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+          }
+          return {
+            ...cloned,
+            searchRoomQuery: cloned.room_name || "",
+            showRoomDropdown: false,
+            searchCourseQuery: cloned.course_code || "",
+            showCourseDropdown: false,
+            searchSectionQuery: cloned.set_name || "",
+            showSectionDropdown: false,
+          };
+        });
       } catch (error) {
         console.error("Failed to load full schedules:", error);
         this.fullSchedules = [];
@@ -1482,12 +1409,9 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(
-          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
-          {
-            withCredentials: true,
-          },
-        );
+        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
+          withCredentials: true,
+        });
         this.user = res.data || {};
         await this.fetchCoursesForUser();
       } catch {
@@ -1503,10 +1427,8 @@ export default {
 
       if (this.user.role === "Program Chairperson") {
         const params = new URLSearchParams();
-        if (this.user.institute_id)
-          params.append("institute_id", this.user.institute_id);
-        if (this.user.program_id)
-          params.append("program_id", this.user.program_id);
+        if (this.user.institute_id) params.append("institute_id", this.user.institute_id);
+        if (this.user.program_id) params.append("program_id", this.user.program_id);
         url += `?${params.toString()}`;
       }
 
@@ -1521,9 +1443,7 @@ export default {
       this.localData = (newData || []).map((rec) => {
         const cloned = JSON.parse(JSON.stringify(rec)); // deep clone
         if (!cloned.id && !cloned.tempId) {
-          cloned.tempId = `temp-${Date.now()}-${Math.floor(
-            Math.random() * 1000,
-          )}`;
+          cloned.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
         }
         return {
           ...cloned,
@@ -1553,9 +1473,7 @@ export default {
     filteredRooms(record) {
       if (!record.searchRoomQuery) return this.rooms;
       return this.rooms.filter((r) =>
-        r.room_name
-          .toLowerCase()
-          .includes(record.searchRoomQuery.toLowerCase()),
+        r.room_name.toLowerCase().includes(record.searchRoomQuery.toLowerCase())
       );
     },
     filteredSections(record) {
@@ -1569,14 +1487,12 @@ export default {
         filtered = filtered.filter(
           (s) =>
             s.program?.institute?.institute_id === this.user.institute_id &&
-            s.program_id === this.user.program_id,
+            s.program_id === this.user.program_id
         );
       }
       const query = record.searchSectionQuery?.trim().toLowerCase();
       if (query) {
-        filtered = filtered.filter((s) =>
-          s.set_name?.toLowerCase().includes(query),
-        );
+        filtered = filtered.filter((s) => s.set_name?.toLowerCase().includes(query));
       }
 
       return filtered;
@@ -1587,9 +1503,7 @@ export default {
       if (!fetchDataStore.courses) return [];
 
       let filtered = fetchDataStore.courses.filter((c) =>
-        c.course_code
-          .toLowerCase()
-          .includes(record.searchCourseQuery.toLowerCase()),
+        c.course_code.toLowerCase().includes(record.searchCourseQuery.toLowerCase())
       );
 
       // Only show courses matching user's institute & program if Program Chairperson
@@ -1597,7 +1511,7 @@ export default {
         filtered = filtered.filter(
           (c) =>
             c.institute_id === this.user.institute_id &&
-            c.program_id === this.user.program_id,
+            c.program_id === this.user.program_id
         );
       }
 
@@ -1667,9 +1581,7 @@ export default {
         day: "Monday",
         start_hour: startHour,
         duration: Math.floor(duration),
-        time_slot: `${formatTime(startHour)} - ${formatTime(
-          startHour + duration,
-        )}`,
+        time_slot: `${formatTime(startHour)} - ${formatTime(startHour + duration)}`,
 
         room_id: null,
         room_name: "",
@@ -1695,10 +1607,7 @@ export default {
     cancelNewRow() {
       // Remove the last temp row only
       for (let i = this.localData.length - 1; i >= 0; i--) {
-        if (
-          this.localData[i].tempId &&
-          this.localData[i].tempId.startsWith("temp-")
-        ) {
+        if (this.localData[i].tempId && this.localData[i].tempId.startsWith("temp-")) {
           this.localData.splice(i, 1);
           break;
         }
@@ -1721,12 +1630,12 @@ export default {
 
         // 🔥 CALL API DELETE ENDPOINT
         await axios.delete(
-          `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${this.deleteTarget.id}`,
+          `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${this.deleteTarget.id}`
         );
 
         // After removing locally
         this.localData = this.localData.filter(
-          (item) => item.id !== this.deleteTarget.id,
+          (item) => item.id !== this.deleteTarget.id
         );
 
         this.$emit("deleted", this.deleteTarget.id);
@@ -1813,7 +1722,7 @@ export default {
             r.set_name === record.set_name
           ) {
             reason.push(
-              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time."
             );
           }
 
@@ -1858,8 +1767,7 @@ export default {
       if (!conflicts.length) return "";
       return conflicts
         .map(
-          (c) =>
-            `Conflict with: ${c.faculty_name} (${c.course_code}) in ${c.room_name}`,
+          (c) => `Conflict with: ${c.faculty_name} (${c.course_code}) in ${c.room_name}`
         )
         .join("\n");
     },
@@ -1872,7 +1780,7 @@ export default {
           r.start_hour != null &&
           r.duration != null &&
           r.start_hour < slot.end &&
-          r.start_hour + r.duration > slot.start,
+          r.start_hour + r.duration > slot.start
       );
     },
     isValid() {
@@ -1882,7 +1790,7 @@ export default {
           r.day &&
           r.start_hour != null &&
           r.duration != null &&
-          !this.hasRoomConflict(r),
+          !this.hasRoomConflict(r)
       );
     },
 
@@ -1903,7 +1811,7 @@ export default {
         this.draggedRecord,
         instructor,
         day,
-        slotStart,
+        slotStart
       );
     },
     onDragStart(event, record) {
@@ -1913,7 +1821,7 @@ export default {
       // Drag whole group if joined
       if (record.join_group_id) {
         this.draggedGroup = this.localData.filter(
-          (r) => r.join_group_id === record.join_group_id,
+          (r) => r.join_group_id === record.join_group_id
         );
       } else {
         this.draggedGroup = [record];
@@ -1922,9 +1830,7 @@ export default {
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
       if (!this.draggedRecord) return;
 
-      const group = this.draggedGroup?.length
-        ? this.draggedGroup
-        : [this.draggedRecord];
+      const group = this.draggedGroup?.length ? this.draggedGroup : [this.draggedRecord];
 
       /* ===============================
      STEP 1: JOIN MODE CHECK
@@ -1963,7 +1869,7 @@ export default {
         };
 
         const conflicts = this.getConflictingRecords(tempRecord).filter(
-          (c) => !group.some((g) => g.id === c.id),
+          (c) => !group.some((g) => g.id === c.id)
         );
 
         groupConflicts.push(...conflicts);
@@ -2009,7 +1915,7 @@ export default {
         try {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${id}`,
-            payload,
+            payload
           );
         } catch (error) {
           console.error("Failed to update schedule:", error);
@@ -2048,21 +1954,15 @@ export default {
         this.localData.forEach((record) => {
           // Ensure new records have a tempId
           if (!record.id && !record.tempId) {
-            record.tempId = `temp-${Date.now()}-${Math.floor(
-              Math.random() * 1000,
-            )}`;
+            record.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
           }
 
           const payload = this.sanitizePayload({
             ...record,
-            mode:
-              record.mode?.toLowerCase() === "online"
-                ? "online"
-                : "face to face",
+            mode: record.mode?.toLowerCase() === "online" ? "online" : "face to face",
           });
 
-          const id =
-            record.id || record.schedule_id || record.final_generated_id;
+          const id = record.id || record.schedule_id || record.final_generated_id;
 
           if (id) updatedRows.push({ id, payload });
           else {
@@ -2078,13 +1978,13 @@ export default {
         if (newRows.length) {
           const { data } = await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
-            newRows,
+            newRows
           );
 
           // Assign returned IDs to localData
           data.forEach((row) => {
             const tempRecord = this.localData.find(
-              (r) => !r.id && r.tempId === row.tempId,
+              (r) => !r.id && r.tempId === row.tempId
             );
             if (tempRecord) tempRecord.id = row.id;
           });
@@ -2098,9 +1998,9 @@ export default {
             updatedRows.map(({ id, payload }) =>
               axios.patch(
                 `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${id}`,
-                payload,
-              ),
-            ),
+                payload
+              )
+            )
           );
         }
 

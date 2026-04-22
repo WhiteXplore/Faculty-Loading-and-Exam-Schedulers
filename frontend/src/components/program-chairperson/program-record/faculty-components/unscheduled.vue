@@ -8,21 +8,21 @@
     >
       <h3 class="font-semibold text-base ml-2">Unscheduled Courses</h3>
 
- <div class="per-page-container">
+      <div class="per-page-container">
         <input
           v-model="searchQuery"
           @input="changePage(1)"
           type="text"
           placeholder="Search course, program, SY..."
-          class="rounded-full border border-green-600 px-4 py-2 text-xs w-64 focus:outline-none focus:ring-2 focus:ring-green-400"
+          class="rounded-xl border border-green-600 px-4 py-2 text-xs w-64 focus:outline-none focus:ring-2 focus:ring-green-400"
         />
       </div>
     </div>
 
     <!-- Body -->
-    <div class="flex-1 overflow-y-auto p-2">
+    <div class="flex-1 overflow-y-auto">
       <!-- Table -->
-      <div class="w-full h-[35vh] rounded-md border bg-white overflow-hidden">
+      <div class="w-full h-[35vh] border bg-white overflow-auto">
         <table class="min-w-full text-xs text-gray-700">
           <thead class="bg-gray-100 text-defaultGreen">
             <tr>
@@ -42,11 +42,11 @@
               :key="item.id"
               class="border-t hover:bg-green-50"
             >
-              <td class="px-4 py-3 font-semibold">
-                {{ getSetName(item.class_id) }}
+              <td class="px-4 py-3">
+                {{ getSetName(item.class_id) || item.class_id }}
               </td>
               <td class="px-4 py-3 text-center">{{ item.program_code }}</td>
-              <td class="px-4 py-3 font-semibold">{{ item.course_code }}</td>
+              <td class="px-4 py-3">{{ item.course_code }}</td>
               <td class="px-4 py-3 text-center">{{ item.type }}</td>
               <td class="px-4 py-3 text-center">
                 {{ semesterLabel(item.semester) }}
@@ -55,20 +55,13 @@
                 {{ item.reason }}
               </td>
               <td class="px-4 py-3 text-center">
-                <button
-                  @click="openAssignModal(item)"
-                  class="px-3 py-1 text-white bg-defaultGreen rounded-md hover:bg-green-700 text-xs"
-                >
-                  Assign
-                </button>
+                <button @click="openAssignModal(item)" class="btn-save">Assign</button>
               </td>
             </tr>
 
             <tr v-if="paginatedData.length === 0">
               <td colspan="7" class="py-8">
-                <div
-                  class="flex justify-center items-center text-gray-400 text-xs"
-                >
+                <div class="flex justify-center items-center text-gray-400 text-xs">
                   No unscheduled courses found
                 </div>
               </td>
@@ -80,8 +73,7 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4 text-xs">
         <div class="text-gray-700">
-          Showing {{ startIndex }} to {{ endIndex }} of
-          {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1">
           <button
@@ -168,7 +160,12 @@ import axios from "axios";
 
 export default {
   name: "AssignCoursePage",
-  props: { closeAddSchedulePanel: { type: Function, required: true } },
+  props: {
+    closeAddSchedulePanel: {
+      type: Function,
+      required: true,
+    },
+  },
 
   data() {
     return {
@@ -187,19 +184,32 @@ export default {
       return useFetchDataStore();
     },
 
+    sectionMap() {
+      const map = {};
+      (this.store.sections || []).forEach((sec) => {
+        map[Number(sec.class_id)] = sec.set_name;
+      });
+      return map;
+    },
+
     filteredData() {
       const query = this.searchQuery?.toLowerCase() || "";
-      return this.store.unscheduled_meetings.filter((item) => {
+
+      return (this.store.unscheduled_meetings || []).filter((item) => {
         const isSameProgram = this.user.program_id
-          ? item.program_id === this.user.program_id
+          ? Number(item.program_id) === Number(this.user.program_id)
           : true;
+
         const matchesQuery =
           item.course_code?.toLowerCase().includes(query) ||
           item.program_name?.toLowerCase().includes(query) ||
           item.school_year?.toLowerCase().includes(query) ||
           item.type?.toLowerCase().includes(query) ||
-          item.semester?.toLowerCase().includes(query) ||
+          String(item.semester || "")
+            .toLowerCase()
+            .includes(query) ||
           item.reason?.toLowerCase().includes(query);
+
         return isSameProgram && matchesQuery;
       });
     },
@@ -224,17 +234,18 @@ export default {
     },
 
     endIndex() {
-      return Math.min(
-        this.currentPage * this.itemsPerPage,
-        this.filteredData.length,
-      );
+      return Math.min(this.currentPage * this.itemsPerPage, this.filteredData.length);
     },
 
     uniqueInstructors() {
       if (!this.user.program_id) return [];
+
       const seen = new Set();
+
       return (this.store.final_schedules || [])
-        .filter((s) => s.faculty_id && s.program_id === this.user.program_id)
+        .filter(
+          (s) => s.faculty_id && Number(s.program_id) === Number(this.user.program_id)
+        )
         .filter((s) => {
           if (seen.has(s.faculty_id)) return false;
           seen.add(s.faculty_id);
@@ -249,23 +260,31 @@ export default {
     },
 
     semesterLabel(sem) {
-      return sem === "1" ? "1st Semester" : sem === "2" ? "2nd Semester" : sem;
+      return sem === "1" || sem === 1
+        ? "1st Semester"
+        : sem === "2" || sem === 2
+        ? "2nd Semester"
+        : sem;
+    },
+
+    getSetName(classId) {
+      return this.sectionMap[Number(classId)] || "";
     },
 
     openAssignModal(item) {
       const courseInfo = this.store.courses?.find(
-        (c) => c.course_id === item.course_id,
+        (c) => Number(c.course_id) === Number(item.course_id)
       );
+
       const programInfo = this.store.programs?.find(
-        (p) => p.program_id === item.program_id,
+        (p) => Number(p.program_id) === Number(item.program_id)
       );
 
       this.selectedCourse = {
         ...item,
         course_code: item.course_code || courseInfo?.course_code || "Unknown",
-        program_code:
-          item.program_code || programInfo?.program_code || "Unknown",
-        set_name: this.getSetName(item.class_id) || `Set ${item.class_id}`,
+        program_code: item.program_code || programInfo?.program_code || "Unknown",
+        set_name: this.getSetName(item.class_id) || item.class_id,
         hours: item.hours || "3h lec",
       };
 
@@ -288,11 +307,12 @@ export default {
         faculty_id: this.selectedInstructor,
         faculty_name: this.getFacultyName(this.selectedInstructor),
       };
+
       delete course.id;
 
-      // Determine durations
       const lectureMatch = course.hours?.match(/(\d+(\.\d+)?)h lec/);
       const labMatch = course.hours?.match(/(\d+(\.\d+)?)h lab/);
+
       const lectureDuration = lectureMatch ? parseFloat(lectureMatch[1]) : 3;
       const labDuration = labMatch ? parseFloat(labMatch[1]) : 3;
 
@@ -337,55 +357,35 @@ export default {
         ];
       }
 
-      // Emit to parent first
       this.$emit("open-edit-schedule", payload);
-
-      // Send to backend
-      // try {
-      //   await axios.post(
-      //     `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
-      //     payload,
-      //     { withCredentials: true },
-      //   );
-      //   // toast.success("Course assigned successfully!");
-      // } catch (err) {
-      //   console.error(err);
-      //   // toast.error("Failed to assign course. Try again.");
-      // }
-
-      // Reset modal
       this.closeAssignModal();
     },
 
     async fetchUser() {
       try {
-        const res = await axios.get(
-          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
-          { withCredentials: true },
-        );
+        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
+          withCredentials: true,
+        });
         this.user = res.data || {};
       } catch {
         this.user = {};
       }
     },
 
-    getSetName(classId) {
-      const section = this.store.sections.find(
-        (sec) => sec.class_id === classId,
-      );
-      return section ? section.set_name : classId;
-    },
-
     getInstituteId(programId) {
-      const program = this.store.programs.find(
-        (p) => p.program_id === programId,
+      const program = (this.store.programs || []).find(
+        (p) => Number(p.program_id) === Number(programId)
       );
       return program ? program.institute_id : null;
     },
 
     getFacultyName(facultyId) {
-      const user = this.store.rawusers?.find((u) => u.id === facultyId);
+      const user = (this.store.rawusers || []).find(
+        (u) => Number(u.id) === Number(facultyId)
+      );
+
       if (!user) return "Unknown Faculty";
+
       return [user.first_name, user.middle_name, user.last_name]
         .filter(Boolean)
         .join(" ");
@@ -398,6 +398,10 @@ export default {
     await this.store.fetchFinalSchedules();
     await this.store.fetchClassSections();
     await this.store.fetchRawUsers();
+
+    // console.log("unscheduled_meetings:", this.store.unscheduled_meetings);
+    // console.log("sections:", this.store.sections);
+    // console.log("sectionMap:", this.sectionMap);
   },
 };
 </script>

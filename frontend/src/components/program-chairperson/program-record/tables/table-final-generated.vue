@@ -62,12 +62,12 @@
           <div class="overflow-x-auto overflow-y-auto flex-1">
             <table class="w-full text-left border-collapse text-[11px]">
               <thead class="sticky top-0 bg-gray-100 z-10">
-                <tr class="text-gray-700">
-                  <th class="px-4 py-2 border border-gray-200 w-24 text-center">Time</th>
+                <tr class="text-gray-700 bg-gray-200 border">
+                  <th class="py-3 w-2 text-center text-gray-700 bg-gray-100">Time</th>
                   <th
                     v-for="day in days"
                     :key="day"
-                    class="px-4 py-2 border border-gray-200 text-center w-28"
+                    class="px-4 py-2 text-center w-2 text-gray-700 bg-gray-100"
                   >
                     {{ day }}
                   </th>
@@ -81,7 +81,7 @@
                   :style="{ height: timeSlotHeight + 'px' }"
                 >
                   <!-- Time Column -->
-                  <td class="px-4 py-4 border text-center font-medium whitespace-nowrap">
+                  <td class="py-4 border text-center whitespace-nowrap text-gray-700">
                     {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
                   </td>
 

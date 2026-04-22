@@ -40,7 +40,7 @@
       <!-- TODO  Header -->
       <div class="flex items-center justify-between border-b pb-3 mb-4">
         <!-- Left: Icon + Title -->
-   <div class="per-page-container">
+        <div class="per-page-container">
           <icon
             name="exclamation-circle"
             class="w-7 h-7 p-1 rounded-full bg-green-200 text-green-900 flex items-center justify-center"
@@ -156,7 +156,7 @@
           </div>
         </div>
         <!-- Actions -->
-   <div class="per-page-container">
+        <div class="per-page-container">
           <!-- Generate -->
           <button
             @click="generateSchedule"
@@ -220,7 +220,7 @@
               <table class="w-full text-left border-collapse text-[11px]">
                 <!-- <thead class="sticky top-0 bg-gray-100 z-10"></thead> -->
                 <thead class="top-0 bg-gray-100 z-10">
-                  <tr class="text-gray-700">
+                  <tr class="text-gray-700 border border-gray-200">
                     <th class="px-4 py-2 border border-gray-200 w-24 text-center">
                       Time
                     </th>

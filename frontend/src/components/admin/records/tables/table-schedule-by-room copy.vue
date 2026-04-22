@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col space-y-3 h-[83vh] overflow-hidden">
     <!-- TABLE CONTAINER -->
-    <div class="mt-2 overflow-x-auto border p-3 rounded-xl bg-white h-[83vh]">
+    <div class="table-container">
       <!-- TOP CONTROLS (SAME DESIGN AS ROOM TABLE) -->
         <div class="table-controls">
         <!-- Items Per Page -->

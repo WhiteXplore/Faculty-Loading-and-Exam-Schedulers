@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / Courses</div>
- <div class="per-page-container">
+      <div class="per-page-container">
         <!-- Upload & Add -->
         <div
           @click="isUploadModal = true"
@@ -35,15 +35,11 @@
     <!-- Table -->
     <div class="table-container">
       <!-- Top Controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option :value="10">10</option>
               <option :value="15">15</option>
               <option :value="20">20</option>
@@ -66,28 +62,147 @@
         </div>
 
         <div class="flex gap-2">
-          <!-- Curriculum filter -->
-          <div class="relative" v-if="user?.role === 'Admin'">
-            <select
-              v-model="selectedCurriculum"
-              @change="currentPage = 1"
-              class="rounded-full border border-green-600 px-4 py-1.5 text-green-900 text-sm font-semibold shadow-sm cursor-pointer"
-            >
-              <option value="">All Curriculums</option>
-              <option v-for="curr in uniqueCurriculums" :key="curr" :value="curr">
-                {{ curr }}
-              </option>
-            </select>
-          </div>
+          <!-- Admin filters -->
+          <template v-if="user?.role === 'Admin'">
+            <!-- Institute -->
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+              >
+                <icon name="building" />
+              </div>
+
+              <select
+                v-model="selectedInstitute"
+                @change="handleInstituteChange"
+                class="select-filter-input pr-8"
+              >
+                <option value="">All Institutes</option>
+                <option
+                  v-for="inst in uniqueInstitutes"
+                  :key="inst.institute_id"
+                  :value="inst.institute_id"
+                >
+                  {{ inst.institute_code || inst.institute_name }}
+                </option>
+              </select>
+
+              <div
+                class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Program -->
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+              >
+                <icon name="layers" />
+              </div>
+
+              <select
+                v-model="selectedProgram"
+                @change="handleProgramChange"
+                class="select-filter-input pr-8"
+              >
+                <option value="">All Programs</option>
+                <option
+                  v-for="prog in filteredPrograms"
+                  :key="prog.program_id"
+                  :value="prog.program_id"
+                >
+                  {{ prog.program_code || prog.program_name }}
+                </option>
+              </select>
+
+              <div
+                class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Curriculum -->
+            <div class="relative">
+              <div
+                class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+              >
+                <icon name="book" />
+              </div>
+
+              <select
+                v-model="selectedCurriculum"
+                @change="currentPage = 1"
+                class="select-filter-input pr-8"
+              >
+                <option value="">All Curriculums</option>
+                <option
+                  v-for="curr in filteredCurriculums"
+                  :key="curr.curriculum_id"
+                  :value="curr.curriculum_id"
+                >
+                  {{
+                    `${curr.program_code || curr.program_name || "Program"} (${
+                      curr.curriculum_start_year || "-"
+                    } - ${curr.curriculum_end_year || "-"})`
+                  }}
+                </option>
+              </select>
+
+              <div
+                class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+          </template>
 
           <!-- Search input -->
-          <div class="relative w-full sm:w-[280px]">
+          <div class="search-wrapper">
             <input
               v-model="searchQuery"
               @input="currentPage = 1"
               type="text"
               placeholder="Search courses..."
-              class="rounded-full border border-green-600 px-4 py-2 pl-10 text-sm shadow-sm w-full"
+              class="search-input"
             />
             <div
               class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
@@ -113,17 +228,15 @@
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
               <tr>
-                <th class="px-4 py-3 text-left font-normal">Course Code</th>
-                <th class="px-4 py-3 text-left font-normal">Course Title</th>
-                <th class="px-4 py-3 text-center font-normal">Semester</th>
-                <th class="px-4 py-3 text-center font-normal">Year Level</th>
-                <th class="px-4 py-3 text-center font-normal">Lecture</th>
-                <th class="px-4 py-3 text-center font-normal">Lab</th>
-                <th class="px-4 py-3 text-center font-normal">Units</th>
-                <th class="px-4 py-3 text-center font-normal">Pre-requisite</th>
-                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
-                  Actions
-                </th>
+                <th class="text-left w-[8%]">Course Code</th>
+                <th class="text-left">Course Title</th>
+                <th class="text-center">Semester</th>
+                <th class="text-center">Year Level</th>
+                <th class="text-center">Lecture</th>
+                <th class="text-center">Lab</th>
+                <th class="text-center">Units</th>
+                <th class="text-center">Pre-requisite</th>
+                <th class="text-center rounded-tr-lg w-[10%]">Actions</th>
               </tr>
             </thead>
 
@@ -133,27 +246,17 @@
                 :key="c.curriculum_course_id"
                 class="hover:bg-green-50 border-t transition-all"
               >
-                <td class="px-4 py-3">{{ c.course?.course_code || "-" }}</td>
-                <td class="px-4 py-3">{{ c.course?.course_title || "-" }}</td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_semester || "-" }}
-                </td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_level || "-" }}
-                </td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_lec ?? 0 }}
-                </td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_lab ?? 0 }}
-                </td>
-                <td class="px-4 py-3 text-center">
+                <td>{{ c.course?.course_code || "-" }}</td>
+                <td>{{ c.course?.course_title || "-" }}</td>
+                <td class="text-center">{{ c.course?.course_semester || "-" }}</td>
+                <td class="text-center">{{ c.course?.course_level || "-" }}</td>
+                <td class="text-center">{{ c.course?.course_lec ?? 0 }}</td>
+                <td class="text-center">{{ c.course?.course_lab ?? 0 }}</td>
+                <td class="text-center">
                   {{ (c.course?.course_lec ?? 0) + (c.course?.course_lab ?? 0) }}
                 </td>
-                <td class="px-4 py-3 text-center">
-                  {{ c.course?.course_requisite || "-" }}
-                </td>
-                <td class="px-4 py-3 flex justify-center">
+                <td class="text-center">{{ c.course?.course_requisite || "-" }}</td>
+                <td class="flex justify-center">
                   <div class="flex gap-2">
                     <button class="btn-edit" @click="toggleEdit(c)">
                       <icon name="edit" /> Edit
@@ -272,7 +375,12 @@ export default {
       currentPage: 1,
       itemsPerPage: 10,
       searchQuery: "",
+
+      // ADMIN FILTERS
+      selectedInstitute: "",
+      selectedProgram: "",
       selectedCurriculum: "",
+
       isAddCourses: false,
       isTable: true,
       isUploadModal: false,
@@ -287,18 +395,96 @@ export default {
   computed: {
     ...mapState(useFetchDataStore, ["curriculum_courses"]),
 
-    uniqueCurriculums() {
-      const names = (this.curriculum_courses || [])
-        .map((c) => {
-          return (
-            c.curriculum?.program?.program_code ||
-            c.curriculum?.program?.program_name ||
-            `Curriculum ${c.curriculum_id}`
-          );
-        })
-        .filter(Boolean);
+    uniqueInstitutes() {
+      const map = new Map();
 
-      return [...new Set(names)];
+      (this.curriculum_courses || []).forEach((c) => {
+        const institute =
+          c.curriculum?.program?.institute ||
+          (c.curriculum?.institute_id
+            ? {
+                institute_id: c.curriculum.institute_id,
+                institute_name: `Institute ${c.curriculum.institute_id}`,
+                institute_code: "",
+              }
+            : null);
+
+        if (institute?.institute_id && !map.has(institute.institute_id)) {
+          map.set(institute.institute_id, institute);
+        }
+      });
+
+      return Array.from(map.values());
+    },
+    filteredPrograms() {
+      const map = new Map();
+
+      (this.curriculum_courses || []).forEach((c) => {
+        const curriculum = c.curriculum;
+        const program = c.curriculum?.program;
+
+        const programId = curriculum?.program_id;
+        const instituteId = curriculum?.institute_id;
+
+        if (!programId) return;
+
+        if (
+          this.selectedInstitute &&
+          String(instituteId) !== String(this.selectedInstitute)
+        ) {
+          return;
+        }
+
+        if (!map.has(programId)) {
+          map.set(programId, {
+            program_id: programId,
+            institute_id: instituteId,
+            program_code: program?.program_code || `Program ${programId}`,
+            program_name: program?.program_name || `Program ${programId}`,
+          });
+        }
+      });
+
+      return Array.from(map.values());
+    },
+
+    filteredCurriculums() {
+      const map = new Map();
+
+      (this.curriculum_courses || []).forEach((c) => {
+        const curriculum = c.curriculum;
+        const program = c.curriculum?.program;
+
+        if (!curriculum?.curriculum_id) return;
+
+        if (
+          this.selectedInstitute &&
+          String(curriculum.institute_id) !== String(this.selectedInstitute)
+        ) {
+          return;
+        }
+
+        if (
+          this.selectedProgram &&
+          String(curriculum.program_id) !== String(this.selectedProgram)
+        ) {
+          return;
+        }
+
+        if (!map.has(curriculum.curriculum_id)) {
+          map.set(curriculum.curriculum_id, {
+            curriculum_id: curriculum.curriculum_id,
+            curriculum_start_year: curriculum.curriculum_start_year,
+            curriculum_end_year: curriculum.curriculum_end_year,
+            institute_id: curriculum.institute_id,
+            program_id: curriculum.program_id,
+            program_code: program?.program_code || "",
+            program_name: program?.program_name || "",
+          });
+        }
+      });
+
+      return Array.from(map.values());
     },
 
     filteredCourses() {
@@ -319,16 +505,25 @@ export default {
         });
       }
 
-      // Curriculum filter
-      if (this.selectedCurriculum) {
-        result = result.filter((c) => {
-          const curriculumLabel =
-            c.curriculum?.program?.program_code ||
-            c.curriculum?.program?.program_name ||
-            `Curriculum ${c.curriculum_id}`;
+      // Admin filters
+      if (this.user?.role === "Admin") {
+        if (this.selectedInstitute) {
+          result = result.filter(
+            (c) => String(c.curriculum?.institute_id) === String(this.selectedInstitute)
+          );
+        }
 
-          return curriculumLabel === this.selectedCurriculum;
-        });
+        if (this.selectedProgram) {
+          result = result.filter(
+            (c) => String(c.curriculum?.program_id) === String(this.selectedProgram)
+          );
+        }
+
+        if (this.selectedCurriculum) {
+          result = result.filter(
+            (c) => String(c.curriculum?.curriculum_id) === String(this.selectedCurriculum)
+          );
+        }
       }
 
       // Search filter
@@ -339,16 +534,21 @@ export default {
           const courseCode = c.course?.course_code?.toLowerCase() || "";
           const courseTitle = c.course?.course_title?.toLowerCase() || "";
           const requisite = c.course?.course_requisite?.toLowerCase() || "";
-          const curriculumText =
+          const programText =
             c.curriculum?.program?.program_code?.toLowerCase() ||
             c.curriculum?.program?.program_name?.toLowerCase() ||
+            "";
+          const instituteText =
+            c.curriculum?.program?.institute?.institute_code?.toLowerCase() ||
+            c.curriculum?.program?.institute?.institute_name?.toLowerCase() ||
             "";
 
           return (
             courseCode.includes(q) ||
             courseTitle.includes(q) ||
             requisite.includes(q) ||
-            curriculumText.includes(q)
+            programText.includes(q) ||
+            instituteText.includes(q)
           );
         });
       }
@@ -412,6 +612,17 @@ export default {
     async loadCourses() {
       const store = useFetchDataStore();
       await store.fetchCurriculumCourses();
+    },
+
+    handleInstituteChange() {
+      this.selectedProgram = "";
+      this.selectedCurriculum = "";
+      this.currentPage = 1;
+    },
+
+    handleProgramChange() {
+      this.selectedCurriculum = "";
+      this.currentPage = 1;
     },
 
     toggleAdd() {
