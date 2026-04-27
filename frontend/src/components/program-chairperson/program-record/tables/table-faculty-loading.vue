@@ -150,7 +150,7 @@
   <!-- Delete Confirmation Modal -->
   <div
     v-if="showDeleteModal"
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
+    <div class="modal-overlay">
   >
     <div
       class="rounded-xl shadow-lg w-[300px] md:w-[400px] bg-white py-6 px-4 flex flex-col items-center"

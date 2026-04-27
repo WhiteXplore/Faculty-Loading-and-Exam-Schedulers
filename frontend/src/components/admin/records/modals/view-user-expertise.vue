@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
+   <div class="modal-overlay">
     <div
       class="rounded-[16px] shadow-lg justify-center animate-slideUp max-h-[90vh] overflow-y-auto"
     >

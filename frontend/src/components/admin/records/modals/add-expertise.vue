@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg animate-slideUp">
       <form
         @submit.prevent="submitExpertise"
@@ -140,12 +138,7 @@
                       : 'hover:bg-green-100'
                   "
                 >
-                  <span>
-                    <span class="px-2 py-0.5 rounded-full bg-defaultGreen text-white">
-                      {{ course.program_code || getProgramCode(course.program_id) }}
-                    </span>
-                    {{ course.course_code }} - {{ course.course_title }}
-                  </span>
+                  <span> {{ course.course_code }} - {{ course.course_title }} </span>
 
                   <span
                     v-if="isAlreadySelected(course)"
@@ -162,15 +155,7 @@
                   :key="`${item.course_id}-other-${i}`"
                   class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded"
                 >
-                  <span>
-                    <span
-                      v-if="item.program_code"
-                      class="px-2 py-0.5 mr-2 rounded-full bg-white text-defaultGreen"
-                    >
-                      {{ item.program_code }}
-                    </span>
-                    {{ item.course_code }} — {{ item.course_title }}
-                  </span>
+                  <span> {{ item.course_code }} — {{ item.course_title }} </span>
                   <button type="button" @click="removeOtherCourse(i)">✕</button>
                 </div>
               </div>
@@ -412,7 +397,6 @@ export default {
         return matchSearch(c) && notInOther;
       });
     },
-
     filteredOtherCourses() {
       if (this.mode === "cross") return [];
 
@@ -423,29 +407,42 @@ export default {
         (c.course_code || "").toLowerCase().includes(search) ||
         (c.course_title || "").toLowerCase().includes(search);
 
-      const otherProgramCourses = this.normalizedCurriculumCourses.filter((c) => {
-        return (
-          Number(c.institute_id) === this.currentUserInstituteId &&
-          Number(c.program_id) !== this.currentUserProgramId
-        );
-      });
+      const otherProgramCurriculumCourses = this.normalizedCurriculumCourses.filter(
+        (c) => {
+          return (
+            Number(c.institute_id) === this.currentUserInstituteId &&
+            Number(c.program_id) !== this.currentUserProgramId
+          );
+        }
+      );
 
-      const strictMatch = otherProgramCourses.filter((c) => {
+      const strictMatch = otherProgramCurriculumCourses.filter((c) => {
         return (
           Number(c.course_semester) === Number(this.selectedSemester) &&
           Number(c.course_level) === Number(this.selectedYearLevel)
         );
       });
 
-      const source = strictMatch.length ? strictMatch : otherProgramCourses;
+      const source = strictMatch.length ? strictMatch : otherProgramCurriculumCourses;
 
-      return source.filter((c) => {
-        const notInPrimary = !this.currentSemesterData.expertise.some(
-          (e) => Number(e.course_id) === Number(c.course_id)
-        );
+      const uniqueCourseIds = [
+        ...new Set(source.map((c) => Number(c.course_id)).filter(Boolean)),
+      ];
 
-        return matchSearch(c) && notInPrimary;
-      });
+      return this.normalizedCourses
+        .filter((c) => uniqueCourseIds.includes(Number(c.course_id)))
+        .filter((c) => {
+          const notInPrimary = !this.currentSemesterData.expertise.some(
+            (e) => Number(e.course_id) === Number(c.course_id)
+          );
+
+          const notInOther = !this.currentSemesterData.other_expertise.some(
+            (e) => Number(e.course_id) === Number(c.course_id)
+          );
+
+          return matchSearch(c) && notInPrimary && notInOther;
+        })
+        .sort((a, b) => (a.course_code || "").localeCompare(b.course_code || ""));
     },
   },
 

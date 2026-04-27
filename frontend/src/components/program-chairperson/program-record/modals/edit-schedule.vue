@@ -178,7 +178,7 @@
                                   item.mode === 'online' ? 'bg-purple-500' : '',
                                 ]"
                               >
-                                {{ item.mode === "face to face" ? "F2F" : "Online" }}
+                                {{ item.mode === "face to face" ? "F2F" : "OL" }}
                               </span>
                               <span
                                 v-if="item.is_joined"

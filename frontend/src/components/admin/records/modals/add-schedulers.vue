@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg fixed top-20">
       <form
         @submit.prevent="submitData"
@@ -9,18 +7,12 @@
         ref="schedulesForm"
       >
         <!-- Header -->
-        <div
-          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow"
-        >
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
             <h1 class="font-bold tracking-wide text-lg">Add Class Schedule</h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <div class="p-5 w-[40vw] text-left">
@@ -77,11 +69,7 @@
                 class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
               >
                 <option value="" disabled>Select Room:</option>
-                <option
-                  v-for="room in rooms"
-                  :key="room.room_id"
-                  :value="room.room_id"
-                >
+                <option v-for="room in rooms" :key="room.room_id" :value="room.room_id">
                   {{ room.room_name }}
                 </option>
               </select>
@@ -138,11 +126,7 @@
                   class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
                 >
                   <option value="" disabled>Select Time Start:</option>
-                  <option
-                    v-for="time in time"
-                    :key="time.time_id"
-                    :value="time.time"
-                  >
+                  <option v-for="time in time" :key="time.time_id" :value="time.time">
                     {{ formatTime12Hour(time.time) }}
                   </option>
                 </select>
@@ -155,11 +139,7 @@
                   class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
                 >
                   <option value="" disabled>Select Time End:</option>
-                  <option
-                    v-for="time in time"
-                    :key="time.time_id"
-                    :value="time.time"
-                  >
+                  <option v-for="time in time" :key="time.time_id" :value="time.time">
                     {{ formatTime12Hour(time.time) }}
                   </option>
                 </select>
@@ -218,10 +198,7 @@
           </li>
           <li>
             <strong>Course:</strong>
-            {{
-              conflictSchedule.course_name ||
-              conflictSchedule.course?.course_code
-            }}
+            {{ conflictSchedule.course_name || conflictSchedule.course?.course_code }}
           </li>
           <li>
             <strong>Room:</strong>
@@ -229,10 +206,7 @@
           </li>
           <li>
             <strong>Section:</strong>
-            {{
-              conflictSchedule.section_name ||
-              conflictSchedule.section?.section_set
-            }}
+            {{ conflictSchedule.section_name || conflictSchedule.section?.section_set }}
           </li>
           <li>
             <strong>Days:</strong>
@@ -358,12 +332,8 @@ export default {
         return;
       }
 
-      const startIndex = this.time.findIndex(
-        (t) => t.time === this.form.time_start
-      );
-      const endIndex = this.time.findIndex(
-        (t) => t.time === this.form.time_end
-      );
+      const startIndex = this.time.findIndex((t) => t.time === this.form.time_start);
+      const endIndex = this.time.findIndex((t) => t.time === this.form.time_end);
 
       if (startIndex === -1 || endIndex === -1) {
         toast.error("Invalid time selected.");
@@ -379,13 +349,9 @@ export default {
       const instructor = this.instructors.find(
         (i) => i.instructor_id === this.form.instructor_id
       );
-      const course = this.courses.find(
-        (c) => c.course_id === this.form.course_id
-      );
+      const course = this.courses.find((c) => c.course_id === this.form.course_id);
       const room = this.rooms.find((r) => r.room_id === this.form.room_id);
-      const section = this.sections.find(
-        (s) => s.section_id === this.form.section_id
-      );
+      const section = this.sections.find((s) => s.section_id === this.form.section_id);
 
       this.form.instructor_name = instructor
         ? `${instructor.instructor_fname} ${instructor.instructor_lname}`
@@ -398,8 +364,7 @@ export default {
 
       try {
         const response = await axios.get(
-          process.env.VUE_APP_API_BASE_URL +
-            "/class-schedules/get-class-schedules"
+          process.env.VUE_APP_API_BASE_URL + "/class-schedules/get-class-schedules"
         );
         const existing = response.data;
         console.log("Fetched schedules:", existing);
@@ -464,16 +429,15 @@ export default {
             ...conflict,
 
             instructor_fname:
-              this.instructors.find(
-                (c) => c.instructor_id === conflict.instructor_id
-              )?.instructor_lname || conflict.instructor_id,
+              this.instructors.find((c) => c.instructor_id === conflict.instructor_id)
+                ?.instructor_lname || conflict.instructor_id,
             course_name:
-              this.courses.find((c) => c.course_id === conflict.course_id)
-                ?.course_code || conflict.course_id,
+              this.courses.find((c) => c.course_id === conflict.course_id)?.course_code ||
+              conflict.course_id,
 
             room_name:
-              this.rooms.find((r) => r.room_id === conflict.room_id)
-                ?.room_name || conflict.room_id,
+              this.rooms.find((r) => r.room_id === conflict.room_id)?.room_name ||
+              conflict.room_id,
 
             section_name:
               this.sections.find((s) => s.section_id === conflict.section_id)
@@ -491,8 +455,7 @@ export default {
 
         // No conflict — proceed
         await axios.post(
-          process.env.VUE_APP_API_BASE_URL +
-            "/class-schedules/add-class-schedules",
+          process.env.VUE_APP_API_BASE_URL + "/class-schedules/add-class-schedules",
           {
             instructor_id: this.form.instructor_id,
             course_id: this.form.course_id,

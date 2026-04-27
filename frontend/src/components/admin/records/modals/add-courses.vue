@@ -1,17 +1,9 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="coursesForm"
-      >
+  <div class="modal-overlay">
+    <div class="modal-wrapper">
+      <form @submit.prevent="submitData" class="modal-container" ref="coursesForm">
         <!-- Header -->
-        <div
-          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow"
-        >
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
             <h1 class="font-bold tracking-wide text-lg">
@@ -22,56 +14,57 @@
         </div>
 
         <!-- Body -->
-        <div class="p-5 w-[35vw] space-y-5">
+        <div class="w-[35vw] modal-body">
           <!-- Curriculum -->
-          <div class="flex flex-col space-y-2 w-full relative">
-            <label class="font-bold">Curriculum :</label>
-            <input
-              v-model="searchCurriculumQuery"
-              type="text"
-              placeholder="Search curriculum..."
-              class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
-              @focus="showCurriculumDropdown = true"
-              :disabled="isEdit"
-            />
-            <div
-              v-if="showCurriculumDropdown && filteredCurriculum.length"
-              class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
-              @mouseleave="showCurriculumDropdown = false"
-            >
-              <div
-                v-for="curriculum in filteredCurriculum"
-                :key="curriculum.curriculum_id"
-                class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                @mousedown="selectcurriculum(curriculum)"
-              >
-                {{ curriculum.curriculum_end_year }} -
-                {{ curriculum.program.program_name }}
+          <div class="dropdown-container">
+            <label class="dropdown-label">Curriculum :</label>
+
+            <div class="dropdown-wrapper">
+              <input
+                v-model="searchCurriculumQuery"
+                type="text"
+                placeholder="Search curriculum..."
+                class="dropdown-input"
+                @focus="showCurriculumDropdown = true"
+                :disabled="isEdit"
+              />
+              <div v-if="showCurriculumDropdown" class="dropdown-menu">
+                <div v-if="filteredCurriculum.length">
+                  <div
+                    v-for="curriculum in filteredCurriculum"
+                    :key="curriculum.curriculum_id"
+                    class="dropdown-item"
+                    @mousedown="selectcurriculum(curriculum)"
+                  >
+                    {{ curriculum.curriculum_end_year }} -
+                    {{ curriculum.program.program_name }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Course Code -->
           <div class="w-full space-y-2">
-            <label for="course_code" class="font-bold">Course Code:</label>
+            <label for="course_code" class="input-label">Course Code:</label>
             <input
               v-model="form.course_code"
               type="text"
               id="course_code"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+              class="input-text"
               placeholder="Enter course code"
             />
           </div>
 
           <!-- Description -->
           <div class="w-full space-y-2">
-            <label for="course_title" class="font-bold">Course Description:</label>
+            <label for="course_title" class="input-label">Course Description:</label>
             <textarea
               v-model="form.course_title"
               id="course_title"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+              class="input-text"
               placeholder="Enter course description"
             />
           </div>
@@ -79,12 +72,8 @@
           <!-- Year + Semester -->
           <div class="w-full flex gap-3">
             <div class="w-full space-y-2">
-              <label class="font-bold">Year Level:</label>
-              <select
-                v-model="form.course_level"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md"
-              >
+              <label class="input-label">Year Level:</label>
+              <select v-model="form.course_level" required class="input-text">
                 <option disabled value="">Select Level</option>
                 <option value="1">First</option>
                 <option value="2">Second</option>
@@ -93,12 +82,8 @@
               </select>
             </div>
             <div class="w-full space-y-2">
-              <label class="font-bold">Semester:</label>
-              <select
-                v-model="form.course_semester"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md"
-              >
+              <label class="input-label">Semester:</label>
+              <select v-model="form.course_semester" required class="input-text">
                 <option disabled value="">Select Semester</option>
                 <option value="1">First</option>
                 <option value="2">Second</option>
@@ -109,27 +94,27 @@
           <!-- Lec/Lab -->
           <div class="w-full flex gap-3">
             <div class="w-full space-y-2">
-              <label class="font-bold">Lecture (Hours):</label>
+              <label class="input-label">Lecture (Hours):</label>
               <input
                 v-model="form.course_lec"
                 type="number"
                 required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md"
+                class="input-text"
               />
             </div>
             <div class="w-full space-y-2">
-              <label class="font-bold">Laboratory (Hours):</label>
+              <label class="input-label">Laboratory (Hours):</label>
               <input
                 v-model="form.course_lab"
                 type="number"
                 required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md"
+                class="input-text"
               />
             </div>
           </div>
 
           <div class="flex flex-col space-y-2 relative">
-            <label class="font-bold">Requisites :</label>
+            <label class="input-label">Requisites :</label>
 
             <!-- Show Add button if input is hidden -->
             <button
@@ -143,38 +128,38 @@
 
             <!-- Show input when button clicked -->
             <div v-if="showRequisiteInput" class="flex flex-col gap-2">
-              <div class="flex gap-2">
-                <input
-                  :value="form.course_requisite.join(', ')"
-                  @input="searchRequisiteQuery = $event.target.value"
-                  @focus="showRequisiteDropdown = true"
-                  type="text"
-                  placeholder="Search course prerequisite..."
-                  class="px-3 py-3 border w-full border-gray-600 rounded-md"
-                />
-                <!-- Cancel button -->
-                <button
-                  type="button"
-                  @click="cancelRequisites"
-                  class="text-red-600 px-2 py-1 border border-red-600 rounded-md hover:bg-red-600 hover:text-white"
-                >
-                  Cancel
-                </button>
-              </div>
+              <div class="dropdown-wrapper">
+                <div class="flex gap-2">
+                  <input
+                    :value="form.course_requisite.join(', ')"
+                    @input="searchRequisiteQuery = $event.target.value"
+                    @focus="showRequisiteDropdown = true"
+                    type="text"
+                    placeholder="Search course prerequisite..."
+                    class="input-text"
+                  />
+                  <!-- Cancel button -->
+                  <button
+                    type="button"
+                    @click="cancelRequisites"
+                    class="text-red-600 px-2 py-1 border border-red-600 rounded-md hover:bg-red-600 hover:text-white"
+                  >
+                    Cancel
+                  </button>
+                </div>
 
-              <!-- Dropdown -->
-              <div
-                v-if="showRequisiteDropdown && filteredCourse.length"
-                class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
-                @mouseleave="showRequisiteDropdown = false"
-              >
-                <div
-                  v-for="course in filteredCourse"
-                  :key="course.course_id"
-                  class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                  @mousedown="selectcourse(course)"
-                >
-                  {{ course.course_code }} - {{ course.course_title }}
+                <!-- Dropdown -->
+                <div v-if="showRequisiteDropdown">
+                  <div v-if="filteredCourse.length" class="dropdown-menu">
+                    <div
+                      v-for="course in filteredCourse"
+                      :key="course.course_id"
+                      class="dropdown-item"
+                      @mousedown="selectcourse(course)"
+                    >
+                      {{ course.course_code }} - {{ course.course_title }}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -191,9 +176,10 @@
               </span>
             </div>
           </div>
-
+          <!-- Divider -->
+          <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
           <!-- Buttons -->
-          <div class="flex justify-end gap-2 mt-4">
+          <div class="modal-footer">
             <button type="button" class="btn-cancel" @click="$emit('close')">
               Cancel
             </button>

@@ -133,6 +133,77 @@
 
 
 
+  /* MODAL GLOBAL CSS  */
+
+  .modal-overlay {
+    @apply fixed inset-0 bg-gray-800/50 flex justify-center items-center z-50;
+  }
+
+  .modal-wrapper {
+    @apply rounded-[16px] shadow-lg animate-slideUp;
+  }
+
+  .modal-container {
+    @apply bg-white text-[13px] rounded-[16px] shadow-lg;
+  }
+
+  .modal-header {
+    @apply w-full px-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow;
+  }
+
+  .modal-body {
+    @apply p-5 space-y-4;
+  }
+
+  .modal-footer {
+    @apply flex justify-end gap-2 pt-3;
+  }
+
+
+  .input-label {
+    @apply block text-[13px] font-normal text-gray-900;
+  }
+
+  .input-text {
+    @apply w-full rounded-lg border border-gray-400 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm outline-none transition-all duration-200 focus:border-green-700 focus:ring-2 focus:ring-green-200 hover:border-green-700;
+    ;
+  }
+
+  .input-text-disabled {
+    @apply w-full rounded-lg bg-gray-100 border border-gray-400 px-4 py-3 text-sm text-gray-700 shadow-sm outline-none transition-all duration-200 focus:border-green-700 focus:ring-2 focus:ring-green-200 hover:border-green-700;
+  }
+
+
+  /* SEARCHABLE DROPDOWN (GLOBAL) */
+  .dropdown-container {
+    @apply w-full;
+  }
+
+  .dropdown-label {
+    @apply block mb-2 text-[13px] font-normal text-gray-900;
+  }
+
+  .dropdown-wrapper {
+    @apply relative w-full;
+  }
+
+  .dropdown-input {
+    @apply w-full rounded-lg border border-gray-400 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm outline-none transition-all duration-200 focus:border-green-700 focus:ring-2 focus:ring-green-200 hover:border-green-700;
+  }
+
+  .dropdown-menu {
+    @apply absolute left-0 right-0 top-full mt-2 max-h-52 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg z-50;
+  }
+
+  .dropdown-item {
+    @apply cursor-pointer px-4 py-2.5 text-sm text-gray-700 transition-colors duration-150 hover:bg-green-50 hover:text-green-800;
+  }
+
+  .dropdown-empty {
+    @apply px-4 py-3 text-sm text-gray-400;
+  }
+
+  /* SELECT DROPDOWN (GLOBAL) */
 
 
 }

@@ -1,17 +1,9 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        ref="curriculumnForm"
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-      >
+  <div class="modal-overlay">
+    <div class="modal-wrapper">
+      <form ref="curriculumnForm" @submit.prevent="submitData" class="modal-container">
         <!-- Header -->
-        <div
-          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow"
-        >
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon name="add-students" />
             <h1 class="font-bold tracking-wide text-lg">
@@ -22,42 +14,53 @@
         </div>
 
         <!-- Body -->
-        <div class="p-5 w-[28vw] space-y-4">
+        <div class="w-[25vw] modal-body">
           <!-- Curriculum Name -->
           <div class="flex flex-col space-y-2">
-            <label class="font-bold">Curriculum Name:</label>
+            <label class="input-label">Curriculum Name:</label>
             <input
               :value="formattedCurriculumName"
               type="text"
               disabled
-              class="w-full border px-3 py-3 border-gray-600 rounded-md bg-gray-100 cursor-not-allowed"
+              class="input-text"
             />
           </div>
           <!-- Program -->
-          <div class="flex flex-col space-y-2 relative">
-            <label class="font-bold">Program:</label>
-            <input
-              v-model="searchProgramQuery"
-              type="text"
-              placeholder="Search program..."
-              class="px-3 py-3 border border-gray-600 rounded-md"
-              @focus="showProgramDropdown = true"
-              :disabled="isEdit"
-              required
-            />
+          <div class="dropdown-container">
+            <label class="dropdown-label">Program:</label>
 
-            <div
-              v-if="showProgramDropdown && filteredPrograms.length && !isEdit"
-              class="absolute top-[60px] w-full bg-white border rounded-md max-h-40 overflow-y-auto z-10"
-              @mouseleave="showProgramDropdown = false"
-            >
+            <div class="dropdown-wrapper">
+              <input
+                v-model="searchProgramQuery"
+                type="text"
+                placeholder="Search program..."
+                class="dropdown-input"
+                @focus="showProgramDropdown = true"
+                :disabled="isEdit"
+                required
+              />
+
               <div
-                v-for="program in filteredPrograms"
-                :key="program.program_id"
-                class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                @mousedown="selectProgram(program)"
+                v-if="showProgramDropdown && !isEdit"
+                class="dropdown-menu"
+                @mouseleave="showProgramDropdown = false"
               >
-                {{ program.program_name }}
+                <!-- WITH RESULTS -->
+                <div v-if="filteredPrograms.length">
+                  <div
+                    v-for="program in filteredPrograms"
+                    :key="program.program_id"
+                    class="dropdown-item"
+                    @mousedown.prevent="selectProgram(program)"
+                  >
+                    {{ program.program_name }}
+                  </div>
+                </div>
+
+                <!-- EMPTY -->
+                <div v-else>
+                  <div class="dropdown-empty">No program found</div>
+                </div>
               </div>
             </div>
           </div>
@@ -65,29 +68,27 @@
           <!-- Effective Year -->
 
           <div class="flex flex-col space-y-2">
-            <label class="font-bold">Effective Year:</label>
+            <label class="input-label">Effective Year:</label>
 
             <div class="flex gap-3">
               <!-- FROM -->
               <div class="flex-1">
-                <label class="font-bold">From:</label>
                 <input
                   v-model="form.curriculum_start_year"
                   type="number"
                   required
-                  class="w-full border px-3 py-3 border-gray-600 rounded-md"
+                  class="input-text"
                   placeholder="e.g. 2025"
                 />
               </div>
 
               <!-- TO -->
               <div class="flex-1">
-                <label class="font-bold">To:</label>
                 <input
                   v-model="form.curriculum_end_year"
                   type="number"
                   required
-                  class="w-full border px-3 py-3 border-gray-600 rounded-md"
+                  class="input-text"
                   placeholder="e.g. 2026"
                 />
               </div>

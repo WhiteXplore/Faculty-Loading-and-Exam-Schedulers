@@ -1,13 +1,9 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
+   <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
       <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5">
         <!-- Header -->
-        <div
-          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow"
-        >
+       <div class="modal-header">
           <div class="flex gap-1 items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"

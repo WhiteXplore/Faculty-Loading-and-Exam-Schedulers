@@ -109,45 +109,64 @@
     </div>
 
     <!-- Assign Modal -->
-    <div
-      v-if="assignModalVisible"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-    >
-      <div class="bg-white w-[400px] rounded-xl shadow-xl p-6 relative">
-        <h3 class="font-semibold text-lg mb-4">Assign Course</h3>
-        <p class="mb-4">
-          Assign
-          <span class="font-bold">{{ selectedCourse.course_code }}</span> to an
-          instructor.
-        </p>
+    <div v-if="assignModalVisible" class="modal-overlay">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+          <!-- HEADER -->
+          <div class="modal-header">
+            <h1 class="font-bold text-lg">Assign Course</h1>
+            <icon name="circle-close3" @click="closeAssignModal" class="cursor-pointer" />
+          </div>
 
-        <select
-          v-model="selectedInstructor"
-          class="w-full border rounded px-3 py-2 mb-4 text-sm"
-        >
-          <option value="">Select Instructor</option>
-          <option
-            v-for="instr in uniqueInstructors"
-            :key="instr.faculty_id"
-            :value="instr.faculty_id"
-          >
-            {{ instr.faculty_name }}
-          </option>
-        </select>
+          <!-- BODY -->
+          <div class="modal-body w-[25vw]">
+            <p class="text-[13px]">
+              Assign
+              <span class="font-bold text-defaultGreen">
+                {{ selectedCourse.course_code }}
+              </span>
+              to an instructor.
+            </p>
 
-        <div class="flex justify-end gap-2">
-          <button
-            @click="closeAssignModal"
-            class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400 text-xs"
-          >
-            Cancel
-          </button>
-          <button
-            @click="assignCourse"
-            class="px-3 py-1 bg-defaultGreen text-white rounded hover:bg-green-700 text-xs"
-          >
-            Assign
-          </button>
+            <div class="dropdown-container" ref="instructorDropdown">
+              <label class="dropdown-label">Instructor:</label>
+
+              <div class="dropdown-wrapper">
+                <input
+                  v-model="searchInstructorQuery"
+                  type="text"
+                  placeholder="Search instructor..."
+                  class="dropdown-input"
+                  @focus="showInstructorDropdown = true"
+                  @input="showInstructorDropdown = true"
+                />
+
+                <!-- DROPDOWN LIST -->
+                <div v-if="showInstructorDropdown" class="dropdown-menu">
+                  <div v-if="filteredInstructors.length">
+                    <div
+                      v-for="instr in filteredInstructors"
+                      :key="instr.faculty_id"
+                      class="dropdown-item"
+                      @mousedown.prevent="selectInstructor(instr)"
+                    >
+                      {{ instr.faculty_name }}
+                    </div>
+                  </div>
+
+                  <div v-else>
+                    <div class="dropdown-empty">No instructor found</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+              <button @click="closeAssignModal" class="btn-cancel">Cancel</button>
+              <button @click="assignCourse" class="btn-save">Assign</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -157,9 +176,12 @@
 <script>
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import axios from "axios";
-
+import icon from "@/assets/icon.vue";
 export default {
   name: "AssignCoursePage",
+  components: {
+    icon,
+  },
   props: {
     closeAddSchedulePanel: {
       type: Function,
@@ -176,6 +198,8 @@ export default {
       assignModalVisible: false,
       selectedCourse: {},
       selectedInstructor: "",
+      searchInstructorQuery: "",
+      showInstructorDropdown: false,
     };
   },
 
@@ -183,7 +207,13 @@ export default {
     store() {
       return useFetchDataStore();
     },
+    filteredInstructors() {
+      const query = this.searchInstructorQuery?.toLowerCase() || "";
 
+      return this.uniqueInstructors.filter((instr) =>
+        instr.faculty_name?.toLowerCase().includes(query)
+      );
+    },
     sectionMap() {
       const map = {};
       (this.store.sections || []).forEach((sec) => {
@@ -255,6 +285,17 @@ export default {
   },
 
   methods: {
+    handleClickOutside(event) {
+      const dropdown = this.$refs.instructorDropdown;
+      if (dropdown && !dropdown.contains(event.target)) {
+        this.showInstructorDropdown = false;
+      }
+    },
+    selectInstructor(instr) {
+      this.selectedInstructor = instr.faculty_id;
+      this.searchInstructorQuery = instr.faculty_name;
+      this.showInstructorDropdown = false;
+    },
     changePage(page) {
       this.currentPage = Math.max(1, Math.min(page, this.totalPages));
     },
@@ -289,12 +330,17 @@ export default {
       };
 
       this.assignModalVisible = true;
+      this.selectedInstructor = "";
+      this.searchInstructorQuery = "";
+      this.showInstructorDropdown = false;
     },
 
     closeAssignModal() {
       this.assignModalVisible = false;
       this.selectedCourse = {};
       this.selectedInstructor = "";
+      this.searchInstructorQuery = "";
+      this.showInstructorDropdown = false;
     },
 
     async assignCourse() {
@@ -402,6 +448,11 @@ export default {
     // console.log("unscheduled_meetings:", this.store.unscheduled_meetings);
     // console.log("sections:", this.store.sections);
     // console.log("sectionMap:", this.sectionMap);
+    document.addEventListener("click", this.handleClickOutside);
+  },
+
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside);
   },
 };
 </script>
