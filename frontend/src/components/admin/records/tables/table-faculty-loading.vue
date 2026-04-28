@@ -1,35 +1,65 @@
 <template>
-  <!-- TODO  Loading Overlay -->
-  <div
-    v-if="loading"
-    class="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50"
-  >
-    <div class="relative flex items-center justify-center">
+  <!-- TODO Loading Overlay -->
+  <transition name="loader-fade" appear>
+    <div v-if="loading" class="relative z-50" role="dialog" aria-modal="true">
       <div
-        class="absolute w-52 h-44 bg-gradient-to-r from-green-400/30 to-emerald-500/30 rounded-3xl animate-ping"
-      ></div>
-      <div
-        class="relative flex flex-col items-center justify-center bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-white/30"
+        class="fixed inset-0 flex items-center justify-center bg-[#063f2f]/90 backdrop-blur-md"
       >
-        <div class="relative mb-4">
-          <div
-            class="w-12 h-12 border-4 border-green-400 border-t-transparent rounded-full animate-spin"
-          ></div>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <span class="text-defaultGreen text-sm font-semibold"
-              >{{ Math.floor(progress) }}%</span
+        <div class="flex flex-col items-center justify-center animate-loaderUp">
+          <!-- Loader Container -->
+          <div class="relative flex h-36 w-36 items-center justify-center">
+            <!-- Outer Ring -->
+            <div
+              class="absolute h-36 w-36 rounded-full border-4 border-white/10 border-t-green-300 animate-spin"
+            ></div>
+
+            <!-- Pulse Ring -->
+            <div
+              class="absolute h-32 w-32 rounded-full border border-green-300/40 animate-ping"
+            ></div>
+
+            <!-- Middle Glow -->
+            <div
+              class="absolute h-28 w-28 rounded-full bg-white/10 blur-xl animate-pulse"
+            ></div>
+
+            <!-- Progress Card -->
+            <div
+              class="relative flex h-24 w-24 items-center justify-center rounded-full bg-white shadow-2xl ring-1 ring-white/40"
             >
+              <span class="text-defaultGreen text-xl font-bold">
+                {{ Math.floor(progress) }}%
+              </span>
+            </div>
           </div>
-        </div>
-        <div class="text-gray-700 font-semibold text-[15px] tracking-wide">
-          Generating Schedule...
-        </div>
-        <div class="text-xs text-gray-500 mt-1">
-          Please wait while we finalize your data.
+
+          <!-- Text -->
+          <div class="mt-8 text-center animate-fadeDelay">
+            <h2 class="text-lg font-bold tracking-wide text-white">
+              Generating Schedule...
+            </h2>
+
+            <p class="mt-2 text-sm text-white/70">
+              Please wait while we finalize your data.
+            </p>
+          </div>
+
+          <!-- Progress Dots -->
+          <div class="mt-5 flex gap-2">
+            <span class="h-2 w-2 animate-bounce rounded-full bg-white/80"></span>
+            <span
+              class="h-2 w-2 animate-bounce rounded-full bg-white/80"
+              style="animation-delay: 0.15s"
+            ></span>
+            <span
+              class="h-2 w-2 animate-bounce rounded-full bg-white/80"
+              style="animation-delay: 0.3s"
+            ></span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </transition>
 
   <!-- TODO  Confirm Save Modal -->
   <div
@@ -221,13 +251,15 @@
                 <!-- <thead class="sticky top-0 bg-gray-100 z-10"></thead> -->
                 <thead class="top-0 bg-gray-100 z-10">
                   <tr class="text-gray-700 border border-gray-200">
-                    <th class="px-4 py-2 border border-gray-200 w-24 text-center">
+                    <th
+                      class="px-4 py-2 border border-gray-200 bg-gray-100 text-gray-700 w-24 text-center"
+                    >
                       Time
                     </th>
                     <th
                       v-for="day in days"
                       :key="day"
-                      class="px-4 py-2 border border-gray-200 text-center w-28"
+                      class="px-4 py-2 border border-gray-200 bg-gray-100 text-gray-700 text-center w-28"
                     >
                       {{ day }}
                     </th>
@@ -987,7 +1019,10 @@ export default {
       } finally {
         clearInterval(this.progressInterval);
         this.progress = 100;
-        setTimeout(() => (this.loading = false), 400);
+
+        setTimeout(() => {
+          this.loading = false;
+        }, 400);
       }
     },
 
@@ -1173,6 +1208,65 @@ export default {
 };
 </script>
 <style>
+/* Fade whole loader */
+.loader-fade-enter-active,
+.loader-fade-leave-active {
+  transition: all 0.35s ease;
+}
+
+.loader-fade-enter-from,
+.loader-fade-leave-to {
+  opacity: 0;
+}
+
+/* Pop upward */
+@keyframes loaderUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-loaderUp {
+  animation: loaderUp 0.55s ease-out;
+}
+
+/* Floating card */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 2.2s ease-in-out infinite;
+}
+
+/* Delayed text */
+@keyframes fadeDelay {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeDelay {
+  animation: fadeDelay 0.7s ease-out 0.2s both;
+}
 /* Hide scrollbar but allow scrolling */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

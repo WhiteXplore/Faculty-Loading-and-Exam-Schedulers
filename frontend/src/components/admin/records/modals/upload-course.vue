@@ -145,6 +145,7 @@ export default {
             ITED: "Institute of Teacher Education",
             ILEGG: "Institute of Leadership, Entrepreneurship and Good Governance",
             IAAS: "Institute of Applied and Aquatic Sciences",
+            IADS: "Institute of Advanced Studies",
           };
 
           const programMap = {

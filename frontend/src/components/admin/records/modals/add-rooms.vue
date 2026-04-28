@@ -125,7 +125,11 @@
                 class="dropdown-input"
                 @focus="showBuildingDropdown = true"
               />
-              <div v-if="showBuildingDropdown" class="dropdown-menu">
+              <div
+                v-if="showBuildingDropdown"
+                class="dropdown-menu"
+                @mouseleave="showBuildingDropdown = false"
+              >
                 <div v-if="filteredBuildings.length">
                   <div
                     v-for="building in filteredBuildings"
@@ -249,15 +253,20 @@ export default {
     };
   },
   watch: {
-    "form.room_type"(newType) {
+    "form.room_type"(newType, oldType) {
+      // Only clear when user actually changes room type, not while loading edit data
+      if (!oldType) return;
+
       if (newType === "Lecture") {
         this.form.institute_id = null;
         this.searchInstituteQuery = "";
+        // DO NOT clear building_id
       }
 
       if (newType === "Laboratory") {
-        this.form.building_id = null;
-        this.searchBuildingQuery = "";
+        this.form.institute_id = null;
+        this.searchInstituteQuery = "";
+        // DO NOT clear building_id
       }
     },
   },
@@ -313,6 +322,12 @@ export default {
     },
     selectRoomType(type) {
       this.form.room_type = type;
+
+      if (type === "Lecture") {
+        this.form.institute_id = null;
+        this.searchInstituteQuery = "";
+      }
+
       this.showRoomTypeDropdown = false;
     },
     selectInstitute(institute) {
@@ -346,13 +361,31 @@ export default {
         form.reportValidity();
         return;
       }
+      if (!this.searchInstituteQuery) {
+        this.form.institute_id = null;
+      }
+
+      if (!this.searchBuildingQuery) {
+        this.form.building_id = null;
+      }
 
       try {
         const payload = {
-          ...this.form,
+          room_name: this.form.room_name,
+          room_type: this.form.room_type,
           room_capacity: Number(this.form.room_capacity),
-          institute_id: this.form.institute_id ? Number(this.form.institute_id) : null,
-          building_id: this.form.building_id ? Number(this.form.building_id) : null,
+          status: this.form.status,
+
+          // IMPORTANT: send null when cleared
+          institute_id:
+            this.form.institute_id === "" || this.form.institute_id === null
+              ? null
+              : Number(this.form.institute_id),
+
+          building_id:
+            this.form.building_id === "" || this.form.building_id === null
+              ? null
+              : Number(this.form.building_id),
         };
 
         if (this.isEditMode) {
