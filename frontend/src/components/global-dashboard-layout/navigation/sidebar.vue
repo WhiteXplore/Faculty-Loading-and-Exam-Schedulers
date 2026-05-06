@@ -11,46 +11,40 @@
         <icon
           :name="'burger'"
           class="cursor-pointer"
-          :class="{ 'flex w-full justify-center items-center ': !isExpanded }"
+          :class="{ 'flex w-full justify-center items-center  ': !isExpanded }"
         />
       </div>
 
       <!-- Logo and user info -->
-      <div class="flex flex-col items-center justify-center w-full">
+      <!-- Logo and user info -->
+      <div
+        v-if="isExpanded"
+        class="flex flex-row items-center justify-start gap-2 w-full p-2 rounded-md mt-1 bg-black/10 backdrop-blur-lg transition-all duration-200"
+      >
         <img
           src="../../../assets/img/dnsc_logo.png"
           alt="Logo"
-          :class="{
-            'w-16 rounded-full border-white border ': isExpanded,
-            hidden: !isExpanded,
-          }"
-          whitespace-nowrap
+          class="w-10 rounded-lg border-white border"
         />
-        <p
-          :class="{
-            'text-sm font-medium mt-2': isExpanded,
-            hidden: !isExpanded,
-          }"
-        >
-          {{ user.first_name }}
-        </p>
-        <p
-          :class="{
-            'text-[13px] font-medium tracking-wider': isExpanded,
-            hidden: !isExpanded,
-          }"
-        >
-          {{ user.email }}
-        </p>
+
+        <div class="flex flex-col leading-tight">
+          <p class="text-sm font-medium">
+            {{ user.first_name }}
+          </p>
+
+          <p class="text-[13px] font-medium tracking-wider">
+            {{ user.position || user.role }}
+          </p>
+        </div>
       </div>
 
-      <div v-if="isExpanded" class="w-full h-0.5 bg-[#fbfbfb] mt-4"></div>
+      <!-- <div v-if="isExpanded" class="w-full h-0.5 bg-[#fbfbfb] mt-4"></div> -->
 
       <!-- Dynamic Menu -->
       <div
         :class="[
-          'flex flex-col justify-between mt-6 tracking-wide text-[13px] w-full',
-          isExpanded ? 'h-[calc(100vh-200px)]' : 'h-[90vh]',
+          'flex flex-col justify-between tracking-wide text-[13px] w-full transition-all duration-200',
+          isExpanded ? 'mt-4 h-[calc(100vh-175px)]' : 'mt-3 h-[calc(100vh-70px)]',
         ]"
       >
         <!-- TOP MENU -->

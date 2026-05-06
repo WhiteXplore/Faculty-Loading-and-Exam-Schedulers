@@ -1,71 +1,13 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4 rounded-md">
-    <!-- HEADER + CARDS (PREMIUM LAYOUT) -->
-    <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 mb-6">
-      <!-- LEFT: Welcome -->
-      <div
-        class="flex flex-col justify-between bg-defaultGreen xl:w-[40vw] w-full rounded-2xl px-2 py-3 text-white h-full"
-      >
-        <div class="p-5">
-          <h1 class="text-lg font-semibold tracking-tight">
-            Welcome, {{ user.first_name }} 👋
-          </h1>
-          <p class="text-xs text-white/80 mt-1">
-            Faculty loading & exam scheduling overview
-          </p>
-        </div>
-
-        <!-- OPTIONAL bottom content for balance -->
-        <div class="mt-4 text-xs text-white/60">Dashboard Overview</div>
-      </div>
-
-      <!-- RIGHT: CARDS -->
-      <div class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
-        <div
-          v-for="card in dashboardCards"
-          :key="card.title"
-          class="relative overflow-hidden rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 p-4 min-w-[180px]"
-        >
-          <!-- Background Glow -->
-          <!-- <div
-            class="absolute -right-6 -top-6 h-24 w-24 rounded-full opacity-10"
-            :class="card.bg"
-          ></div> -->
-
-          <div class="relative flex items-start justify-between">
-            <div>
-              <p class="text-xs font-medium text-gray-500">
-                {{ card.title }}
-              </p>
-
-              <h2 class="mt-2 text-2xl font-semibold text-gray-900">
-                {{ card.value }}
-              </h2>
-
-              <div class="mt-3 flex items-center gap-2">
-                <span
-                  class="rounded-full px-2.5 py-1 text-[11px] font-semibold"
-                  :class="card.badgeClass"
-                >
-                  {{ card.badge }}
-                </span>
-
-                <span class="text-xs text-gray-400">
-                  {{ card.caption }}
-                </span>
-              </div>
-            </div>
-
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-xl shadow-sm"
-              :class="card.iconBox"
-            >
-              <icon :name="card.icon" class="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="min-h-screen bg-gray-100 p-4 rounded-md">
+    <!-- Header -->
+    <div class="mb-4 text-left">
+      <h1 class="text-2xl font-semibold text-gray-800">
+        Welcome, {{ user.first_name }} 👋
+      </h1>
+      <p class="text-sm text-gray-500">Here's what's happening today</p>
     </div>
+
     <!-- Main Content -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Calendar -->
@@ -130,7 +72,9 @@
 
       <!-- Announcements -->
       <div class="bg-white rounded-2xl shadow p-6 h-[80vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
+        <div
+          class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2"
+        >
           <h2 class="text-xl font-semibold text-gray-700">Announcements</h2>
           <icon :name="'3dots'" />
         </div>
@@ -214,7 +158,9 @@
         </div>
 
         <p
-          v-if="!todaysEvents.length && !upcomingEvents.length && !pastEvents.length"
+          v-if="
+            !todaysEvents.length && !upcomingEvents.length && !pastEvents.length
+          "
           class="text-sm text-gray-500"
         >
           No announcements to show.
@@ -240,7 +186,10 @@
             Delete
           </button>
           <div class="flex gap-2">
-            <button @click="closeEventModal" class="text-gray-600 hover:underline">
+            <button
+              @click="closeEventModal"
+              class="text-gray-600 hover:underline"
+            >
               Cancel
             </button>
             <button
@@ -292,48 +241,6 @@ export default {
       selectedDate: null,
       showEventModal: false,
       selectedEvent: null,
-      dashboardCards: [
-        {
-          title: "Total Faculty",
-          value: "48",
-          badge: "+12%",
-          caption: "active instructors",
-          icon: "users",
-          bg: "bg-green-600",
-          iconBox: "bg-green-50 text-green-700",
-          badgeClass: "bg-green-50 text-green-700",
-        },
-        {
-          title: "Loaded Subjects",
-          value: "126",
-          badge: "82%",
-          caption: "assigned courses",
-          icon: "book",
-          bg: "bg-blue-600",
-          iconBox: "bg-blue-50 text-blue-700",
-          badgeClass: "bg-blue-50 text-blue-700",
-        },
-        {
-          title: "Exam Schedules",
-          value: "34",
-          badge: "This week",
-          caption: "scheduled exams",
-          icon: "calendar",
-          bg: "bg-purple-600",
-          iconBox: "bg-purple-50 text-purple-700",
-          badgeClass: "bg-purple-50 text-purple-700",
-        },
-        {
-          title: "Conflicts Found",
-          value: "7",
-          badge: "Needs review",
-          caption: "room/time conflicts",
-          icon: "warning1",
-          bg: "bg-red-600",
-          iconBox: "bg-red-50 text-red-700",
-          badgeClass: "bg-red-50 text-red-700",
-        },
-      ],
     };
   },
   computed: {
@@ -356,7 +263,12 @@ export default {
 
       for (let i = 1; i <= endOfMonth.date(); i++) {
         days.push(
-          dayjs(`${this.currentMonth.format("YYYY-MM")}-${String(i).padStart(2, "0")}`)
+          dayjs(
+            `${this.currentMonth.format("YYYY-MM")}-${String(i).padStart(
+              2,
+              "0"
+            )}`
+          )
         );
       }
 
@@ -370,7 +282,9 @@ export default {
       return this.selectedEvent ? this.formatDate(this.selectedEvent) : "";
     },
     todaysEvents() {
-      return this.events.filter((e) => dayjs(e.startDate).isSame(dayjs(), "day"));
+      return this.events.filter((e) =>
+        dayjs(e.startDate).isSame(dayjs(), "day")
+      );
     },
     upcomingEvents() {
       return this.events

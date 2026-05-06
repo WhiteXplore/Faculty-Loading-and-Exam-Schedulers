@@ -1,24 +1,19 @@
 <template>
-   <div class="modal-overlay">
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitExpertise"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-      >
-        <!-- Header -->
-       <div class="modal-header">
+  <div class="modal-overlay">
+    <div class="modal-wrapper">
+      <form @submit.prevent="submitExpertise" class="modal-container">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'edit'" />
-            <h1 class="font-bold tracking-wide text-lg">Edit Expertise</h1>
+            <h1 class="font-bold tracking-wide text-lg">Edit Expertises</h1>
           </div>
+
           <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
-        <!-- Content -->
-        <div class="p-5 w-[32vw] space-y-6">
-          <!-- ✅ YEAR LEVEL -->
-          <div>
-            <label class="font-bold text-sm">Select Year Level:</label>
+        <div class="w-[25vw] modal-body">
+          <div class="w-full space-y-2">
+            <label class="input-label">Select Year Level:</label>
             <select
               v-model="selectedYearLevel"
               class="w-full border px-3 py-2.5 rounded-md text-sm"
@@ -29,9 +24,8 @@
             </select>
           </div>
 
-          <!-- SEMESTER -->
-          <div>
-            <label class="font-bold text-sm">Select Semester:</label>
+          <div class="w-full space-y-2">
+            <label class="input-label">Select Semester:</label>
             <select
               v-model="selectedSemester"
               class="w-full border px-3 py-2.5 rounded-md text-sm"
@@ -42,13 +36,9 @@
             </select>
           </div>
 
-          <!-- CONTENT -->
           <div class="space-y-5">
-            <!-- ===================== -->
-            <!-- EXPERTISE -->
-            <!-- ===================== -->
-            <div class="space-y-2 relative">
-              <label class="font-bold">
+            <div class="w-full space-y-2 relative">
+              <label class="input-label">
                 Expertise ({{ getSemesterName(selectedSemester) }})
               </label>
 
@@ -59,9 +49,9 @@
                 class="w-full border px-3 py-2.5 rounded-md"
               />
 
-              <!-- DROPDOWN -->
               <ul
                 v-if="dropdownOpen && filteredCourses.length"
+                @mouseleave="dropdownOpen = false"
                 class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
               >
                 <li
@@ -73,7 +63,6 @@
                   <span>
                     {{ course.course_code }} - {{ course.course_title }}
 
-                    <!-- ✅ CURRICULUM DISPLAY -->
                     <span v-if="course.curriculum" class="text-xs text-gray-500 ml-2">
                       ({{ course.curriculum.curriculum_start_year }} -
                       {{ course.curriculum.curriculum_end_year }})
@@ -82,35 +71,24 @@
                 </li>
               </ul>
 
-              <!-- SELECTED -->
               <div
                 v-if="currentSemesterData.expertise.length"
-                class="border rounded-md mt-2"
+                class="border rounded-md mt-2 space-y-1"
               >
                 <div
                   v-for="(item, i) in currentSemesterData.expertise"
-                  :key="i"
-                  class="flex justify-between px-3 py-2 bg-green-50"
+                  :key="`${item.course_id}-primary-${i}`"
+                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded gap-3"
                 >
-                  <span>
-                    {{ item.course_code }} - {{ item.course_title }}
-
-                    <span v-if="item.curriculum" class="text-xs text-gray-500 ml-2">
-                      ({{ item.curriculum.curriculum_start_year }} -
-                      {{ item.curriculum.curriculum_end_year }})
-                    </span>
-                  </span>
+                  <span> {{ item.course_code }} - {{ item.course_title }} </span>
 
                   <button type="button" @click="removeCourse(i)">❌</button>
                 </div>
               </div>
             </div>
 
-            <!-- ===================== -->
-            <!-- OTHER -->
-            <!-- ===================== -->
-            <div class="space-y-2 relative">
-              <label class="font-bold">
+            <div class="w-full space-y-2 relative">
+              <label class="input-label">
                 Other Expertise ({{ getSemesterName(selectedSemester) }})
               </label>
 
@@ -123,6 +101,7 @@
 
               <ul
                 v-if="otherDropdownOpen && filteredOtherCourses.length"
+                @mouseleave="otherDropdownOpen = false"
                 class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
               >
                 <li
@@ -132,33 +111,28 @@
                   class="px-3 py-2 hover:bg-green-100 cursor-pointer"
                 >
                   <span>
-                    {{ course.course_code }} - {{ course.course_title }}
-
-                    <span v-if="course.curriculum" class="text-xs text-gray-500 ml-2">
-                      ({{ course.curriculum.curriculum_start_year }} -
-                      {{ course.curriculum.curriculum_end_year }})
+                    <span
+                      v-if="course.program_code"
+                      class="px-2 py-0.5 rounded-full bg-defaultGreen text-white text-[10px] mr-1"
+                    >
+                      {{ course.program_code }}
                     </span>
+
+                    {{ course.course_code }} - {{ course.course_title }}
                   </span>
                 </li>
               </ul>
 
               <div
                 v-if="currentSemesterData.other_expertise.length"
-                class="border rounded-md mt-2"
+                class="border rounded-md mt-2 space-y-1"
               >
                 <div
                   v-for="(item, i) in currentSemesterData.other_expertise"
-                  :key="i"
-                  class="flex justify-between px-3 py-2 bg-green-50"
+                  :key="`${item.course_id}-other-${i}`"
+                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded gap-3"
                 >
-                  <span>
-                    {{ item.course_code }} - {{ item.course_title }}
-
-                    <span v-if="item.curriculum" class="text-xs text-gray-500 ml-2">
-                      ({{ item.curriculum.curriculum_start_year }} -
-                      {{ item.curriculum.curriculum_end_year }})
-                    </span>
-                  </span>
+                  <span> {{ item.course_code }} - {{ item.course_title }} </span>
 
                   <button type="button" @click="removeOtherCourse(i)">❌</button>
                 </div>
@@ -166,9 +140,12 @@
             </div>
           </div>
 
-          <!-- SAVE -->
-          <div class="flex justify-end">
-            <button class="bg-green-600 text-white px-4 py-2 rounded">Save</button>
+          <div class="flex gap-2 justify-end">
+            <button type="button" class="btn-cancel" @click="$emit('close')">
+              Cancel
+            </button>
+
+            <button type="submit" class="btn-save">Submit</button>
           </div>
         </div>
       </form>
@@ -181,8 +158,16 @@ import { useFetchDataStore } from "@/store/fetch-data-store";
 import { mapState, mapActions } from "pinia";
 import axios from "axios";
 import { toast } from "vue3-toastify";
+import icon from "@/assets/icon.vue";
+
 export default {
-  props: { userData: Object },
+  props: {
+    userData: Object,
+  },
+
+  components: {
+    icon,
+  },
 
   data() {
     return {
@@ -204,85 +189,141 @@ export default {
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["courses"]),
+    ...mapState(useFetchDataStore, ["courses", "programs", "curriculum_courses"]),
+
+    currentUserInstituteId() {
+      return Number(this.userData?.institute?.institute_id || 0);
+    },
+
+    currentUserProgramId() {
+      return Number(this.userData?.program?.program_id || 0);
+    },
 
     currentSemesterData() {
       return this.form.semesters[this.selectedSemester];
     },
 
-    // ✅ Get latest curriculum year
-    latestCurriculumYear() {
-      const years = this.courses
-        .map((c) => c.curriculum?.curriculum_start_year)
-        .filter(Boolean);
+    normalizedCurriculumCourses() {
+      if (!Array.isArray(this.curriculum_courses)) return [];
 
-      return years.length ? Math.max(...years) : null;
+      return this.curriculum_courses
+        .map((item) => ({
+          curriculum_course_id: item.curriculum_course_id,
+          curriculum_id: item.curriculum_id,
+          course_id: Number(item.course?.course_id || item.course_id),
+          course_code: item.course?.course_code || "",
+          course_title: item.course?.course_title || "",
+          course_semester: Number(item.course?.course_semester || 0),
+          course_level: Number(item.course?.course_level || 0),
+
+          institute_id: Number(item.curriculum?.institute_id || 0),
+          program_id: Number(item.curriculum?.program_id || 0),
+
+          program_code: item.curriculum?.program?.program_code || "",
+          program_name: item.curriculum?.program?.program_name || "",
+          curriculum: item.curriculum || null,
+        }))
+        .filter((c) => c.course_id);
     },
 
-    // ✅ TRUE only if BOTH old and new curriculum exist
-    hasNewCurriculum() {
-      const years = this.courses
-        .map((c) => c.curriculum?.curriculum_start_year)
-        .filter(Boolean);
+    normalizedCourses() {
+      if (!Array.isArray(this.courses)) return [];
 
-      const unique = [...new Set(years)];
-
-      return unique.length > 1;
+      return this.courses.map((c) => ({
+        course_id: Number(c.course_id),
+        course_code: c.course_code || "",
+        course_title: c.course_title || "",
+        course_semester: Number(c.course_semester || 0),
+        course_level: Number(c.course_level || 0),
+        program_id: Number(c.program_id || c.program?.program_id || 0),
+        program_code: c.program?.program_code || "",
+        program_name: c.program?.program_name || "",
+        institute_id: Number(c.institute_id || c.program?.institute_id || 0),
+        curriculum: c.curriculum || null,
+      }));
     },
 
-    // =========================
-    // EXPERTISE FILTER (FIXED)
-    // =========================
     filteredCourses() {
-      return this.courses.filter((c) => {
-        const year = c.curriculum?.curriculum_start_year;
+      const search = (this.searchQuery || "").toLowerCase().trim();
 
-        let validCurriculum = true;
+      const matchSearch = (c) =>
+        !search ||
+        (c.course_code || "").toLowerCase().includes(search) ||
+        (c.course_title || "").toLowerCase().includes(search);
 
-        if (this.hasNewCurriculum) {
-          if (this.selectedYearLevel === 1) {
-            validCurriculum = year === this.latestCurriculumYear;
-          } else {
-            validCurriculum = year !== this.latestCurriculumYear;
-          }
-        }
-
+      const sameProgramCourses = this.normalizedCurriculumCourses.filter((c) => {
         return (
-          c.course_semester === this.selectedSemester &&
-          c.course_level === this.selectedYearLevel &&
-          validCurriculum &&
-          c.curriculum?.program_id === this.userData.program.program_id &&
-          c.curriculum?.program?.institute_id === this.userData.institute.institute_id &&
-          c.course_code.toLowerCase().includes(this.searchQuery.toLowerCase())
+          Number(c.institute_id) === this.currentUserInstituteId &&
+          Number(c.program_id) === this.currentUserProgramId
         );
+      });
+
+      const strictMatch = sameProgramCourses.filter((c) => {
+        return (
+          Number(c.course_semester) === Number(this.selectedSemester) &&
+          Number(c.course_level) === Number(this.selectedYearLevel)
+        );
+      });
+
+      const source = strictMatch.length ? strictMatch : sameProgramCourses;
+
+      return source.filter((c) => {
+        const notInPrimary = !this.currentSemesterData.expertise.some(
+          (e) => Number(e.course_id) === Number(c.course_id)
+        );
+
+        const notInOther = !this.currentSemesterData.other_expertise.some(
+          (e) => Number(e.course_id) === Number(c.course_id)
+        );
+
+        return matchSearch(c) && notInPrimary && notInOther;
       });
     },
 
-    // =========================
-    // OTHER EXPERTISE FILTER (FIXED)
-    // =========================
     filteredOtherCourses() {
-      return this.courses.filter((c) => {
-        const year = c.curriculum?.curriculum_start_year;
+      const search = (this.otherSearchQuery || "").toLowerCase().trim();
 
-        let validCurriculum = true;
+      const matchSearch = (c) =>
+        !search ||
+        (c.course_code || "").toLowerCase().includes(search) ||
+        (c.course_title || "").toLowerCase().includes(search);
 
-        if (this.hasNewCurriculum) {
-          if (this.selectedYearLevel === 1) {
-            validCurriculum = year === this.latestCurriculumYear;
-          } else {
-            validCurriculum = year !== this.latestCurriculumYear;
-          }
+      const otherProgramCurriculumCourses = this.normalizedCurriculumCourses.filter(
+        (c) => {
+          return (
+            Number(c.institute_id) === this.currentUserInstituteId &&
+            Number(c.program_id) !== this.currentUserProgramId
+          );
         }
+      );
 
+      const strictMatch = otherProgramCurriculumCourses.filter((c) => {
         return (
-          c.course_semester === this.selectedSemester &&
-          c.course_level === this.selectedYearLevel &&
-          validCurriculum &&
-          c.curriculum?.program?.institute_id === this.userData.institute.institute_id &&
-          c.course_code.toLowerCase().includes(this.otherSearchQuery.toLowerCase())
+          Number(c.course_semester) === Number(this.selectedSemester) &&
+          Number(c.course_level) === Number(this.selectedYearLevel)
         );
       });
+
+      const source = strictMatch.length ? strictMatch : otherProgramCurriculumCourses;
+
+      const uniqueCourseIds = [
+        ...new Set(source.map((c) => Number(c.course_id)).filter(Boolean)),
+      ];
+
+      return this.normalizedCourses
+        .filter((c) => uniqueCourseIds.includes(Number(c.course_id)))
+        .filter((c) => {
+          const notInPrimary = !this.currentSemesterData.expertise.some(
+            (e) => Number(e.course_id) === Number(c.course_id)
+          );
+
+          const notInOther = !this.currentSemesterData.other_expertise.some(
+            (e) => Number(e.course_id) === Number(c.course_id)
+          );
+
+          return matchSearch(c) && notInPrimary && notInOther;
+        })
+        .sort((a, b) => (a.course_code || "").localeCompare(b.course_code || ""));
     },
   },
 
@@ -298,50 +339,44 @@ export default {
   },
 
   methods: {
-    ...mapActions(useFetchDataStore, ["fetchCourses"]),
+    ...mapActions(useFetchDataStore, [
+      "fetchCourses",
+      "fetchPrograms",
+      "fetchCurriculumCourses",
+    ]),
 
     getSemesterName(s) {
-      return s === 1 ? "1st" : s === 2 ? "2nd" : "Summer";
+      return Number(s) === 1 ? "1st" : Number(s) === 2 ? "2nd" : "Summer";
     },
 
     getYearLevelName(y) {
       return `${y}${["st", "nd", "rd", "th"][y - 1]} Year`;
     },
 
-    // =========================
-    // LOAD EXISTING DATA (SAFE)
-    // =========================
-    loadExistingData(user) {
-      const semesters = {
-        1: { expertise: [], other_expertise: [] },
-        2: { expertise: [], other_expertise: [] },
-        3: { expertise: [], other_expertise: [] },
-      };
+    isAlreadySelected(course) {
+      const id = Number(course?.course_id);
+      if (!id) return false;
 
-      const groupBySemester = (list, target) => {
-        (list || []).forEach((item) => {
-          const sem = item.course?.course_semester;
-
-          if (sem && semesters[sem]) {
-            semesters[sem][target].push(item.course);
-          }
-        });
-      };
-
-      groupBySemester(user.expertise, "expertise");
-      groupBySemester(user.other_expertise, "other_expertise");
-
-      this.form.semesters = semesters;
+      return (
+        this.currentSemesterData.expertise.some((c) => Number(c.course_id) === id) ||
+        this.currentSemesterData.other_expertise.some((c) => Number(c.course_id) === id)
+      );
     },
 
-    addCourse(c) {
-      this.currentSemesterData.expertise.push(c);
+    addCourse(course) {
+      if (this.isAlreadySelected(course)) return;
+
+      this.currentSemesterData.expertise.push({ ...course });
       this.dropdownOpen = false;
+      this.searchQuery = "";
     },
 
-    addOtherCourse(c) {
-      this.currentSemesterData.other_expertise.push(c);
+    addOtherCourse(course) {
+      if (this.isAlreadySelected(course)) return;
+
+      this.currentSemesterData.other_expertise.push({ ...course });
       this.otherDropdownOpen = false;
+      this.otherSearchQuery = "";
     },
 
     removeCourse(i) {
@@ -351,20 +386,80 @@ export default {
     removeOtherCourse(i) {
       this.currentSemesterData.other_expertise.splice(i, 1);
     },
+
+    loadExistingData(user) {
+      const semesters = {
+        1: { expertise: [], other_expertise: [] },
+        2: { expertise: [], other_expertise: [] },
+        3: { expertise: [], other_expertise: [] },
+      };
+
+      const allMappedCourses = [
+        ...this.normalizedCurriculumCourses,
+        ...this.normalizedCourses,
+      ];
+
+      const mapCourse = (id) =>
+        allMappedCourses.find((c) => Number(c.course_id) === Number(id)) || null;
+
+      const fallbackCourse = (ex) => ({
+        course_id: Number(ex?.course?.course_id || ex?.course_id),
+        course_code: ex?.course?.course_code || "",
+        course_title: ex?.course?.course_title || "",
+        course_semester: Number(ex?.course?.course_semester || 1),
+        course_level: Number(ex?.course?.course_level || 1),
+        program_id: Number(ex?.course?.program_id || 0),
+        program_code: ex?.course?.program?.program_code || "",
+        curriculum: ex?.course?.curriculum || null,
+      });
+
+      (user.expertise || []).forEach((ex) => {
+        if (ex.status === "CROSS") return;
+
+        const rawId = ex?.course?.course_id || ex?.course_id;
+        const course = mapCourse(rawId) || fallbackCourse(ex);
+
+        const sem = Number(course.course_semester || 1);
+
+        if (!semesters[sem]) {
+          semesters[sem] = { expertise: [], other_expertise: [] };
+        }
+
+        if (ex.status === "OTHER") {
+          semesters[sem].other_expertise.push(course);
+        } else {
+          semesters[sem].expertise.push(course);
+        }
+      });
+
+      this.form.semesters = semesters;
+    },
+
     async submitExpertise() {
       try {
-        const allExpertise = Object.values(this.form.semesters)
-          .flatMap((s) => s.expertise)
-          .map((c) => c.course_id);
-        const allOther = Object.values(this.form.semesters)
-          .flatMap((s) => s.other_expertise)
-          .map((c) => c.course_id);
+        const existingCross = (this.userData.expertise || [])
+          .filter((e) => e.status === "CROSS")
+          .map((e) => ({
+            course_id: e.course?.course_id || e.course_id,
+            status: "CROSS",
+          }));
 
-        const payload = { expertise: allExpertise, other_expertise: allOther };
+        const assignPayload = Object.values(this.form.semesters).flatMap((s) => [
+          ...s.expertise.map((c) => ({
+            course_id: c.course_id,
+            status: "PRIMARY",
+          })),
+          ...s.other_expertise.map((c) => ({
+            course_id: c.course_id,
+            status: "OTHER",
+          })),
+        ]);
 
         await axios.patch(
-          process.env.VUE_APP_API_BASE_URL + `/auth/update/${this.userData.id}`,
-          payload,
+          `${process.env.VUE_APP_API_BASE_URL}/auth/update/${this.userData.id}`,
+          {
+            expertise: [...assignPayload, ...existingCross],
+          },
           { withCredentials: true }
         );
 
@@ -372,6 +467,7 @@ export default {
         this.$emit("updated");
         this.$emit("close");
       } catch (error) {
+        console.error(error);
         toast.error(error?.response?.data?.message || "Failed to update expertise");
       }
     },
@@ -379,6 +475,12 @@ export default {
 
   async mounted() {
     await this.fetchCourses();
+    await this.fetchPrograms();
+    await this.fetchCurriculumCourses();
+
+    if (this.userData) {
+      this.loadExistingData(this.userData);
+    }
   },
 };
 </script>
