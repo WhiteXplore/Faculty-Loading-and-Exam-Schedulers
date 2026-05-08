@@ -18,24 +18,32 @@
     <div class="flex items-center gap-2">
       <!-- Dropdown -->
       <div v-if="activeYears.length > 1" class="relative flex items-center">
+        <!-- Calendar Icon -->
+        <div
+          class="pointer-events-none absolute left-3 flex items-center text-green-700 z-10"
+        >
+          <icon name="calendar" />
+        </div>
+
         <select
           v-model="selectedSchoolYearId"
           @change="updateSchoolYear"
           @focus="isDropdownOpen = true"
           @blur="isDropdownOpen = false"
-          class="appearance-none rounded-xl border border-green-600 bg-white py-2 pl-4 pr-10 text-center text-green-900 text-sm font-semibold cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-lg"
+          class="appearance-none rounded-xl border border-gray-200 bg-white py-2 pl-4 pr-3 text-center text-green-900 text-sm font-normal cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-lg"
         >
           <option value="" disabled>Select Active School Year</option>
           <option
             v-for="sy in activeYears"
             :key="sy.school_year_id"
             :value="sy.school_year_id"
+            class="dropdown-item"
           >
             {{ sy.school_year_name }} {{ getSemesterLabel(sy.semester) }}
           </option>
         </select>
 
-        <!-- Icon -->
+        <!-- Arrow Icon -->
         <div
           class="pointer-events-none absolute right-3 flex items-center transition-transform duration-300 text-green-700"
           :class="{ 'rotate-180': isDropdownOpen }"
@@ -52,18 +60,6 @@
         </div>
       </div>
 
-      <!-- Static -->
-      <div
-        v-else
-        class="border border-green-600 rounded-xl px-4 py-1.5 text-green-900 text-sm font-semibold flex items-center justify-center"
-      >
-        <span v-if="activeYears.length === 1">
-          {{ activeYears[0].school_year_name }}
-          {{ getSemesterLabel(activeYears[0].semester) }}
-        </span>
-        <span v-else class="text-gray-500">No Active Year</span>
-      </div>
-
       <!-- Profile -->
       <div class="flex items-center gap-2 cursor-pointer" @click.stop="toggleOpenProfile">
         <div
@@ -76,14 +72,14 @@
           />
         </div>
 
-        <div class="text-left leading-tight">
+        <!-- <div class="text-left leading-tight">
           <h1 class="text-sm font-semibold text-gray-800">
             {{ user.last_name }}, {{ user.first_name || "Guest" }}
           </h1>
           <h2 class="text-xs text-gray-500">
             {{ user.role || "No Role" }}
           </h2>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -92,7 +88,7 @@
   <div
     v-if="isOpenProfile"
     ref="profileDropdown"
-    class="absolute top-[70px] right-6 z-50"
+    class="absolute top-[68px] right-1 z-50"
   >
     <Profile />
   </div>
@@ -102,10 +98,10 @@
 import axios from "axios";
 import Profile from "./profile-setting.vue";
 import { eventBus } from "@/bus/event-bus";
-
+import icon from "@/assets/icon.vue";
 export default {
   name: "TopBarPage",
-  components: { Profile },
+  components: { Profile, icon },
 
   data() {
     return {
@@ -192,7 +188,7 @@ export default {
     },
 
     getSemesterLabel(sem) {
-      return sem === 1 ? "1st Semester" : sem === 2 ? "2nd Semester" : "";
+      return sem === 1 ? "1st Sem" : sem === 2 ? "2nd Sem" : "";
     },
 
     async updateSchoolYear() {

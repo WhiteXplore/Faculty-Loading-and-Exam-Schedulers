@@ -31,7 +31,8 @@ async function bootstrap() {
   'http://localhost:8080',
   'http://localhost:5173',
   'http://192.168.2.176:8080',
-  'http://192.168.1.57:8080'
+  // 'http://192.168.1.57:8080',
+    'http://192.168.2.177:8080'
 ];
     app.enableCors({
       origin: (origin, callback) => {
@@ -65,3 +66,4 @@ await app.listen(port, '0.0.0.0');
 }
 
 bootstrap();
+ 

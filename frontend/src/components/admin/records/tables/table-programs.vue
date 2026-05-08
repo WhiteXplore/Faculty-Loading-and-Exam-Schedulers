@@ -242,7 +242,7 @@
   <!-- Delete Confirmation -->
   <div
     v-if="showDeleteModal"
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
+    <div class="modal-overlay">
   ></div>
   <div
     v-if="showDeleteModal"

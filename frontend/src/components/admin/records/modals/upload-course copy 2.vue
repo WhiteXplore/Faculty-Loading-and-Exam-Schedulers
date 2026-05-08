@@ -145,11 +145,9 @@ export default {
             ITED: "Institute of Teacher Education",
             ILEGG: "Institute of Leadership, Entrepreneurship and Good Governance",
             IAAS: "Institute of Applied and Aquatic Sciences",
-            IADS: "Institute of Advanced Studies",
           };
 
           const programMap = {
-            // UNDERGRADUATE PROGRAMS
             BSIT: "Bachelor of Science in Information Technology",
             BSIS: "Bachelor of Science in Information Systems",
             BSAF: "Bachelor of Science in Agro-Forestry",
@@ -165,27 +163,8 @@ export default {
             BSEDSCI: "Bachelor of Secondary Education Major in Science",
             BSEDENG: "Bachelor of Secondary Education Major in English",
             BACOMM: "Bachelor of Arts in Communication",
-            BTLED: "Bachelor of Technology and Livelihood Education",
-            BPED: "Bachelor of Physical Education",
-
-            // SPEACIAL PROGRAM
-            BSENTREPSPA:
-              "Bachelor of Science in Entrepreneurship - Special Program for Adult Education",
-
-            // MASTERS PROGRAMS
-            MIT: "Master in Information Technology",
-            MABE: "Master of Arts in Basic Education",
-            MAEM: "Master of Arts in Educational Management",
-            MFMAQTECH: "Master in Fisheries Management Major in Aquaculture Technology",
-            MFMPROC: "Master in Fisheries Management Major in Fish Processing",
-            MPA: "Master in Public Administration (USEP Consortium)",
-            MSMB: "Master of Science in Marine Biodiversity",
-            MSTBIO: "Master in Science Teaching Major in Biology",
-            MSTGENSCI: "Master in  Science Teaching  Major in General Science",
-            MSTMATH: "Master in Science Teaching Major in Mathematics",
-
-            // PHD PROGRAMS
-            PHDEDMGT: "Ph.D. in Educational Mangement",
+            BTLEd: "Bachelor of Technology and Livelihood Education",
+            BPE: "Bachelor of Physical Education",
           };
 
           this.parsedData = json.map((row) => {

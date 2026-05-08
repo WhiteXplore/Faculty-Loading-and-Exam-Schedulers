@@ -1,17 +1,9 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="roomsForm"
-      >
+  <div class="modal-overlay">
+    <div class="modal-wrapper">
+      <form @submit.prevent="submitData" class="modal-container" ref="roomsForm">
         <!-- HEADER -->
-        <div
-          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow"
-        >
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
             <h1 class="font-bold tracking-wide text-lg">
@@ -23,122 +15,181 @@
         </div>
 
         <!-- BODY -->
-        <div class="p-5 w-[27vw]">
-          <div class="w-full text-left gap-3 flex flex-col space-y-1">
-            <!-- Room Name -->
-            <div class="w-full space-y-2">
-              <label class="font-bold">Room Name:</label>
+        <div class="w-[30vw] modal-body">
+          <div class="w-full space-y-2">
+            <label class="input-label">Room Name:</label>
 
-              <input
-                v-model="form.room_name"
-                type="text"
-                required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                placeholder="Enter room name"
-              />
-            </div>
+            <input
+              v-model="form.room_name"
+              type="text"
+              required
+              class="input-text"
+              placeholder="Enter room name"
+            />
+          </div>
 
-            <!-- Room Type -->
-            <div class="w-full space-y-2">
-              <label class="font-bold">Room Type:</label>
+          <div class="dropdown-container">
+            <label class="dropdown-label">Room Type:</label>
 
-              <select
-                v-model="form.room_type"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              >
-                <option disabled value="">Select Room Type</option>
-                <option value="Lecture">Lecture</option>
-                <option value="Laboratory">Laboratory</option>
-              </select>
-            </div>
-
-            <!-- Room Capacity -->
-            <div class="w-full space-y-2">
-              <label class="font-bold">Room Capacity:</label>
-
-              <input
-                v-model="form.room_capacity"
-                type="number"
-                required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                placeholder="Enter room capacity"
-              />
-            </div>
-            <!-- Institute -->
-            <div class="flex flex-col space-y-2 w-full relative">
-              <label class="font-bold">Institute :</label>
-
-              <input
-                v-model="searchInstituteQuery"
-                type="text"
-                placeholder="Search institute..."
-                class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
-                @focus="showInstituteDropdown = true"
-                :disabled="form.room_type === 'Lecture'"
-              />
-
+            <div class="dropdown-wrapper">
+              <!-- DISPLAY (acts like select) -->
               <div
-                v-if="showInstituteDropdown && filteredInstitutes.length"
-                class="absolute top-[60px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
-                @mouseleave="showInstituteDropdown = false"
+                class="dropdown-input cursor-pointer flex items-center justify-between"
+                @click="showRoomTypeDropdown = !showRoomTypeDropdown"
               >
-                <div
-                  v-for="institute in filteredInstitutes"
-                  :key="institute.institute_id"
-                  class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                  @mousedown="selectInstitute(institute)"
+                <span :class="form.room_type ? '' : 'text-gray-400'">
+                  {{ form.room_type || "Select Room Type" }}
+                </span>
+
+                <!-- ARROW -->
+                <svg
+                  class="w-4 h-4 ml-2 transition-transform duration-200"
+                  :class="{ 'rotate-180': showRoomTypeDropdown }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
                 >
-                  {{ institute.institute_code }} -
-                  {{ institute.institute_name }}
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+
+              <!-- DROPDOWN -->
+              <div v-if="showRoomTypeDropdown" class="dropdown-menu">
+                <div
+                  v-for="type in roomTypes"
+                  :key="type"
+                  class="dropdown-item"
+                  @click="selectRoomType(type)"
+                >
+                  {{ type }}
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Building -->
-            <div class="flex flex-col space-y-2 w-full relative">
-              <label class="font-bold">Building :</label>
+          <!-- Room Capacity -->
+          <div class="w-full space-y-2">
+            <label class="input-label">Room Capacity:</label>
 
+            <input
+              v-model="form.room_capacity"
+              type="number"
+              required
+              class="input-text"
+              placeholder="Enter room capacity"
+            />
+          </div>
+          <!-- Institute -->
+          <div class="flex flex-col space-y-2 w-full relative">
+            <label class="input-label">Institute :</label>
+
+            <input
+              v-model="searchInstituteQuery"
+              type="text"
+              placeholder="Search institute..."
+              class="input-text"
+              @focus="showInstituteDropdown = true"
+              :disabled="form.room_type === 'Lecture'"
+            />
+
+            <div
+              v-if="showInstituteDropdown && filteredInstitutes.length"
+              class="absolute top-[60px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
+              @mouseleave="showInstituteDropdown = false"
+            >
+              <div
+                v-for="institute in filteredInstitutes"
+                :key="institute.institute_id"
+                class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                @mousedown="selectInstitute(institute)"
+              >
+                {{ institute.institute_code }} -
+                {{ institute.institute_name }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Building -->
+          <div class="dropdown-container">
+            <label class="dropdown-label">Building :</label>
+            <div class="dropdown-wrapper">
               <input
                 v-model="searchBuildingQuery"
                 type="text"
                 placeholder="Search building..."
-                class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
+                class="dropdown-input"
                 @focus="showBuildingDropdown = true"
               />
-
               <div
-                v-if="showBuildingDropdown && filteredBuildings.length"
-                class="absolute top-[60px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
+                v-if="showBuildingDropdown"
+                class="dropdown-menu"
                 @mouseleave="showBuildingDropdown = false"
               >
-                <div
-                  v-for="building in filteredBuildings"
-                  :key="building.building_id"
-                  class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                  @mousedown="selectBuilding(building)"
-                >
-                  {{ building.buildingArea?.collegeBranch?.college_branch_name }}
-                  -
-                  {{ building.buildingArea?.area_name }}
-                  -
-                  {{ building.building_name }}
+                <div v-if="filteredBuildings.length">
+                  <div
+                    v-for="building in filteredBuildings"
+                    :key="building.building_id"
+                    class="dropdown-item"
+                    @mousedown="selectBuilding(building)"
+                  >
+                    {{ building.buildingArea?.collegeBranch?.college_branch_name }}
+                    -
+                    {{ building.buildingArea?.area_name }}
+                    -
+                    {{ building.building_name }}
+                  </div>
                 </div>
               </div>
             </div>
-            <!-- Status -->
-            <div class="w-full space-y-2">
-              <label class="font-bold">Status:</label>
+          </div>
 
-              <select
-                v-model="form.status"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
+          <!-- Status -->
+          <div class="dropdown-container">
+            <label class="dropdown-label">Status:</label>
+
+            <div class="dropdown-wrapper">
+              <!-- DISPLAY -->
+              <div
+                class="dropdown-input cursor-pointer flex items-center justify-between"
+                @click="showStatusDropdown = !showStatusDropdown"
               >
-                <option disabled value="">Select Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+                <span :class="form.status ? '' : 'text-gray-400'">
+                  {{ form.status || "Select Status" }}
+                </span>
+
+                <!-- ARROW -->
+                <svg
+                  class="w-4 h-4 ml-2 transition-transform duration-200"
+                  :class="{ 'rotate-180': showStatusDropdown }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+
+              <!-- DROPDOWN -->
+              <div v-if="showStatusDropdown" class="dropdown-menu">
+                <div
+                  v-for="status in statusOptions"
+                  :key="status"
+                  class="dropdown-item"
+                  @click="selectStatus(status)"
+                >
+                  {{ status }}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -147,18 +198,11 @@
 
           <!-- Buttons -->
           <div class="tracking-wide flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              class="btn-cancel"
-              @click="$emit('close')"
-            >
+            <button type="button" class="btn-cancel" @click="$emit('close')">
               Cancel
             </button>
 
-            <button
-              type="submit"
-             class="btn-save"
-            >
+            <button type="submit" class="btn-save">
               {{ isEditMode ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -186,16 +230,43 @@ export default {
   },
 
   components: { icon },
+  data() {
+    return {
+      roomTypes: ["Lecture", "Laboratory"],
+      statusOptions: ["Active", "Inactive"],
+      showRoomTypeDropdown: false,
+      showStatusDropdown: false,
+      form: {
+        institute_id: "",
+        building_id: "",
+        room_name: "",
+        room_type: "",
+        room_capacity: "",
+        status: "",
+      },
+
+      searchInstituteQuery: "",
+      showInstituteDropdown: false,
+
+      searchBuildingQuery: "",
+      showBuildingDropdown: false,
+    };
+  },
   watch: {
-    "form.room_type"(newType) {
+    "form.room_type"(newType, oldType) {
+      // Only clear when user actually changes room type, not while loading edit data
+      if (!oldType) return;
+
       if (newType === "Lecture") {
         this.form.institute_id = null;
         this.searchInstituteQuery = "";
+        // DO NOT clear building_id
       }
 
       if (newType === "Laboratory") {
-        this.form.building_id = null;
-        this.searchBuildingQuery = "";
+        this.form.institute_id = null;
+        this.searchInstituteQuery = "";
+        // DO NOT clear building_id
       }
     },
   },
@@ -236,27 +307,29 @@ export default {
     },
   },
 
-  data() {
-    return {
-      form: {
-        institute_id: "",
-        building_id: "",
-        room_name: "",
-        room_type: "",
-        room_capacity: "",
-        status: "",
-      },
-
-      searchInstituteQuery: "",
-      showInstituteDropdown: false,
-
-      searchBuildingQuery: "",
-      showBuildingDropdown: false,
-    };
-  },
   methods: {
     ...mapActions(useFetchDataStore, ["fetchInstitutes", "fetchBuildings"]),
 
+    handleClickOutside(e) {
+      if (!this.$el.contains(e.target)) {
+        this.showRoomTypeDropdown = false;
+        this.showStatusDropdown = false;
+      }
+    },
+    selectStatus(status) {
+      this.form.status = status;
+      this.showStatusDropdown = false;
+    },
+    selectRoomType(type) {
+      this.form.room_type = type;
+
+      if (type === "Lecture") {
+        this.form.institute_id = null;
+        this.searchInstituteQuery = "";
+      }
+
+      this.showRoomTypeDropdown = false;
+    },
     selectInstitute(institute) {
       this.form.institute_id = institute.institute_id;
       this.searchInstituteQuery = institute.institute_name;
@@ -288,13 +361,31 @@ export default {
         form.reportValidity();
         return;
       }
+      if (!this.searchInstituteQuery) {
+        this.form.institute_id = null;
+      }
+
+      if (!this.searchBuildingQuery) {
+        this.form.building_id = null;
+      }
 
       try {
         const payload = {
-          ...this.form,
+          room_name: this.form.room_name,
+          room_type: this.form.room_type,
           room_capacity: Number(this.form.room_capacity),
-          institute_id: this.form.institute_id ? Number(this.form.institute_id) : null,
-          building_id: this.form.building_id ? Number(this.form.building_id) : null,
+          status: this.form.status,
+
+          // IMPORTANT: send null when cleared
+          institute_id:
+            this.form.institute_id === "" || this.form.institute_id === null
+              ? null
+              : Number(this.form.institute_id),
+
+          building_id:
+            this.form.building_id === "" || this.form.building_id === null
+              ? null
+              : Number(this.form.building_id),
         };
 
         if (this.isEditMode) {
@@ -345,6 +436,10 @@ export default {
         ? this.formatBuilding(this.roomData.building)
         : "";
     }
+    document.addEventListener("click", this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside);
   },
 };
 </script>

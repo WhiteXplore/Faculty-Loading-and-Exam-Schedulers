@@ -1,79 +1,63 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-800 bg-opacity-40 flex justify-center items-center z-50"
-  >
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="programsForm"
-      >
+  <div class="modal-overlay">
+    <div class="modal-wrapper">
+      <form @submit.prevent="submitData" class="modal-container" ref="programsForm">
         <!-- Header -->
-        <div
-          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow"
-        >
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
             <h1 class="font-bold tracking-wide text-lg">
               {{ isEdit ? "Edit" : "Add" }} Institute
             </h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
-        <div class="p-5 w-[25vw] space-y-3">
+        <div class="w-[25vw] modal-body">
           <!-- Institute Fields -->
           <div class="w-full space-y-2 text-left flex flex-col">
-            <label for="institute_code" class="font-bold"
-              >Institute Code:</label
-            >
+            <label for="institute_code" class="input-label">Institute Code:</label>
             <input
               v-model="form.institute_code"
               type="text"
               id="institute_code"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+              class="input-text"
               placeholder="Enter institute code"
             />
           </div>
           <div class="w-full space-y-2 text-left flex flex-col">
-            <label for="institute_name" class="font-bold"
-              >Institute Name:</label
-            >
+            <label for="institute_name" class="input-label">Institute Name:</label>
             <input
               v-model="form.institute_name"
               type="text"
               id="institute_name"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+              class="input-text"
               placeholder="Enter institute name"
             />
           </div>
 
           <!-- Program Fields -->
           <div class="w-full space-y-2 text-left flex flex-col">
-            <label for="program_code" class="font-bold">Program Code:</label>
+            <label for="program_code" class="input-label">Program Code:</label>
             <input
               v-model="form.program_code"
               type="text"
               id="program_code"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+              class="input-text"
               placeholder="Enter program code"
             />
           </div>
           <div class="w-full space-y-2 text-left flex flex-col">
-            <label for="program_name" class="font-bold">Program Name:</label>
+            <label for="program_name" class="input-label">Program Name:</label>
             <input
               v-model="form.program_name"
               type="text"
               id="program_name"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+              class="input-text"
               placeholder="Enter program name"
             />
           </div>
@@ -82,17 +66,9 @@
           <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
 
           <!-- Buttons -->
-          <div class="tracking-wide flex justify-end gap-2 mt-4">
-            <button
-              class="btn-cancel"
-              @click="$emit('close')"
-            >
-              Cancel
-            </button>
-            <button
-             class="btn-save"
-              type="submit"
-            >
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="$emit('close')">Cancel</button>
+            <button class="btn-save" type="submit">
               {{ isEdit ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -164,7 +140,7 @@ export default {
             {
               institute_name: this.form.institute_name,
               institute_code: this.form.institute_code,
-            },
+            }
           );
           instituteId = instituteResponse.data.institute_id;
 
@@ -176,7 +152,7 @@ export default {
               program_name: this.form.program_name,
               program_code: this.form.program_code,
               institute_id: instituteId,
-            },
+            }
           );
 
           toast.success("Institute and Program updated successfully!");
@@ -187,19 +163,16 @@ export default {
             {
               institute_name: this.form.institute_name,
               institute_code: this.form.institute_code,
-            },
+            }
           );
           instituteId = instituteResponse.data.institute_id;
 
           // Add Program
-          await axios.post(
-            process.env.VUE_APP_API_BASE_URL + "/programs/add-programs",
-            {
-              program_name: this.form.program_name,
-              program_code: this.form.program_code,
-              institute_id: instituteId,
-            },
-          );
+          await axios.post(process.env.VUE_APP_API_BASE_URL + "/programs/add-programs", {
+            program_name: this.form.program_name,
+            program_code: this.form.program_code,
+            institute_id: instituteId,
+          });
 
           toast.success("Institute and Program added successfully!");
         }
