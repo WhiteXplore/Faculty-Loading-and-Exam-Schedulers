@@ -421,7 +421,7 @@
               <div
                 v-for="id in form.interbranchCampus"
                 :key="id"
-                class="flex items-center gap-2 bg-defaultGreen text-white px-3 py-1 rounded-full text-[13px] font-normal"
+                class="flex items-center gap-2 bg-defaultGreen text-white px-3 py-1 rounded-md text-[13px] font-normal"
               >
                 {{
                   college_branch.find((b) => b.college_branch_id === id)

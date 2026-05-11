@@ -64,11 +64,11 @@
         class="flex items-center gap-2 px-3 py-2 border text-defaultGreen border-defaultGreen rounded-xl hover:bg-defaultGreen hover:text-white hover:shadow-lg cursor-pointer transition duration-200"
       >
         <div
-          class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+          class="btn-add-icon"
         >
           <icon name="faculty-loading1" />
         </div>
-        <span class="font-medium text-sm">Compare</span>
+           <span class="btn-add-text">Compare</span>
       </div>
 
       <!-- COMPARE SECTION -->
@@ -117,11 +117,11 @@
             ]"
           >
             <div
-              class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+              class="btn-add-icon"
             >
               <icon name="faculty-loading1" />
             </div>
-            <span class="font-medium text-sm">Compare</span>
+               <span class="btn-add-text">Compare</span>
           </div>
         </div>
 

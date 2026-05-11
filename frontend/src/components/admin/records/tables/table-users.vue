@@ -8,16 +8,11 @@
       <div class="flex gap-2">
         <!-- IMPORT DROPDOWN -->
         <div class="relative">
-          <div
-            @click="showImportSelector = true"
-            class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
-          >
-            <div
-              class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
-            >
+          <div @click="showImportSelector = true" class="btn-gui">
+            <div class="btn-add-icon">
               <icon :name="'uploads'" class="w-4 h-4" />
             </div>
-            <span class="font-medium text-sm">Import</span>
+            <span class="btn-add-text">Import</span>
           </div>
 
           <!-- DROPDOWN MENU -->
@@ -57,16 +52,11 @@
         </div>
 
         <!-- ADD ACCOUNT -->
-        <div
-          @click="toggleAdd"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-        >
-          <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-          >
+        <div @click="toggleAdd" class="btn-add">
+          <div class="btn-add-icon">
             <icon :name="'add-account1.1'" class="w-4 h-4" />
           </div>
-          <span class="font-medium text-sm">Add Accounts</span>
+          <span class="btn-add-text">Add Accounts</span>
         </div>
       </div>
     </div>
@@ -74,15 +64,11 @@
     <!-- Table -->
     <div class="table-container">
       <!-- Top controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="select-input" 
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -106,12 +92,12 @@
         </div>
 
         <!-- Search -->
-        <div class="relative">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-[250px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+            class="search-input"
             @input="changePage(1)"
           />
           <!-- Search icon -->
@@ -167,7 +153,7 @@
               <td class="px-4 py-3 text-left">{{ user.role }}</td>
 
               <td class="px-4 py-3 items-center justify-center flex relative">
-           <div class="per-page-container">
+                <div class="per-page-container">
                   <!-- Always visible -->
                   <button class="btn-view" @click="toggleViewExpertise(user)">
                     See Details
@@ -270,10 +256,7 @@
   />
 
   <!-- Delete Confirmation Modal -->
-  <div
-    v-if="showDeleteModal"
-    <div class="modal-overlay">
-  ></div>
+  <div v-if="showDeleteModal" class="modal-overlay"></div>
   <div
     v-if="showDeleteModal"
     class="rounded-xl shadow-lg w-[300px] md:w-[400px] bg-white py-6 px-4 flex flex-col items-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 animate-slideUp"

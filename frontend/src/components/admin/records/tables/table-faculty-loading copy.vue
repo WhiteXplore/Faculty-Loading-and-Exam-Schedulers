@@ -21,13 +21,13 @@
                 class="w-4 h-4 text-blue-600 group-hover:text-blue-600"
               />
             </div>
-            <span class="font-medium text-sm">View Faculty</span>
+               <span class="btn-add-text">View Faculty</span>
           </div>
 
           <!-- Auto Generation Button -->
           <div
             @click="generateSchedule"
-            class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+            class="btn-add"
           >
             <div
               class="flex items-center justify-center w-5 h-5 bg-white rounded-full group-hover:bg-green-100 transition-colors duration-300"
@@ -37,13 +37,13 @@
                 class="w-4 h-4 text-defaultGreen transition-colors duration-300 group-hover:text-defaultGreen"
               />
             </div>
-            <span class="font-medium text-sm">Auto Generation</span>
+               <span class="btn-add-text">Auto Generation</span>
           </div>
 
           <!-- Save Schedule -->
           <div
             @click="saveScheduled"
-            class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+            class="btn-add"
           >
             <div
               class="flex items-center justify-center w-5 h-5 bg-white rounded-full group-hover:bg-green-100 transition-colors duration-300"
@@ -53,7 +53,7 @@
                 class="w-4 h-4 text-defaultGreen transition-colors duration-300 group-hover:text-defaultGreen"
               />
             </div>
-            <span class="font-medium text-sm">Save this schedule</span>
+               <span class="btn-add-text">Save this schedule</span>
           </div>
         </div>
       </div>
@@ -290,7 +290,7 @@
           class="flex items-center gap-2 px-4 py-2 border border-gray-400 text-gray-700 hover:bg-gray-100 rounded-lg shadow-sm transition"
         >
           <icon name="arrow-left" class="w-4 h-4" />
-          <span class="font-medium text-sm">Back to Faculty List</span>
+             <span class="btn-add-text">Back to Faculty List</span>
         </button>
       </div>
 

@@ -20,7 +20,7 @@
               class="w-4 h-4 text-blue-600 group-hover:text-blue-600"
             />
           </div>
-          <span class="font-medium text-sm">
+             <span class="btn-add-text">
             {{ showFacultyTable ? "View Cards" : "View Faculty" }}
           </span>
         </button>
@@ -88,7 +88,7 @@
                 class="w-4 h-4 text-yellow-600 group-hover:text-yellow-600"
               />
             </div>
-            <span class="font-medium text-sm">Swap</span>
+               <span class="btn-add-text">Swap</span>
           </button>
 
           <!-- Close Compare -->
@@ -120,7 +120,7 @@
         class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
       >
         <icon name="arrow-left" class="w-4 h-4" />
-        <span class="font-medium text-sm">Back to Table</span>
+           <span class="btn-add-text">Back to Table</span>
       </button>
     </div>
 

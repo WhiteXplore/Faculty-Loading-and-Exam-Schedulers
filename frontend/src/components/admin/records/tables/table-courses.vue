@@ -5,29 +5,19 @@
       <div class="text-[13px] text-text mt-4">Pages / Courses</div>
       <div class="per-page-container">
         <!-- Upload & Add -->
-        <div
-          @click="isUploadModal = true"
-          class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
-        >
-          <div
-            class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
-          >
+        <div @click="isUploadModal = true" class="btn-gui">
+          <div class="btn-add-icon">
             <icon name="uploads" />
           </div>
-          <span class="font-medium text-sm">Upload Course</span>
+          <span class="btn-add-text">Upload Course</span>
         </div>
 
-        <div
-          @click="toggleAdd"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-        >
-          <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-          >
-            <icon name="circle-add" />
+        <div @click="toggleAdd" class="btn-add">
+          <div class="btn-add-icon">
+            <icon name="add-account1.1" />
           </div>
 
-          <span class="font-medium text-sm">Add Course</span>
+          <span class="btn-add-text">Add Course</span>
         </div>
       </div>
     </div>
@@ -149,7 +139,7 @@
             </div>
 
             <!-- Curriculum -->
-            <div class="relative">
+            <!-- <div class="relative">
               <div
                 class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
               >
@@ -192,7 +182,7 @@
                   />
                 </svg>
               </div>
-            </div>
+            </div> -->
           </template>
 
           <!-- Search input -->
@@ -365,7 +355,7 @@ import uploadCourses from "../modals/upload-course.vue";
 import { useFetchDataStore } from "../../../../store/fetch-data-store";
 import { mapState } from "pinia";
 import axios from "axios";
-
+import { toast } from "vue3-toastify";
 export default {
   name: "TableCourses",
   components: { icon, addCourses, uploadCourses },
@@ -399,15 +389,7 @@ export default {
       const map = new Map();
 
       (this.curriculum_courses || []).forEach((c) => {
-        const institute =
-          c.curriculum?.program?.institute ||
-          (c.curriculum?.institute_id
-            ? {
-                institute_id: c.curriculum.institute_id,
-                institute_name: `Institute ${c.curriculum.institute_id}`,
-                institute_code: "",
-              }
-            : null);
+        const institute = c.curriculum?.institute;
 
         if (institute?.institute_id && !map.has(institute.institute_id)) {
           map.set(institute.institute_id, institute);
@@ -421,26 +403,23 @@ export default {
 
       (this.curriculum_courses || []).forEach((c) => {
         const curriculum = c.curriculum;
-        const program = c.curriculum?.program;
+        const program = curriculum?.program;
 
-        const programId = curriculum?.program_id;
-        const instituteId = curriculum?.institute_id;
-
-        if (!programId) return;
+        if (!program?.program_id) return;
 
         if (
           this.selectedInstitute &&
-          String(instituteId) !== String(this.selectedInstitute)
+          String(curriculum.institute_id) !== String(this.selectedInstitute)
         ) {
           return;
         }
 
-        if (!map.has(programId)) {
-          map.set(programId, {
-            program_id: programId,
-            institute_id: instituteId,
-            program_code: program?.program_code || `Program ${programId}`,
-            program_name: program?.program_name || `Program ${programId}`,
+        if (!map.has(program.program_id)) {
+          map.set(program.program_id, {
+            program_id: program.program_id,
+            program_name: program.program_name,
+            program_code: program.program_code,
+            institute_id: curriculum.institute_id,
           });
         }
       });
@@ -654,7 +633,7 @@ export default {
         );
 
         await this.loadCourses();
-
+        toast.success("Course deleted successfully");
         this.showDeleteModal = false;
         this.recordToDelete = null;
       } catch (error) {

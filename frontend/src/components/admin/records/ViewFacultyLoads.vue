@@ -46,7 +46,7 @@
               >
                 <icon :name="'download'" class="w-4 h-4" />
               </div>
-              <span class="font-medium text-sm">Show Download Previews</span>
+                 <span class="btn-add-text">Show Download Previews</span>
             </router-link>
           </div>
 

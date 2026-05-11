@@ -168,14 +168,14 @@
 
         <div
           @click="showFacultyTable = !showFacultyTable"
-          class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
+          class="btn-gui"
         >
           <div
-            class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
+           class="btn-add-icon"
           >
             <icon name="users" />
           </div>
-          <span class="font-medium text-sm">
+             <span class="btn-add-text">
             {{ showFacultyTable ? "View Cards" : "View Faculty" }}
           </span>
         </div>
@@ -184,15 +184,15 @@
 
         <div
           @click="generateSchedule"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+          class="btn-add"
         >
           <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+            class="btn-add-icon"
           >
             <icon name="arrow-path" />
           </div>
 
-          <span class="font-medium text-sm">Generate</span>
+             <span class="btn-add-text">Generate</span>
         </div>
 
         <!-- TODO  Save Schedule -->
@@ -200,15 +200,15 @@
         <div
           v-if="appearSave"
           @click="showConfirmSaved = true"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+          class="btn-add"
         >
           <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+            class="btn-add-icon"
           >
             <icon name="circle-check" />
           </div>
 
-          <span class="font-medium text-sm">Save this Schedule</span>
+             <span class="btn-add-text">Save this Schedule</span>
         </div>
       </div>
     </div>
@@ -223,7 +223,7 @@
         class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
       >
         <icon name="arrow-left" class="w-4 h-4" />
-        <span class="font-medium text-sm">Back to Table</span>
+           <span class="btn-add-text">Back to Table</span>
       </button>
     </div>
 

@@ -7,31 +7,21 @@
       <!-- RIGHT (Buttons) -->
       <div class="flex gap-2">
         <!-- Upload Room -->
-        <div
-          @click="isUploadModal = true"
-          class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
-        >
-          <div
-            class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
-          >
+        <div @click="isUploadModal = true" class="btn-gui">
+          <div class="btn-add-icon">
             <icon name="uploads" />
           </div>
 
-          <span class="font-medium text-sm">Upload Room</span>
+          <span class="btn-add-text">Upload Room</span>
         </div>
 
         <!-- Add Room -->
-        <div
-          @click="toggleAdd"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-        >
-          <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-          >
-            <icon name="circle-add" />
+        <div @click="toggleAdd" class="btn-add">
+          <div class="btn-add-icon">
+            <icon name="add-account1.1" />
           </div>
 
-          <span class="font-medium text-sm">Add Room</span>
+          <span class="btn-add-text">Add Room</span>
         </div>
       </div>
     </div>

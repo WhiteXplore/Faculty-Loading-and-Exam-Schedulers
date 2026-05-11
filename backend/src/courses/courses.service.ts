@@ -4,7 +4,7 @@ import { Repository, DataSource } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
-
+import { CurriculumCourse } from 'src/curriculum_courses/entities/curriculum_course.entity';
 @Injectable()
 export class CoursesService {
   constructor(
@@ -12,7 +12,55 @@ export class CoursesService {
     private readonly courseRepository: Repository<Course>,
     private readonly dataSource: DataSource,
   ) {}
+async createSingleCourse(createCourseDto: any): Promise<Course> {
+  const queryRunner = this.dataSource.createQueryRunner();
 
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const {
+      curriculum_id,
+      course_code,
+      course_title,
+      course_semester,
+      course_level,
+      course_lec,
+      course_lab,
+      course_requisite,
+    } = createCourseDto;
+
+    const course = queryRunner.manager.create(Course, {
+      course_code,
+      course_title,
+      course_semester: Number(course_semester),
+      course_level: Number(course_level),
+      course_lec: Number(course_lec),
+      course_lab: Number(course_lab),
+      course_requisite,
+    });
+
+    const savedCourse = await queryRunner.manager.save(Course, course);
+
+    if (curriculum_id) {
+      const curriculumCourse = queryRunner.manager.create(CurriculumCourse, {
+        curriculum_id: Number(curriculum_id),
+        course_id: savedCourse.course_id,
+      });
+
+      await queryRunner.manager.save(CurriculumCourse, curriculumCourse);
+    }
+
+    await queryRunner.commitTransaction();
+
+    return savedCourse;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw error;
+  } finally {
+    await queryRunner.release();
+  }
+}
   // 🔹 BULK INSERT COURSES
   // async createMany(createCourseDtos: CreateCourseDto[]) {
   //   const queryRunner = this.dataSource.createQueryRunner();
@@ -143,18 +191,79 @@ async createMany(createCourseDtos: CreateCourseDto[]): Promise<Course[]> {
     return course;
   }
 
-  async update(id: number, updateCourseDto: UpdateCourseDto): Promise<Course> {
-    const course = await this.courseRepository.preload({
-      course_id: id,
-      ...updateCourseDto,
+ async update(id: number, updateCourseDto: any): Promise<Course> {
+  const queryRunner = this.dataSource.createQueryRunner();
+
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
+
+  try {
+    const {
+      curriculum_id,
+      course_code,
+      course_title,
+      course_semester,
+      course_level,
+      course_lec,
+      course_lab,
+      course_requisite,
+    } = updateCourseDto;
+
+    const course = await queryRunner.manager.findOne(Course, {
+      where: { course_id: id },
     });
 
     if (!course) {
       throw new NotFoundException(`Course with ID ${id} not found`);
     }
 
-    return await this.courseRepository.save(course);
+    course.course_code = course_code;
+    course.course_title = course_title;
+    course.course_semester = Number(course_semester);
+    course.course_level = Number(course_level);
+    course.course_lec = Number(course_lec);
+    course.course_lab = Number(course_lab);
+    course.course_requisite = course_requisite;
+
+    const savedCourse = await queryRunner.manager.save(Course, course);
+
+    if (curriculum_id) {
+      const existingCurriculumCourse = await queryRunner.manager.findOne(
+        CurriculumCourse,
+        {
+          where: { course_id: id },
+        },
+      );
+
+      if (existingCurriculumCourse) {
+        existingCurriculumCourse.curriculum_id = Number(curriculum_id);
+        await queryRunner.manager.save(
+          CurriculumCourse,
+          existingCurriculumCourse,
+        );
+      } else {
+        const newCurriculumCourse = queryRunner.manager.create(
+          CurriculumCourse,
+          {
+            curriculum_id: Number(curriculum_id),
+            course_id: id,
+          },
+        );
+
+        await queryRunner.manager.save(CurriculumCourse, newCurriculumCourse);
+      }
+    }
+
+    await queryRunner.commitTransaction();
+
+    return savedCourse;
+  } catch (error) {
+    await queryRunner.rollbackTransaction();
+    throw error;
+  } finally {
+    await queryRunner.release();
   }
+}
 
   async remove(id: number): Promise<{ message: string }> {
     const course = await this.findOne(id);

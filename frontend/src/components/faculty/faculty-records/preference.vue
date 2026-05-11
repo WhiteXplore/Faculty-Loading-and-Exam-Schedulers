@@ -1,9 +1,9 @@
 <template>
   <div class="px-2 mt-2">
     <!-- Headers -->
-    <div class="flex justify-between items-start">
+    <!-- <div class="flex justify-between items-start">
       <h1 class="font-semibold tracking-wide text-sm px-1">My Preference</h1>
-    </div>
+    </div> -->
 
     <!-- Main Content  -->
     <div class="mt-3">

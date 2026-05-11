@@ -3,10 +3,7 @@
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4 font-regular">Pages / Prospectus</div>
 
-      <div
-        @click="toggleAdd"
-        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-      >
+      <div @click="toggleAdd" class="btn-add">
         <div
           class="flex items-center justify-center w-5 h-5 bg-white rounded-full group-hover:bg-green-100 transition-colors duration-300"
         >
@@ -15,22 +12,18 @@
             class="w-4 h-4 text-defaultGreen transition-colors duration-300 group-hover:text-defaultGreen"
           />
         </div>
-        <span class="font-medium text-sm">Generate Report</span>
+        <span class="btn-add-text">Generate Report</span>
       </div>
     </div>
 
     <!-- Table -->
     <div class="table-container">
       <!-- Top Controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="select-input" 
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>

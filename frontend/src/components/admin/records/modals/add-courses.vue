@@ -2,7 +2,6 @@
   <div class="modal-overlay">
     <div class="modal-wrapper">
       <form @submit.prevent="submitData" class="modal-container" ref="coursesForm">
-        <!-- Header -->
         <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
@@ -10,10 +9,10 @@
               {{ isEdit ? "Edit " : "Add " }} Course
             </h1>
           </div>
+
           <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
-        <!-- Body -->
         <div class="w-[35vw] modal-body">
           <!-- Curriculum -->
           <div class="dropdown-container">
@@ -21,48 +20,53 @@
 
             <div class="dropdown-wrapper">
               <input
-                v-model="searchCurriculumQuery"
+                :value="curriculumDisplayText"
                 type="text"
                 placeholder="Search curriculum..."
                 class="dropdown-input"
-                @focus="showCurriculumDropdown = true"
+                :class="isEdit ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''"
                 :disabled="isEdit"
+                @input="handleCurriculumInput"
+                @focus="!isEdit && (showCurriculumDropdown = true)"
               />
+
               <div v-if="showCurriculumDropdown" class="dropdown-menu">
                 <div v-if="filteredCurriculum.length">
                   <div
                     v-for="curriculum in filteredCurriculum"
                     :key="curriculum.curriculum_id"
                     class="dropdown-item"
-                    @mousedown="selectcurriculum(curriculum)"
+                    @mousedown.prevent="selectCurriculum(curriculum)"
                   >
-                    {{ curriculum.curriculum_end_year }} -
-                    {{ curriculum.program.program_name }}
+                    {{ curriculum.curriculum_start_year }} -
+                    {{ curriculum.curriculum_end_year }}
+                    -
+                    {{ curriculum.program?.program_name || "No Program" }}
                   </div>
                 </div>
+
+                <div v-else class="dropdown-item text-gray-400">No curriculum found</div>
               </div>
             </div>
           </div>
 
           <!-- Course Code -->
           <div class="w-full space-y-2">
-            <label for="course_code" class="input-label">Course Code:</label>
+            <label class="input-label">Course Code:</label>
             <input
               v-model="form.course_code"
               type="text"
-              id="course_code"
               required
               class="input-text"
               placeholder="Enter course code"
             />
           </div>
 
-          <!-- Description -->
+          <!-- Course Title -->
           <div class="w-full space-y-2">
-            <label for="course_title" class="input-label">Course Description:</label>
+            <label class="input-label">Course Description:</label>
             <textarea
               v-model="form.course_title"
-              id="course_title"
               required
               class="input-text"
               placeholder="Enter course description"
@@ -81,12 +85,14 @@
                 <option value="4">Fourth</option>
               </select>
             </div>
+
             <div class="w-full space-y-2">
               <label class="input-label">Semester:</label>
               <select v-model="form.course_semester" required class="input-text">
                 <option disabled value="">Select Semester</option>
                 <option value="1">First</option>
                 <option value="2">Second</option>
+                <option value="3">Summer</option>
               </select>
             </div>
           </div>
@@ -102,6 +108,7 @@
                 class="input-text"
               />
             </div>
+
             <div class="w-full space-y-2">
               <label class="input-label">Laboratory (Hours):</label>
               <input
@@ -113,32 +120,30 @@
             </div>
           </div>
 
+          <!-- Requisites -->
           <div class="flex flex-col space-y-2 relative">
             <label class="input-label">Requisites :</label>
 
-            <!-- Show Add button if input is hidden -->
             <button
               v-if="!showRequisiteInput"
               type="button"
               class="bg-defaultGreen text-white px-3 py-3 tracking-wider rounded-md text-sm hover:bg-green-700"
-              @click="showRequisiteInput = true"
+              @click="openRequisiteInput"
             >
-              Add Requisite
+              {{ form.course_requisite.length ? "Update Requisite" : "Add Requisite" }}
             </button>
 
-            <!-- Show input when button clicked -->
             <div v-if="showRequisiteInput" class="flex flex-col gap-2">
               <div class="dropdown-wrapper">
                 <div class="flex gap-2">
                   <input
-                    :value="form.course_requisite.join(', ')"
-                    @input="searchRequisiteQuery = $event.target.value"
+                    v-model="searchRequisiteQuery"
                     @focus="showRequisiteDropdown = true"
                     type="text"
                     placeholder="Search course prerequisite..."
                     class="input-text"
                   />
-                  <!-- Cancel button -->
+
                   <button
                     type="button"
                     @click="cancelRequisites"
@@ -148,37 +153,47 @@
                   </button>
                 </div>
 
-                <!-- Dropdown -->
                 <div v-if="showRequisiteDropdown">
                   <div v-if="filteredCourse.length" class="dropdown-menu">
                     <div
                       v-for="course in filteredCourse"
                       :key="course.course_id"
                       class="dropdown-item"
-                      @mousedown="selectcourse(course)"
+                      @mousedown.prevent="selectCourse(course)"
                     >
                       {{ course.course_code }} - {{ course.course_title }}
                     </div>
+                  </div>
+
+                  <div v-else class="dropdown-menu">
+                    <div class="dropdown-item text-gray-400">No requisite found</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Display selected requisites -->
-            <div class="flex flex-wrap gap-2 mt-2">
-              <span
+            <!-- Selected Requisites -->
+            <div v-if="form.course_requisite.length" class="flex flex-wrap gap-2 mt-2">
+              <div
                 v-for="code in form.course_requisite"
                 :key="code"
-                class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs cursor-pointer"
-                @click="removeRequisite(code)"
+                class="flex items-center gap-2 bg-defaultGreen text-white px-3 py-1 rounded-md text-[13px] font-normal"
               >
-                {{ code }} ✕
-              </span>
+                <span>{{ code }}</span>
+
+                <button
+                  type="button"
+                  @click="removeRequisite(code)"
+                  class="text-white hover:text-red-600"
+                >
+                  <icon name="delete" />
+                </button>
+              </div>
             </div>
           </div>
-          <!-- Divider -->
+
           <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
-          <!-- Buttons -->
+
           <div class="modal-footer">
             <button type="button" class="btn-cancel" @click="$emit('close')">
               Cancel
@@ -204,9 +219,14 @@ import { mapState, mapActions } from "pinia";
 export default {
   name: "CourseFormModal",
   components: { icon },
+
   props: {
-    courseData: { type: Object, default: null },
+    courseData: {
+      type: Object,
+      default: null,
+    },
   },
+
   data() {
     return {
       form: {
@@ -219,75 +239,316 @@ export default {
         course_level: "",
         course_requisite: [],
       },
-      showRequisiteInput: false,
+
+      selectedCurriculumText: "",
       searchCurriculumQuery: "",
       showCurriculumDropdown: false,
+
+      showRequisiteInput: false,
       searchRequisiteQuery: "",
       showRequisiteDropdown: false,
+
+      editLoaded: false,
     };
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["curriculums", "courses"]),
+    ...mapState(useFetchDataStore, ["curriculums", "courses", "curriculum_courses"]),
+    curriculumCourseList() {
+      if (Array.isArray(this.curriculum_courses)) return this.curriculum_courses;
+      if (Array.isArray(this.curriculum_courses?.data))
+        return this.curriculum_courses.data;
+      return [];
+    },
     isEdit() {
       return !!this.courseData;
     },
 
-    filteredCurriculum() {
-      if (!this.searchCurriculumQuery) return this.curriculums;
+    curriculumList() {
+      if (Array.isArray(this.curriculums)) return this.curriculums;
+      if (Array.isArray(this.curriculums?.data)) return this.curriculums.data;
+      return [];
+    },
 
-      const q = this.searchCurriculumQuery.toLowerCase();
-      return this.curriculums.filter(
-        (c) =>
-          c.curriculum_end_year?.toLowerCase().includes(q) ||
-          c.program.program_name?.toLowerCase().includes(q)
-      );
+    curriculumDisplayText() {
+      if (this.searchCurriculumQuery) return this.searchCurriculumQuery;
+      if (this.selectedCurriculumText) return this.selectedCurriculumText;
+
+      const curriculum = this.findSelectedCurriculum();
+      return curriculum ? this.formatCurriculum(curriculum) : "";
+    },
+
+    filteredCurriculum() {
+      const q = String(this.searchCurriculumQuery || "")
+        .toLowerCase()
+        .trim();
+
+      if (!q) return this.curriculumList;
+
+      return this.curriculumList.filter((c) => {
+        const startYear = String(c.curriculum_start_year || "").toLowerCase();
+        const endYear = String(c.curriculum_end_year || "").toLowerCase();
+        const programName = String(c.program?.program_name || "").toLowerCase();
+        const programCode = String(c.program?.program_code || "").toLowerCase();
+
+        return (
+          startYear.includes(q) ||
+          endYear.includes(q) ||
+          `${startYear} - ${endYear}`.includes(q) ||
+          `${startYear}-${endYear}`.includes(q) ||
+          programName.includes(q) ||
+          programCode.includes(q)
+        );
+      });
     },
 
     filteredCourse() {
-      const q = this.searchRequisiteQuery.toLowerCase();
-      return this.courses.filter(
-        (course) =>
-          (course.course_code?.toLowerCase().includes(q) ||
-            course.course_title?.toLowerCase().includes(q)) &&
-          this.form.curriculum_id === course.curriculum_id &&
-          !this.form.course_requisite.includes(course.course_code)
-      );
+      const q = String(this.searchRequisiteQuery || "")
+        .toLowerCase()
+        .trim();
+      const list = this.courses || [];
+
+      return list.filter((course) => {
+        const code = String(course.course_code || "").toLowerCase();
+        const title = String(course.course_title || "").toLowerCase();
+
+        const isSelected = this.form.course_requisite.includes(course.course_code);
+
+        const isCurrentCourse =
+          this.isEdit && Number(course.course_id) === Number(this.courseData?.course_id);
+
+        const matchSearch = !q || code.includes(q) || title.includes(q);
+
+        return !isSelected && !isCurrentCourse && matchSearch;
+      });
+    },
+  },
+
+  watch: {
+    courseData: {
+      immediate: true,
+      deep: true,
+      handler() {
+        this.loadEditData();
+      },
+    },
+    curriculum_courses: {
+      immediate: true,
+      deep: true,
+      handler() {
+        this.setSelectedCurriculumText();
+      },
+    },
+    curriculums: {
+      immediate: true,
+      deep: true,
+      handler() {
+        this.setSelectedCurriculumText();
+      },
     },
   },
 
   methods: {
-    ...mapActions(useFetchDataStore, ["fetchCurriculums", "fetchCourses"]),
+    ...mapActions(useFetchDataStore, [
+      "fetchCurriculums",
+      "fetchCourses",
+      "fetchCurriculumCourses",
+    ]),
 
-    selectcurriculum(curr) {
-      this.form.curriculum_id = curr.curriculum_id;
-      this.searchCurriculumQuery = `${curr.curriculum_end_year} - ${curr.program.program_name}`;
+    getCurriculumId() {
+      const directId =
+        this.courseData?.curriculum_id ||
+        this.courseData?.curriculum?.curriculum_id ||
+        this.courseData?.curriculumCourse?.curriculum_id ||
+        this.courseData?.curriculum_course?.curriculum_id ||
+        this.courseData?.curriculumCourse?.curriculum?.curriculum_id ||
+        this.courseData?.curriculum_course?.curriculum?.curriculum_id;
+
+      if (directId) return directId;
+
+      const match = this.curriculumCourseList.find(
+        (item) => Number(item.course_id) === Number(this.courseData?.course_id)
+      );
+
+      console.log("MATCHED CURRICULUM COURSE:", match);
+
+      return match?.curriculum_id || match?.curriculum?.curriculum_id || "";
+    },
+
+    formatCurriculum(curriculum) {
+      return `${curriculum.curriculum_start_year} - ${curriculum.curriculum_end_year} - ${
+        curriculum.program?.program_name || "No Program"
+      }`;
+    },
+
+    findSelectedCurriculum() {
+      const curriculumId = this.form.curriculum_id || this.getCurriculumId();
+
+      return this.curriculumList.find(
+        (c) => Number(c.curriculum_id) === Number(curriculumId)
+      );
+    },
+
+    setSelectedCurriculumText() {
+      const curriculum = this.findSelectedCurriculum();
+
+      if (curriculum) {
+        console.log("CURRICULUM START YEAR:", curriculum.curriculum_start_year);
+        console.log("CURRICULUM END YEAR:", curriculum.curriculum_end_year);
+
+        this.selectedCurriculumText = this.formatCurriculum(curriculum);
+        return;
+      }
+
+      const match = this.curriculumCourseList.find(
+        (item) => Number(item.course_id) === Number(this.courseData?.course_id)
+      );
+
+      if (match?.curriculum) {
+        console.log("CURRICULUM START YEAR:", match.curriculum.curriculum_start_year);
+        console.log("CURRICULUM END YEAR:", match.curriculum.curriculum_end_year);
+
+        this.form.curriculum_id = match.curriculum_id || match.curriculum.curriculum_id;
+        this.selectedCurriculumText = this.formatCurriculum(match.curriculum);
+        return;
+      }
+
+      console.log("❌ STILL NO CURRICULUM FOUND");
+    },
+
+    handleCurriculumInput(event) {
+      this.searchCurriculumQuery = event.target.value;
+      this.selectedCurriculumText = "";
+      this.showCurriculumDropdown = true;
+    },
+
+    selectCurriculum(curriculum) {
+      this.form.curriculum_id = curriculum.curriculum_id;
+      this.selectedCurriculumText = this.formatCurriculum(curriculum);
+      this.searchCurriculumQuery = "";
       this.showCurriculumDropdown = false;
     },
 
-    selectcourse(course) {
+    openRequisiteInput() {
+      this.showRequisiteInput = true;
+      this.showRequisiteDropdown = true;
+    },
+
+    selectCourse(course) {
       if (!this.form.course_requisite.includes(course.course_code)) {
         this.form.course_requisite.push(course.course_code);
       }
+
+      this.searchRequisiteQuery = "";
       this.showRequisiteDropdown = false;
     },
 
     removeRequisite(code) {
-      this.form.course_requisite = this.form.course_requisite.filter((c) => c !== code);
+      this.form.course_requisite = this.form.course_requisite.filter(
+        (item) => item !== code
+      );
     },
 
     cancelRequisites() {
       this.showRequisiteInput = false;
-      this.form.course_requisite = [];
       this.searchRequisiteQuery = "";
+      this.showRequisiteDropdown = false;
+    },
+
+    normalizeRequisites(value) {
+      if (!value) return [];
+
+      if (Array.isArray(value)) {
+        return value
+          .map((item) => {
+            if (typeof item === "string") return item.trim();
+            return item?.course_code?.trim();
+          })
+          .filter(Boolean);
+      }
+
+      if (typeof value === "string") {
+        return value
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
+      }
+
+      return [];
+    },
+
+    loadEditData() {
+      if (!this.isEdit) return;
+
+      const curriculumId = this.getCurriculumId();
+
+      this.form = {
+        curriculum_id: curriculumId,
+        course_code: this.courseData?.course_code || "",
+        course_title: this.courseData?.course_title || "",
+        course_semester: String(this.courseData?.course_semester || ""),
+        course_lab: String(this.courseData?.course_lab || ""),
+        course_lec: String(this.courseData?.course_lec || ""),
+        course_level: String(this.courseData?.course_level || ""),
+        course_requisite: this.normalizeRequisites(this.courseData?.course_requisite),
+      };
+
+      console.log("==================================");
+      console.log("EDIT MODE COURSE DATA:");
+      console.log(this.courseData);
+
+      console.log("CURRICULUM ID:");
+      console.log(curriculumId);
+
+      console.log("ALL CURRICULUMS:");
+      console.log(this.curriculumList);
+
+      const curriculum = this.findSelectedCurriculum();
+
+      console.log("FOUND CURRICULUM:");
+      console.log(curriculum);
+
+      if (curriculum) {
+        console.log("CURRICULUM START YEAR:");
+        console.log(curriculum.curriculum_start_year);
+
+        console.log("CURRICULUM END YEAR:");
+        console.log(curriculum.curriculum_end_year);
+
+        console.log("PROGRAM:");
+        console.log(curriculum.program);
+
+        this.selectedCurriculumText = this.formatCurriculum(curriculum);
+      } else {
+        console.log("❌ CURRICULUM NOT FOUND");
+      }
+
+      console.log("==================================");
+
+      if (this.form.course_requisite.length) {
+        this.showRequisiteInput = true;
+      }
     },
 
     async submitData() {
       try {
+        if (!this.form.curriculum_id) {
+          toast.error("Please select a curriculum from the dropdown.");
+          return;
+        }
+
         const payload = {
-          ...this.form,
+          curriculum_id: Number(this.form.curriculum_id),
+          course_code: this.form.course_code.trim(),
+          course_title: this.form.course_title.trim(),
+          course_semester: Number(this.form.course_semester),
+          course_lab: Number(this.form.course_lab),
+          course_lec: Number(this.form.course_lec),
+          course_level: Number(this.form.course_level),
           course_requisite: this.form.course_requisite.join(","),
         };
+
+        console.log("COURSE PAYLOAD:", payload);
 
         if (this.isEdit) {
           await axios.patch(
@@ -303,40 +564,20 @@ export default {
           toast.success("Course added successfully!");
         }
 
+        await this.fetchCourses();
+
         this.$emit("refresh");
         this.$emit("close");
       } catch (err) {
-        console.error(err);
-        toast.error(this.isEdit ? "Failed to update course." : "Failed to add course.");
+        console.error("SAVE COURSE ERROR:", err.response?.data || err);
+        toast.error(err.response?.data?.message || "Failed to save course.");
       }
     },
   },
 
-  mounted() {
-    this.fetchCurriculums();
-    this.fetchCourses();
-
-    if (this.isEdit) {
-      this.form = {
-        curriculum_id: this.courseData.curriculum_id,
-        course_code: this.courseData.course_code,
-        course_title: this.courseData.course_title,
-        course_semester: this.courseData.course_semester,
-        course_lab: this.courseData.course_lab,
-        course_lec: this.courseData.course_lec,
-        course_level: this.courseData.course_level,
-        course_requisite: this.courseData.course_requisite
-          ? this.courseData.course_requisite.split(",")
-          : [],
-      };
-
-      // ✅ FINAL FIX FOR EDIT MODE
-      if (this.courseData.curriculum) {
-        this.searchCurriculumQuery =
-          `${this.courseData.curriculum.curriculum_end_year} - ` +
-          `${this.courseData.curriculum.program.program_name}`;
-      }
-    }
+  async mounted() {
+    await Promise.all([this.fetchCurriculums(), this.fetchCourses()]);
+    this.loadEditData();
   },
 };
 </script>

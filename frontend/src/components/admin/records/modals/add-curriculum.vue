@@ -16,7 +16,7 @@
         <!-- Body -->
         <div class="w-[25vw] modal-body">
           <!-- Curriculum Name -->
-          <div class="flex flex-col space-y-2">
+          <!-- <div class="flex flex-col space-y-2">
             <label class="input-label">Curriculum Name:</label>
             <input
               :value="formattedCurriculumName"
@@ -24,7 +24,7 @@
               disabled
               class="input-text"
             />
-          </div>
+          </div> -->
           <!-- Program -->
           <div class="dropdown-container">
             <label class="dropdown-label">Program:</label>

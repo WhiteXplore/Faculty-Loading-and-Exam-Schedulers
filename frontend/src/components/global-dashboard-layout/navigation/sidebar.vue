@@ -32,7 +32,7 @@
             {{ user.first_name }}
           </p>
 
-          <p class="text-[13px] font-medium tracking-wider">
+          <p class="text-[10px] font-normal tracking-wider">
             {{ user.position || user.role }}
           </p>
         </div>

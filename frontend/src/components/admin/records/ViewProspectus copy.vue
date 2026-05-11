@@ -69,7 +69,45 @@
       class="h-[82vh] overflow-auto rounded-2xl border border-gray-100 bg-white p-6 shadow-xl shadow-gray-200/60"
     >
       <!-- REPORT HEADER -->
-      <div class="mb-4 overflow-hidden">
+      <div
+        class="mb-6 overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br from-white via-white to-green-50"
+      >
+        <!-- <div
+          class="flex flex-col gap-5 p-6 lg:flex-row lg:items-center lg:justify-between"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-gray-100"
+            >
+              <img
+                src="@/assets/img/dnsc_logo.png"
+                alt="DNSC Logo"
+                class="h-16 w-16 object-contain"
+              />
+            </div>
+
+            <div>
+              <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
+                DAVAO DEL NORTE
+              </h2>
+              <h3 class="text-xl font-medium tracking-wide text-gray-700">
+                STATE COLLEGE
+              </h3>
+              <p class="mt-1 text-sm italic text-gray-500">
+                "Inspiring Change, Creating Futures"
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="rounded-2xl border border-gray-100 bg-white/80 px-5 py-4 text-sm text-gray-600 shadow-sm"
+          >
+            <p class="font-medium">president@dnsc.edu.ph</p>
+            <p>dnsc.edu.ph</p>
+            <p>@officialdnsc</p>
+          </div>
+        </div> -->
+
         <div class="px-6 py-5 text-center">
           <p class="text-xs font-semibold uppercase tracking-[0.25em] text-defaultGreen">
             Curriculum Checklist
@@ -395,8 +433,6 @@ export default {
           return "First Semester";
         case 2:
           return "Second Semester";
-        case 3:
-          return "Summer";
         default:
           return `Semester ${sem}`;
       }
