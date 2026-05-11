@@ -120,83 +120,98 @@
 
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
-            <tr>
-              <th class="px-4 py-3 text-left font-normal w-[15%]">Name</th>
-              <th class="px-4 py-3 text-left font-normal w-[25%]">Email</th>
-              <th class="px-4 py-3 text-left font-normal">Institute</th>
-              <th class="px-4 py-3 text-left font-normal">Program</th>
-              <th class="px-4 py-3 text-left font-normal">Position</th>
+        <div class="max-h-[69vh] overflow-y-auto">
+          <table class="min-w-full text-sm text-gray-700 border-collapse">
+            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+              <tr>
+                <th class="px-4 py-3 text-left font-normal w-[15%]">Name</th>
+                <th class="px-4 py-3 text-left font-normal w-[25%]">Email</th>
+                <th class="px-4 py-3 text-left font-normal">Unit Loads</th>
+                <th class="px-4 py-3 text-left font-normal">Designation</th>
+                <th class="px-4 py-3 text-left font-normal">Institute</th>
+                <th class="px-4 py-3 text-left font-normal">Program</th>
+                <th class="px-4 py-3 text-left font-normal">Position</th>
 
-              <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="user in paginatedData"
-              :key="user.id"
-              class="hover:bg-green-50 transition-all border-t"
-            >
-              <td class="px-4 py-3 text-left">
-                {{ user.first_name }} {{ user.last_name }}
-              </td>
-              <td class="px-4 py-3 text-left">{{ user.email }}</td>
-              <td class="px-4 py-3 text-left">
-                {{ user.institute?.institute_code }}
-              </td>
-              <td class="px-4 py-3 text-left">
-                {{ user.program?.program_code }}
-              </td>
-              <td class="px-4 py-3 text-left">{{ user.role }}</td>
+                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="user in paginatedData"
+                :key="user.id"
+                class="hover:bg-green-50 transition-all border-t"
+              >
+                <td class="px-4 py-3 text-left">
+                  {{ user.first_name }} {{ user.last_name }}
+                </td>
+                <td class="px-4 py-3 text-left">{{ user.email }}</td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.unit_load }}
+                </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.designation }}
+                </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.institute?.institute_code }}
+                </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.program?.program_code }}
+                </td>
+                <td class="px-4 py-3 text-left">{{ user.role }}</td>
 
-              <td class="px-4 py-3 items-center justify-center flex relative">
-                <div class="per-page-container">
-                  <!-- Always visible -->
-                  <button class="btn-view" @click="toggleViewExpertise(user)">
-                    See Details
-                  </button>
+                <td class="px-4 py-3 items-center justify-center flex relative">
+                  <div class="per-page-container">
+                    <!-- Always visible -->
+                    <button class="btn-view" @click="toggleViewExpertise(user)">
+                      See Details
+                    </button>
 
-                  <!-- 3 dots button -->
-                  <button
-                    class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                    @click.stop="toggleActionMenu(user.id)"
+                    <!-- 3 dots button -->
+                    <button
+                      class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                      @click.stop="toggleActionMenu(user.id)"
+                    >
+                      <icon name="3dots" class="rotate-90" />
+                    </button>
+                  </div>
+
+                  <!-- Dropdown actions -->
+                  <div
+                    v-if="openActionMenuId === user.id"
+                    @mouseleave="openActionMenuId = false"
+                    class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
                   >
-                    <icon name="3dots" class="rotate-90" />
-                  </button>
-                </div>
+                    <button
+                      class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                      @click="toggleEdit(user)"
+                    >
+                      <icon
+                        name="edit"
+                        class="rounded-lg bg-defaultGreen text-white p-1"
+                      />
+                      Edit
+                    </button>
 
-                <!-- Dropdown actions -->
-                <div
-                  v-if="openActionMenuId === user.id"
-                  @mouseleave="openActionMenuId = false"
-                  class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
-                >
-                  <button
-                    class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
-                    @click="toggleEdit('edit', user)"
-                  >
-                    <icon name="edit" class="rounded-lg bg-defaultGreen text-white p-1" />
-                    Edit
-                  </button>
-
-                  <button
-                    class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
-                    @click="toggleDelete('delete', user)"
-                  >
-                    <icon name="delete" class="rounded-lg bg-red-800 text-white p-1" />
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="paginatedData.length === 0">
-              <td colspan="7" class="text-center py-6 text-gray-400">No records found</td>
-            </tr>
-          </tbody>
-        </table>
+                    <button
+                      class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                      @click="toggleDelete(user)"
+                    >
+                      <icon name="delete" class="rounded-lg bg-red-800 text-white p-1" />
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="paginatedData.length === 0">
+                <td colspan="7" class="text-center py-6 text-gray-400">
+                  No records found
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
@@ -519,17 +534,26 @@ export default {
     },
 
     toggleEdit(user) {
-      this.selectedUser = user;
+      if (!user || !user.id) {
+        toast.error("Invalid user selected.");
+        return;
+      }
+
+      this.selectedUser = { ...user };
       this.showEditModal = true;
       this.openActionMenuId = null;
     },
 
     toggleDelete(user) {
+      if (!user || !user.id) {
+        toast.error("Invalid user selected.");
+        return;
+      }
+
       this.recordToDelete = user;
       this.showDeleteModal = true;
       this.openActionMenuId = null;
     },
-
     async confirmDelete() {
       if (!this.recordToDelete || isNaN(this.recordToDelete.id)) {
         toast.error("Invalid user ID.");
