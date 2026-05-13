@@ -30,7 +30,11 @@
                 @focus="!isEdit && (showCurriculumDropdown = true)"
               />
 
-              <div v-if="showCurriculumDropdown" class="dropdown-menu">
+              <div
+                v-if="showCurriculumDropdown"
+                class="dropdown-menu"
+                @mouseleave="showCurriculumDropdown = false"
+              >
                 <div v-if="filteredCurriculum.length">
                   <div
                     v-for="curriculum in filteredCurriculum"
@@ -239,7 +243,7 @@ export default {
         course_level: "",
         course_requisite: [],
       },
-
+      user: null,
       selectedCurriculumText: "",
       searchCurriculumQuery: "",
       showCurriculumDropdown: false,
@@ -283,9 +287,24 @@ export default {
         .toLowerCase()
         .trim();
 
-      if (!q) return this.curriculumList;
+      const role = String(this.user?.role || "").toLowerCase();
 
-      return this.curriculumList.filter((c) => {
+      let list = this.curriculumList;
+
+      // Admin = show all
+      // Program Chairperson = show only same program_id
+      if (role === "program chairperson") {
+        list = list.filter((c) => {
+          const curriculumProgramId = Number(c.program_id || c.program?.program_id);
+          const userProgramId = Number(this.user?.program_id);
+
+          return curriculumProgramId === userProgramId;
+        });
+      }
+
+      if (!q) return list;
+
+      return list.filter((c) => {
         const startYear = String(c.curriculum_start_year || "").toLowerCase();
         const endYear = String(c.curriculum_end_year || "").toLowerCase();
         const programName = String(c.program?.program_name || "").toLowerCase();
@@ -354,7 +373,23 @@ export default {
       "fetchCourses",
       "fetchCurriculumCourses",
     ]),
+    async fetchUser() {
+      try {
+        const response = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
+          withCredentials: true,
+        });
 
+        if (response.data) {
+          this.user = response.data;
+          console.log("Authenticated User:", this.user);
+        } else {
+          this.$router.push("/");
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        this.$router.push("/");
+      }
+    },
     getCurriculumId() {
       const directId =
         this.courseData?.curriculum_id ||
@@ -576,7 +611,14 @@ export default {
   },
 
   async mounted() {
-    await Promise.all([this.fetchCurriculums(), this.fetchCourses()]);
+    await this.fetchUser();
+
+    await Promise.all([
+      this.fetchCurriculums(),
+      this.fetchCourses(),
+      this.fetchCurriculumCourses(),
+    ]);
+
     this.loadEditData();
   },
 };

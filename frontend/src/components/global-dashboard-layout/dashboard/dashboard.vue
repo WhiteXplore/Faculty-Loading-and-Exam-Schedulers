@@ -94,7 +94,7 @@
                 <p class="mb-2 text-xs font-semibold text-gray-700">{{ item.units }}</p>
 
                 <div
-                  class="w-full max-w-[34px] rounded-t-xl bg-gradient-to-t from-defaultGreen to-emerald-400 shadow-lg shadow-green-100 transition group-hover:scale-105"
+                  class="w-full max-w-[55px] rounded-t-md bg-gradient-to-t from-defaultGreen to-emerald-400 shadow-lg shadow-green-100 transition group-hover:scale-105"
                   :style="{ height: item.height + '%' }"
                 ></div>
 

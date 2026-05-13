@@ -1,12 +1,9 @@
 <template>
-   <div class="modal-overlay">
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-[25vw] bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-      >
+  <div class="modal-overlay">
+    <div class="modal-wrapper">
+      <form @submit.prevent="submitData" class="modal-container">
         <!-- Header -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
             <h1 class="font-bold tracking-wide text-lg">
@@ -17,9 +14,9 @@
         </div>
 
         <!-- Body -->
-        <div class="p-5 space-y-5">
+        <div class="w-[25vw] modal-body">
           <!-- <div class="w-full space-y-2">
-            <label>School Year Name:</label>
+            <label class="input-label">School Year Name:</label>
             <input
               :value="schoolYearName"
               type="text"
@@ -30,38 +27,34 @@
 
           <div class="w-full flex gap-3">
             <div class="w-full space-y-2">
-              <label>Start Year:</label>
+              <label class="input-label">Start Year:</label>
               <input
                 v-model.number="form.start_year"
                 type="number"
                 required
                 min="2000"
                 max="2100"
-                class="w-full border px-3 py-3 rounded-lg"
+                class="input-text"
                 placeholder="e.g., 2024"
               />
             </div>
             <div class="w-full space-y-2">
-              <label>End Year:</label>
+              <label class="input-label">End Year:</label>
               <input
                 v-model.number="form.end_year"
                 type="number"
                 required
                 min="2000"
                 max="2100"
-                class="w-full border px-3 py-3 rounded-lg"
+                class="input-text"
                 placeholder="e.g., 2025"
               />
             </div>
           </div>
 
           <div class="w-full space-y-2">
-            <label>Semester:</label>
-            <select
-              v-model.number="form.semester"
-              required
-              class="w-full border px-3 py-3 rounded-lg"
-            >
+            <label class="input-label">Semester:</label>
+            <select v-model.number="form.semester" required class="input-text">
               <option value="">Select Semester</option>
               <option value="1">1st Semester</option>
               <option value="2">2nd Semester</option>

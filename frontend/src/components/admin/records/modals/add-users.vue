@@ -1,11 +1,7 @@
 <template>
   <div class="modal-overlay">
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="usersForm"
-      >
+    <div class="modal-wrapper">
+      <form @submit.prevent="submitData" class="modal-container" ref="usersForm">
         <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
@@ -19,40 +15,32 @@
 
         <div class="p-5 w-[32vw] space-y-6">
           <!-- STEP 1 -->
-          <div v-if="currentStep === 1" class="space-y-3">
-            <h2 class="text-md font-bold text-gray-800 border-b pb-1">
-              Personal Information
-            </h2>
-
-            <div>
-              <label class="font-bold">First Name:</label>
+          <div v-if="currentStep === 1" class="grid grid-cols-2 items-start gap-3">
+            <div class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">First Name:</label>
               <input
                 v-model="form.first_name"
                 type="text"
                 required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+                class="input-text"
                 placeholder="Enter first name"
               />
             </div>
 
-            <div>
-              <label class="font-bold">Last Name:</label>
+            <div class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">Last Name:</label>
               <input
                 v-model="form.last_name"
                 type="text"
                 required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+                class="input-text"
                 placeholder="Enter last name"
               />
             </div>
 
-            <div>
-              <label class="font-bold">Role:</label>
-              <select
-                v-model="form.role"
-                required
-                class="w-full border px-3 py-3.5 border-gray-600 rounded-md text-md text-gray-800"
-              >
+            <div class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">Role:</label>
+              <select v-model="form.role" required class="input-text">
                 <option disabled value="">Select role</option>
                 <option value="Admin">Admin</option>
                 <option value="Program Chairperson">Program Chairperson</option>
@@ -60,35 +48,31 @@
               </select>
             </div>
 
-            <!-- NON-ADMIN FIELDS -->
             <template v-if="!isAdminRole">
-              <div>
-                <label class="font-bold">Designation:</label>
+              <div class="w-full space-y-2 text-left flex flex-col">
+                <label class="input-label">Designation:</label>
                 <input
                   v-model="form.designation"
                   type="text"
-                  class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+                  class="input-text"
                   placeholder="Example: Instructor I"
                 />
               </div>
 
-              <div>
-                <label class="font-bold">Unit Load:</label>
+              <div class="w-full space-y-2 text-left flex flex-col">
+                <label class="input-label">Unit Load:</label>
                 <input
                   v-model.number="form.unit_load"
                   type="number"
                   min="0"
-                  class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+                  class="input-text"
                   placeholder="Enter unit load"
                 />
               </div>
 
-              <div>
-                <label class="font-bold">Employment Type:</label>
-                <select
-                  v-model="form.employment_type"
-                  class="w-full border px-3 py-3.5 border-gray-600 rounded-md text-md text-gray-800"
-                >
+              <div class="w-full space-y-2 text-left flex flex-col">
+                <label class="input-label">Employment Type:</label>
+                <select v-model="form.employment_type" class="input-text">
                   <option value="">Select employment type</option>
                   <option value="Full Time">Full Time</option>
                   <option value="Part Time">Part Time</option>
@@ -96,87 +80,95 @@
               </div>
 
               <div class="flex flex-col space-y-2 w-full relative">
-                <label class="font-bold">Institute:</label>
+                <label class="input-label">Institute:</label>
                 <input
                   v-model="searchInstituteQuery"
                   type="text"
                   placeholder="Search institute..."
-                  class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
+                  class="input-text"
                   @focus="showInstituteDropdown = true"
                 />
 
                 <div
-                  v-if="showInstituteDropdown && filteredInstitutes.length"
-                  class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-20"
-                  @mouseleave="showInstituteDropdown = false"
+                  v-if="showInstituteDropdown"
+                  class="absolute top-[75px] left-0 w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-50 shadow-lg"
                 >
                   <div
                     v-for="institute in filteredInstitutes"
                     :key="institute.institute_id"
                     class="px-3 py-3 hover:bg-gray-100 cursor-pointer"
-                    @mousedown="selectInstitute(institute)"
+                    @mousedown.prevent="selectInstitute(institute)"
                   >
                     {{ institute.institute_name }}
+                  </div>
+
+                  <div
+                    v-if="!filteredInstitutes.length"
+                    class="px-3 py-3 text-sm text-gray-400"
+                  >
+                    No institute found
                   </div>
                 </div>
               </div>
 
               <div class="flex flex-col space-y-2 w-full relative">
-                <label class="font-bold">Program:</label>
+                <label class="input-label">Program:</label>
                 <input
                   v-model="searchProgramQuery"
                   type="text"
                   placeholder="Search program..."
-                  class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
+                  class="input-text"
                   @focus="showProgramDropdown = true"
                 />
 
                 <div
-                  v-if="showProgramDropdown && filteredPrograms.length"
-                  class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-20"
-                  @mouseleave="showProgramDropdown = false"
+                  v-if="showProgramDropdown"
+                  class="absolute top-[75px] left-0 w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-50 shadow-lg"
                 >
                   <div
                     v-for="program in filteredPrograms"
                     :key="program.program_id"
                     class="px-3 py-3 hover:bg-gray-100 cursor-pointer"
-                    @mousedown="selectProgram(program)"
+                    @mousedown.prevent="selectProgram(program)"
                   >
                     {{ program.program_name }}
+                  </div>
+
+                  <div
+                    v-if="!filteredPrograms.length"
+                    class="px-3 py-3 text-sm text-gray-400"
+                  >
+                    No program found
                   </div>
                 </div>
               </div>
             </template>
 
-            <div class="flex justify-end pt-2">
+            <div class="col-span-2 flex justify-end pt-2">
               <button class="btn-save" type="button" @click="goToStep2">Next</button>
             </div>
           </div>
 
           <!-- STEP 2 -->
           <div v-if="currentStep === 2" class="space-y-3">
-            <h2 class="text-md font-bold text-gray-800 border-b pb-1">
-              User Credentials
-            </h2>
-
-            <div>
-              <label class="font-bold">Email:</label>
+            <div class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">Email:</label>
               <input
                 v-model="form.email"
                 type="email"
                 required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+                class="input-text"
                 placeholder="Enter email"
               />
             </div>
 
-            <div v-if="!isEditMode">
-              <label class="font-bold">Password:</label>
+            <div v-if="!isEditMode" class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">Password:</label>
               <input
                 v-model="form.password"
                 type="password"
                 required
-                class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
+                class="input-text"
                 placeholder="Enter password"
               />
             </div>
@@ -346,7 +338,7 @@ export default {
       if (!this.isAdminRole) {
         payload.employment_type = this.form.employment_type || "Full Time";
         payload.designation = this.form.designation?.trim() || "";
-        payload.preffered_time = this.form.preffered_time || "";
+
         payload.unit_load = Number(this.form.unit_load || 0);
         payload.institute_id = Number(this.form.institute_id);
         payload.program_id = Number(this.form.program_id);

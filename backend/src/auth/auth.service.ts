@@ -108,76 +108,105 @@ export class AuthService {
   }
 
   // ✅ New Registration Method
-  async register(
-    email: string,
-    password: string,
-    first_name: string,
-    last_name: string,
-    position: string,
-    role: string,
-    institute_id: number,
-    program_id: number,
-    res: Response,
-  ) {
-    const existingUser = await this.findUserByEmail(email);
-    if (existingUser) {
-      throw new BadRequestException('Email already in use');
-    }
+async register(body: any, res: Response) {
+  const {
+    email,
+    password,
+    first_name,
+    last_name,
+    role,
+    employment_type,
+    designation,
+    preffered_time,
+    unit_load,
+    institute_id,
+    program_id,
+  } = body;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+  const existingUser = await this.findUserByEmail(email);
+  if (existingUser) {
+    throw new BadRequestException('Email already in use');
+  }
 
-    // Correct property is `id` for Institute and `program_id` for Program
-    const institute = await this.userRepository.manager.findOne(Institute, {
-      where: { institute_id: institute_id },
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  let institute: Institute | null = null;
+  let program: Program | null = null;
+
+  if (role !== 'Admin') {
+    institute = await this.userRepository.manager.findOne(Institute, {
+      where: { institute_id: Number(institute_id) },
     });
 
-    const program = await this.userRepository.manager.findOne(Program, {
-      where: { program_id: program_id },
-    });
-
-    if (!institute)
+    if (!institute) {
       throw new BadRequestException(
         `Institute with ID ${institute_id} not found`,
       );
-    if (!program)
+    }
+
+    program = await this.userRepository.manager.findOne(Program, {
+      where: { program_id: Number(program_id) },
+    });
+
+    if (!program) {
       throw new BadRequestException(`Program with ID ${program_id} not found`);
-
-    const newUser = this.userRepository.create({
-      email,
-      password: hashedPassword,
-      first_name,
-      last_name,
-      // position,
-      role,
-      institute,
-      program,
-    });
-
-    await this.userRepository.save(newUser);
-
-    const payload = {
-      sub: newUser.id,
-      email: newUser.email,
-      role: newUser.role,
-      // position: newUser.position,
-      first_name: newUser.first_name,
-      last_name: newUser.last_name,
-    };
-
-    const token = this.jwtService.sign(payload, { expiresIn: '1h' });
-
-    res.cookie('jwt', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 3600000,
-    });
-
-    return res.status(201).json({
-      message: 'Registration successful',
-      role: newUser.role,
-    });
+    }
   }
+
+  const newUser = this.userRepository.create({
+    email,
+    password: hashedPassword,
+    first_name,
+    last_name,
+    role,
+
+  employment_type: role === 'Admin' ? '' : employment_type || 'Full Time',
+designation: role === 'Admin' ? '' : designation || '',
+    preffered_time: preffered_time || '',
+    unit_load: role === 'Admin' ? 0 : Number(unit_load || 0),
+
+    institute: role === 'Admin' ? null : institute,
+    program: role === 'Admin' ? null : program,
+  });
+
+  const savedUser = await this.userRepository.save(newUser);
+
+  const payload = {
+    sub: savedUser.id,
+    email: savedUser.email,
+    role: savedUser.role,
+    first_name: savedUser.first_name,
+    last_name: savedUser.last_name,
+    institute_id: savedUser.institute?.institute_id ?? null,
+    program_id: savedUser.program?.program_id ?? null,
+  };
+
+  const token = this.jwtService.sign(payload, { expiresIn: '1h' });
+
+  res.cookie('jwt', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 3600000,
+  });
+
+  return res.status(201).json({
+    message: 'Registration successful',
+    user: {
+      id: savedUser.id,
+      email: savedUser.email,
+      first_name: savedUser.first_name,
+      last_name: savedUser.last_name,
+      role: savedUser.role,
+      employment_type: savedUser.employment_type,
+      designation: savedUser.designation,
+      preffered_time: savedUser.preffered_time,
+      unit_load: savedUser.unit_load,
+      institute_id: savedUser.institute?.institute_id ?? null,
+      program_id: savedUser.program?.program_id ?? null,
+    },
+  });
+}
 
   // Inside AuthService
   async getAllUsers(): Promise<any[]> {

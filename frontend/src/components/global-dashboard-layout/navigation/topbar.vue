@@ -17,46 +17,84 @@
     <!-- Right Section -->
     <div class="flex items-center gap-2">
       <!-- Dropdown -->
-      <div v-if="activeYears.length > 1" class="relative flex items-center">
-        <!-- Calendar Icon -->
-        <div
-          class="pointer-events-none absolute left-3 flex items-center text-green-700 z-10"
-        >
-          <icon name="calendar" />
-        </div>
 
-        <select
-          v-model="selectedSchoolYearId"
-          @change="updateSchoolYear"
-          @focus="isDropdownOpen = true"
-          @blur="isDropdownOpen = false"
-          class="appearance-none rounded-xl border border-gray-200 bg-white py-2 pl-4 pr-3 text-center text-green-900 text-sm font-normal cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-lg"
+      <div class="relative w-[230px]">
+        <button
+          type="button"
+          @click="isDropdownOpen = !isDropdownOpen"
+          class="flex w-full items-center justify-between rounded-xl border border-gray-200 bg-white px-2 py-1 shadow-sm transition-all duration-300 hover:border-green-300 hover:shadow-md"
         >
-          <option value="" disabled>Select Active School Year</option>
-          <option
-            v-for="sy in activeYears"
-            :key="sy.school_year_id"
-            :value="sy.school_year_id"
-            class="dropdown-item"
-          >
-            {{ sy.school_year_name }} {{ getSemesterLabel(sy.semester) }}
-          </option>
-        </select>
+          <div class="flex items-center gap-3">
+            <div
+              class="flex h-7 w-7 items-center justify-center rounded-md bg-green-50 text-gray-700"
+            >
+              <icon name="calendar" />
+            </div>
 
-        <!-- Arrow Icon -->
-        <div
-          class="pointer-events-none absolute right-3 flex items-center transition-transform duration-300 text-green-700"
-          :class="{ 'rotate-180': isDropdownOpen }"
-        >
+            <div class="text-left">
+              <p class="text-sm text-gray-800">
+                {{
+                  activeYears.find((sy) => sy.school_year_id === selectedSchoolYearId)
+                    ? activeYears.find((sy) => sy.school_year_id === selectedSchoolYearId)
+                        .school_year_name +
+                      " • " +
+                      getSemesterLabel(
+                        activeYears.find(
+                          (sy) => sy.school_year_id === selectedSchoolYearId
+                        ).semester
+                      )
+                    : "Select School Year"
+                }}
+              </p>
+            </div>
+          </div>
+
           <svg
-            class="w-5 h-5"
+            class="h-4 w-4 text-gray-500 transition-transform duration-300"
+            :class="{ 'rotate-180': isDropdownOpen }"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
+            stroke-width="2.4"
             viewBox="0 0 24 24"
           >
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
+        </button>
+
+        <div
+          v-if="isDropdownOpen"
+          class="absolute right-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+        >
+          <button
+            v-for="sy in activeYears"
+            :key="sy.school_year_id"
+            type="button"
+            @click="
+              selectedSchoolYearId = sy.school_year_id;
+              updateSchoolYear();
+              isDropdownOpen = false;
+            "
+            class="flex w-full items-center justify-between px-4 py-3 text-left transition hover:bg-green-50"
+            :class="
+              selectedSchoolYearId === sy.school_year_id ? 'bg-green-50' : 'bg-white'
+            "
+          >
+            <div>
+              <p class="text-sm font-semibold text-gray-800">
+                {{ sy.school_year_name }}
+              </p>
+              <p class="text-xs text-gray-500">
+                {{ getSemesterLabel(sy.semester) }}
+              </p>
+            </div>
+
+            <span
+              v-if="selectedSchoolYearId === sy.school_year_id"
+              class="rounded-full bg-green-100 px-2 py-1 text-[10px] font-bold text-green-700"
+            >
+              Active
+            </span>
+          </button>
         </div>
       </div>
 

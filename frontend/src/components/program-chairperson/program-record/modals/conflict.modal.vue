@@ -9,10 +9,7 @@
       <!-- Header -->
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-semibold">Schedule Conflicts Detected</h2>
-        <button
-          @click="$emit('close')"
-          class="text-gray-500 hover:text-gray-700"
-        >
+        <button @click="$emit('close')" class="text-gray-500 hover:text-gray-700">
           ✕
         </button>
       </div>
@@ -47,9 +44,7 @@
             <!-- ROOM -->
             <td class="px-4 py-2 border">
               <span
-                v-if="
-                  item.room_name && item.room_name.toLowerCase() === 'online'
-                "
+                v-if="item.room_name && item.room_name.toLowerCase() === 'online'"
                 class="px-2 py-1 text-[11px] bg-purple-500 text-white rounded-full"
               >
                 ONLINE
