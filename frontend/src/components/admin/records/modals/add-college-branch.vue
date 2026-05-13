@@ -9,7 +9,7 @@
         <!-- HEADER -->
        <div class="modal-header">
           <div class="flex gap-1 items-center">
-            <icon name="circle-add" />
+            <icon name="add-account1.1" />
             <h1 class="font-bold tracking-wide text-lg">
               {{ isEditMode ? "Edit College Branch" : "Add College Branch" }}
             </h1>

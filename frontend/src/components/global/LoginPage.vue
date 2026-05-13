@@ -17,8 +17,8 @@
           <div class="z-10 w-[20vw] flex justify-center items-start text-white p-3">
             <div class="flex flex-col justify-center items-center text-center">
               <img src="@/assets/img/dnsc_logo.png" alt="" class="w-20" />
-              <h1 class="font-bold text-2xl mt-2">Davao del Norte State College</h1>
-              <p class="text-sm text-justify mt-5">
+              <h1 class="font-medium text-[20px] mt-2">Davao del Norte State College</h1>
+              <p class="text-sm text-justify mt-3 font-normal">
                 Davao del Norte State College is a distinguished public institution of
                 higher learning located in New Visayas, Panabo City, Philippines. It
                 offers diverse academic programs in Information Technology, Agriculture,
@@ -27,7 +27,7 @@
                 and dedicated faculty. By empowering students with knowledge, skills, and
                 values, it helps shape innovative leaders who contribute to national
                 development and global progres
-                <a href="https://dnsc.edu.ph/" class="text-left flex mt-5 font-bold"
+                <a href="https://dnsc.edu.ph/" class="text-left flex mt-5 font-semibold"
                   >Click here for more information!</a
                 >
               </p>

@@ -16,7 +16,7 @@
         <!-- Body -->
         <div class="w-[25vw] modal-body">
           <!-- Curriculum Name -->
-          <div class="flex flex-col space-y-2">
+          <!-- <div class="flex flex-col space-y-2">
             <label class="input-label">Curriculum Name:</label>
             <input
               :value="formattedCurriculumName"
@@ -24,7 +24,7 @@
               disabled
               class="input-text"
             />
-          </div>
+          </div> -->
           <!-- Program -->
           <div class="dropdown-container">
             <label class="dropdown-label">Program:</label>
@@ -199,23 +199,49 @@ export default {
 
     async submitData() {
       const formEl = this.$refs.curriculumnForm;
+
       if (!formEl.checkValidity()) {
         formEl.reportValidity();
         return;
       }
 
       try {
+        // ✅ Duplicate validation only when adding
+        if (!this.isEdit) {
+          const res = await axios.get(
+            `${process.env.VUE_APP_API_BASE_URL}/curriculums/get-curriculums`
+          );
+
+          const curriculums = Array.isArray(res.data) ? res.data : [];
+
+          const duplicate = curriculums.find((item) => {
+            return (
+              Number(item.program_id) === Number(this.form.program_id) &&
+              Number(item.curriculum_start_year) ===
+                Number(this.form.curriculum_start_year) &&
+              Number(item.curriculum_end_year) === Number(this.form.curriculum_end_year)
+            );
+          });
+
+          if (duplicate) {
+            toast.warning("This curriculum already exists.");
+            return;
+          }
+        }
+
         if (this.isEdit) {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/curriculums/update-curriculum/${this.curriculumData.curriculum_id}`,
             this.form
           );
+
           toast.success("Curriculum updated successfully!");
         } else {
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/curriculums/add-curriculums`,
             this.form
           );
+
           toast.success("Curriculum added successfully!");
         }
 
@@ -223,6 +249,7 @@ export default {
         this.$emit("refresh");
         this.$emit("close");
       } catch (err) {
+        console.error(err);
         toast.error("Failed to save curriculum");
       }
     },

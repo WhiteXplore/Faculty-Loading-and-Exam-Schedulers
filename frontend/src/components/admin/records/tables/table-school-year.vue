@@ -4,17 +4,12 @@
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / School Years</div>
 
-      <div
-        @click="toggleAdd"
-        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-      >
-        <div
-          class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-        >
-          <icon name="circle-add" />
+      <div @click="toggleAdd" class="btn-add">
+        <div class="btn-add-icon">
+          <icon name="add-account1.1" />
         </div>
 
-        <span class="font-medium text-sm">Add School Year</span>
+        <span class="btn-add-text">Add School Year</span>
       </div>
     </div>
 
@@ -48,31 +43,30 @@
         </div>
 
         <!-- Filters -->
-        <div class="flex items-center gap-3 flex-wrap">
-          <!-- Search -->
-          <div class="relative">
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search..."
-              class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full sm:w-[280px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
-              @input="changePage(1)"
-            />
-            <!-- Search icon -->
-            <div
-              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+
+        <!-- Search -->
+        <div class="search-wrapper">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search..."
+            class="search-input"
+            @input="changePage(1)"
+          />
+          <!-- Search icon -->
+          <div
+            class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.35-4.35" />
-              </svg>
-            </div>
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@
       >
         <!-- Header -->
         <div
-          class="w-full p-5 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b border-green-700 shadow"
+          class="w-full p-4 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b border-green-700 shadow"
         >
           <div class="flex gap-2 items-center">
             <icon :name="'add-students'" class="size-5" />
@@ -26,7 +26,7 @@
         </div>
 
         <!-- BODY -->
-        <div class="p-6 space-y-6 text-[13px] max-h-[80vh] overflow-y-auto">
+        <div class="p-4 space-y-6 text-[13px] max-h-[80vh] overflow-y-auto">
           <!-- PROGRAM INFO -->
           <div class="p-4 bg-gray-50 border rounded-xl">
             <p class="text-gray-800">
@@ -127,7 +127,7 @@
                   <div
                     class="flex justify-between items-center px-5 py-3 bg-gray-50 border-b rounded-t-xl"
                   >
-               <div class="per-page-container">
+                    <div class="per-page-container">
                       <icon name="calendar" class="size-5 text-green-700" />
                       <h4 class="font-semibold text-green-800">
                         {{ year.label }}
@@ -171,7 +171,7 @@
                         </span>
                       </div>
 
-                 <div class="per-page-container">
+                      <div class="per-page-container">
                         <icon name="users" class="size-4 text-defaultGreen" />
 
                         <input
@@ -314,11 +314,19 @@ export default {
     },
 
     filteredSchoolYears() {
-      if (!this.searchSchoolYearQuery) return this.schoolYears;
+      // show only active school years
+      const activeSchoolYears = this.schoolYears.filter(
+        (sy) => Number(sy.is_active) === 1
+      );
+
+      // if no search query
+      if (!this.searchSchoolYearQuery) {
+        return activeSchoolYears;
+      }
 
       const q = this.searchSchoolYearQuery.toLowerCase();
 
-      return this.schoolYears.filter((sy) =>
+      return activeSchoolYears.filter((sy) =>
         sy.school_year_name?.toLowerCase().includes(q)
       );
     },

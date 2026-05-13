@@ -8,15 +8,15 @@
       <div class="flex gap-2">
         <div
           @click="openAddModal"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+          class="btn-add"
         >
           <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+            class="btn-add-icon"
           >
-            <icon name="circle-add" />
+            <icon name="add-account1.1" />
           </div>
 
-          <span class="font-medium text-sm">Add Branch</span>
+             <span class="btn-add-text">Add Branch</span>
         </div>
       </div>
     </div>

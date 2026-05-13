@@ -32,7 +32,7 @@
             {{ user.first_name }}
           </p>
 
-          <p class="text-[13px] font-medium tracking-wider">
+          <p class="text-[10px] font-normal tracking-wider">
             {{ user.position || user.role }}
           </p>
         </div>
@@ -43,8 +43,8 @@
       <!-- Dynamic Menu -->
       <div
         :class="[
-          'flex flex-col justify-between tracking-wide text-[13px] w-full transition-all duration-200',
-          isExpanded ? 'mt-4 h-[calc(100vh-175px)]' : 'mt-3 h-[calc(100vh-70px)]',
+          'flex flex-col justify-between tracking-wide text-[13px] w-full transition-all duration-200 ',
+          isExpanded ? 'mt-4 h-[calc(100vh-120px)]' : 'mt-3 h-[calc(102vh-90px)]',
         ]"
       >
         <!-- TOP MENU -->
@@ -353,7 +353,7 @@ export default {
                 children: [
                   { name: "Courses", route: "/program-chair-courses" },
                   {
-                    name: "Class & Assigned Courses",
+                    name: "Year & Section",
                     route: "/program-chair-year-section",
                   },
                   // {
@@ -369,7 +369,7 @@ export default {
                 route: "/program-chair-faculty-list",
               },
               {
-                name: "Class & Assigned Courses",
+                name: "Year & Section",
                 icon: "class-list",
                 route: "/program-chair-class-assigned-classes",
               },

@@ -69,19 +69,90 @@ export class UserService {
     return user;
   }
 
-  async update(
-    id: number,
-    updateUserDto: UpdateUserDto,
-  ): Promise<User_Accounts> {
-    const user = await this.userRepository.preload({
-      id,
-      ...updateUserDto,
+async update(id: number, updateUserDto: UpdateUserDto): Promise<User_Accounts> {
+  const user = await this.userRepository.findOne({
+    where: { id },
+    relations: ['program', 'institute'],
+  });
+
+  if (!user) {
+    throw new NotFoundException(`User with ID ${id} not found`);
+  }
+
+  if (updateUserDto.email !== undefined) {
+    const email = updateUserDto.email.trim().toLowerCase();
+
+    const existingEmail = await this.userRepository.findOne({
+      where: { email },
     });
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+
+    if (existingEmail && existingEmail.id !== id) {
+      throw new BadRequestException('Email already exists');
     }
+
+    user.email = email;
+  }
+
+  if (updateUserDto.first_name !== undefined) {
+    user.first_name = updateUserDto.first_name.trim();
+  }
+
+  if (updateUserDto.last_name !== undefined) {
+    user.last_name = updateUserDto.last_name.trim();
+  }
+
+  if (updateUserDto.role !== undefined) {
+    user.role = updateUserDto.role.trim();
+  }
+
+  if (updateUserDto.password && updateUserDto.password.trim() !== '') {
+    user.password = await bcrypt.hash(updateUserDto.password, 10);
+  }
+
+  // ADMIN: clear faculty-only fields
+  if (user.role === 'Admin') {
+    user.employment_type = '';
+    user.designation = '';
+    user.preffered_time = '';
+    user.unit_load = 0;
+    user.program = null;
+    user.institute = null;
+
     return await this.userRepository.save(user);
   }
+
+  if (updateUserDto.employment_type !== undefined) {
+    user.employment_type = updateUserDto.employment_type?.trim() || 'Full Time';
+  }
+
+  if (updateUserDto.designation !== undefined) {
+    user.designation = updateUserDto.designation?.trim() || '';
+  }
+
+  if (updateUserDto.preffered_time !== undefined) {
+    user.preffered_time = updateUserDto.preffered_time?.trim() || '';
+  }
+
+  if (updateUserDto.unit_load !== undefined) {
+    user.unit_load = Number(updateUserDto.unit_load || 0);
+  }
+
+  if (updateUserDto.program_id !== undefined && updateUserDto.program_id !== null) {
+    const program = await this.programRepository.findOne({
+      where: { program_id: Number(updateUserDto.program_id) },
+      relations: ['institute'],
+    });
+
+    if (!program) {
+      throw new NotFoundException('Program not found');
+    }
+
+    user.program = program;
+    user.institute = program.institute;
+  }
+
+  return await this.userRepository.save(user);
+}
 
   async remove(id: number): Promise<void> {
     const result = await this.userRepository.delete(id);
@@ -90,98 +161,121 @@ export class UserService {
     }
   }
 
-  async importUsers(importData: ImportUserDto[]): Promise<ImportResult> {
-    const results: ImportResult = { success: 0, failed: 0, errors: [] };
+async importUsers(importData: ImportUserDto[]): Promise<ImportResult> {
+  const results: ImportResult = {
+    success: 0,
+    failed: 0,
+    errors: [],
+  };
 
-    // Fetch all programs for matching
-    const programs = await this.programRepository.find({
-      relations: ['institute'],
-    });
+  const programs = await this.programRepository.find({
+    relations: ['institute'],
+  });
 
-    for (let i = 0; i < importData.length; i++) {
-      try {
-        const userData = importData[i];
+  for (let i = 0; i < importData.length; i++) {
+    try {
+      const userData = importData[i];
 
-        // Validate required fields
-        if (
-          !userData.first_name ||
-          !userData.last_name ||
-          !userData.email ||
-          !userData.role
-        ) {
-          results.failed++;
-          results.errors.push({
-            row: i + 2, // +2 because row 1 is header
-            error: 'Missing required fields',
-            data: userData,
-          });
-          continue;
-        }
-
-        // Check if user already exists
-        const existingUser = await this.userRepository.findOne({
-          where: { email: userData.email },
-        });
-
-        if (existingUser) {
-          results.failed++;
-          results.errors.push({
-            row: i + 2,
-            error: 'Email already exists',
-            email: userData.email,
-          });
-          continue;
-        }
-
-        // Find program by name or code
-        let program: Program | undefined = undefined;
-        if (userData.program_name) {
-          program = programs.find(
-            (p) =>
-              p.program_name?.toLowerCase() ===
-                userData.program_name?.toLowerCase() ||
-              p.program_code?.toLowerCase() ===
-                userData.program_name?.toLowerCase(),
-          );
-        }
-
-        // Generate a default password (can be customized)
-        const defaultPassword = 'Password123!';
-        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-
-        // Create user - build object conditionally
-        const userPayload: any = {
-          first_name: userData.first_name.trim(),
-          last_name: userData.last_name.trim(),
-          email: userData.email.trim().toLowerCase(),
-          password: hashedPassword,
-          role: userData.role.trim(),
-        };
-
-        // Only add program and institute if program exists
-        if (program) {
-          userPayload.program = program;
-          if (program.institute) {
-            userPayload.institute = program.institute;
-          }
-        }
-
-        const newUser = this.userRepository.create(userPayload);
-
-        await this.userRepository.save(newUser);
-        results.success++;
-      } catch (error) {
+      // REQUIRED VALIDATION
+      if (
+        !userData.first_name ||
+        !userData.last_name ||
+        !userData.email ||
+        !userData.role
+      ) {
         results.failed++;
+
         results.errors.push({
           row: i + 2,
-          error: error.message || 'Unknown error',
-          data: importData[i],
+          error: 'Missing required fields',
+          data: userData,
         });
-      }
-    }
 
-    return results;
+        continue;
+      }
+
+      // CHECK EXISTING EMAIL
+      const existingUser = await this.userRepository.findOne({
+        where: {
+          email: userData.email.trim().toLowerCase(),
+        },
+      });
+
+      if (existingUser) {
+        results.failed++;
+
+        results.errors.push({
+          row: i + 2,
+          error: 'Email already exists',
+          email: userData.email,
+        });
+
+        continue;
+      }
+
+     // FIND PROGRAM
+// FIND PROGRAM
+let program: Program | undefined = undefined;
+
+if (userData.program) {
+  const programSearch = userData.program.toLowerCase();
+
+  program = programs.find(
+    (p) =>
+      p.program_name?.toLowerCase() === programSearch ||
+      p.program_code?.toLowerCase() === programSearch,
+  );
+}
+      // DEFAULT PASSWORD
+      const defaultPassword = 'Password123!';
+      const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+      // CREATE USER PAYLOAD
+      const userPayload: any = {
+        first_name: userData.first_name.trim(),
+        last_name: userData.last_name.trim(),
+        email: userData.email.trim().toLowerCase(),
+        password: hashedPassword,
+
+        role: userData.role?.trim(),
+
+        employment_type:
+          userData.employment_type?.trim() || 'Full Time',
+
+        unit_load: Number(userData.unit_load || 0),
+
+      designation: userData.designation?.trim() || '',
+
+        preffered_time: '',
+      };
+
+      // PROGRAM + INSTITUTE
+      if (program) {
+        userPayload.program = program;
+
+        if (program.institute) {
+          userPayload.institute = program.institute;
+        }
+      }
+
+      const newUser = this.userRepository.create(userPayload);
+
+      await this.userRepository.save(newUser);
+
+      results.success++;
+    } catch (error) {
+      results.failed++;
+
+      results.errors.push({
+        row: i + 2,
+        error: error.message || 'Unknown error',
+        data: importData[i],
+      });
+    }
   }
+
+  return results;
+}
 
   async importExpertise(
     importData: ImportExpertiseDto[],

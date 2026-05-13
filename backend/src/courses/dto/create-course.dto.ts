@@ -6,6 +6,10 @@ import {
 } from 'class-validator';
 
 export class CreateCourseDto {
+    @IsOptional()
+  @IsInt()
+  curriculum_id?: number;
+  
   @IsString()
   @MaxLength(100)
   course_code: string;

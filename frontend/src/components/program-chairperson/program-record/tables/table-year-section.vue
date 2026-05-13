@@ -4,14 +4,9 @@
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / Year & Section</div>
 
-      <button
-        @click="openYearSectionModal"
-        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-      >
-        <div
-          class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-        >
-          <icon name="circle-add" />
+      <button @click="openYearSectionModal" class="btn-add">
+        <div class="btn-add-icon">
+          <icon name="add-account1.1" />
         </div>
         <span class="font-medium">Add Year/Section</span>
       </button>
@@ -29,7 +24,7 @@
         </p> -->
 
         <!-- SECTIONS TABLE -->
-        <div v-if="filteredAndSearchedClasses.length > 0">
+        <div>
           <div class="overflow-x-auto border p-3 rounded-xl bg-white">
             <!-- Controls -->
             <div class="table-controls">
@@ -73,7 +68,7 @@
                 <div class="relative">
                   <select
                     v-model="selectedCampus"
-                    class="appearance-none rounded-full border border-green-600 bg-white px-3 py-2 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+                    class="select-filter-input pr-8"
                     @change="changePage(1)"
                   >
                     <option value="all">All Campus</option>
@@ -197,8 +192,8 @@
 
                     <tr v-if="paginatedClasses.length === 0">
                       <td
-                        :colspan="user.role === 'Admin' ? 6 : 5"
-                        class="text-center py-6 text-gray-400"
+                        :colspan="user.role === 'Admin' ? 8 : 7"
+                        class="text-center py-10 text-gray-400"
                       >
                         No matching sections found
                       </td>
@@ -253,7 +248,12 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else class="bg-white border p-8 rounded-xl text-center">
+        <!-- Empty State -->
+        <!-- Optional Empty State -->
+        <div
+          v-if="filteredClasses.length === 0"
+          class="bg-white border p-8 rounded-xl text-center"
+        >
           <p class="text-gray-600">
             No sections created for {{ activeSchoolYearName }} -
             {{ formatSemester(activeSemesterYear) }} yet.
@@ -415,9 +415,11 @@ export default {
     },
 
     totalPages() {
-      return Math.ceil(this.filteredAndSearchedClasses.length / this.itemsPerPage);
+      return Math.max(
+        1,
+        Math.ceil(this.filteredAndSearchedClasses.length / this.itemsPerPage)
+      );
     },
-
     startIndex() {
       return this.filteredAndSearchedClasses.length === 0
         ? 0
@@ -523,7 +525,19 @@ export default {
     },
 
     changePage(page) {
-      if (page >= 1 && page <= this.totalPages) this.currentPage = page;
+      const maxPage = this.totalPages || 1;
+
+      if (page < 1) {
+        this.currentPage = 1;
+        return;
+      }
+
+      if (page > maxPage) {
+        this.currentPage = maxPage;
+        return;
+      }
+
+      this.currentPage = page;
     },
   },
 

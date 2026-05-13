@@ -4,7 +4,7 @@
       <div class="text-[13px] text-text mt-4 font-regular">Pages / Faculty List</div>
       <div
         @click="toggleAdd"
-        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+        class="btn-add"
       >
         <div
           class="flex items-center justify-center w-5 h-5 bg-white rounded-full group-hover:bg-green-100 transition-colors duration-300"
@@ -14,7 +14,7 @@
             class="w-4 h-4 text-defaultGreen transition-colors duration-300 group-hover:text-defaultGreen"
           />
         </div>
-        <span class="font-medium text-sm">Add Instructor</span>
+           <span class="btn-add-text">Add Instructor</span>
       </div>
     </div>
 

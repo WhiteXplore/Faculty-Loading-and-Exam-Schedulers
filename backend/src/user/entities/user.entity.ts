@@ -44,19 +44,13 @@ export class User_Accounts {
   @Column({ nullable: true })
   preffered_time: string;
 
-  // Institute Relationship
-  @ManyToOne(() => Institute, (institute) => institute.users, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'institute_id' })
-  institute: Institute;
+@ManyToOne(() => Program, { nullable: true })
+@JoinColumn({ name: 'program_id' })
+program: Program | null;
 
-  // Program Relationship
-  @ManyToOne(() => Program, (program) => program.users, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'program_id' })
-  program: Program;
+@ManyToOne(() => Institute, { nullable: true })
+@JoinColumn({ name: 'institute_id' })
+institute: Institute | null;
 
   // School Year Relationship ✅
   @ManyToOne(() => SchoolYear, {

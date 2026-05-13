@@ -167,7 +167,7 @@
             v-model="searchQuery"
             type="text"
             placeholder="Search faculty..."
-            class="rounded-xl border border-green-600 bg-white px-4 py-2.5 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+            class="search-input"
           />
 
           <div
@@ -188,27 +188,19 @@
         <!-- Actions -->
         <div class="per-page-container">
           <!-- Generate -->
-          <button
-            @click="generateSchedule"
-            class="flex items-center gap-2 px-3 py-2.5 border bg-blue-700 text-white border-blue-600 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg transition duration-200"
-          >
-            <div class="p-1 bg-blue-800/20 rounded-full flex items-center justify-center">
+          <button @click="generateSchedule" class="btn-gui">
+            <div class="btn-gui-icon">
               <icon name="arrow-path" />
             </div>
-            <span class="font-medium text-sm">Generate</span>
+            <span class="btn-gui-text">Generate</span>
           </button>
 
           <!-- Save -->
-          <button
-            @click="showConfirmSaved = true"
-            class="flex items-center gap-2 px-3 py-2.5 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg transition duration-200"
-          >
-            <div
-              class="p-1 bg-defaultGreen/20 rounded-full flex items-center justify-center"
-            >
+          <button @click="showConfirmSaved = true" class="btn-add">
+            <div class="btn-add-icon">
               <icon name="circle-check" />
             </div>
-            <span class="font-medium text-sm">Save Schedule</span>
+            <span class="btn-add-text">Save Schedule</span>
           </button>
         </div>
       </div>

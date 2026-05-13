@@ -1,5 +1,5 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div
       class="rounded-[16px] shadow-lg justify-center animate-slideUp max-h-[90vh] overflow-y-auto"
     >
@@ -74,11 +74,21 @@
                 <p class="text-gray-800 font-medium">{{ userData.email }}</p>
               </div>
               <div>
-                <p class="text-gray-600 text-sm font-semibold mb-1">
-                  Institute
+                <p class="text-gray-600 text-sm font-semibold mb-1">Designation</p>
+                <p class="text-gray-800 font-medium">
+                  {{ userData.designation || "N/A" }}
                 </p>
+              </div>
+              <div>
+                <p class="text-gray-600 text-sm font-semibold mb-1">Institute</p>
                 <p class="text-gray-800 font-medium">
                   {{ userData.institute?.institute_name || "N/A" }}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-600 text-sm font-semibold mb-1">Unit Load</p>
+                <p class="text-gray-800 font-medium">
+                  {{ userData.unit_load || "N/A" }}
                 </p>
               </div>
               <div>
@@ -88,9 +98,7 @@
                 </p>
               </div>
               <div>
-                <p class="text-gray-600 text-sm font-semibold mb-1">
-                  Program Code
-                </p>
+                <p class="text-gray-600 text-sm font-semibold mb-1">Program Code</p>
                 <p class="text-gray-800 font-medium">
                   {{ userData.program?.program_code || "N/A" }}
                 </p>
@@ -101,11 +109,8 @@
           <!-- Expertise Section -->
           <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <h3
-                class="text-lg font-bold text-gray-800 flex items-center gap-2"
-              >
-                <span
-                  class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-sm"
+              <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-sm"
                   >PRIMARY EXPERTISE</span
                 >
                 Courses Faculty Can Teach
@@ -183,9 +188,7 @@
                   d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                 />
               </svg>
-              <p class="text-gray-500 font-medium">
-                No course expertise assigned
-              </p>
+              <p class="text-gray-500 font-medium">No course expertise assigned</p>
               <p class="text-gray-400 text-sm mt-1">
                 This faculty member hasn't been assigned any courses yet
               </p>
@@ -194,25 +197,18 @@
 
           <!-- Other Expertise Section -->
           <div
-            v-if="
-              userData.other_expertise && userData.other_expertise.length > 0
-            "
+            v-if="userData.other_expertise && userData.other_expertise.length > 0"
             class="space-y-4"
           >
             <div class="flex items-center justify-between">
-              <h3
-                class="text-lg font-bold text-gray-800 flex items-center gap-2"
-              >
-                <span
-                  class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-sm"
+              <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded text-sm"
                   >OTHER EXPERTISE</span
                 >
                 Additional Courses
               </h3>
               <span class="text-sm text-gray-600 font-semibold">
-                {{ otherExpertiseCount }} course{{
-                  otherExpertiseCount !== 1 ? "s" : ""
-                }}
+                {{ otherExpertiseCount }} course{{ otherExpertiseCount !== 1 ? "s" : "" }}
               </span>
             </div>
 
@@ -294,9 +290,7 @@ export default {
       return this.userData.expertise ? this.userData.expertise.length : 0;
     },
     otherExpertiseCount() {
-      return this.userData.other_expertise
-        ? this.userData.other_expertise.length
-        : 0;
+      return this.userData.other_expertise ? this.userData.other_expertise.length : 0;
     },
   },
 };

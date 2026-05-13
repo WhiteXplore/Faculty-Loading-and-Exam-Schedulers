@@ -121,14 +121,14 @@ export class CurriculumCoursesService {
 
   findAll() {
     return this.curriculumCourseRepository.find({
-      relations: ['curriculum', 'course'],
+      relations: ['curriculum', 'curriculum.institute', 'curriculum.program', 'course'],
     });
   }
 
   findOne(id: number) {
     return this.curriculumCourseRepository.findOne({
       where: { curriculum_course_id: id },
-      relations: ['curriculum', 'course'],
+      relations: ['curriculum', 'curriculum.institute', 'curriculum.program', 'course'],
     });
   }
 

@@ -9,29 +9,29 @@
         <!-- Upload Building -->
         <!-- <div
           @click="isUploadModal = true"
-          class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
+          class="btn-gui"
         >
           <div
-            class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
+           class="btn-add-icon"
           >
             <icon name="uploads" />
           </div>
 
-          <span class="font-medium text-sm">Upload Building</span>
+             <span class="btn-add-text">Upload Building</span>
         </div> -->
 
         <!-- Add Building -->
         <div
           @click="toggleAdd"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+          class="btn-add"
         >
           <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
+            class="btn-add-icon"
           >
-            <icon name="circle-add" />
+            <icon name="add-account1.1" />
           </div>
 
-          <span class="font-medium text-sm">Add Building</span>
+             <span class="btn-add-text">Add Building</span>
         </div>
       </div>
     </div>

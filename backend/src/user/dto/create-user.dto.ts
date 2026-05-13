@@ -1,75 +1,140 @@
+import { Type } from 'class-transformer';
 import {
   IsEmail,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 
 export class CreateUserDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  first_name: string;
+  first_name?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  last_name: string;
+  last_name?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  password: string;
-
-  @IsNotEmpty()
-  @IsString()
-  role: string;
-
-  @IsNotEmpty()
-  @IsString()
-  employment_type: string;
-
-  @IsNotEmpty()
-  @IsString()
-  designation: string;
-
-  @IsNotEmpty()
-  @IsString()
-  preffered_time: string;
+  email?: string;
 
   @IsOptional()
+  @IsString()
+  password?: string;
+
+  @IsOptional()
+  @IsString()
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  employment_type?: string;
+
+  @IsOptional()
+  @IsString()
+  designation?: string;
+
+  @IsOptional()
+  @IsString()
+  preffered_time?: string;
+
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
-  unit_load: number;
+  unit_load?: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   institute_id?: number;
 
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   program_id?: number;
 }
 
 export class ImportUserDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  first_name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  last_name: string;
-
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  role: string;
+  first_name?: string;
 
   @IsOptional()
   @IsString()
-  program_name?: string;
+  last_name?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  program?: string;
+
+  @IsOptional()
+  @IsString()
+  designation?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  unit_load?: number;
+
+  @IsOptional()
+  @IsString()
+  employment_type?: string;
+}
+
+export class UpdateUserDto {
+  @IsOptional()
+  @IsString()
+  first_name?: string;
+
+  @IsOptional()
+  @IsString()
+  last_name?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  password?: string;
+
+  @IsOptional()
+  @IsString()
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  employment_type?: string;
+
+  @IsOptional()
+  @IsString()
+  designation?: string;
+
+  @IsOptional()
+  @IsString()
+  preffered_time?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  unit_load?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  institute_id?: number | null;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  program_id?: number | null;
 }

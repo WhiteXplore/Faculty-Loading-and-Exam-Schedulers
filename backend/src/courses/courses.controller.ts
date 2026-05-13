@@ -18,10 +18,14 @@ export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   // 🔹 BULK INSERT
-  @Post('add-courses')
-  create(@Body() createCourseDto: CreateCourseDto[]) {
+@Post('add-courses')
+create(@Body() createCourseDto: CreateCourseDto | CreateCourseDto[]) {
+  if (Array.isArray(createCourseDto)) {
     return this.coursesService.createMany(createCourseDto);
   }
+
+  return this.coursesService.createSingleCourse(createCourseDto);
+}
 
   @Get('get-courses')
   findAll() {

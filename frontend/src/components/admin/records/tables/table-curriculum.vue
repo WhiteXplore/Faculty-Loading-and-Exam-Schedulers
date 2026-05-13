@@ -3,17 +3,12 @@
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4 font-regular">Pages / Curriculum Offers</div>
 
-      <div
-        @click="toggleAdd"
-        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-      >
-        <div
-          class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-        >
-          <icon name="circle-add" />
+      <div @click="toggleAdd" class="btn-add">
+        <div class="btn-add-icon">
+          <icon name="add-account1.1" />
         </div>
 
-        <span class="font-medium text-sm">Add Curriculum</span>
+        <span class="btn-add-text">Add Curriculum</span>
       </div>
     </div>
 
@@ -234,16 +229,34 @@ export default {
     ...mapState(useFetchDataStore, ["curriculums"]),
 
     filteredData() {
-      const query = this.searchQuery.toLowerCase();
+      const query = (this.searchQuery || "").toLowerCase().trim();
+
+      if (!query) return this.curriculums || [];
+
       return (this.curriculums || []).filter((item) => {
-        return (
-          item.institute_name?.toLowerCase().includes(query) ||
-          item.institute_code?.toLowerCase().includes(query) ||
-          String(item.curriculum_id).toLowerCase().includes(query)
-        );
+        const programName = item.program?.program_name || "";
+        const programCode = item.program?.program_code || "";
+        const instituteName = item.program?.institute?.institute_name || "";
+        const instituteCode = item.program?.institute?.institute_code || "";
+        const startYear = item.curriculum_start_year || "";
+        const endYear = item.curriculum_end_year || "";
+        const curriculumId = item.curriculum_id || "";
+
+        return [
+          programName,
+          programCode,
+          instituteName,
+          instituteCode,
+          startYear,
+          endYear,
+          curriculumId,
+          `${startYear} - ${endYear}`,
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(query);
       });
     },
-
     totalPages() {
       return Math.ceil(this.filteredData.length / this.itemsPerPage) || 1;
     },

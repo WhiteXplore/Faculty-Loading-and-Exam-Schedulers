@@ -14,10 +14,10 @@ from openpyxl.utils import get_column_letter
 # MySQL Connection (adjust creds/host/db as needed)
 # =========================
 DB_USER = "root"
-DB_PASS = "root"
-DB_HOST = "127.0.0.2"
+DB_PASS = "Dnsc2026"
+DB_HOST = "172.16.197.57"
 DB_PORT = 3306
-DB_NAME = "dnsc_class_scheduler_ga7"
+DB_NAME = "dnsc_class_scheduler_ga_qa"
 
 engine = create_engine(
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",

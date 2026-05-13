@@ -20,7 +20,7 @@
               class="w-4 h-4 text-blue-600 group-hover:text-blue-600"
             />
           </div>
-          <span class="font-medium text-sm">
+             <span class="btn-add-text">
             {{ showFacultyTable ? "View Cards" : "View Faculty" }}
           </span>
         </button>
@@ -35,7 +35,7 @@
           >
             <icon name="arrow-path" class="w-4 h-4 text-defaultGreen" />
           </div>
-          <span class="font-medium text-sm">Auto Generation</span>
+             <span class="btn-add-text">Auto Generation</span>
         </button>
 
         <!-- TODO  Save Schedule -->
@@ -49,7 +49,7 @@
           >
             <icon name="circle-check" class="w-4 h-4 text-defaultGreen" />
           </div>
-          <span class="font-medium text-sm">Save this schedule</span>
+             <span class="btn-add-text">Save this schedule</span>
         </button>
       </div>
     </div>
@@ -64,7 +64,7 @@
         class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
       >
         <icon name="arrow-left" class="w-4 h-4" />
-        <span class="font-medium text-sm">Back to Table</span>
+           <span class="btn-add-text">Back to Table</span>
       </button>
 
       <!-- TODO  Filters (pushed to the end) -->

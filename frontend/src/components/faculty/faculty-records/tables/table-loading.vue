@@ -25,12 +25,12 @@
       <!-- DOWNLOAD BUTTON -->
       <div
         @click="previewPDF"
-        class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+        class="btn-add"
       >
         <div class="p-1 bg-white bg-opacity-20 rounded-full">
           <icon name="edit" />
         </div>
-        <span class="font-medium text-sm">Download</span>
+           <span class="btn-add-text">Download</span>
       </div>
     </div>
 

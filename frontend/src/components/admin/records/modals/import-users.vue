@@ -1,9 +1,9 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
       <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5">
         <!-- Header -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -49,12 +49,8 @@
             <h3 class="font-bold text-blue-800 mb-2">Import Instructions:</h3>
             <ul class="text-blue-700 text-sm space-y-1">
               <li>• File must be in XLSX format (.xlsx)</li>
-              <li>
-                • Required columns: Last Name, First Name, Email, Designation
-              </li>
-              <li>
-                • Optional column: Program (must match existing program name)
-              </li>
+              <li>• Required columns: Last Name, First Name, Email, Role</li>
+              <li>• Optional column: Program (must match existing program name)</li>
               <li>• Default password will be: Password123!</li>
             </ul>
           </div>
@@ -93,9 +89,7 @@
               @drop.prevent="handleFileDrop"
               :class="[
                 'border-2 border-dashed rounded-lg p-6 text-center transition-all',
-                dragOver
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-gray-300 bg-gray-50',
+                dragOver ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50',
               ]"
             >
               <input
@@ -169,9 +163,7 @@
           <div v-if="uploading" class="space-y-2">
             <div class="flex justify-between text-sm">
               <span class="text-gray-600">Uploading and processing...</span>
-              <span class="text-gray-800 font-semibold"
-                >{{ uploadProgress }}%</span
-              >
+              <span class="text-gray-800 font-semibold">{{ uploadProgress }}%</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
               <div
@@ -208,9 +200,7 @@
                   <p>
                     <strong>Row {{ error.row }}:</strong> {{ error.error }}
                   </p>
-                  <p v-if="error.email" class="text-xs">
-                    Email: {{ error.email }}
-                  </p>
+                  <p v-if="error.email" class="text-xs">Email: {{ error.email }}</p>
                 </div>
               </div>
             </div>
@@ -302,22 +292,11 @@ export default {
           "Last Name": "Acdal",
           "First Name": "April",
           Email: "acdal.april@dnsc.edu.ph",
-          Designation: "Faculty",
+          Role: "Faculty",
           Program: "BSDRM",
-        },
-        {
-          "Last Name": "Anobong Jr.",
-          "First Name": "Anselmo",
-          Email: "anobong.jr..anselmo@dnsc.edu.ph",
-          Designation: "Faculty",
-          Program: "BSEDSCI",
-        },
-        {
-          "Last Name": "Balio",
-          "First Name": "Ariel",
-          Email: "balio.ariel.@dnsc.edu.ph",
-          Designation: "Faculty",
-          Program: "BTLEd",
+          Designation: "Instructor I",
+          Unit: 3,
+          "Employment Type": "Full Time",
         },
       ];
 
@@ -333,6 +312,9 @@ export default {
         { wch: 35 },
         { wch: 25 },
         { wch: 15 },
+        { wch: 25 },
+        { wch: 10 },
+        { wch: 20 },
       ];
 
       // Download file
@@ -367,7 +349,7 @@ export default {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          },
+          }
         );
 
         clearInterval(progressInterval);
@@ -380,22 +362,19 @@ export default {
         };
 
         if (response.data.success > 0) {
-          toast.success(
-            `Successfully imported ${response.data.success} users!`,
-          );
+          toast.success(`Successfully imported ${response.data.success} users!`);
           this.$emit("refresh");
         }
 
         if (response.data.failed > 0) {
           toast.warning(
-            `${response.data.failed} users failed to import. Check details below.`,
+            `${response.data.failed} users failed to import. Check details below.`
           );
         }
       } catch (error) {
         console.error("Import failed:", error);
         toast.error(
-          error.response?.data?.message ||
-            "Failed to import users. Please try again.",
+          error.response?.data?.message || "Failed to import users. Please try again."
         );
       } finally {
         this.uploading = false;

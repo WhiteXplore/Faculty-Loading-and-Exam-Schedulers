@@ -8,16 +8,11 @@
       <div class="flex gap-2">
         <!-- IMPORT DROPDOWN -->
         <div class="relative">
-          <div
-            @click="showImportSelector = true"
-            class="flex items-center gap-2 px-3 py-2 border bg-blue-700 text-white border-blue-700 rounded-xl hover:bg-white hover:text-blue-700 hover:shadow-lg cursor-pointer transition duration-200"
-          >
-            <div
-              class="p-1 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center"
-            >
+          <div @click="showImportSelector = true" class="btn-gui">
+            <div class="btn-add-icon">
               <icon :name="'uploads'" class="w-4 h-4" />
             </div>
-            <span class="font-medium text-sm">Import</span>
+            <span class="btn-add-text">Import</span>
           </div>
 
           <!-- DROPDOWN MENU -->
@@ -57,16 +52,11 @@
         </div>
 
         <!-- ADD ACCOUNT -->
-        <div
-          @click="toggleAdd"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-        >
-          <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-          >
+        <div @click="toggleAdd" class="btn-add">
+          <div class="btn-add-icon">
             <icon :name="'add-account1.1'" class="w-4 h-4" />
           </div>
-          <span class="font-medium text-sm">Add Accounts</span>
+          <span class="btn-add-text">Add Accounts</span>
         </div>
       </div>
     </div>
@@ -74,15 +64,11 @@
     <!-- Table -->
     <div class="table-container">
       <!-- Top controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="select-input" 
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -106,12 +92,12 @@
         </div>
 
         <!-- Search -->
-        <div class="relative">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-[250px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
+            class="search-input"
             @input="changePage(1)"
           />
           <!-- Search icon -->
@@ -134,83 +120,98 @@
 
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
-            <tr>
-              <th class="px-4 py-3 text-left font-normal w-[15%]">Name</th>
-              <th class="px-4 py-3 text-left font-normal w-[25%]">Email</th>
-              <th class="px-4 py-3 text-left font-normal">Institute</th>
-              <th class="px-4 py-3 text-left font-normal">Program</th>
-              <th class="px-4 py-3 text-left font-normal">Position</th>
+        <div class="max-h-[69vh] overflow-y-auto">
+          <table class="min-w-full text-sm text-gray-700 border-collapse">
+            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+              <tr>
+                <th class="px-4 py-3 text-left font-normal w-[15%]">Name</th>
+                <th class="px-4 py-3 text-left font-normal w-[25%]">Email</th>
+                <th class="px-4 py-3 text-left font-normal">Unit Loads</th>
+                <th class="px-4 py-3 text-left font-normal">Designation</th>
+                <th class="px-4 py-3 text-left font-normal">Institute</th>
+                <th class="px-4 py-3 text-left font-normal">Program</th>
+                <th class="px-4 py-3 text-left font-normal">Position</th>
 
-              <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="user in paginatedData"
-              :key="user.id"
-              class="hover:bg-green-50 transition-all border-t"
-            >
-              <td class="px-4 py-3 text-left">
-                {{ user.first_name }} {{ user.last_name }}
-              </td>
-              <td class="px-4 py-3 text-left">{{ user.email }}</td>
-              <td class="px-4 py-3 text-left">
-                {{ user.institute?.institute_code }}
-              </td>
-              <td class="px-4 py-3 text-left">
-                {{ user.program?.program_code }}
-              </td>
-              <td class="px-4 py-3 text-left">{{ user.role }}</td>
+                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="user in paginatedData"
+                :key="user.id"
+                class="hover:bg-green-50 transition-all border-t"
+              >
+                <td class="px-4 py-3 text-left">
+                  {{ user.first_name }} {{ user.last_name }}
+                </td>
+                <td class="px-4 py-3 text-left">{{ user.email }}</td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.unit_load }}
+                </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.designation }}
+                </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.institute?.institute_code }}
+                </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.program?.program_code }}
+                </td>
+                <td class="px-4 py-3 text-left">{{ user.role }}</td>
 
-              <td class="px-4 py-3 items-center justify-center flex relative">
-           <div class="per-page-container">
-                  <!-- Always visible -->
-                  <button class="btn-view" @click="toggleViewExpertise(user)">
-                    See Details
-                  </button>
+                <td class="px-4 py-3 items-center justify-center flex relative">
+                  <div class="per-page-container">
+                    <!-- Always visible -->
+                    <button class="btn-view" @click="toggleViewExpertise(user)">
+                      See Details
+                    </button>
 
-                  <!-- 3 dots button -->
-                  <button
-                    class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                    @click.stop="toggleActionMenu(user.id)"
+                    <!-- 3 dots button -->
+                    <button
+                      class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                      @click.stop="toggleActionMenu(user.id)"
+                    >
+                      <icon name="3dots" class="rotate-90" />
+                    </button>
+                  </div>
+
+                  <!-- Dropdown actions -->
+                  <div
+                    v-if="openActionMenuId === user.id"
+                    @mouseleave="openActionMenuId = false"
+                    class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
                   >
-                    <icon name="3dots" class="rotate-90" />
-                  </button>
-                </div>
+                    <button
+                      class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                      @click="toggleEdit(user)"
+                    >
+                      <icon
+                        name="edit"
+                        class="rounded-lg bg-defaultGreen text-white p-1"
+                      />
+                      Edit
+                    </button>
 
-                <!-- Dropdown actions -->
-                <div
-                  v-if="openActionMenuId === user.id"
-                  @mouseleave="openActionMenuId = false"
-                  class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
-                >
-                  <button
-                    class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
-                    @click="toggleEdit('edit', user)"
-                  >
-                    <icon name="edit" class="rounded-lg bg-defaultGreen text-white p-1" />
-                    Edit
-                  </button>
-
-                  <button
-                    class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
-                    @click="toggleDelete('delete', user)"
-                  >
-                    <icon name="delete" class="rounded-lg bg-red-800 text-white p-1" />
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr v-if="paginatedData.length === 0">
-              <td colspan="7" class="text-center py-6 text-gray-400">No records found</td>
-            </tr>
-          </tbody>
-        </table>
+                    <button
+                      class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
+                      @click="toggleDelete(user)"
+                    >
+                      <icon name="delete" class="rounded-lg bg-red-800 text-white p-1" />
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr v-if="paginatedData.length === 0">
+                <td colspan="7" class="text-center py-6 text-gray-400">
+                  No records found
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
@@ -270,45 +271,27 @@
   />
 
   <!-- Delete Confirmation Modal -->
-  <div
-    v-if="showDeleteModal"
-    <div class="modal-overlay">
-  ></div>
-  <div
-    v-if="showDeleteModal"
-    class="rounded-xl shadow-lg w-[300px] md:w-[400px] bg-white py-6 px-4 flex flex-col items-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 animate-slideUp"
-  >
-    <div
-      class="rounded-full w-16 h-16 md:w-20 md:h-20 flex justify-center items-center bg-red-300 animate-pulse"
-    >
-      <icon
-        name="question"
-        class="w-8 h-8 md:w-10 md:h-10 text-white flex justify-center items-center"
-      />
-    </div>
+  <div v-if="showDeleteModal" class="delete-container">
+    <div class="delete-box">
+      <div class="delete-icon">
+        <icon name="question" class="text-red-600" />
+      </div>
 
-    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">Delete Confirmation</h1>
-    <p class="mt-2 text-[12px] md:text-[13px] text-center px-8">
-      Are you sure you want to delete this record? This action cannot be undone.
-    </p>
+      <h1 class="delete-title">Delete Confirmation</h1>
 
-    <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
+      <p class="delete-text">
+        Are you sure you want to delete
+        <b> {{ recordToDelete?.first_name }} {{ recordToDelete?.last_name }} </b>
+        ? This action cannot be undone.
+      </p>
 
-    <div class="tracking-wide flex gap-2 mt-4">
-      <button
-        class="bg-red-400 p-2 px-3 text-[11px] md:text-[13px] rounded-md text-white hover:bg-white border hover:border-red-800 hover:text-red-800 hover:shadow-md"
-        @click="showDeleteModal = false"
-      >
-        No, Cancel
-      </button>
-      <button
-        class="bg-green-400 p-2 px-3 text-[11px] md:text-[13px] rounded-md text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
-        @click="confirmDelete"
-      >
-        Yes, Delete
-      </button>
+      <div class="delete-actions">
+        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+      </div>
     </div>
   </div>
+
   <!-- Import Selection Modal -->
   <div
     v-if="showImportSelector"
@@ -536,17 +519,26 @@ export default {
     },
 
     toggleEdit(user) {
-      this.selectedUser = user;
+      if (!user || !user.id) {
+        toast.error("Invalid user selected.");
+        return;
+      }
+
+      this.selectedUser = { ...user };
       this.showEditModal = true;
       this.openActionMenuId = null;
     },
 
     toggleDelete(user) {
+      if (!user || !user.id) {
+        toast.error("Invalid user selected.");
+        return;
+      }
+
       this.recordToDelete = user;
       this.showDeleteModal = true;
       this.openActionMenuId = null;
     },
-
     async confirmDelete() {
       if (!this.recordToDelete || isNaN(this.recordToDelete.id)) {
         toast.error("Invalid user ID.");

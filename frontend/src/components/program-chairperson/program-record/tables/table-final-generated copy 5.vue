@@ -985,6 +985,7 @@ export default {
         .filter((r) => {
           if (!r || r.id === record.id) return false;
 
+          // Ignore same join group
           if (
             record.is_joined &&
             r.is_joined &&
@@ -1000,38 +1001,12 @@ export default {
 
           if (rStart == null || rEnd == null) return false;
 
+          // Check time overlap first
           const overlaps = Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
+
           if (!overlaps) return false;
 
-          const sameFaculty =
-            (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
-            (r.faculty_name &&
-              record.faculty_name &&
-              r.faculty_name.trim().toLowerCase() ===
-                record.faculty_name.trim().toLowerCase());
-
-          const sameRoom =
-            r.room_id &&
-            record.room_id &&
-            r.room_id === record.room_id &&
-            r.mode?.toLowerCase() === "face to face" &&
-            record.mode?.toLowerCase() === "face to face";
-
-          const sameClass =
-            r.class_id && record.class_id && r.class_id === record.class_id;
-
-          const sameOnlineSection =
-            record.mode?.toLowerCase() === "online" &&
-            r.mode?.toLowerCase() === "online" &&
-            r.set_name === record.set_name &&
-            r.program_id === record.program_id &&
-            Number(r.college_branch_id) === Number(record.college_branch_id);
-
-          return sameFaculty || sameRoom || sameClass || sameOnlineSection;
-        })
-        .map((r) => {
-          const reason = [];
-
+          // ✅ 1. FACULTY CONFLICT (always conflict)
           const sameFaculty =
             (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
             (r.faculty_name &&
@@ -1040,9 +1015,10 @@ export default {
                 record.faculty_name.trim().toLowerCase());
 
           if (sameFaculty) {
-            reason.push("Same faculty assigned to overlapping schedules");
+            return true;
           }
 
+          // ✅ 2. ROOM CONFLICT (Face to Face only)
           if (
             r.room_id &&
             record.room_id &&
@@ -1050,173 +1026,93 @@ export default {
             r.mode?.toLowerCase() === "face to face" &&
             record.mode?.toLowerCase() === "face to face"
           ) {
-            reason.push("Same room, same day, and overlapping time");
+            if (!this.isJoined || r.faculty_id === record.faculty_id) {
+              return true;
+            }
           }
 
+          // ✅ 3. CLASS CONFLICT
           if (r.class_id && record.class_id && r.class_id === record.class_id) {
-            reason.push("Same class/section has overlapping schedules");
+            return true;
           }
 
+          // ✅ 4. ONLINE SECTION CONFLICT (NEW RULE)
           if (
             record.mode?.toLowerCase() === "online" &&
             r.mode?.toLowerCase() === "online" &&
+            r.set_name &&
+            record.set_name &&
+            r.set_name === record.set_name
+          ) {
+            return true;
+          }
+
+          return false;
+        })
+        .map((r) => {
+          let reason = "";
+
+          // Faculty conflict
+          if (
+            (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
+            (r.faculty_name &&
+              record.faculty_name &&
+              r.faculty_name.trim().toLowerCase() ===
+                record.faculty_name.trim().toLowerCase())
+          ) {
+            reason =
+              "Same faculty assigned to overlapping schedules (Mode does not matter)";
+          }
+
+          // Room conflict
+          else if (
+            r.room_id === record.room_id &&
+            r.mode?.toLowerCase() === "face to face" &&
+            record.mode?.toLowerCase() === "face to face"
+          ) {
+            reason = "Same room, same day, and overlapping time (Face-to-Face)";
+          }
+
+          // Class conflict
+          else if (r.class_id === record.class_id) {
+            reason = "Same class/section has overlapping schedules";
+          }
+
+          // ✅ Online conflict
+          //   else if (
+          //     record.mode?.toLowerCase() === "online" &&
+          //     r.mode?.toLowerCase() === "online" &&
+          //     r.set_name === record.set_name &&
+          //     r.program_id === record.program_id &&
+          //     Number(r.college_branch_id) === Number(record.college_branch_id)
+          //   ) {
+          //     reason =
+          //       "ONLINE conflict: Same section cannot attend two online classes at the same time.";
+          //   }
+
+          //   return { ...r, reason };
+          // });
+
+          // ✅ ONLINE CONFLICT (same program + same section only)
+          if (
+            (record.room_name || "").toLowerCase() === "online" &&
+            (r.mode || "").toLowerCase() === "online" &&
             r.set_name === record.set_name &&
             r.program_id === record.program_id &&
-            Number(r.college_branch_id) === Number(record.college_branch_id)
+            r.college_branch_id === record.college_branch_id &&
+            r.college_branch_id === record.college_branch_id
           ) {
             reason.push(
-              "ONLINE conflict: Same program section cannot attend two online classes at the same time"
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time."
             );
           }
 
           if (!reason.length) return null;
 
-          return {
-            ...r,
-            reason: reason.join(", "),
-          };
+          return { ...r, reason: reason.join(", ") };
         })
         .filter(Boolean);
     },
-    //   if (!record || record.start_hour == null || !record.duration) return [];
-
-    //   const recordStart = this.normalizeHour(record.start_hour);
-    //   const recordEnd = recordStart + Number(record.duration);
-
-    //   const sameDaySchedules = this.scheduleIndex.byDay[record.day] || [];
-
-    //   return sameDaySchedules
-    //     .filter((r) => {
-    //       if (!r || r.id === record.id) return false;
-
-    //       // Ignore same join group
-    //       if (
-    //         record.is_joined &&
-    //         r.is_joined &&
-    //         record.join_group_id &&
-    //         r.join_group_id &&
-    //         record.join_group_id === r.join_group_id
-    //       ) {
-    //         return false;
-    //       }
-
-    //       const rStart = this.normalizeHour(r.start_hour);
-    //       const rEnd = rStart + Number(r.duration);
-
-    //       if (rStart == null || rEnd == null) return false;
-
-    //       // Check time overlap first
-    //       const overlaps = Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
-
-    //       if (!overlaps) return false;
-
-    //       // ✅ 1. FACULTY CONFLICT (always conflict)
-    //       const sameFaculty =
-    //         (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
-    //         (r.faculty_name &&
-    //           record.faculty_name &&
-    //           r.faculty_name.trim().toLowerCase() ===
-    //             record.faculty_name.trim().toLowerCase());
-
-    //       if (sameFaculty) {
-    //         return true;
-    //       }
-
-    //       // ✅ 2. ROOM CONFLICT (Face to Face only)
-    //       if (
-    //         r.room_id &&
-    //         record.room_id &&
-    //         r.room_id === record.room_id &&
-    //         r.mode?.toLowerCase() === "face to face" &&
-    //         record.mode?.toLowerCase() === "face to face"
-    //       ) {
-    //         if (!this.isJoined || r.faculty_id === record.faculty_id) {
-    //           return true;
-    //         }
-    //       }
-
-    //       // ✅ 3. CLASS CONFLICT
-    //       if (r.class_id && record.class_id && r.class_id === record.class_id) {
-    //         return true;
-    //       }
-
-    //       // ✅ 4. ONLINE SECTION CONFLICT (NEW RULE)
-    //       if (
-    //         record.mode?.toLowerCase() === "online" &&
-    //         r.mode?.toLowerCase() === "online" &&
-    //         r.set_name &&
-    //         record.set_name &&
-    //         r.set_name === record.set_name
-    //       ) {
-    //         return true;
-    //       }
-
-    //       return false;
-    //     })
-    //     .map((r) => {
-    //       let reason = "";
-
-    //       // Faculty conflict
-    //       if (
-    //         (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
-    //         (r.faculty_name &&
-    //           record.faculty_name &&
-    //           r.faculty_name.trim().toLowerCase() ===
-    //             record.faculty_name.trim().toLowerCase())
-    //       ) {
-    //         reason =
-    //           "Same faculty assigned to overlapping schedules (Mode does not matter)";
-    //       }
-
-    //       // Room conflict
-    //       else if (
-    //         r.room_id === record.room_id &&
-    //         r.mode?.toLowerCase() === "face to face" &&
-    //         record.mode?.toLowerCase() === "face to face"
-    //       ) {
-    //         reason = "Same room, same day, and overlapping time (Face-to-Face)";
-    //       }
-
-    //       // Class conflict
-    //       else if (r.class_id === record.class_id) {
-    //         reason = "Same class/section has overlapping schedules";
-    //       }
-
-    //       // ✅ Online conflict
-    //       //   else if (
-    //       //     record.mode?.toLowerCase() === "online" &&
-    //       //     r.mode?.toLowerCase() === "online" &&
-    //       //     r.set_name === record.set_name &&
-    //       //     r.program_id === record.program_id &&
-    //       //     Number(r.college_branch_id) === Number(record.college_branch_id)
-    //       //   ) {
-    //       //     reason =
-    //       //       "ONLINE conflict: Same section cannot attend two online classes at the same time.";
-    //       //   }
-
-    //       //   return { ...r, reason };
-    //       // });
-
-    //       // ✅ ONLINE CONFLICT (same program + same section only)
-    //       if (
-    //         (record.room_name || "").toLowerCase() === "online" &&
-    //         (r.mode || "").toLowerCase() === "online" &&
-    //         r.set_name === record.set_name &&
-    //         r.program_id === record.program_id &&
-    //         r.college_branch_id === record.college_branch_id &&
-    //         r.college_branch_id === record.college_branch_id
-    //       ) {
-    //         reason.push(
-    //           "ONLINE conflict: Same program section cannot attend two online classes at the same time."
-    //         );
-    //       }
-
-    //       if (!reason.length) return null;
-
-    //       return { ...r, reason: reason.join(", ") };
-    //     })
-    //     .filter(Boolean);
-    // },
 
     hasRoomConflict(record) {
       return this.getConflictingRecords(record).length > 0;
@@ -1584,8 +1480,10 @@ export default {
               s.program_id === this.user.program_id
           );
         }
+        this.buildScheduleIndex();
         this.finalSchedules = schedules;
         this.rebuildAllIndexes();
+
         this.changePage(1);
       } catch (err) {
         this.error = err.message || "Failed to fetch final schedules";
