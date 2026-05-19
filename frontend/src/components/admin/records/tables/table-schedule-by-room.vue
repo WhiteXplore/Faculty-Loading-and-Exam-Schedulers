@@ -2,24 +2,20 @@
   <div class="overflow-y-auto">
     <div class="mt-2 overflow-x-auto bg-white">
       <!-- FILTER BAR -->
-      <div class="flex justify-between items-center mb-3">
-        <!-- <div class="flex items-center gap-2">
-           <div class="select-wrapper">
-            <select
-              v-model="entriesLimit"
-              class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
-            >
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="15">15</option>
-              <option :value="20">20</option>
-              <option :value="999">All</option>
-            </select>
+      <div class="flex justify-between items-center mb-3 gap-4">
+        <!-- CURRENT ROOM TITLE -->
+        <span v-for="(schedules, room) in filteredRooms" :key="room" class="text-lg">
+          <span class="font-bold text-defaultGreen">
+            {{ room }} - {{ roomTypeMap[room] || "Unknown" }}
+          </span>
+        </span>
 
-
-            <div
-              class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-defaultGreen"
-            >
+        <!-- PREMIUM SEARCH / ROOM DROPDOWN -->
+        <div class="relative w-[320px]" ref="roomDropdownRef">
+          <div
+            class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+          >
+            <div class="absolute left-3 text-defaultGreen">
               <svg
                 class="w-4 h-4"
                 fill="none"
@@ -27,59 +23,109 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
               </svg>
             </div>
+
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search or select room..."
+              class="w-full rounded-xl bg-transparent py-2.5 pl-10 pr-10 text-sm font-medium text-gray-700 outline-none placeholder:text-gray-400"
+              @focus="showRoomDropdown = true"
+              @input="
+                showRoomDropdown = true;
+                changePage(1);
+              "
+            />
+
+            <button
+              type="button"
+              @click="showRoomDropdown = !showRoomDropdown"
+              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
+            >
+              <svg
+                class="w-4 h-4 transition-transform duration-200"
+                :class="{ 'rotate-180': showRoomDropdown }"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
           </div>
 
-          <span class="text-sm font-medium text-gray-600">Per page</span>
-        </div> -->
-        <!-- SHOW ENTRIES -->
-        <span v-for="(schedules, room) in filteredRooms" :key="room" class="text-lg">
-          <span class="font-bold text-defaultGreen"
-            >{{ room }} - {{ roomTypeMap[room] || "Unknown" }}</span
-          >
-        </span>
-
-        <!-- SEARCH -->
-
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search room..."
-            class="rounded-xl border border-green-600 bg-white px-4 py-2.5 pl-10 text-sm shadow-sm w-full transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
-            @input="changePage(1)"
-          />
-          <!-- Search icon -->
+          <!-- DROPDOWN -->
           <div
-            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none transition-colors"
+            v-if="showRoomDropdown"
+            class="absolute right-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
           >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+            <div class="border-b border-gray-100 px-4 py-3">
+              <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                Available Rooms
+              </p>
+            </div>
+
+            <div class="max-h-[260px] overflow-y-auto p-1.5">
+              <button
+                v-for="room in filteredRoomOptions"
+                :key="room"
+                type="button"
+                @click="selectRoom(room)"
+                class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-green-50"
+                :class="searchQuery === room ? 'bg-green-50' : ''"
+              >
+                <div>
+                  <p class="text-sm font-semibold text-gray-800">
+                    {{ room }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    {{ roomTypeMap[room] || "Unknown" }}
+                  </p>
+                </div>
+
+                <span
+                  class="rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                  :class="
+                    roomTypeMap[room] === 'Laboratory'
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'bg-green-50 text-green-700'
+                  "
+                >
+                  {{ roomTypeMap[room] || "Room" }}
+                </span>
+              </button>
+
+              <div
+                v-if="filteredRoomOptions.length === 0"
+                class="px-4 py-6 text-center text-sm text-gray-400"
+              >
+                No room found
+              </div>
+            </div>
+
+            <div v-if="searchQuery" class="border-t border-gray-100 p-2">
+              <button
+                type="button"
+                @click="clearRoomSearch"
+                class="w-full rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+              >
+                Clear search
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
       <div v-if="Object.keys(groupedSchedule).length" class="grid grid-cols-1 gap-3">
         <div
           v-for="(schedules, room) in filteredRooms"
           :key="room"
           class="bg-white rounded-xl border flex flex-col h-[75vh]"
         >
-          <!-- HEADER -->
-          <!-- <div class="bg-defaultGreen text-white px-4 py-3 rounded-t-xl">
-            <span class="text-lg font-bold">
-              {{ room }} - {{ roomTypeMap[room] || "Unknown" }}
-            </span>
-          </div> -->
           <div class="overflow-auto border bg-white h-[83vh] rounded-t-xl">
             <table class="w-full text-[13px] border-collapse table-fixed">
               <thead class="bg-defaultGreen text-white sticky top-0 z-20">
@@ -93,55 +139,13 @@
 
               <tbody>
                 <tr v-for="slot in timeSlots" :key="slot.start">
-                  <!-- TIME -->
                   <td class="border p-2 text-center font-medium">
                     {{ formatTime(slot.start) }} -
                     {{ formatTime(slot.end) }}
                   </td>
 
-                  <!-- DAYS -->
                   <td v-for="day in days" :key="day" class="border relative h-[60px]">
-                    <!-- ONLINE ROOM -->
-                    <div v-if="room === 'Online'" class="flex flex-col gap-1 p-1 w-full">
-                      <div
-                        v-for="item in getScheduleForCell(slot, day, room)"
-                        :key="item.id"
-                        class="absolute inset-x-1 rounded-lg p-1 text-[11px] relative"
-                        :style="{
-                          ...getProgramColor(item.program_code),
-                          height: getBlockHeight(item) + 'px',
-                          top: getBlockTop(item, slot) + 'px',
-                        }"
-                      >
-                        <!-- 🔥 BADGE -->
-                        <span
-                          v-if="getRoomBadge(room)"
-                          :class="[
-                            'absolute top-1 left-1 text-[9px] px-1.5 py-[1px] rounded font-semibold shadow',
-                            getRoomBadge(room).class,
-                          ]"
-                        >
-                          {{ getRoomBadge(room).label }}
-                        </span>
-
-                        <p class="font-semibold mt-3">{{ item.course_code }}</p>
-                        <p class="text-gray-600">{{ item.faculty_name }}</p>
-                        <p class="text-gray-600">
-                          {{ item.program_code }} - {{ item.set_name }}
-                        </p>
-
-                        <button
-                          v-if="hasRoomConflict(item)"
-                          @click.stop="openConflictModal(item)"
-                          class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
-                        >
-                          !
-                        </button>
-                      </div>
-                    </div>
-
-                    <!-- NORMAL ROOM -->
-                    <template v-else>
+                    <template v-if="room !== 'Online'">
                       <div
                         v-for="item in getScheduleForCell(slot, day, room)"
                         :key="item.id"
@@ -152,17 +156,6 @@
                           top: getBlockTop(item, slot) + 'px',
                         }"
                       >
-                        <!-- <span
-                        v-if="getRoomBadge(room)"
-                        :class="[
-                          'absolute top-1 right-1 text-[9px] px-1.5 py-[1px] rounded-full font-semibold shadow',
-                          getRoomBadge(room).class,
-                        ]"
-                      >
-                        {{ getRoomBadge(room).label }}
-                      </span> -->
-
-                        <!-- ✅ INSTITUTE BADGE (FIXED) -->
                         <span
                           v-if="getInstituteBadge(item.program_code)"
                           :class="[
@@ -194,6 +187,16 @@
             </table>
           </div>
         </div>
+
+        <div
+          v-if="Object.keys(filteredRooms).length === 0"
+          class="flex flex-col items-center justify-center min-h-[350px] text-center text-gray-500 border rounded-xl"
+        >
+          <p class="text-lg font-semibold mb-2">No room found</p>
+          <p class="text-sm text-gray-400">
+            Try searching another room name or room type.
+          </p>
+        </div>
       </div>
 
       <div
@@ -208,15 +211,15 @@
         </p>
       </div>
     </div>
+
     <!-- CONFLICT MODAL -->
     <div
       v-if="showConflictModal"
       class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center"
     >
       <div class="bg-white w-[900px] rounded-2xl p-6 shadow-xl">
-        <!-- Header -->
         <div class="flex items-center justify-between border-b pb-3 mb-4">
-     <div class="per-page-container">
+          <div class="per-page-container">
             <icon
               name="exclamation-circle"
               class="w-7 h-7 p-1 rounded-full bg-red-200 text-red-900 flex items-center justify-center"
@@ -234,9 +237,7 @@
           </button>
         </div>
 
-        <!-- BODY -->
         <div class="grid grid-cols-2 gap-6 mt-6">
-          <!-- SELECTED SCHEDULE -->
           <div class="relative bg-white rounded-2xl p-5 border">
             <span
               class="absolute -top-3 left-4 bg-green-600 text-white text-xs px-3 py-1 rounded-full shadow"
@@ -245,11 +246,9 @@
             </span>
 
             <div v-if="selectedSchedule" class="mt-3 space-y-3 text-sm">
-              <div class="flex justify-between items-center">
-                <h4 class="font-semibold text-base">
-                  {{ selectedSchedule.course_code }}
-                </h4>
-              </div>
+              <h4 class="font-semibold text-base">
+                {{ selectedSchedule.course_code }}
+              </h4>
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
@@ -295,7 +294,6 @@
             </div>
           </div>
 
-          <!-- CONFLICT LIST -->
           <div class="relative bg-white rounded-2xl p-5 border">
             <span
               class="absolute -top-3 left-4 bg-red-600 text-white text-xs px-3 py-1 rounded-full shadow"
@@ -365,7 +363,6 @@
           </div>
         </div>
 
-        <!-- FOOTER -->
         <div class="flex justify-end mt-5">
           <button
             @click="showConflictModal = false"
@@ -388,6 +385,7 @@ export default {
   data() {
     return {
       searchQuery: "",
+      showRoomDropdown: false,
       entriesLimit: 1,
       groupedSchedule: {},
       rooms: [],
@@ -398,6 +396,8 @@ export default {
       selectedSchedule: null,
       programs: [],
       programMap: {},
+      instituteMap: {},
+
       days: [
         "Monday",
         "Tuesday",
@@ -414,22 +414,62 @@ export default {
       })),
     };
   },
+
   computed: {
+    usedRoomOptions() {
+      return Object.keys(this.groupedSchedule)
+        .filter((room) => room.toLowerCase() !== "online")
+        .sort((a, b) => a.localeCompare(b));
+    },
+
+    filteredRoomOptions() {
+      const query = this.searchQuery.toLowerCase().trim();
+
+      return this.usedRoomOptions.filter((room) => {
+        const roomName = room.toLowerCase();
+        const roomType = (this.roomTypeMap[room] || "").toLowerCase();
+
+        return roomName.includes(query) || roomType.includes(query);
+      });
+    },
+
     filteredRooms() {
-      const query = this.searchQuery.toLowerCase();
+      const query = this.searchQuery.toLowerCase().trim();
+
       const filtered = Object.entries(this.groupedSchedule).filter(([room]) => {
         const roomName = room.toLowerCase();
         const roomType = (this.roomTypeMap[room] || "").toLowerCase();
 
         return (
-          (roomName.includes(query) || roomType.includes(query)) && roomName !== "online"
+          roomName !== "online" && (roomName.includes(query) || roomType.includes(query))
         );
       });
+
       return Object.fromEntries(filtered.slice(0, this.entriesLimit));
     },
   },
 
   methods: {
+    selectRoom(room) {
+      this.searchQuery = room;
+      this.showRoomDropdown = false;
+      this.changePage(1);
+    },
+
+    clearRoomSearch() {
+      this.searchQuery = "";
+      this.showRoomDropdown = false;
+      this.changePage(1);
+    },
+
+    handleClickOutside(event) {
+      const dropdown = this.$refs.roomDropdownRef;
+
+      if (dropdown && !dropdown.contains(event.target)) {
+        this.showRoomDropdown = false;
+      }
+    },
+
     getRoomBadge(room) {
       const type = this.roomTypeMap[room];
 
@@ -449,6 +489,7 @@ export default {
 
       return null;
     },
+
     getInstituteBadge(programCode) {
       const instituteId = this.programMap[programCode];
       const instituteName = this.instituteMap[instituteId];
@@ -456,13 +497,9 @@ export default {
       if (!instituteName) return null;
 
       const colors = {
-        // IAAS - Sky Blue
         63: "bg-cyan-600 text-white",
-        // IC - Violet
         64: "bg-purple-800 text-white",
-        // ILEGG - Maroon
         65: "bg-red-600 text-white",
-        // ITED - Blue
         66: "bg-blue-600 text-white",
       };
 
@@ -471,29 +508,29 @@ export default {
         class: colors[instituteId] || "bg-gray-500 text-white",
       };
     },
+
     getProgramColor(programCode) {
       const instituteId = this.programMap[programCode];
 
       const instituteColors = {
-        63: "118, 210, 219", // IAAS
-        64: "166, 166, 237", // IC
-        65: "168, 35, 35", // ILEGG
-        66: "59, 130, 246", // ITED
+        63: "118, 210, 219",
+        64: "166, 166, 237",
+        65: "168, 35, 35",
+        66: "59, 130, 246",
       };
 
       const rgb = instituteColors[instituteId];
 
       return {
-        background: rgb
-          ? `rgba(${rgb}, 0.3)` //
-          : "rgba(220, 252, 231, 0.5)",
-
+        background: rgb ? `rgba(${rgb}, 0.3)` : "rgba(220, 252, 231, 0.5)",
         border: rgb ? `1px solid rgba(${rgb}, 1)` : "1px solid #22C55E",
       };
     },
+
     changePage(page) {
       this.currentPage = page;
     },
+
     parseHour(timeStr) {
       const [time, modifier] = timeStr.split(" ");
       let [hours, minutes] = time.split(":").map(Number);
@@ -564,22 +601,6 @@ export default {
       return (item.start_hour - slot.start) * 60;
     },
 
-    getRoomColor(room) {
-      const type = this.roomTypeMap[room];
-
-      if (type === "Laboratory") {
-        return {
-          background: "#DBEAFE",
-          border: "1px solid #3B82F6",
-        };
-      }
-
-      return {
-        background: "#DCFCE7",
-        border: "1px solid #22C55E",
-      };
-    },
-
     hasRoomConflict(record) {
       const roomSchedules = this.groupedSchedule[record.room_name] || [];
 
@@ -611,17 +632,20 @@ export default {
           r.program_code === record.program_code
         );
       });
+
       this.showConflictModal = true;
     },
+
     async loadSchedules() {
       const store = useFetchDataStore();
       const data = await store.fetchGeneratedScheduled();
       const scheduleByRoom = data?.schedule_by_room;
-      // if wala unod ang json
+
       if (!scheduleByRoom || Object.keys(scheduleByRoom).length === 0) {
         this.groupedSchedule = {};
         return;
       }
+
       this.groupedSchedule = this.transformRoomSchedule(scheduleByRoom);
     },
 
@@ -636,19 +660,18 @@ export default {
         return map;
       }, {});
     },
+
     async fetchPrograms() {
       const store = useFetchDataStore();
       await store.fetchPrograms();
 
       this.programs = store.programs || [];
 
-      // ✅ program_code -> institute_id
       this.programMap = this.programs.reduce((map, p) => {
         map[p.program_code] = p.institute_id;
         return map;
       }, {});
 
-      // ✅ institute_id -> institute_name (FIXED 🔥)
       this.instituteMap = this.programs.reduce((map, p) => {
         if (p.institute) {
           map[p.institute.institute_id] = p.institute.institute_code;
@@ -659,9 +682,15 @@ export default {
   },
 
   async mounted() {
+    document.addEventListener("click", this.handleClickOutside);
+
     await this.fetchPrograms();
     await this.fetchRooms();
     await this.loadSchedules();
+  },
+
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside);
   },
 };
 </script>

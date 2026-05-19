@@ -28,15 +28,11 @@
     </div>
     <div class="overflow-x-auto border p-3 rounded-tr-xl bg-white">
       <!-- Controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
-            <select
-              v-model="itemsPerPage"
-              class="select-input" 
-              @change="changePage(1)"
-            >
+        <div class="per-page-container">
+          <div class="select-wrapper">
+            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -59,13 +55,12 @@
         </div>
 
         <!-- Search -->
-        <div class="relative">
+        <div class="search-wrapper">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search faculty ..."
-            class="rounded-full border border-green-600 bg-white px-4 py-2 pl-10 text-sm shadow-sm w-full sm:w-[280px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
-            @input="changePage(1)"
+            class="search-input"
           />
           <div
             class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"

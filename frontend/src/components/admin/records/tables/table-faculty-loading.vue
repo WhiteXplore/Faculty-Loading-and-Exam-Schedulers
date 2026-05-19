@@ -342,56 +342,116 @@
             <div
               v-if="scheduleTooltipVisible && tooltipItem"
               class="fixed z-[9999] pointer-events-none"
-              :style="{
-                top: tooltipY + 'px',
-                left: tooltipX + 'px',
-                maxWidth: '260px',
-              }"
+              :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
             >
-              <div class="bg-white border border-gray-300 rounded-xl p-3 scale-125">
-                <div class="flex items-center justify-between gap-2 mb-2 w-full">
-                  <!-- Course Code -->
-                  <div class="text-sm font-bold text-defaultGreen leading-none">
-                    {{ tooltipItem.course_code }}
-                  </div>
+              <div
+                class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.18)] ring-1 ring-black/5"
+              >
+                <div
+                  class="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white px-4 py-3"
+                >
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p
+                        class="text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+                      >
+                        Schedule Details
+                      </p>
+                      <h3
+                        class="mt-0.5 text-sm font-bold text-defaultGreen leading-tight"
+                      >
+                        {{ tooltipItem.course_code }}
+                      </h3>
+                    </div>
 
-                  <span
-                    v-if="tooltipItem.schedule_type"
-                    class="inline-flex items-center justify-center px-2 py-1 text-[8px] leading-none rounded-full text-white"
-                    :class="
-                      tooltipItem.schedule_type === 'face to face'
-                        ? 'bg-orange-500'
-                        : 'bg-purple-500'
-                    "
-                  >
-                    {{
-                      tooltipItem.schedule_type === "face to face"
-                        ? "Face to Face"
-                        : "Online"
-                    }}
-                  </span>
+                    <span
+                      v-if="tooltipItem.schedule_type"
+                      class="shrink-0 inline-flex items-center rounded-full px-2.5 py-1 text-[9px] font-semibold text-white shadow-sm"
+                      :class="
+                        tooltipItem.schedule_type === 'face to face'
+                          ? 'bg-orange-500'
+                          : 'bg-purple-500'
+                      "
+                    >
+                      {{
+                        tooltipItem.schedule_type === "face to face"
+                          ? "Face to Face"
+                          : "Online"
+                      }}
+                    </span>
+                  </div>
                 </div>
 
-                <div class="text-[10px] text-gray-700 space-y-0.5">
-                  <p><strong>Faculty:</strong> {{ tooltipItem.faculty_name }}</p>
-                  <p>
-                    <strong>Year & Section:</strong>
-                    {{ tooltipItem.program_code }}-{{ tooltipItem.set_name }}
-                  </p>
-                  <p><strong>Room:</strong> {{ tooltipItem.room_name }}</p>
-                  <p><strong>Day:</strong> {{ tooltipItem.day }}</p>
-                  <p>
-                    <strong>Time:</strong>
-                    {{ formatTime(tooltipItem.start_hour) }} –
-                    {{
-                      formatTime(tooltipItem.start_hour + Number(tooltipItem.duration))
-                    }}
-                  </p>
-                  <p><strong>Type:</strong> {{ tooltipItem.type }}</p>
-                  <p>
-                    <strong>Campus Branch:</strong>
-                    {{ getCollegeBranchName(tooltipItem.college_branch_id) }}
-                  </p>
+                <div class="px-4 py-3 space-y-3 text-[11px] text-gray-700">
+                  <!-- <div>
+                    <p
+                      class="text-[9px] font-semibold uppercase tracking-wide text-gray-400"
+                    >
+                      Faculty
+                    </p>
+                    <p class="mt-0.5 font-semibold text-gray-800">
+                      {{ tooltipItem.faculty_name || "Not assigned" }}
+                    </p>
+                  </div> -->
+
+                  <div>
+                    <p
+                      class="text-[9px] font-semibold uppercase tracking-wide text-gray-400"
+                    >
+                      Year & Section
+                    </p>
+                    <div
+                      class="mt-1 rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
+                    >
+                      <p class="font-semibold text-gray-800">
+                        {{ tooltipItem.program_code }} - {{ tooltipItem.set_name }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+                      <p class="text-[9px] font-semibold uppercase text-gray-400">Room</p>
+                      <p class="mt-0.5 font-semibold text-gray-800">
+                        {{ tooltipItem.room_name || "TBA" }}
+                      </p>
+                    </div>
+
+                    <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+                      <p class="text-[9px] font-semibold uppercase text-gray-400">Day</p>
+                      <p class="mt-0.5 font-semibold text-gray-800">
+                        {{ tooltipItem.day || "-" }}
+                      </p>
+                    </div>
+
+                    <div class="rounded-lg bg-gray-50 px-2.5 py-2 col-span-2">
+                      <p class="text-[9px] font-semibold uppercase text-gray-400">Time</p>
+                      <p class="mt-0.5 font-semibold text-gray-800">
+                        {{ formatTime(tooltipItem.start_hour) }} –
+                        {{
+                          formatTime(
+                            tooltipItem.start_hour + Number(tooltipItem.duration)
+                          )
+                        }}
+                      </p>
+                    </div>
+
+                    <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+                      <p class="text-[9px] font-semibold uppercase text-gray-400">Type</p>
+                      <p class="mt-0.5 font-semibold text-gray-800">
+                        {{ tooltipItem.type || "-" }}
+                      </p>
+                    </div>
+
+                    <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+                      <p class="text-[9px] font-semibold uppercase text-gray-400">
+                        Campus
+                      </p>
+                      <p class="mt-0.5 font-semibold text-gray-800 truncate">
+                        {{ getCollegeBranchName(tooltipItem.college_branch_id) }}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -551,34 +611,33 @@ export default {
       const result = {};
 
       Object.entries(this.filteredGroupedSchedule).forEach(([faculty, schedules]) => {
-        let totalLecture = 0;
-        let totalLab = 0;
+        let totalUnits = 0;
+
+        // prevent duplicate counting
+        const counted = new Set();
 
         schedules.forEach((sched) => {
+          const key = `${sched.set_name}-${sched.course_code}`;
+
+          // skip if already counted
+          if (counted.has(key)) return;
+
+          counted.add(key);
+
           const course = this.coursesList.find(
             (c) => c.course_code === sched.course_code
           );
+
           if (!course) return;
 
-          const duration = Number(sched.duration || 0);
+          const lec = Number(course.course_lec || 0);
+          const lab = Number(course.course_lab || 0);
 
-          if (sched.type === "Lecture") {
-            const unitsPerSlot = (duration / 3) * Number(course.course_lec || 0);
-            totalLecture += unitsPerSlot;
-          } else if (sched.type === "Laboratory") {
-            const unitsPerSlot = (duration / 3) * Number(course.course_lab || 0);
-            totalLab += unitsPerSlot;
-          }
+          totalUnits += lec + lab;
         });
 
-        const lectureUnits = Number(totalLecture.toFixed(2));
-        const labUnits = Number(totalLab.toFixed(2));
-        const totalUnits = Number((lectureUnits + labUnits).toFixed(2));
-
         result[faculty] = {
-          lectureUnits,
-          labUnits,
-          totalUnits,
+          totalUnits: Number(totalUnits.toFixed(2)),
         };
       });
 
@@ -963,9 +1022,9 @@ export default {
       if (!room_type) return "bg-green-100 border-green-400";
       const normalized = room_type.toLowerCase();
       if (normalized === "laboratory" || normalized === "lab") {
-        return "bg-blue-200 border-blue-300";
+        return "bg-blue-100 border-blue-300";
       }
-      return "bg-green-200 border-green-300";
+      return "bg-green-100 border-green-300";
     },
 
     viewFacultySchedule(instructor) {

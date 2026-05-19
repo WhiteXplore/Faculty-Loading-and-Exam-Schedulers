@@ -320,27 +320,27 @@ if (userData.program) {
     for (let i = 0; i < importData.length; i++) {
       const row = importData[i];
 
-      if (!row.instructor_name || !row.course_code) {
-        results.failed++;
-        results.errors.push({
-          row: i + 2,
-          error: 'Missing instructor or course',
-        });
-        continue;
-      }
+      // if (!row.instructor_name || !row.course_code) {
+      //   results.failed++;
+      //   results.errors.push({
+      //     row: i + 2,
+      //     error: 'Missing instructor or course',
+      //   });
+      //   continue;
+      // }
 
       const instructor = row.instructor_name
         .trim()
         .replace(/\s+/g, ' ')
         .toLowerCase();
 
-      const parts = instructor.split(' ');
-      const first = parts[0];
-      const last = parts[parts.length - 1];
+const [last = "", first = ""] = instructor
+  .split(",")
+  .map((item) => item.trim());
+
 
       const userKey = `${first} ${last}`;
       const user = userMap.get(userKey);
-
       if (!user) {
         results.failed++;
         results.errors.push({

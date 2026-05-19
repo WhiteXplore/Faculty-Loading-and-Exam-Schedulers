@@ -260,14 +260,12 @@
                 <thead class="bg-gray-100 sticky top-0 z-20">
                   <tr>
                     <th class="px-4 py-3 border w-[13%]">Section</th>
-                    <th class="px-4 py-3 border w-[10%]">Course</th>
-                    <th class="px-4 py-3 border w-[5%]">Campus</th>
+                    <th class="px-4 py-3 border w-[12%]">Course</th>
                     <th class="px-4 py-3 border w-[13%]">Room</th>
                     <th class="px-4 py-3 border w-[13%]">Day</th>
-                    <th class="px-4 py-3 border w-[7%]">Start</th>
-                    <th class="px-4 py-3 border w-[7%]">Hours</th>
-                    <th class="px-4 py-3 border w-[5%]">Set-up</th>
-
+                    <th class="px-4 py-3 border w-[10%]">Start</th>
+                    <th class="px-4 py-3 border w-[10%]">Hours</th>
+                    <th class="px-4 py-3 border w-[18%]">Set Up</th>
                     <th class="px-4 py-3 border text-center w-[2%]">Action</th>
                   </tr>
                 </thead>
@@ -302,8 +300,7 @@
                         v-if="
                           record.showSectionDropdown && filteredSections(record).length
                         "
-                        class="absolute z-10 w-[8vw] bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
-                        @mouseleave="record.showSectionDropdown = false"
+                        class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
                         <div
                           v-for="section in filteredSections(record)"
@@ -311,7 +308,7 @@
                           class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                           @mousedown.prevent="selectSection(record, section)"
                         >
-                          {{ section?.program?.program_code }} - {{ section.set_name }}
+                          {{ section.set_name }}
                         </div>
                       </div>
                     </td>
@@ -327,38 +324,18 @@
                         @input="record.course_id = null"
                       />
                       <div
-                        @mouseleave="record.showCourseDropdown = false"
                         v-if="record.showCourseDropdown && filteredCourses(record).length"
                         class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
                         <div
-                          v-for="item in filteredCourses(record)"
-                          :key="item.curriculum_course_id"
+                          v-for="course in filteredCourses(record)"
+                          :key="course.course_id"
                           class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                          @mousedown="selectCourse(record, item)"
+                          @mousedown="selectCourse(record, course)"
                         >
-                          {{ item.course?.course_code }}
+                          {{ course.course_code }}
                         </div>
                       </div>
-                    </td>
-
-                    <!-- Campus -->
-                    <td class="px-2 py-2 border relative">
-                      <select
-                        v-model.number="record.college_branch_id"
-                        class="w-full rounded px-2 py-2 text-xs"
-                        @change="onCampusChange(record)"
-                      >
-                        <option :value="null" disabled>Select Campus</option>
-
-                        <option
-                          v-for="campus in availableCampuses()"
-                          :key="campus.college_branch_id"
-                          :value="campus.college_branch_id"
-                        >
-                          {{ campus.college_branch_name }}
-                        </option>
-                      </select>
                     </td>
 
                     <!-- Room Input -->
@@ -372,7 +349,6 @@
                         @input="record.room_id = null"
                       />
                       <div
-                        @mouseleave="record.showRoomDropdown = false"
                         v-if="record.showRoomDropdown && filteredRooms(record).length"
                         class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
@@ -424,8 +400,8 @@
                         class="w-full rounded px-2 py-1 text-xs"
                       >
                         <option value="" disabled selected>Select mode</option>
-                        <option value="face to face">F2F</option>
-                        <option value="online">OL</option>
+                        <option value="face to face">Face to face</option>
+                        <option value="online">Online</option>
                       </select>
                     </td>
 
@@ -467,214 +443,152 @@
     </div>
     <div
       v-if="conflictModalVisible"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center"
     >
-      <div
-        class="w-full max-w-[940px] overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-slate-200"
-      >
+      <div class="bg-white w-[900px] rounded-2xl p-6 shadow-xl">
         <!-- Header -->
-        <div
-          class="flex items-center justify-between border-b border-slate-100 px-6 py-5"
-        >
-          <div class="flex items-center gap-3">
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600 ring-1 ring-red-100"
-            >
-              <icon name="exclamation-circle" class="h-6 w-6" />
-            </div>
-
-            <div>
-              <h3 class="text-base font-semibold text-slate-900">
-                Scheduled Conflict Detected
-              </h3>
-              <p class="mt-0.5 text-xs text-slate-500">
-                Review the selected schedule and conflicting records below.
-              </p>
-            </div>
-          </div>
-
-          <button
-            @click="closeConflictModal"
-            class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
-          >
+        <div class="flex justify-between items-center mb-4 border-b pb-2">
+          <h3 class="text-lg font-semibold text-red-700">Schedule Conflict Detected</h3>
+          <button @click="closeConflictModal" class="text-gray-400 hover:text-gray-600">
             ✕
           </button>
         </div>
 
         <!-- Body -->
-        <div class="grid grid-cols-1 gap-5 p-6 lg:grid-cols-2">
-          <!-- Selected Schedule -->
-          <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-5">
-            <div class="mb-4 flex items-center justify-between">
-              <span
-                class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100"
-              >
-                Selected Schedule
-              </span>
+        <div class="grid grid-cols-2 gap-6 mt-6">
+          <!-- LEFT: Selected Schedule -->
+          <div class="relative bg-white rounded-2xl p-5 border">
+            <span
+              class="absolute -top-3 left-4 bg-green-600 text-white text-xs px-3 py-1 rounded-full shadow"
+            >
+              Selected Schedule
+            </span>
 
-              <span
-                class="rounded-full px-2.5 py-1 text-xs font-semibold"
-                :class="{
-                  'bg-orange-50 text-orange-700 ring-1 ring-orange-100':
-                    selectedSchedule.mode === 'face to face',
-                  'bg-purple-50 text-purple-700 ring-1 ring-purple-100':
-                    selectedSchedule.mode === 'online',
-                }"
-              >
-                {{ selectedSchedule.mode === "face to face" ? "Face to Face" : "Online" }}
-              </span>
-            </div>
-
-            <h4 class="mb-4 text-lg font-bold text-slate-900">
-              {{ selectedSchedule.course_code || "No Course Selected" }}
-            </h4>
-
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Faculty</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ selectedSchedule.faculty_name || "-" }}
-                </p>
-              </div>
-
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Section</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ selectedSchedule.program_code || "-" }}-{{
-                    selectedSchedule.set_name || "-"
+            <div class="mt-3 space-y-3 text-xs text-gray-800">
+              <div class="flex justify-between items-center">
+                <h4 class="font-semibold text-base">
+                  {{ selectedSchedule.course_code || "No Course Selected" }}
+                </h4>
+                <span
+                  class="text-xs px-2 py-1 rounded-full font-medium"
+                  :class="{
+                    'bg-orange-500 text-white': selectedSchedule.mode === 'face to face',
+                    'bg-purple-700 text-white': selectedSchedule.mode === 'online',
+                  }"
+                >
+                  {{
+                    selectedSchedule.mode === "face to face" ? "Face to Face" : "Online"
                   }}
-                </p>
+                </span>
               </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Room</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ selectedSchedule.room_name || "-" }}
-                </p>
-              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <p class="text-xs text-gray-500">Faculty</p>
+                  <p class="font-medium">{{ selectedSchedule.faculty_name }}</p>
+                </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Room Type</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ selectedSchedule.room_type || "-" }}
-                </p>
-              </div>
+                <div>
+                  <p class="text-xs text-gray-500">Section</p>
+                  <p class="font-medium">
+                    {{ selectedSchedule.program_code }}-{{ selectedSchedule.set_name }}
+                  </p>
+                </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Day</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ selectedSchedule.day || "-" }}
-                </p>
-              </div>
+                <div>
+                  <p class="text-xs text-gray-500">Room</p>
+                  <p class="font-medium">{{ selectedSchedule.room_name }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Type</p>
+                  <p class="font-medium">{{ selectedSchedule.room_type }}</p>
+                </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Time</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ formatTime(selectedSchedule.time_start) }} –
-                  {{ formatTime(selectedSchedule.time_end) }}
-                </p>
+                <div>
+                  <p class="text-xs text-gray-500">Time</p>
+                  <p class="font-medium">
+                    {{ formatTime(selectedSchedule.time_start) }} –
+                    {{ formatTime(selectedSchedule.time_end) }}
+                  </p>
+                </div>
+
+                <div>
+                  <p class="text-xs text-gray-500">Day</p>
+                  <p class="font-medium">{{ selectedSchedule.day }}</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Conflicting Schedules -->
-          <div class="rounded-xl border border-slate-200 bg-white p-5">
-            <div class="mb-4 flex items-center justify-between">
-              <span
-                class="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-red-100"
-              >
-                Conflicting Schedules
-              </span>
+          <!-- RIGHT: Conflicts -->
+          <div class="relative bg-white rounded-2xl p-4 border">
+            <span
+              class="absolute -top-3 left-4 bg-red-600 text-white text-xs px-3 py-1 rounded-full shadow"
+            >
+              Conflicting Schedules
+            </span>
 
-              <span class="text-xs font-medium text-slate-400">
-                {{ conflictRecords.length }} record(s)
-              </span>
-            </div>
-
-            <div class="max-h-[420px] space-y-3 overflow-y-auto pr-2">
+            <div class="mt-3 space-y-4 max-h-[420px] overflow-y-auto p-2">
               <div
                 v-for="conflict in conflictRecords"
                 :key="conflict.id"
-                class="rounded-xl border p-4 transition hover:shadow-sm"
-                :class="{
-                  'border-red-100 bg-red-50/60':
-                    conflict.reason !== 'Part of the joined schedule',
-                  'border-amber-100 bg-amber-50/70':
-                    conflict.reason === 'Part of the joined schedule',
-                }"
+                class="bg-white rounded-xl p-8 ring-1 ring-red-200"
               >
-                <div class="mb-3 flex items-center justify-between gap-3">
-                  <h5 class="font-semibold text-slate-900">
-                    {{ conflict.course_code || "-" }}
-                  </h5>
+                <div class="space-y-2 text-xs">
+                  <div class="flex justify-between items-center">
+                    <h5 class="font-semibold">{{ conflict.course_code }}</h5>
+                    <span
+                      class="text-xs px-2 py-1 rounded-full font-medium"
+                      :class="{
+                        'bg-orange-500 text-white': conflict.mode === 'face to face',
+                        'bg-purple-700 text-white': conflict.mode === 'online',
+                      }"
+                    >
+                      {{ conflict.mode === "face to face" ? "Face to Face" : "Online" }}
+                    </span>
+                  </div>
 
-                  <span
-                    class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
-                    :class="{
-                      'bg-orange-100 text-orange-700': conflict.mode === 'face to face',
-                      'bg-purple-100 text-purple-700': conflict.mode === 'online',
-                    }"
+                  <div class="grid grid-cols-2 gap-2">
+                    <div>
+                      <p class="text-xs text-gray-500">Faculty</p>
+                      <p class="font-medium">{{ conflict.faculty_name }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Section</p>
+                      <p class="font-medium">
+                        {{ conflict.program_code }}-{{ conflict.set_name }}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Room</p>
+                      <p class="font-medium">{{ conflict.room_name }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-gray-500">Type</p>
+                      <p class="font-medium">{{ conflict.room_type }}</p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Time</p>
+                      <p class="font-medium">
+                        {{ formatTime(conflict.start_hour) }} –
+                        {{ formatTime(conflict.start_hour + conflict.duration) }}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p class="text-xs text-gray-500">Day</p>
+                      <p class="font-medium">{{ conflict.day }}</p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="mt-2 p-2 rounded-lg bg-red-50 text-xs text-red-700 flex gap-2"
                   >
-                    {{ conflict.mode === "face to face" ? "Face to Face" : "Online" }}
-                  </span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3 text-sm">
-                  <div>
-                    <p class="text-xs text-slate-500">Faculty</p>
-                    <p class="font-medium text-slate-800">
-                      {{ conflict.faculty_name || "-" }}
-                    </p>
+                    ⚠ {{ conflict.reason || "Schedule overlap detected" }}
                   </div>
-
-                  <div>
-                    <p class="text-xs text-slate-500">Section</p>
-                    <p class="font-medium text-slate-800">
-                      {{ conflict.program_code || "-" }}-{{ conflict.set_name || "-" }}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p class="text-xs text-slate-500">Room</p>
-                    <p class="font-medium text-slate-800">
-                      {{ conflict.room_name || "-" }}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p class="text-xs text-slate-500">Room Type</p>
-                    <p class="font-medium text-slate-800">
-                      {{ conflict.room_type || "-" }}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p class="text-xs text-slate-500">Day</p>
-                    <p class="font-medium text-slate-800">
-                      {{ conflict.day || "-" }}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p class="text-xs text-slate-500">Time</p>
-                    <p class="font-medium text-slate-800">
-                      {{ formatTime(conflict.start_hour) }} –
-                      {{ formatTime(conflict.start_hour + conflict.duration) }}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  class="mt-4 flex items-start gap-2 rounded-lg bg-white px-3 py-2 text-xs font-medium ring-1"
-                  :class="{
-                    'text-red-700 ring-red-100':
-                      conflict.reason !== 'Part of the joined schedule',
-                    'text-amber-700 ring-amber-100':
-                      conflict.reason === 'Part of the joined schedule',
-                  }"
-                >
-                  <span>⚠</span>
-                  <span>{{ conflict.reason || "Schedule overlap detected" }}</span>
                 </div>
               </div>
             </div>
@@ -682,10 +596,10 @@
         </div>
 
         <!-- Footer -->
-        <div class="flex justify-end border-t border-slate-100 bg-slate-50 px-6 py-4">
+        <div class="flex justify-end mt-5">
           <button
             @click="closeConflictModal"
-            class="rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs"
           >
             Close
           </button>
@@ -892,7 +806,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(useFetchDataStore, ["rooms", "curriculum_courses"]),
+    ...mapState(useFetchDataStore, ["rooms"]),
     isDraggable(record) {
       // If Join is active and class size >= 30 → not draggable
       return !(this.isJoined && Number(record.class_size) >= 30);
@@ -927,16 +841,7 @@ export default {
 
     coursesList() {
       const store = useFetchDataStore();
-
-      return (store.curriculum_courses || [])
-        .map((cc) => ({
-          ...cc.course,
-          curriculum: cc.curriculum,
-          program_id: cc.curriculum?.program_id,
-          institute_id: cc.curriculum?.institute_id,
-          program_code: cc.curriculum?.program?.program_code,
-        }))
-        .filter(Boolean);
+      return store.courses || [];
     }, // Total units per faculty
     facultyTotalUnits() {
       const result = {};
@@ -1080,7 +985,7 @@ export default {
           // Refresh Pinia stores
           this.fetchRooms();
           this.fetchClassSections();
-          this.fetchCurriculumCourses();
+
           // Reload full schedules from API
           this.loadData();
 
@@ -1094,38 +999,9 @@ export default {
   methods: {
     ...mapActions(useFetchDataStore, [
       "fetchRooms",
-      "fetchCurriculumCourses",
+      "fetchCourses",
       "fetchClassSections",
     ]),
-    onCampusChange(record) {
-      const selectedCampus = this.availableCampuses().find(
-        (campus) => Number(campus.college_branch_id) === Number(record.college_branch_id)
-      );
-
-      record.college_branch_name = selectedCampus?.college_branch_name || "";
-
-      record.room_id = null;
-      record.room_name = "";
-      record.room_type = "";
-      record.room_capacity = "";
-      record.searchRoomQuery = "";
-    },
-
-    availableCampuses() {
-      const map = new Map();
-
-      (this.rooms || []).forEach((room) => {
-        const campus = room.building?.buildingArea?.collegeBranch;
-        if (!campus?.college_branch_id) return;
-
-        map.set(Number(campus.college_branch_id), {
-          college_branch_id: Number(campus.college_branch_id),
-          college_branch_name: campus.college_branch_name,
-        });
-      });
-
-      return Array.from(map.values());
-    },
     generateTimeSlot(startHour, duration) {
       if (startHour == null || duration == null) return null;
 
@@ -1595,27 +1471,10 @@ export default {
     /* ------------------ 3. FILTERING ------------------ */
 
     filteredRooms(record) {
-      let rooms = this.rooms || [];
-
-      const selectedCampusId = Number(record.college_branch_id);
-
-      if (selectedCampusId) {
-        rooms = rooms.filter((room) => {
-          const roomCampusId = Number(
-            room.building?.buildingArea?.collegeBranch?.college_branch_id
-          );
-
-          return roomCampusId === selectedCampusId;
-        });
-      }
-
-      const query = record.searchRoomQuery?.trim().toLowerCase();
-
-      if (query) {
-        rooms = rooms.filter((room) => room.room_name?.toLowerCase().includes(query));
-      }
-
-      return rooms;
+      if (!record.searchRoomQuery) return this.rooms;
+      return this.rooms.filter((r) =>
+        r.room_name.toLowerCase().includes(record.searchRoomQuery.toLowerCase())
+      );
     },
     filteredSections(record) {
       const fetchDataStore = useFetchDataStore();
@@ -1623,7 +1482,7 @@ export default {
 
       let filtered = sections;
 
-      // Filter for Program Chairperson
+      // If user is Program Chairperson, filter by institute & program
       if (this.user.role === "Program Chairperson") {
         filtered = filtered.filter(
           (s) =>
@@ -1631,17 +1490,9 @@ export default {
             s.program_id === this.user.program_id
         );
       }
-
       const query = record.searchSectionQuery?.trim().toLowerCase();
-
       if (query) {
-        filtered = filtered.filter((s) => {
-          const display = `${s.program?.program_code || ""} - ${
-            s.set_name || ""
-          }`.toLowerCase();
-
-          return display.includes(query);
-        });
+        filtered = filtered.filter((s) => s.set_name?.toLowerCase().includes(query));
       }
 
       return filtered;
@@ -1649,26 +1500,19 @@ export default {
 
     filteredCourses(record) {
       const fetchDataStore = useFetchDataStore();
-      const curriculumCourses = fetchDataStore.curriculum_courses || [];
+      if (!fetchDataStore.courses) return [];
 
-      let filtered = curriculumCourses;
+      let filtered = fetchDataStore.courses.filter((c) =>
+        c.course_code.toLowerCase().includes(record.searchCourseQuery.toLowerCase())
+      );
 
+      // Only show courses matching user's institute & program if Program Chairperson
       if (this.user.role === "Program Chairperson") {
         filtered = filtered.filter(
-          (cc) =>
-            cc.curriculum?.institute_id === this.user.institute_id &&
-            cc.curriculum?.program_id === this.user.program_id
+          (c) =>
+            c.institute_id === this.user.institute_id &&
+            c.program_id === this.user.program_id
         );
-      }
-
-      const query = record.searchCourseQuery?.trim().toLowerCase();
-
-      if (query) {
-        filtered = filtered.filter((cc) => {
-          const courseCode = cc.course?.course_code?.toLowerCase() || "";
-          const courseTitle = cc.course?.course_title?.toLowerCase() || "";
-          return courseCode.includes(query) || courseTitle.includes(query);
-        });
       }
 
       return filtered;
@@ -1679,53 +1523,30 @@ export default {
       record.class_id = section.class_id;
       record.set_name = section.set_name;
       record.program_id = section.program?.program_id || null;
-      record.program_code = section.program?.program_code || "";
       record.institute_id = section.program?.institute?.institute_id || null;
 
-      // ✅ campus from selected section
-      record.college_branch_id = section.colleges?.college_branch_id || null;
-      record.college_branch_name = section.colleges?.college_branch_name || "";
-
-      record.searchSectionQuery = `${section.program?.program_code || ""} - ${
-        section.set_name
-      }`;
+      record.searchSectionQuery = section.set_name;
       record.showSectionDropdown = false;
-
-      // reset room if room is not in selected campus
-      record.room_id = null;
-      record.room_name = "";
-      record.searchRoomQuery = "";
     },
+
     selectRoom(record, room) {
-      record.room_id = room.room_id;
-      record.room_name = room.room_name;
-      record.room_type = room.room_type;
-      record.room_capacity = room.room_capacity;
-
-      const campus = room.building?.buildingArea?.collegeBranch;
-
-      record.college_branch_id =
-        campus?.college_branch_id || record.college_branch_id || null;
-      record.college_branch_name =
-        campus?.college_branch_name || record.college_branch_name || "";
-
-      record.searchRoomQuery = room.room_name;
+      // Only update if room changed
+      if (record.room_id !== room.room_id) {
+        record.room_id = room.room_id;
+        record.room_name = room.room_name;
+        record.room_type = room.room_type;
+        record.room_capacity = room.room_capacity;
+      }
+      record.searchRoomQuery = room.room_name; // for display only
       record.showRoomDropdown = false;
     },
-    selectCourse(record, curriculumCourse) {
-      const course = curriculumCourse.course;
-      const curriculum = curriculumCourse.curriculum;
-
+    selectCourse(record, course) {
       record.course_id = course.course_id;
       record.course_code = course.course_code;
       record.semester = String(course.course_semester);
-      record.program_id = curriculum?.program_id || null;
-      record.program_code = curriculum?.program?.program_code || "";
-      record.institute_id = curriculum?.institute_id || null;
 
-      const startYear = curriculum?.curriculum_start_year;
-      const endYear = curriculum?.curriculum_end_year;
-
+      const startYear = course?.curriculum?.curriculum_start_year;
+      const endYear = course?.curriculum?.curriculum_end_year;
       record.school_year =
         startYear && endYear ? `${startYear} - ${endYear}` : startYear || "";
 
@@ -2197,12 +2018,9 @@ export default {
   },
   async mounted() {
     await this.fetchUser();
-
     const roomsPromise = this.fetchRooms();
     if (roomsPromise && roomsPromise.then) await roomsPromise;
-
     await this.fetchClassSections();
-    await this.fetchCurriculumCourses();
     await this.loadData();
   },
 };

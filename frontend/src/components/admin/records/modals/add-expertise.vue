@@ -19,7 +19,7 @@
           <div class="grid grid-cols-2 bg-gray-100 p-1 rounded-xl">
             <button
               type="button"
-              @click="activeTab = 'assign'"
+              @click="switchTab('assign')"
               class="py-2.5 rounded-lg font-semibold transition"
               :class="
                 activeTab === 'assign'
@@ -32,7 +32,7 @@
 
             <button
               type="button"
-              @click="activeTab = 'cross'"
+              @click="switchTab('cross')"
               class="py-2.5 rounded-lg font-semibold transition"
               :class="
                 activeTab === 'cross'
@@ -304,12 +304,26 @@ export default {
       },
 
       selectedCrossCourses: [],
+      originalAssignSnapshot: "",
+      originalCrossSnapshot: "",
     };
   },
 
   computed: {
     ...mapState(useFetchDataStore, ["courses", "programs", "curriculum_courses"]),
+    hasUnsavedAssignChanges() {
+      return (
+        this.originalAssignSnapshot &&
+        this.originalAssignSnapshot !== this.getAssignSnapshot()
+      );
+    },
 
+    hasUnsavedCrossChanges() {
+      return (
+        this.originalCrossSnapshot &&
+        this.originalCrossSnapshot !== this.getCrossSnapshot()
+      );
+    },
     currentUserInstituteId() {
       return Number(this.userData?.institute?.institute_id || 0);
     },
@@ -492,7 +506,61 @@ export default {
       "fetchPrograms",
       "fetchCurriculumCourses",
     ]),
+    getCrossSnapshot() {
+      const payload = this.selectedCrossCourses.map((c) => ({
+        course_id: Number(c.course_id),
+        status: "CROSS",
+      }));
 
+      return JSON.stringify(payload.sort((a, b) => a.course_id - b.course_id));
+    },
+    getAssignSnapshot() {
+      const payload = Object.values(this.form.semesters).flatMap((s) => [
+        ...s.expertise.map((c) => ({
+          course_id: Number(c.course_id),
+          status: "PRIMARY",
+        })),
+        ...s.other_expertise.map((c) => ({
+          course_id: Number(c.course_id),
+          status: "OTHER",
+        })),
+      ]);
+
+      return JSON.stringify(
+        payload.sort((a, b) => {
+          if (a.status !== b.status) return a.status.localeCompare(b.status);
+          return a.course_id - b.course_id;
+        })
+      );
+    },
+
+    switchTab(tab) {
+      if (tab === this.activeTab) return;
+
+      if (
+        this.activeTab === "assign" &&
+        tab === "cross" &&
+        this.hasUnsavedAssignChanges
+      ) {
+        toast.warning(
+          "Please save your Expertise Assignment changes first before proceeding to Cross Assign."
+        );
+        return;
+      }
+
+      if (this.activeTab === "cross" && tab === "assign" && this.hasUnsavedCrossChanges) {
+        toast.warning(
+          "Please save your Cross Assign changes first before proceeding to Expertise Assignment."
+        );
+        return;
+      }
+
+      this.activeTab = tab;
+      this.searchQuery = "";
+      this.otherSearchQuery = "";
+      this.dropdownOpen = false;
+      this.otherDropdownOpen = false;
+    },
     getSemesterName(s) {
       return s === 1 ? "1st Semester" : s === 2 ? "2nd Semester" : "Summer";
     },
@@ -609,7 +677,14 @@ export default {
         );
 
         this.$emit("updated");
-        this.$emit("close");
+
+        if (this.activeTab === "assign") {
+          this.originalAssignSnapshot = this.getAssignSnapshot();
+        }
+
+        if (this.activeTab === "cross") {
+          this.originalCrossSnapshot = this.getCrossSnapshot();
+        }
       } catch (err) {
         console.error(err);
         toast.error("Failed to save.");
@@ -698,6 +773,8 @@ export default {
     await this.fetchCurriculumCourses();
 
     this.loadExistingExpertise();
+    this.originalAssignSnapshot = this.getAssignSnapshot();
+    this.originalCrossSnapshot = this.getCrossSnapshot();
   },
 };
 </script>
