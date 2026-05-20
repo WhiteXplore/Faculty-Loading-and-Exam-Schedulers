@@ -7,9 +7,7 @@
       class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl h-[380px] overflow-hidden"
     >
       <!-- HEADER -->
-      <div
-        class="flex justify-between items-center px-6 py-4 bg-defaultGreen text-white"
-      >
+      <div class="flex justify-between items-center px-6 py-4 bg-defaultGreen text-white">
         <div class="flex items-center gap-3">
           <icon
             name="exclamation-circle"
@@ -29,9 +27,7 @@
       </div>
 
       <!-- BODY -->
-      <div
-        class="relative h-[250px] overflow-hidden flex items-center justify-center"
-      >
+      <div class="relative h-[250px] overflow-hidden flex items-center justify-center">
         <!-- Base Card -->
         <div
           v-if="pendingJoinRecord"
@@ -41,9 +37,7 @@
           <div
             class="w-[270px] min-h-[180px] p-4 rounded-xl border border-green-200 flex flex-col justify-between bg-gray-50"
           >
-            <p class="text-[11px] font-semibold text-green-700 mb-1">
-              Base Schedule
-            </p>
+            <p class="text-[11px] font-semibold text-green-700 mb-1">Base Schedule</p>
             <div>
               <div class="font-semibold text-gray-800 text-sm">
                 {{ pendingJoinRecord.course_code }}
@@ -60,9 +54,7 @@
                 Room Type: {{ pendingJoinRecord.room_type || "No Room Type" }}
               </div>
             </div>
-            <div
-              class="text-[11px] bg-white px-3 py-1 rounded-full border self-start"
-            >
+            <div class="text-[11px] bg-white px-3 py-1 rounded-full border self-start">
               👥 {{ pendingJoinRecord.class_size }}
             </div>
           </div>
@@ -78,9 +70,7 @@
           <div
             class="w-[270px] min-h-[180px] p-4 rounded-xl border border-blue-200 flex flex-col justify-between bg-gray-50"
           >
-            <p class="text-[11px] font-semibold text-blue-700 mb-1">
-              Target Schedule
-            </p>
+            <p class="text-[11px] font-semibold text-blue-700 mb-1">Target Schedule</p>
             <div>
               <div class="font-semibold text-gray-800 text-sm">
                 {{ target.course_code }}
@@ -96,9 +86,7 @@
                 Room Type: {{ target.room_type || "No Room Type" }}
               </div>
             </div>
-            <div
-              class="text-[11px] bg-white px-3 py-1 rounded-full border self-start"
-            >
+            <div class="text-[11px] bg-white px-3 py-1 rounded-full border self-start">
               👥 {{ target.class_size }}
             </div>
           </div>
@@ -125,9 +113,7 @@
             class="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-md z-50"
           >
             <div class="relative flex items-center justify-center">
-              <div
-                class="absolute w-32 h-32 rounded-full bg-green-500/20 blur-2xl"
-              ></div>
+              <div class="absolute w-32 h-32 rounded-full bg-green-500/20 blur-2xl"></div>
               <div
                 class="relative w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-[0_10px_40px_rgba(16,185,129,0.4)] success-scale"
               >
@@ -149,9 +135,7 @@
             <p class="mt-6 text-lg font-semibold text-gray-800 tracking-wide">
               Successfully Joined
             </p>
-            <p class="text-sm text-gray-500 mt-1">
-              Sections merged successfully
-            </p>
+            <p class="text-sm text-gray-500 mt-1">Sections merged successfully</p>
           </div>
         </transition>
       </div>

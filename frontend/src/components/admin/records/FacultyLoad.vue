@@ -13,7 +13,7 @@
           :key="tab.value"
           @click="activeTab = tab.value"
           :class="[
-            'px-4 py-2 rounded-t-lg font-normal text-sm',
+            'px-4 py-2.5 rounded-t-lg font-normal text-xs',
             activeTab === tab.value
               ? 'bg-defaultGreen text-white border border-gray-300 border-b-white shadow-sm'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200',

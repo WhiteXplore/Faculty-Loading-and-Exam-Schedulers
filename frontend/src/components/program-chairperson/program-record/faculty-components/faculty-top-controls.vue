@@ -1,17 +1,15 @@
 <template>
   <div class="flex justify-between items-center">
     <!-- LEFT: JOIN TOGGLE -->
-    <div
-      class="flex items-center gap-4 py-2 px-3 rounded-full border w-max bg-white text-sm"
-    >
+    <div class="flex items-center py-2 px-3 rounded-lg border w-max bg-white text-sm">
       <span class="font-medium text-gray-700">Join Scheduled:</span>
 
- <div class="per-page-container">
+      <div class="per-page-container">
         <span
           class="font-semibold"
           :class="isJoined ? 'text-green-600' : 'text-gray-400'"
         >
-          {{ isJoined ? "YES" : "NOT" }}
+          {{ isJoined ? "" : "" }}
         </span>
 
         <button
@@ -63,12 +61,10 @@
         @click="$emit('toggleCompareSelection')"
         class="flex items-center gap-2 px-3 py-2 border text-defaultGreen border-defaultGreen rounded-xl hover:bg-defaultGreen hover:text-white hover:shadow-lg cursor-pointer transition duration-200"
       >
-        <div
-          class="btn-add-icon"
-        >
+        <div class="btn-add-icon">
           <icon name="faculty-loading1" />
         </div>
-           <span class="btn-add-text">Compare</span>
+        <span class="btn-add-text">Compare</span>
       </div>
 
       <!-- COMPARE SECTION -->
@@ -116,12 +112,10 @@
                 : 'text-gray-400 border-gray-300 cursor-not-allowed',
             ]"
           >
-            <div
-              class="btn-add-icon"
-            >
+            <div class="btn-add-icon">
               <icon name="faculty-loading1" />
             </div>
-               <span class="btn-add-text">Compare</span>
+            <span class="btn-add-text">Compare</span>
           </div>
         </div>
 
