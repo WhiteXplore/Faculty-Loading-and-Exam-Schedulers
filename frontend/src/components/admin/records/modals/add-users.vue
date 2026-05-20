@@ -74,7 +74,9 @@
                 <label class="input-label">Employment Type:</label>
                 <select v-model="form.employment_type" class="input-text">
                   <option value="">Select employment type</option>
-                  <option value="Full Time">Full Time</option>
+                  <option value="Permanent">Permanent</option>
+                  <option value="Temporary">Temporary</option>
+                  <option value="Contract of Service">ontract of Service</option>
                   <option value="Part Time">Part Time</option>
                 </select>
               </div>

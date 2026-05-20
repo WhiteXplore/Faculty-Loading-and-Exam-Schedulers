@@ -208,11 +208,7 @@
 
           <!-- Action Buttons -->
           <div class="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-200"
-            >
+            <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
             <button
@@ -220,9 +216,9 @@
               @click="handleImport"
               :disabled="!selectedFile || uploading"
               :class="[
-                'px-4 py-2 rounded-lg transition duration-200',
+                'btn-save',
                 selectedFile && !uploading
-                  ? 'bg-green-600 text-white hover:bg-defaultGreen'
+                  ? ''
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed',
               ]"
             >

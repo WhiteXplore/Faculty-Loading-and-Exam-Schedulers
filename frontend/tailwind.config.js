@@ -9,14 +9,14 @@ module.exports = {
 
       /* ✅ FONT SETUP */
       fontFamily: {
-        poppins: ["Poppins", "sans-serif"],
-        sans: ["Poppins", "sans-serif"], // make poppins default
+        poppins: ["Poppins", "sans-serif"],   
       },
 
       /* ✅ OPTIONAL: semantic font weights */
       fontWeight: {
         light: "300",
         regular: "400",
+        normal:"100",
         medium: "500",
         semibold: "600",
         bold: "700",

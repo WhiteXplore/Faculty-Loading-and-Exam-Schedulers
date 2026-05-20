@@ -171,6 +171,8 @@ export default {
             // SPEACIAL PROGRAM
             BSENTREPSPA:
               "Bachelor of Science in Entrepreneurship - Special Program for Adult Education",
+            BPASPA:
+              "Bachelor of Public Administration - Special Program for Adult Education",
 
             // MASTERS PROGRAMS
             MIT: "Master in Information Technology",
@@ -241,21 +243,21 @@ export default {
 
         const normalize = (val) =>
           String(val || "")
-            .replace(/\s+/g, "")
+            .replace(/\s+/g, " ")
             .toUpperCase()
             .trim();
 
-        // existing course_code in database
+        const courseKey = (row) => normalize(row.course_code);
+
         const existingCourseCodeSet = new Set(
           existingCourses.map((course) => normalize(course.course_code)).filter(Boolean)
         );
 
-        // duplicate course_code inside uploaded file itself
         const seenUploadCodes = new Set();
         const uploadDuplicateCodes = new Set();
 
         this.parsedData.forEach((row) => {
-          const code = normalize(row.course_code);
+          const code = courseKey(row);
           if (!code) return;
 
           if (seenUploadCodes.has(code)) {
@@ -265,16 +267,12 @@ export default {
           }
         });
 
-        // codes already in database
         const duplicateInDatabase = this.parsedData
-          .map((row) => normalize(row.course_code))
+          .map((row) => courseKey(row))
           .filter((code) => code && existingCourseCodeSet.has(code));
 
         this.duplicateCourseCodes = [...new Set(duplicateInDatabase)];
 
-        // =========================================================
-        // SAVE INSTITUTES FROM ALL ROWS
-        // =========================================================
         const uniqueInstitutes = [
           ...new Map(
             this.parsedData
@@ -297,9 +295,6 @@ export default {
           instituteMap.set(inst.institute_code, res.data.institute_id);
         }
 
-        // =========================================================
-        // SAVE PROGRAMS + CURRICULUMS FROM ALL ROWS
-        // =========================================================
         const uniquePrograms = [
           ...new Map(
             this.parsedData
@@ -350,18 +345,14 @@ export default {
               }
             );
 
-            const curriculum = curriculumRes.data;
-            curriculumMap.set(curriculumKey, curriculum.curriculum_id);
+            curriculumMap.set(curriculumKey, curriculumRes.data.curriculum_id);
           }
         }
 
-        // =========================================================
-        // SAVE ONLY NEW COURSES
-        // =========================================================
         const addedInThisBatch = new Set();
 
         const filteredParsedData = this.parsedData.filter((row) => {
-          const code = normalize(row.course_code);
+          const code = courseKey(row);
           if (!code) return false;
 
           if (existingCourseCodeSet.has(code)) return false;
@@ -374,7 +365,7 @@ export default {
         const newCourses = filteredParsedData.map((row) => ({
           course_level: row.course_level,
           course_semester: row.course_semester,
-          course_code: row.course_code,
+          course_code: normalize(row.course_code),
           course_title: row.course_title,
           course_lec: row.course_lec,
           course_lab: row.course_lab,
@@ -387,30 +378,27 @@ export default {
           );
         }
 
-        // refresh all courses so we can get course_id of both old + newly inserted
         await fetchDataStore.fetchCourses();
 
         const allCourses = fetchDataStore.courses;
 
         const courseIdMap = new Map();
+
         allCourses.forEach((course) => {
           const normalizedCode = normalize(course.course_code);
-          if (normalizedCode) {
+
+          if (normalizedCode && !courseIdMap.has(normalizedCode)) {
             courseIdMap.set(normalizedCode, course.course_id);
           }
         });
 
-        // =========================================================
-        // BUILD CURRICULUM-COURSE LINKS
-        // use ALL uploaded rows, including existing course codes
-        // =========================================================
         const curriculumCourseLinks = [];
         const seenLinks = new Set();
 
         this.parsedData.forEach((row) => {
           const curriculumKey = `${row.institute_code}-${row.program_code}-${row.curriculum_start_year}-${row.curriculum_end_year}`;
           const curriculum_id = curriculumMap.get(curriculumKey);
-          const course_id = courseIdMap.get(normalize(row.course_code));
+          const course_id = courseIdMap.get(courseKey(row));
 
           if (!curriculum_id || !course_id) return;
 
@@ -436,9 +424,6 @@ export default {
           );
         }
 
-        // =========================================================
-        // TOAST MESSAGES
-        // =========================================================
         if (!newCourses.length && this.duplicateCourseCodes.length) {
           toast.warning(
             "All uploaded course codes already exist in the database. Institute, program, curriculum, and curriculum-course links were still processed."
