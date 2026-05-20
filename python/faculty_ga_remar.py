@@ -14,8 +14,8 @@ from openpyxl.utils import get_column_letter
 # MySQL Connection (adjust creds/host/db as needed)
 # =========================
 DB_USER = "root"
-DB_PASS = "Dnsc2026"
-DB_HOST = "172.16.197.57"
+DB_PASS = "root"
+DB_HOST = "127.0.0.1"
 DB_PORT = 3306
 DB_NAME = "dnsc_class_scheduler_ga_qa"
 

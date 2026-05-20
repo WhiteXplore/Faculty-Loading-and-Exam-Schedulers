@@ -242,7 +242,7 @@
   <!-- Delete Confirmation -->
   <div
     v-if="showDeleteModal"
-    <div class="modal-overlay">
+    class="modal-overlay"
   ></div>
   <div
     v-if="showDeleteModal"
