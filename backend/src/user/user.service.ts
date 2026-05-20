@@ -282,7 +282,7 @@ if (userData.program) {
   ): Promise<ImportResult> {
     const results: ImportResult = { success: 0, failed: 0, errors: [] };
 
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.find({ relations: ['program'] });
     const courses = await this.courseRepository.find();
     const existingExpertise = await this.userExpertiseRepository.find({
       relations: ['user', 'course'],
@@ -309,6 +309,25 @@ if (userData.program) {
     existingExpertise.forEach((e) => {
       const key = `${e.user.id}-${e.course.course_id}`;
       existingMap.add(key);
+    });
+
+    const allPrograms = await this.programRepository.find();
+    const programInstituteMap = new Map<number, number>();
+    allPrograms.forEach((p) => programInstituteMap.set(p.program_id, p.institute_id));
+
+    const courseProgramRows: { course_id: number; program_id: number }[] =
+      await this.courseRepository.manager.query(`
+        SELECT DISTINCT cc.course_id, cu.program_id
+        FROM curriculum_courses cc
+        JOIN curricula cu ON cu.curriculum_id = cc.curriculum_id
+      `);
+
+    const courseProgramMap = new Map<number, Set<number>>();
+    courseProgramRows.forEach(({ course_id, program_id }) => {
+      if (!courseProgramMap.has(course_id)) {
+        courseProgramMap.set(course_id, new Set());
+      }
+      courseProgramMap.get(course_id)!.add(program_id);
     });
 
     const expertiseToInsert: UserExpertise[] = [];
@@ -366,6 +385,24 @@ const [last = "", first = ""] = instructor
         continue;
       }
 
+      const userProgramId = user.program?.program_id;
+      const userInstituteId = user.program?.institute_id;
+      const coursePrograms = courseProgramMap.get(course.course_id) ?? new Set<number>();
+
+      let status: 'PRIMARY' | 'OTHER' | 'CROSS';
+      if (userProgramId && coursePrograms.has(userProgramId)) {
+        status = 'PRIMARY';
+      } else if (
+        userInstituteId &&
+        [...coursePrograms].some(
+          (pid) => programInstituteMap.get(pid) === userInstituteId,
+        )
+      ) {
+        status = 'OTHER';
+      } else {
+        status = 'CROSS';
+      }
+
       const key = `${user.id}-${course.course_id}`;
 
       if (existingMap.has(key)) {
@@ -380,6 +417,7 @@ const [last = "", first = ""] = instructor
       const expertise = this.userExpertiseRepository.create({
         user,
         course,
+        status,
       });
 
       expertiseToInsert.push(expertise);
