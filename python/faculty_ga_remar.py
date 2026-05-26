@@ -1269,7 +1269,7 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                           schedule_tracker, faculty_schedule_tracker,
                           unscheduled_meetings, class_schedule_tracker,
                           lecture_type_tracker, day_pattern_tracker, preferred_time=None, faculty_branch_tracker=None,
-                          day_f2f_tracker=None, far_branch_set=None):
+                          day_f2f_tracker=None, far_branch_set=None, faculty_lecture_type_tracker=None):
     """
     Schedule a class that has only lecture (no lab).
     Classes meet on a day pattern (TTH, MF, or MWF) with hours split equally per meeting.
@@ -1381,9 +1381,17 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
                 num_f2f = n = len(pattern_days)
                 f2f_day_set = set(pattern_days)
             else:
-                # Standard f2f/online split
+                # Standard f2f/online split — use per-faculty tracker for accurate ratio
                 n = len(pattern_days)
-                num_f2f = int(n * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
+                if faculty_lecture_type_tracker is not None and faculty_id in faculty_lecture_type_tracker:
+                    fac_f2f = faculty_lecture_type_tracker[faculty_id]["f2f"]
+                    fac_total = faculty_lecture_type_tracker[faculty_id]["total"]
+                    hours_per_day = lecture_hours_per_week / n
+                    target_f2f_total = (fac_total + lecture_hours_per_week) * TARGET_FACE_TO_FACE_PERCENTAGE
+                    f2f_still_needed = max(0.0, target_f2f_total - fac_f2f)
+                    num_f2f = min(n, max(0, round(f2f_still_needed / hours_per_day)))
+                else:
+                    num_f2f = int(n * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
                 num_f2f = max(0, min(n, num_f2f))
 
                 # When hours are uneven, assign longer-hour days to f2f
@@ -1547,6 +1555,17 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             # Update day pattern tracker for fairness
             day_pattern_tracker[pattern_name] = day_pattern_tracker.get(pattern_name, 0) + 1
 
+            # Update per-faculty f2f/online tracker
+            if faculty_lecture_type_tracker is not None:
+                if faculty_id not in faculty_lecture_type_tracker:
+                    faculty_lecture_type_tracker[faculty_id] = {"f2f": 0.0, "online": 0.0, "total": 0.0}
+                faculty_lecture_type_tracker[faculty_id]["total"] += lecture_hours_per_week
+                for i, day in enumerate(pattern_days):
+                    if day_types[day] == "face to face":
+                        faculty_lecture_type_tracker[faculty_id]["f2f"] += hours_list[i]
+                    else:
+                        faculty_lecture_type_tracker[faculty_id]["online"] += hours_list[i]
+
             # Update faculty branch tracker for all days
             update_branch_tracker(faculty_id, pattern_days, branch_id, faculty_branch_tracker if faculty_branch_tracker is not None else {})
 
@@ -1596,8 +1615,15 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
         if wed_branch_rules["force_f2f"]:
             wed_schedule_type = "face to face"
         else:
-            wed_num_f2f = int(1 * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
-            wed_schedule_type = "face to face" if wed_num_f2f == 1 else "online"
+            if faculty_lecture_type_tracker is not None and faculty_id in faculty_lecture_type_tracker:
+                fac_f2f = faculty_lecture_type_tracker[faculty_id]["f2f"]
+                fac_total = faculty_lecture_type_tracker[faculty_id]["total"]
+                target_f2f_total = (fac_total + wed_lecture_hours) * TARGET_FACE_TO_FACE_PERCENTAGE
+                f2f_still_needed = max(0.0, target_f2f_total - fac_f2f)
+                wed_schedule_type = "face to face" if f2f_still_needed >= wed_lecture_hours * 0.5 else "online"
+            else:
+                wed_num_f2f = int(1 * TARGET_FACE_TO_FACE_PERCENTAGE + 0.5)
+                wed_schedule_type = "face to face" if wed_num_f2f == 1 else "online"
 
         lecture_room = None
         schedule_type = wed_schedule_type
@@ -1712,6 +1738,16 @@ def schedule_lecture_only(cls, rooms, faculty_id, employment_type,
             lecture_type_tracker["face_to_face_hours"] += wed_lecture_hours
             day_f2f_tracker[wednesday] = day_f2f_tracker.get(wednesday, 0) + 1
         lecture_type_tracker["total_lecture_hours"] += wed_lecture_hours
+
+        # Update per-faculty f2f/online tracker
+        if faculty_lecture_type_tracker is not None:
+            if faculty_id not in faculty_lecture_type_tracker:
+                faculty_lecture_type_tracker[faculty_id] = {"f2f": 0.0, "online": 0.0, "total": 0.0}
+            faculty_lecture_type_tracker[faculty_id]["total"] += wed_lecture_hours
+            if schedule_type == "online":
+                faculty_lecture_type_tracker[faculty_id]["online"] += wed_lecture_hours
+            else:
+                faculty_lecture_type_tracker[faculty_id]["f2f"] += wed_lecture_hours
 
         # Update faculty branch tracker for Wednesday
         update_branch_tracker(faculty_id, [wednesday], branch_id, faculty_branch_tracker if faculty_branch_tracker is not None else {})
@@ -2122,6 +2158,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
     day_pattern_tracker = {name: 0 for name in DAY_PATTERNS}
     # Track per-day f2f assignment count so no single day always gets f2f
     day_f2f_tracker = {}
+    faculty_lecture_type_tracker = {}  # per-faculty f2f/online hour tracking
     faculty_branch_tracker = {}
     # Pre-compute which branches are "far" (round-trip travel > FAR_BRANCH_ROUND_TRIP_LIMIT)
     far_branch_set = set()
@@ -2500,7 +2537,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                     cls, rooms, faculty_id, employment_type,
                     schedule_tracker, faculty_schedule_tracker, unscheduled_meetings, class_schedule_tracker,
                     lecture_type_tracker, day_pattern_tracker, preferred_time, faculty_branch_tracker,
-                    day_f2f_tracker, far_branch_set
+                    day_f2f_tracker, far_branch_set, faculty_lecture_type_tracker
                 )
 
                 if scheduled_meetings:
@@ -2523,7 +2560,7 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                     cls, rooms, faculty_id, employment_type,
                     schedule_tracker, faculty_schedule_tracker, unscheduled_meetings, class_schedule_tracker,
                     lecture_type_tracker, day_pattern_tracker, preferred_time, faculty_branch_tracker,
-                    day_f2f_tracker, far_branch_set
+                    day_f2f_tracker, far_branch_set, faculty_lecture_type_tracker
                 )
 
                 if scheduled_meetings:
@@ -3508,48 +3545,136 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
     # Track unassigned non-Main branch courses for branch_expertise_needed output
     unassigned_branch_courses = []
 
-    # Assign classes
+    # ----------------------------------------------------------------
+    # EXPERTISE-FIRST ASSIGNMENT  (Round-Robin Interleaved)
+    #
+    # Why round-robin instead of sequential processing:
+    #   Sequential "most-constrained-first" causes STARVATION. Example:
+    #   IT411 (1 qualified faculty: F1) gets processed first → all 4 sections
+    #   consume F1's load. Then ITELEC2 (3 qualified: F1,F2,F3) arrives later
+    #   and F1 has no capacity left.
+    #
+    # Round-robin fix: each iteration assigns exactly 1 section from each
+    # expertise group before going back to assign a second section.
+    # This prevents any group from monopolising shared faculty capacity.
+    #
+    # Process flow:
+    #   1. Group classes by expertise key (course_code, program_id)
+    #   2. Build expertise → qualified faculty map
+    #   3. Each round: visit every expertise group once and assign 1 section
+    #      to the least-loaded qualified faculty (load-balanced)
+    #   4. Repeat rounds until all sections assigned or none can progress
+    # ----------------------------------------------------------------
+
+    # Build expertise → qualified faculty list map
+    # key: (course_code, program_id) → [fid, fid, ...]
+    expertise_to_fids = {}
+    for f in faculty_expertise_courses:
+        if f.get("course_code") is None:
+            continue
+        key = (f["course_code"], f["program_id"])
+        if key not in expertise_to_fids:
+            expertise_to_fids[key] = []
+        fid = f["faculty_id"]
+        if fid not in expertise_to_fids[key]:
+            expertise_to_fids[key].append(fid)
+
+    # Group classes by expertise key; shuffle within each group for fairness
+    classes_by_expertise = {}
     for course in classes_courses:
-        assigned = False
-        course_branch_id = course.get("branch_id")
+        key = (course.get("course_code"), course.get("program_id"))
+        if key not in classes_by_expertise:
+            classes_by_expertise[key] = []
+        classes_by_expertise[key].append(course)
 
-        # For non-Main branches, sort matching faculty so those with the branch
-        # in their expertise are tried first (inter-branch priority)
-        matching_faculty = [
-            f for f in faculty_expertise_courses
-            if f.get("course_code") is not None and matches_expertise(course, f)
-        ]
+    # Mutable per-group queues of sections still waiting to be assigned
+    remaining_sections = {}
+    for k, v in classes_by_expertise.items():
+        sections = list(v)
+        random.shuffle(sections)
+        remaining_sections[k] = sections
 
-        if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
-            # Prioritize faculty who have this branch in their expertise
-            matching_faculty.sort(
-                key=lambda f: (
-                    0 if course_branch_id in faculty_branches_map.get(f["faculty_id"], set()) else 1,
+    # Expertise groups with no qualified faculty at all — mark immediately
+    for key, sections in remaining_sections.items():
+        if not expertise_to_fids.get(key):
+            for course in sections:
+                print(f"[WARNING] No qualified faculty found for course: {course['course_code']}")
+                course_branch_id = course.get("branch_id")
+                if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
+                    unassigned_branch_courses.append(course)
+            remaining_sections[key] = []
+
+    # ----------------------------------------------------------------
+    # TIERED ASSIGNMENT: process expertise groups in ascending order of
+    # units_per_section.  Smaller-unit courses (e.g. ITELEC2 @ 4.25 units)
+    # are fully scheduled before larger-unit courses (e.g. IT111 @ 7.5 units).
+    # This prevents large-unit monopoly courses from consuming shared faculty
+    # capacity before smaller, higher-section-count courses can claim their share.
+    #
+    # Within each tier: load-balanced round-robin (1 section per expertise group
+    # per pass) distributes sections across all qualified faculty fairly.
+    # ----------------------------------------------------------------
+
+    # Build tier map: units_per_section → [expertise_key, ...]
+    unit_to_keys = {}
+    for key in classes_by_expertise.keys():
+        if not expertise_to_fids.get(key):
+            continue  # No qualified faculty — already warned above
+        if not remaining_sections.get(key):
+            continue
+        sample = remaining_sections[key][0]
+        ups = compute_load(sample["course_lec"], sample["course_lab"])
+        if ups not in unit_to_keys:
+            unit_to_keys[ups] = []
+        unit_to_keys[ups].append(key)
+
+    # Process tiers from smallest to largest units_per_section
+    for ups in sorted(unit_to_keys.keys()):
+        tier_keys = unit_to_keys[ups]
+        random.shuffle(tier_keys)  # Fair ordering within tier
+
+        # Round-robin within tier: assign 1 section per group per pass
+        made_progress = True
+        while made_progress:
+            made_progress = False
+            for expertise_key in tier_keys:
+                if not remaining_sections.get(expertise_key):
+                    continue
+
+                qualified_fids = expertise_to_fids[expertise_key]
+                course = remaining_sections[expertise_key][0]
+                course_branch_id = course.get("branch_id")
+
+                # Sort: branch priority → load balance → random tiebreaker
+                sorted_fids = sorted(
+                    qualified_fids,
+                    key=lambda fid: (
+                        0 if (
+                            course_branch_id is not None
+                            and course_branch_id != MAIN_BRANCH_ID
+                            and course_branch_id in faculty_branches_map.get(fid, set())
+                        ) else 1,
+                        faculty_loads[fid]["total_units"],
+                        random.random(),
+                    )
                 )
-            )
 
-        for faculty in matching_faculty:
-            units = compute_load(course["course_lec"], course["course_lab"])
-            fid = faculty["faculty_id"]
+                for fid in sorted_fids:
+                    units = compute_load(course["course_lec"], course["course_lab"])
+                    if faculty_loads[fid]["total_units"] + units <= faculty_loads[fid]["load_unit"]:
+                        faculty_loads[fid]["assigned_classes"].append(course)
+                        faculty_loads[fid]["total_units"] += units
+                        faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
+                        faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
+                        remaining_sections[expertise_key].pop(0)
+                        made_progress = True
+                        break
 
-            # Get faculty's specific load limit (18 for full time, 9 for part time)
-            faculty_max_load = faculty_loads[fid]["load_unit"]
-
-            # Check if load limit allows assignment
-            if faculty_loads[fid]["total_units"] + units <= faculty_max_load:
-
-                faculty_loads[fid]["assigned_classes"].append(course)
-                faculty_loads[fid]["total_units"] += units
-                faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
-                faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
-
-                assigned = True
-                break
-
-        if not assigned:
-            print(
-                f"[WARNING] No qualified faculty found for course: {course['course_code']}")
-            # Track non-Main unassigned courses for branch_expertise_needed
+    # Any sections that couldn't be assigned after all tiers exhausted
+    for expertise_key, courses in remaining_sections.items():
+        for course in courses:
+            print(f"[WARNING] No qualified faculty found for course: {course['course_code']}")
+            course_branch_id = course.get("branch_id")
             if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
                 unassigned_branch_courses.append(course)
 
