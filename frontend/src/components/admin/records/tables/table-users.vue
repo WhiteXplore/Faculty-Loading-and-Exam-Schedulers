@@ -131,6 +131,7 @@
                 <th class="px-4 py-3 text-left font-normal">Institute</th>
                 <th class="px-4 py-3 text-left font-normal">Program</th>
                 <th class="px-4 py-3 text-left font-normal">Position</th>
+                <th class="px-4 py-3 text-left font-normal">Status</th>
 
                 <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
                   Actions
@@ -160,7 +161,24 @@
                   {{ user.program?.program_code }}
                 </td>
                 <td class="px-4 py-3 text-left">{{ user.role }}</td>
+                <td class="px-4 py-3 text-left">
+                  <span
+                    :class="{
+                      'border-green-600 text-green-600 bg-green-50':
+                        user.is_active === true || user.is_active === 1,
 
+                      'border-red-600 text-red-600 bg-red-50':
+                        user.is_active === false || user.is_active === 0,
+                    }"
+                    class="font-semibold text-xs px-3 py-1 rounded-full border"
+                  >
+                    {{
+                      user.is_active === true || user.is_active === 1
+                        ? "Active"
+                        : "Inactive"
+                    }}
+                  </span>
+                </td>
                 <td class="px-4 py-3 items-center justify-center flex relative">
                   <div class="per-page-container">
                     <!-- Always visible -->
@@ -304,7 +322,7 @@
       >
         <div class="flex gap-1 items-center">
           <icon :name="'add-students'" />
-          <h1 class="font-bold tracking-wide text-lg">Choose Import</h1>
+          <h1 class="header1">Choose Import</h1>
         </div>
         <icon
           :name="'circle-close3'"
@@ -433,8 +451,12 @@ export default {
     ...mapState(useFetchDataStore, ["users", "programs"]),
     filteredData() {
       const query = this.searchQuery.toLowerCase();
+
       return this.users.filter((user) =>
-        `${user.first_name} ${user.last_name} ${user.role} ${user.email}`
+        `${user.first_name} ${user.last_name}
+     ${user.role}
+     ${user.email}
+     ${user.is_active ? "Active" : "Inactive"}`
           .toLowerCase()
           .includes(query)
       );

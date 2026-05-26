@@ -219,7 +219,7 @@
         <div
           class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center"
         >
-          <h1 class="font-bold tracking-wide text-lg">Update Faculty</h1>
+         <h1 class="header1">Update Faculty</h1>
 
           <button type="button" @click="showAddModal = false" class="text-white text-lg">
             ✕

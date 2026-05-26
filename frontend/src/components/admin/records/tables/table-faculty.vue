@@ -253,7 +253,7 @@
         <div
           class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center"
         >
-          <h1 class="font-bold tracking-wide text-lg">Update Faculty</h1>
+         <h1 class="header1">Update Faculty</h1>
 
           <button type="button" @click="closeUpdateModal" class="text-white text-lg">
             ✕
@@ -522,219 +522,337 @@
   <!-- View Modal -->
   <div
     v-if="showViewModal"
-    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4"
   >
-    <div
-      class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 relative animate-slideUp"
-    >
-      <div class="flex justify-between items-center border-b pb-3 mb-4">
-        <h2 class="text-xl font-semibold text-gray-900 flex items-center gap-2">
-          <svg
-            class="w-6 h-6 text-defaultGreen"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 11c0 1.657-1.343 3-3 3S6 12.657 6 11s1.343-3 3-3 3 1.343 3 3zm0 0v10m0-10c0 1.657 1.343 3 3 3s3-1.343 3-3-1.343-3-3-3-3 1.343-3 3z"
-            />
-          </svg>
-          Faculty Information
-        </h2>
+    <div class="w-full max-w-5xl rounded-2xl bg-white shadow-xl overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Faculty Information</h2>
+          <p class="text-sm text-gray-500">Faculty details and expertise overview</p>
+        </div>
 
         <button
           @click="showViewModal = false"
           class="text-gray-400 hover:text-gray-600 transition"
         >
-          ✕
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
         </button>
       </div>
 
-      <div class="space-y-6" v-if="selectedFaculty">
-        <!-- Basic Info -->
-        <div class="grid gap-2 text-sm">
-          <p class="flex space-x-4">
-            <span class="font-semibold text-gray-700">Name:</span>
-            <span class="text-gray-900">
-              {{ selectedFaculty.first_name }} {{ selectedFaculty.last_name }}
-            </span>
-          </p>
+      <div v-if="selectedFaculty" class="p-6 space-y-6 max-h-[85vh] overflow-y-auto">
+        <!-- Faculty Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+          <div class="space-y-1">
+            <p class="text-gray-500">Faculty Name</p>
+            <p class="font-medium text-gray-900">
+              {{ selectedFaculty.first_name }}
+              {{ selectedFaculty.last_name }}
+            </p>
+          </div>
 
-          <p class="flex space-x-4">
-            <span class="font-semibold text-gray-700">Institute:</span>
-            <span class="text-gray-900">
+          <div class="space-y-1">
+            <p class="text-gray-500">Institute</p>
+            <p class="font-medium text-gray-900">
               {{ selectedFaculty.institute?.institute_name || "N/A" }}
-            </span>
-          </p>
+            </p>
+          </div>
 
-          <p class="flex space-x-4">
-            <span class="font-semibold text-gray-700">Program:</span>
-            <span class="text-gray-900">
+          <div class="space-y-1">
+            <p class="text-gray-500">Program</p>
+            <p class="font-medium text-gray-900">
               {{ selectedFaculty.program?.program_name || "N/A" }}
-            </span>
-          </p>
+            </p>
+          </div>
 
-          <p class="flex space-x-4">
-            <span class="font-semibold text-gray-700">Designation:</span>
-            <span class="text-gray-900">
+          <div class="space-y-1">
+            <p class="text-gray-500">Designation</p>
+            <p class="font-medium text-gray-900">
               {{ selectedFaculty.designation || "N/A" }}
-            </span>
-          </p>
+            </p>
+          </div>
 
-          <p class="flex space-x-4">
-            <span class="font-semibold text-gray-700">Unit Load:</span>
-            <span class="text-gray-900">
-              {{ selectedFaculty.unit_load ?? "N/A" }}
-            </span>
-          </p>
-
-          <p class="flex space-x-4">
-            <span class="font-semibold text-gray-700">Role:</span>
-            <span class="text-gray-900">
-              {{ selectedFaculty.role || "N/A" }}
-            </span>
-          </p>
-
-          <p class="flex space-x-4">
-            <span class="font-semibold text-gray-700">Employment Type:</span>
-            <span class="text-gray-900">
+          <div class="space-y-1">
+            <p class="text-gray-500">Employment Type</p>
+            <p class="font-medium text-gray-900">
               {{ selectedFaculty.employment_type || "N/A" }}
-            </span>
-          </p>
+            </p>
+          </div>
+
+          <div class="space-y-1">
+            <p class="text-gray-500">Unit Load</p>
+            <p class="font-medium text-gray-900">
+              {{ selectedFaculty.unit_load ?? "N/A" }}
+            </p>
+          </div>
         </div>
 
-        <!-- Expertise -->
-        <div class="flex justify-between gap-6 border-t py-3 text-sm">
-          <div class="flex-1">
-            <h3 class="font-semibold text-gray-800 mb-2">Expertise</h3>
+        <!-- Expertise Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <!-- Expertise -->
+          <div
+            class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
+          >
+            <div class="flex items-center gap-2 mb-5">
+              <div
+                class="w-8 h-8 rounded-xl bg-green-600 flex items-center justify-center shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"
+                  />
+                </svg>
+              </div>
 
-            <div v-if="filteredExpertise.primary.length" class="space-y-3">
+              <h3 class="text-sm font-semibold text-gray-800">Expertise</h3>
+            </div>
+
+            <div v-if="filteredExpertise.primary.length" class="space-y-5 text-sm">
               <div
                 v-for="(group, key) in groupByYearSemester(filteredExpertise.primary)"
                 :key="key"
               >
-                <div class="mb-2">
-                  <span class="text-green-800 text-xs font-semibold">
-                    {{ key }}
-                  </span>
-                </div>
+                <p class="text-xs font-semibold text-green-700 mb-3">
+                  {{ key }}
+                </p>
 
-                <ul class="list-disc list-inside ml-2 text-gray-700 space-y-1">
-                  <li v-for="(exp, i) in group" :key="i">
-                    {{ exp.course?.course_code }} -
-                    {{ exp.course?.course_title }}
+                <ul class="space-y-2">
+                  <li
+                    v-for="(exp, i) in group"
+                    :key="i"
+                    class="flex items-start gap-2 text-gray-700"
+                  >
+                    <span class="w-2 h-2 rounded-full bg-green-500 mt-2"></span>
+
+                    <span>
+                      {{ exp.course?.course_code }} -
+                      {{ exp.course?.course_title }}
+                    </span>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <p v-else class="text-gray-500 italic">No expertise added</p>
+            <p v-else class="text-sm text-gray-400 italic">No expertise added</p>
           </div>
 
-          <div class="flex-1">
-            <h3 class="font-semibold text-gray-800 mb-2">Other Expertise</h3>
+          <!-- Other Expertise -->
+          <div
+            class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
+          >
+            <div class="flex items-center gap-2 mb-5">
+              <div
+                class="w-8 h-8 rounded-xl bg-green-600 flex items-center justify-center shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3"
+                  />
+                </svg>
+              </div>
 
-            <div v-if="filteredExpertise.other.length" class="space-y-3">
+              <h3 class="text-sm font-semibold text-gray-800">Other Expertise</h3>
+            </div>
+
+            <div v-if="filteredExpertise.other.length" class="space-y-5 text-sm">
               <div
                 v-for="(group, key) in groupByYearSemester(filteredExpertise.other)"
                 :key="key"
               >
-                <div class="mb-2">
-                  <span class="text-orange-700 text-xs font-semibold">
-                    {{ key }}
-                  </span>
-                </div>
+                <p class="text-xs font-semibold text-orange-600 mb-3">
+                  {{ key }}
+                </p>
 
-                <ul class="list-disc list-inside ml-2 text-gray-700 space-y-1">
-                  <li v-for="(exp, i) in group" :key="i">
-                    <span class="text-defaultGreen font-extrabold">
-                      {{ getProgramCode(exp.course?.program_id) }}
+                <ul class="space-y-2">
+                  <li
+                    v-for="(exp, i) in group"
+                    :key="i"
+                    class="flex items-start gap-2 text-gray-700"
+                  >
+                    <span class="w-2 h-2 rounded-full bg-orange-500 mt-2"></span>
+
+                    <span>
+                      {{ exp.course?.course_code }} -
+                      {{ exp.course?.course_title }}
                     </span>
-                    -
-                    {{ exp.course?.course_code }} -
-                    {{ exp.course?.course_title }}
                   </li>
                 </ul>
               </div>
             </div>
 
-            <p v-else class="text-gray-500 italic">No other expertise added</p>
+            <p v-else class="text-sm text-gray-400 italic">No other expertise added</p>
           </div>
 
-          <div class="flex-1">
-            <h3 class="font-semibold text-gray-800 mb-2">Cross Expertise</h3>
+          <!-- Cross Expertise -->
+          <div
+            class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
+          >
+            <div class="flex items-center gap-2 mb-5">
+              <div
+                class="w-8 h-8 rounded-xl bg-green-600 flex items-center justify-center shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 9l4-4 4 4m0 6l-4 4-4-4"
+                  />
+                </svg>
+              </div>
 
-            <div v-if="filteredExpertise.cross.length" class="space-y-3">
+              <h3 class="text-sm font-semibold text-gray-800">Cross Expertise</h3>
+            </div>
+
+            <div v-if="filteredExpertise.cross.length" class="space-y-5 text-sm">
               <div
                 v-for="(group, key) in groupByYearSemester(filteredExpertise.cross)"
                 :key="key"
               >
-                <div class="mb-2">
-                  <span class="text-blue-700 text-xs font-semibold">
-                    {{ key }}
-                  </span>
-                </div>
+                <p class="text-xs font-semibold text-blue-600 mb-3">
+                  {{ key }}
+                </p>
 
-                <ul class="list-disc list-inside ml-2 text-gray-700 space-y-1">
-                  <li v-for="(exp, i) in group" :key="i">
-                    <span class="text-defaultGreen font-extrabold">
-                      {{ getProgramCode(exp.course?.program_id) }}
+                <ul class="space-y-2">
+                  <li
+                    v-for="(exp, i) in group"
+                    :key="i"
+                    class="flex items-start gap-2 text-gray-700"
+                  >
+                    <span class="w-2 h-2 rounded-full bg-blue-500 mt-2"></span>
+
+                    <span>
+                      {{ exp.course?.course_code }} -
+                      {{ exp.course?.course_title }}
                     </span>
-                    {{ exp.course?.course_code }} -
-                    {{ exp.course?.course_title }}
                   </li>
                 </ul>
               </div>
             </div>
 
-            <p v-else class="text-gray-500 italic">No cross expertise assigned</p>
+            <p v-else class="text-sm text-gray-400 italic">No cross expertise assigned</p>
           </div>
         </div>
 
-        <!-- Preferred Time -->
-        <div class="pt-3 border-t text-sm">
-          <h3 class="font-semibold text-gray-800 mb-2">Preferred Time</h3>
+        <!-- Additional Info -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <!-- Preferred Time -->
+          <div
+            class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
+          >
+            <div class="flex items-center gap-2 mb-4">
+              <div
+                class="w-8 h-8 rounded-xl bg-green-600 flex items-center justify-center shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
 
-          <p class="text-gray-700" v-if="selectedFaculty.preffered_time">
-            {{ selectedFaculty.preffered_time }}
-          </p>
+              <h3 class="text-sm font-semibold text-gray-800">Preferred Time</h3>
+            </div>
 
-          <p class="text-gray-500 italic" v-else>No preferred time set</p>
-        </div>
+            <p v-if="selectedFaculty.preffered_time" class="text-sm text-gray-700">
+              {{ selectedFaculty.preffered_time }}
+            </p>
 
-        <!-- Inter-branch Campuses -->
-        <div class="pt-3 border-t text-sm">
-          <h3 class="font-semibold text-gray-800 mb-2">Inter-branch Campuses</h3>
+            <p v-else class="text-sm text-gray-400 italic">No preferred time set</p>
+          </div>
 
-          <div class="flex flex-wrap gap-2">
-            <span
-              v-for="(branchName, i) in selectedFaculty.faculty_branches || []"
-              :key="i"
-              class="bg-defaultGreen text-white text-xs px-2 py-1 rounded-full"
-            >
-              {{ branchName }}
-            </span>
+          <!-- Inter-branch -->
+          <div
+            class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
+          >
+            <div class="flex items-center gap-2 mb-4">
+              <div
+                class="w-8 h-8 rounded-xl bg-green-600 flex items-center justify-center shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              </div>
 
-            <span
+              <h3 class="text-sm font-semibold text-gray-800">Inter-branch Campuses</h3>
+            </div>
+
+            <div
               v-if="
-                !selectedFaculty.faculty_branches ||
-                selectedFaculty.faculty_branches.length === 0
+                selectedFaculty.faculty_branches &&
+                selectedFaculty.faculty_branches.length
               "
-              class="text-gray-500 italic"
+              class="flex flex-wrap gap-2"
             >
-              No inter-branch campuses
-            </span>
+              <span
+                v-for="(branchName, i) in selectedFaculty.faculty_branches"
+                :key="i"
+                class="px-3 py-1.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100"
+              >
+                {{ branchName }}
+              </span>
+            </div>
+
+            <p v-else class="text-sm text-gray-400 italic">No inter-branch campuses</p>
           </div>
         </div>
-      </div>
 
-      <div class="flex justify-end mt-6">
-        <button type="button" @click="showViewModal = false" class="btn-cancel">
-          Close
-        </button>
+        <!-- Footer -->
+        <div class="flex justify-end pt-2">
+          <button @click="showViewModal = false" class="btn-cancel">Close</button>
+        </div>
       </div>
     </div>
   </div>
@@ -969,13 +1087,6 @@ export default {
         this.openCrossAssignModal(user);
       }
     },
-
-    getProgramCode(programId) {
-      const program = (this.programs || []).find((p) => p.program_id === programId);
-
-      return program?.program_code || "-";
-    },
-
     groupByYearSemester(list) {
       const grouped = {};
 

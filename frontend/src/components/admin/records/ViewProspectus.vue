@@ -370,29 +370,30 @@ export default {
 
         if (String(curriculum.institute_id) !== String(this.instituteId)) return;
 
-        const key = `${curriculum.program_id}-${curriculum.curriculum_start_year}-${curriculum.curriculum_end_year}`;
+        // IMPORTANT
+        const key = String(curriculum.curriculum_id);
 
         if (!map.has(key)) {
           map.set(key, {
-            value: key,
+            value: String(curriculum.curriculum_id),
+
+            curriculum_id: curriculum.curriculum_id,
+
             program_id: curriculum.program_id,
+
             program_name: program.program_name,
+
             program_code: program.program_code,
+
             curriculum_start_year: curriculum.curriculum_start_year,
+
             curriculum_end_year: curriculum.curriculum_end_year,
           });
         }
       });
 
-      return Array.from(map.values()).sort((a, b) => {
-        if (a.program_code === b.program_code) {
-          return b.curriculum_start_year - a.curriculum_start_year;
-        }
-
-        return a.program_code.localeCompare(b.program_code);
-      });
+      return Array.from(map.values());
     },
-
     selectedProgramData() {
       return this.uniquePrograms.find(
         (program) => String(program.value) === String(this.selectedProgram)
@@ -402,31 +403,36 @@ export default {
     filteredCourses() {
       if (!this.selectedProgram || !this.instituteId) return [];
 
-      const [programId, startYear, endYear] = String(this.selectedProgram).split("-");
+      return (this.curriculum_courses || [])
+        .filter((item) => {
+          return (
+            String(item.curriculum?.institute_id) === String(this.instituteId) &&
+            // ONLY FILTER BY CURRICULUM ID
+            String(item.curriculum?.curriculum_id) === String(this.selectedProgram)
+          );
+        })
+        .map((item) => ({
+          curriculum_course_id: item.curriculum_course_id,
 
-      let result = this.curriculum_courses || [];
+          curriculum: item.curriculum,
 
-      result = result.filter((item) => {
-        return (
-          String(item.curriculum?.institute_id) === String(this.instituteId) &&
-          String(item.curriculum?.program_id) === String(programId) &&
-          String(item.curriculum?.curriculum_start_year) === String(startYear) &&
-          String(item.curriculum?.curriculum_end_year) === String(endYear)
-        );
-      });
+          course_id: item.course?.course_id,
 
-      return result.map((item) => ({
-        curriculum_course_id: item.curriculum_course_id,
-        curriculum: item.curriculum,
-        course_id: item.course?.course_id,
-        course_code: item.course?.course_code,
-        course_description: item.course?.course_title || item.course?.course_description,
-        course_semester: item.course?.course_semester,
-        course_level: item.course?.course_level,
-        course_lec: Number(item.course?.course_lec || 0),
-        course_lab: Number(item.course?.course_lab || 0),
-        course_requisite: item.course?.course_requisite || "",
-      }));
+          course_code: item.course?.course_code,
+
+          course_description:
+            item.course?.course_title || item.course?.course_description,
+
+          course_semester: item.course?.course_semester,
+
+          course_level: item.course?.course_level,
+
+          course_lec: Number(item.course?.course_lec || 0),
+
+          course_lab: Number(item.course?.course_lab || 0),
+
+          course_requisite: item.course?.course_requisite || "",
+        }));
     },
 
     groupedCourses() {

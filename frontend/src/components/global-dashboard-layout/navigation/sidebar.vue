@@ -398,6 +398,72 @@ export default {
           },
         ],
 
+        "Department Chairperson": [
+          {
+            title: "Home",
+            items: [
+              {
+                name: "Dashboard",
+                icon: "dashboard",
+                route: "/progchair-dashboard",
+              },
+            ],
+          },
+          {
+            title: "Record Management",
+            items: [
+              {
+                name: "Setup",
+                icon: "set-up",
+                bottom: true,
+                children: [
+                  { name: "Courses", route: "/program-chair-courses" },
+                  {
+                    name: "Year & Section",
+                    route: "/program-chair-year-section",
+                  },
+                  // {
+                  //   name: "Assign Course",
+                  //   route: "/program-chair-assigned-courses",
+                  // },
+                ],
+              },
+
+              {
+                name: "Faculty List",
+                icon: "faculty-list",
+                route: "/program-chair-faculty-list",
+              },
+              {
+                name: "Year & Section",
+                icon: "class-list",
+                route: "/program-chair-class-assigned-classes",
+              },
+            ],
+          },
+
+          {
+            title: "Load Management",
+            items: [
+              {
+                name: "Generated Load",
+                icon: "faculty-loading",
+                route: "/program-final-schedules",
+              },
+            ],
+          },
+          {
+            title: "Documents",
+            items: [
+              {
+                name: "Faculty Expertise Overview",
+                icon: "expertise",
+                route: "/faculty-expertise",
+              },
+            ],
+          },
+        ],
+
         Faculty: [
           {
             title: "Home",

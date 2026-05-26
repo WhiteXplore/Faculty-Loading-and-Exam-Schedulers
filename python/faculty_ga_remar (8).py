@@ -18,7 +18,6 @@ DB_PASS = "Dnsc2026"
 DB_HOST = "172.16.197.57"
 DB_PORT = 3306
 DB_NAME = "dnsc_class_scheduler3"
-
 engine = create_engine(
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
     pool_pre_ping=True,
@@ -3545,136 +3544,88 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
     # Track unassigned non-Main branch courses for branch_expertise_needed output
     unassigned_branch_courses = []
 
-    # ----------------------------------------------------------------
-    # EXPERTISE-FIRST ASSIGNMENT  (Round-Robin Interleaved)
-    #
-    # Why round-robin instead of sequential processing:
-    #   Sequential "most-constrained-first" causes STARVATION. Example:
-    #   IT411 (1 qualified faculty: F1) gets processed first → all 4 sections
-    #   consume F1's load. Then ITELEC2 (3 qualified: F1,F2,F3) arrives later
-    #   and F1 has no capacity left.
-    #
-    # Round-robin fix: each iteration assigns exactly 1 section from each
-    # expertise group before going back to assign a second section.
-    # This prevents any group from monopolising shared faculty capacity.
-    #
-    # Process flow:
-    #   1. Group classes by expertise key (course_code, program_id)
-    #   2. Build expertise → qualified faculty map
-    #   3. Each round: visit every expertise group once and assign 1 section
-    #      to the least-loaded qualified faculty (load-balanced)
-    #   4. Repeat rounds until all sections assigned or none can progress
-    # ----------------------------------------------------------------
-
-    # Build expertise → qualified faculty list map
-    # key: (course_code, program_id) → [fid, fid, ...]
-    expertise_to_fids = {}
+    # Build per-faculty expertise map: fid -> list of unique (course_code, program_id) tuples
+    faculty_expertise_map = {}
     for f in faculty_expertise_courses:
+        fid = f["faculty_id"]
         if f.get("course_code") is None:
             continue
-        key = (f["course_code"], f["program_id"])
-        if key not in expertise_to_fids:
-            expertise_to_fids[key] = []
-        fid = f["faculty_id"]
-        if fid not in expertise_to_fids[key]:
-            expertise_to_fids[key].append(fid)
+        if fid not in faculty_expertise_map:
+            faculty_expertise_map[fid] = []
+        expertise_key = (f["course_code"], f["program_id"])
+        if expertise_key not in faculty_expertise_map[fid]:
+            faculty_expertise_map[fid].append(expertise_key)
 
-    # Group classes by expertise key; shuffle within each group for fairness
-    classes_by_expertise = {}
-    for course in classes_courses:
-        key = (course.get("course_code"), course.get("program_id"))
-        if key not in classes_by_expertise:
-            classes_by_expertise[key] = []
-        classes_by_expertise[key].append(course)
+    # Track which class_ids have already been assigned
+    assigned_class_ids = set()
 
-    # Mutable per-group queues of sections still waiting to be assigned
-    remaining_sections = {}
-    for k, v in classes_by_expertise.items():
-        sections = list(v)
-        random.shuffle(sections)
-        remaining_sections[k] = sections
+    # Pass 1: Guarantee at least 1 class per expertise area per faculty.
+    # Shuffle faculty order so no single faculty always wins when expertise overlaps.
+    faculty_ids_shuffled = list(faculty_expertise_map.keys())
+    random.shuffle(faculty_ids_shuffled)
 
-    # Expertise groups with no qualified faculty at all — mark immediately
-    for key, sections in remaining_sections.items():
-        if not expertise_to_fids.get(key):
-            for course in sections:
-                print(f"[WARNING] No qualified faculty found for course: {course['course_code']}")
-                course_branch_id = course.get("branch_id")
-                if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
-                    unassigned_branch_courses.append(course)
-            remaining_sections[key] = []
-
-    # ----------------------------------------------------------------
-    # TIERED ASSIGNMENT: process expertise groups in ascending order of
-    # units_per_section.  Smaller-unit courses (e.g. ITELEC2 @ 4.25 units)
-    # are fully scheduled before larger-unit courses (e.g. IT111 @ 7.5 units).
-    # This prevents large-unit monopoly courses from consuming shared faculty
-    # capacity before smaller, higher-section-count courses can claim their share.
-    #
-    # Within each tier: load-balanced round-robin (1 section per expertise group
-    # per pass) distributes sections across all qualified faculty fairly.
-    # ----------------------------------------------------------------
-
-    # Build tier map: units_per_section → [expertise_key, ...]
-    unit_to_keys = {}
-    for key in classes_by_expertise.keys():
-        if not expertise_to_fids.get(key):
-            continue  # No qualified faculty — already warned above
-        if not remaining_sections.get(key):
-            continue
-        sample = remaining_sections[key][0]
-        ups = compute_load(sample["course_lec"], sample["course_lab"])
-        if ups not in unit_to_keys:
-            unit_to_keys[ups] = []
-        unit_to_keys[ups].append(key)
-
-    # Process tiers from smallest to largest units_per_section
-    for ups in sorted(unit_to_keys.keys()):
-        tier_keys = unit_to_keys[ups]
-        random.shuffle(tier_keys)  # Fair ordering within tier
-
-        # Round-robin within tier: assign 1 section per group per pass
-        made_progress = True
-        while made_progress:
-            made_progress = False
-            for expertise_key in tier_keys:
-                if not remaining_sections.get(expertise_key):
+    for fid in faculty_ids_shuffled:
+        expertise_list = list(faculty_expertise_map[fid])
+        random.shuffle(expertise_list)  # Randomize expertise order for fairness
+        for course_code, program_id in expertise_list:
+            for course in classes_courses:
+                if course["class_id"] in assigned_class_ids:
                     continue
+                if course.get("course_code") != course_code or course.get("program_id") != program_id:
+                    continue
+                units = compute_load(course["course_lec"], course["course_lab"])
+                if faculty_loads[fid]["total_units"] + units <= faculty_loads[fid]["load_unit"]:
+                    faculty_loads[fid]["assigned_classes"].append(course)
+                    faculty_loads[fid]["total_units"] += units
+                    faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
+                    faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
+                    assigned_class_ids.add(course["class_id"])
+                    break  # At most 1 per expertise in Pass 1
 
-                qualified_fids = expertise_to_fids[expertise_key]
-                course = remaining_sections[expertise_key][0]
-                course_branch_id = course.get("branch_id")
+    # Pass 2: Fill remaining load capacity with any matching unassigned classes
+    for course in classes_courses:
+        if course["class_id"] in assigned_class_ids:
+            continue
 
-                # Sort: branch priority → load balance → random tiebreaker
-                sorted_fids = sorted(
-                    qualified_fids,
-                    key=lambda fid: (
-                        0 if (
-                            course_branch_id is not None
-                            and course_branch_id != MAIN_BRANCH_ID
-                            and course_branch_id in faculty_branches_map.get(fid, set())
-                        ) else 1,
-                        faculty_loads[fid]["total_units"],
-                        random.random(),
-                    )
+        assigned = False
+        course_branch_id = course.get("branch_id")
+
+        # For non-Main branches, sort matching faculty so those with the branch
+        # in their expertise are tried first (inter-branch priority)
+        matching_faculty = [
+            f for f in faculty_expertise_courses
+            if f.get("course_code") is not None and matches_expertise(course, f)
+        ]
+
+        if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
+            # Prioritize faculty who have this branch in their expertise
+            matching_faculty.sort(
+                key=lambda f: (
+                    0 if course_branch_id in faculty_branches_map.get(f["faculty_id"], set()) else 1,
                 )
+            )
 
-                for fid in sorted_fids:
-                    units = compute_load(course["course_lec"], course["course_lab"])
-                    if faculty_loads[fid]["total_units"] + units <= faculty_loads[fid]["load_unit"]:
-                        faculty_loads[fid]["assigned_classes"].append(course)
-                        faculty_loads[fid]["total_units"] += units
-                        faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
-                        faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
-                        remaining_sections[expertise_key].pop(0)
-                        made_progress = True
-                        break
+        for faculty in matching_faculty:
+            units = compute_load(course["course_lec"], course["course_lab"])
+            fid = faculty["faculty_id"]
 
-    # Any sections that couldn't be assigned after all tiers exhausted
-    for expertise_key, courses in remaining_sections.items():
-        for course in courses:
-            print(f"[WARNING] No qualified faculty found for course: {course['course_code']}")
-            course_branch_id = course.get("branch_id")
+            # Get faculty's specific load limit (18 for full time, 9 for part time)
+            faculty_max_load = faculty_loads[fid]["load_unit"]
+
+            # Check if load limit allows assignment
+            if faculty_loads[fid]["total_units"] + units <= faculty_max_load:
+                faculty_loads[fid]["assigned_classes"].append(course)
+                faculty_loads[fid]["total_units"] += units
+                faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
+                faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
+                assigned_class_ids.add(course["class_id"])
+                assigned = True
+                break
+
+        if not assigned:
+            print(
+                f"[WARNING] No qualified faculty found for course: {course['course_code']}")
+            # Track non-Main unassigned courses for branch_expertise_needed
             if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
                 unassigned_branch_courses.append(course)
 

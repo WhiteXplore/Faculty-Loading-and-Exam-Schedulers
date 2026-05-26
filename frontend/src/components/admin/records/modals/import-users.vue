@@ -19,7 +19,7 @@
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
               />
             </svg>
-            <h1 class="font-bold tracking-wide text-lg">Import Users</h1>
+           <h1 class="header1">Import Users</h1>
           </div>
           <button
             @click="$emit('close')"
@@ -208,11 +208,7 @@
 
           <!-- Action Buttons -->
           <div class="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-200"
-            >
+            <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
             <button
@@ -220,9 +216,9 @@
               @click="handleImport"
               :disabled="!selectedFile || uploading"
               :class="[
-                'px-4 py-2 rounded-lg transition duration-200',
+                'btn-save',
                 selectedFile && !uploading
-                  ? 'bg-green-600 text-white hover:bg-defaultGreen'
+                  ? ''
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed',
               ]"
             >

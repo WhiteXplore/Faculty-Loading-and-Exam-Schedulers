@@ -127,12 +127,15 @@
                 <td class="px-4 py-3 text-center">
                   <span
                     :class="{
-                      'border-green-600 text-green-600': rooms_data.status === 'Active',
-                      'border-gray-600 text-gray-600': rooms_data.status === 'Inactive',
+                      'border-green-600 text-green-600 bg-green-50':
+                        rooms_data.is_active === true,
+
+                      'border-red-600 text-red-600 bg-red-50':
+                        rooms_data.is_active === false,
                     }"
-                    class="font-semibold text-xs px-2 py-1 rounded-full border"
+                    class="font-semibold text-xs px-3 py-1 rounded-full border"
                   >
-                    {{ rooms_data.status || "Inactive" }}
+                    {{ rooms_data.is_active ? "Active" : "Inactive" }}
                   </span>
                 </td>
 
@@ -262,13 +265,14 @@ export default {
 
     filteredData() {
       const query = this.searchQuery.toLowerCase();
+
       return this.rooms.filter((item) =>
         [
           item.room_name,
           item.room_type,
           item.room_capacity,
           item.institute?.institute_name,
-          item.status,
+          item.is_active ? "Active" : "Inactive",
         ]
           .join(" ")
           .toLowerCase()

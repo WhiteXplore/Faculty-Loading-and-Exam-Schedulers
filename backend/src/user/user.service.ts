@@ -40,10 +40,14 @@ export class UserService {
     private readonly userExpertiseRepository: Repository<UserExpertise>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User_Accounts> {
-    const user = this.userRepository.create(createUserDto);
-    return await this.userRepository.save(user);
-  }
+async create(createUserDto: CreateUserDto): Promise<User_Accounts> {
+  const user = this.userRepository.create({
+    ...createUserDto,
+    is_active: createUserDto.is_active ?? true,
+  });
+
+  return await this.userRepository.save(user);
+}
 
   async findAll(): Promise<User_Accounts[]> {
     return await this.userRepository.find({
@@ -52,8 +56,8 @@ export class UserService {
         'program',
         'expertise',
         'expertise.course', // ✅ include course details
-        'other_expertise',
-        'other_expertise.course',
+        // 'other_expertise',
+        // 'other_expertise.course',
       ], // eager load relations if needed
     });
   }
@@ -135,7 +139,9 @@ async update(id: number, updateUserDto: UpdateUserDto): Promise<User_Accounts> {
 
   if (updateUserDto.unit_load !== undefined) {
     user.unit_load = Number(updateUserDto.unit_load || 0);
-  }
+  }if (updateUserDto.is_active !== undefined) {
+  user.is_active = updateUserDto.is_active;
+}
 
   if (updateUserDto.program_id !== undefined && updateUserDto.program_id !== null) {
     const program = await this.programRepository.findOne({

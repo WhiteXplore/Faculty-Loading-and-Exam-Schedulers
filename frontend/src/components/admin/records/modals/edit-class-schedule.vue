@@ -10,7 +10,7 @@
        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
-            <h1 class="font-bold tracking-wide text-lg">Edit Class Schedule</h1>
+           <h1 class="header1">Edit Class Schedule</h1>
           </div>
           <icon
             :name="'circle-close3'"

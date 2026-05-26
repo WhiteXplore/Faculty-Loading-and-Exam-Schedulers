@@ -28,6 +28,9 @@
     @apply text-gray-600
   }
 
+  .header1 {
+    @apply text-[16px] font-normal text-white
+  }
 
 
 
@@ -188,7 +191,7 @@
 
 
   .input-label {
-    @apply block text-[13px] font-normal text-gray-900;
+    @apply block text-[12.5px] font-normal text-gray-700;
   }
 
   .input-text {
@@ -207,7 +210,7 @@
   }
 
   .dropdown-label {
-    @apply block mb-2 text-[13px] font-normal text-gray-900;
+    @apply block mb-2 text-[12.5px] font-normal text-gray-700;
   }
 
   .dropdown-wrapper {

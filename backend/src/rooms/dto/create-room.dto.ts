@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateRoomDto {
@@ -19,8 +19,8 @@ export class CreateRoomDto {
   room_type: string;
   
   @IsOptional()
-  @IsString()
-  status: string;
+@IsBoolean()
+is_active?: boolean;
 
   @IsOptional()
   @Type(() => Number)

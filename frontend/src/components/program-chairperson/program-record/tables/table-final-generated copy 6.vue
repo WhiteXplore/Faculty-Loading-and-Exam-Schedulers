@@ -111,10 +111,7 @@
                     >
                       <div
                         v-if="isStartingSlot(item, slot)"
-                        :draggable="
-                          canEditSchedule(item) &&
-                          !(isJoined && Number(item.class_size) >= 30)
-                        "
+                        :draggable="!(isJoined && Number(item.class_size) >= 30)"
                         @dblclick.stop="handleUnjoin(item)"
                         @dragstart="onDragStart($event, item)"
                         @mouseenter="showScheduleTooltip($event, item)"
@@ -135,9 +132,6 @@
                             ? 'opacity-50 pointer-events-none cursor-not-allowed'
                             : '',
                           'hover:bg-yellow-100',
-                          !canEditSchedule(item)
-                            ? 'opacity-60 cursor-not-allowed pointer-events-none'
-                            : 'cursor-pointer hover:bg-yellow-100',
                         ]"
                         :style="{
                           top: getBlockTop(item, slot.start) + 'px',
@@ -176,13 +170,12 @@
                             {{
                               finalSchedules
                                 .filter((s) => s.join_group_id === item.join_group_id)
-                                .map((s) => `${s.display_program_code}-${s.set_name}`)
+                                .map((s) => s.set_name)
                                 .join(" + ")
                             }}
                           </template>
-
                           <template v-else>
-                            {{ item.display_program_code }}-{{ item.set_name }}
+                            {{ item.program_code }}-{{ item.set_name }}
                           </template>
                         </div>
 
@@ -290,8 +283,7 @@
                             class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
                           >
                             <p class="font-semibold text-gray-800">
-                              {{ s.display_program_code }} -
-                              {{ s.set_name }}
+                              {{ s.program_code }} - {{ s.set_name }}
                             </p>
                             <p class="text-[10px] text-gray-500">
                               Class Size: {{ s.class_size }}
@@ -303,19 +295,8 @@
                           <div
                             class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
                           >
-                            <!-- <p class="font-semibold text-gray-800">
-                              {{ tooltipItem.display_institute_name }}
-                            </p>
-
-                            <p class="text-[10px] text-gray-600">
-                              {{ tooltipItem.display_program_name }}
-                              ({{ tooltipItem.display_program_code }})
-                            </p> -->
-
                             <p class="font-semibold text-gray-800">
-                              {{ tooltipItem.display_program_code }}-{{
-                                tooltipItem.set_name
-                              }}
+                              {{ tooltipItem.program_code }} - {{ tooltipItem.set_name }}
                             </p>
                             <p class="text-[10px] text-gray-500">
                               Class Size: {{ tooltipItem.class_size }}
@@ -749,43 +730,6 @@ export default {
   },
 
   methods: {
-    canEditSchedule(schedule) {
-      if (!schedule) return false;
-
-      // PROGRAM CHAIRPERSON
-      if (this.user.role === "Program Chairperson") {
-        const sameClassProgram =
-          Number(schedule.class_program_id) === Number(this.user.program_id);
-
-        const sameClassInstitute =
-          Number(schedule.class_institute_id) === Number(this.user.institute_id);
-
-        return sameClassProgram && sameClassInstitute;
-      }
-
-      // DEPARTMENT CHAIRPERSON
-      if (this.user.role === "Department Chairperson") {
-        const sameFacultyProgram =
-          Number(schedule.faculty_program_id) === Number(this.user.program_id);
-
-        const sameFacultyInstitute =
-          Number(schedule.faculty_institute_id) === Number(this.user.institute_id);
-
-        const sameClassProgram =
-          Number(schedule.class_program_id) === Number(this.user.program_id);
-
-        const sameClassInstitute =
-          Number(schedule.class_institute_id) === Number(this.user.institute_id);
-
-        const facultyOwned = sameFacultyProgram && sameFacultyInstitute;
-
-        const externalClass = !sameClassProgram || !sameClassInstitute;
-
-        return facultyOwned && externalClass;
-      }
-
-      return false;
-    },
     async fetchCollegeBranch() {
       const store = useFetchDataStore();
       await store.fetchCollegeBranch();
@@ -1474,12 +1418,7 @@ export default {
 
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
       if (!this.draggedRecord) return;
-      // 🔒 BLOCK IF NO EDIT PERMISSION
-      if (!this.canEditSchedule(this.draggedRecord)) {
-        toast.error("This schedule is locked.");
-        this.draggedRecord = null;
-        return;
-      }
+
       const baseRecord = this.draggedRecord;
 
       // 🔥 Join mode
@@ -1707,162 +1646,30 @@ export default {
 
       this.scheduleIndex = index;
     },
-
-    async fetchClassSections() {
-      try {
-        const { data } = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/class/get-classes"
-        );
-
-        // classes under current user's institute/program
-        this.sections = data.filter((cls) => {
-          return (
-            Number(cls.program_id) === Number(this.user.program_id) &&
-            Number(cls.program?.institute_id) === Number(this.user.institute_id)
-          );
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    },
-
     async fetchFinalSchedules() {
       this.loading = true;
       this.error = null;
 
       try {
-        // ================================
-        // FETCH SCHEDULES
-        // ================================
-        const { data: schedulesData } = await axios.get(
+        const { data } = await axios.get(
           process.env.VUE_APP_API_BASE_URL +
             "/final-generated-class-schedule/get-all-final-schedules",
           { withCredentials: true }
         );
 
-        // ================================
-        // FETCH CLASS SECTIONS
-        // ================================
-        const { data: classSections } = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
-          { withCredentials: true }
-        );
-
-        // ================================
-        // CLASS MAP
-        // ================================
-        const classMap = {};
-
-        classSections.forEach((cls) => {
-          classMap[Number(cls.class_id)] = cls;
-        });
-
-        let schedules = schedulesData || [];
-
-        // ================================
-        // ATTACH CLASS / PROGRAM INFO
-        // ================================
-        schedules = schedules.map((s) => {
-          const cls = classSections.find(
-            (c) => Number(c.class_id) === Number(s.class_id)
-          );
-
-          return {
-            ...s,
-
-            classInfo: cls || null,
-
-            // ====================================
-            // FACULTY OWNER
-            // original owner sa faculty
-            // ====================================
-            faculty_program_id: s.program_id || null,
-
-            faculty_institute_id: s.institute_id || null,
-
-            // ====================================
-            // CLASS OWNER
-            // gikan sa class/get-classes
-            // ====================================
-            class_program_id: cls?.program_id || null,
-
-            class_institute_id: cls?.program?.institute_id || null,
-
-            // ====================================
-            // DISPLAY VALUES
-            // ALWAYS gikan sa class/get-classes
-            // ====================================
-            // preserve original ownership
-            program_id: s.program_id,
-            institute_id: s.institute_id,
-
-            // 🔥 DISPLAY ONLY
-            display_program_code: cls?.program?.program_code || "Unknown Program",
-
-            display_program_name: cls?.program?.program_name || "Unknown Program",
-
-            display_institute_name:
-              cls?.program?.institute?.institute_name || "Unknown Institute",
-
-            display_institute_code: cls?.program?.institute?.institute_code || "",
-
-            set_name: cls?.set_name || s.set_name,
-
-            class_size: cls?.class_size || s.class_size,
-          };
-        });
-
-        // ================================
-        // PROGRAM CHAIRPERSON
-        // show all schedules sa ilang faculty
-        // ================================
+        let schedules = data || [];
         if (this.user.role === "Program Chairperson") {
-          const ownedFacultyIds = [
-            ...new Set(
-              schedules
-                .filter(
-                  (s) =>
-                    Number(s.faculty_program_id) === Number(this.user.program_id) &&
-                    Number(s.faculty_institute_id) === Number(this.user.institute_id)
-                )
-                .map((s) => s.faculty_id)
-            ),
-          ];
-
-          // show tanan schedules handled by their faculty
-          schedules = schedules.filter((s) => ownedFacultyIds.includes(s.faculty_id));
+          schedules = schedules.filter(
+            (s) =>
+              s.institute_id === this.user.institute_id &&
+              s.program_id === this.user.program_id
+          );
         }
-
-        // ================================
-        // DEPARTMENT CHAIRPERSON
-        // show all schedules sa ilang faculty
-        // ================================
-        else if (this.user.role === "Department Chairperson") {
-          const ownedFacultyIds = [
-            ...new Set(
-              schedules
-                .filter(
-                  (s) =>
-                    Number(s.faculty_program_id) === Number(this.user.program_id) &&
-                    Number(s.faculty_institute_id) === Number(this.user.institute_id)
-                )
-                .map((s) => s.faculty_id)
-            ),
-          ];
-
-          schedules = schedules.filter((s) => ownedFacultyIds.includes(s.faculty_id));
-        }
-
-        // ================================
-        // SAVE
-        // ================================
         this.finalSchedules = schedules;
-
         this.rebuildAllIndexes();
         this.changePage(1);
       } catch (err) {
         this.error = err.message || "Failed to fetch final schedules";
-
         console.error(err);
       } finally {
         this.loading = false;
@@ -1891,7 +1698,6 @@ export default {
   },
   async mounted() {
     await this.fetchUser();
-    await this.fetchClassSections();
     await this.loadFetchData();
     await this.fetchSchoolYears();
     await this.fetchFinalSchedules();

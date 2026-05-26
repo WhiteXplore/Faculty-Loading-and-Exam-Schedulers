@@ -33,8 +33,7 @@ export class RoomsService {
     room.room_name = createRoomDto.room_name;
     room.room_capacity = createRoomDto.room_capacity;
     room.room_type = createRoomDto.room_type;
-    room.status = createRoomDto.status ; 
-
+   room.is_active = createRoomDto.is_active ?? true;
     // attach institute
     if (createRoomDto.institute_id) {
       const institute = await this.instituteRepository.findOne({
@@ -102,7 +101,9 @@ export class RoomsService {
     room.room_name = updateRoomDto.room_name ?? room.room_name;
     room.room_capacity = updateRoomDto.room_capacity ?? room.room_capacity;
     room.room_type = updateRoomDto.room_type ?? room.room_type;
-    room.status = updateRoomDto.status ?? room.status;
+  if (updateRoomDto.is_active !== undefined) {
+  room.is_active = updateRoomDto.is_active;
+}
 
     // update institute
     if (updateRoomDto.institute_id !== undefined) {

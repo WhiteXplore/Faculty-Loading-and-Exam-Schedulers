@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsBoolean,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -48,6 +49,10 @@ export class CreateUserDto {
   @Type(() => Number)
   @IsNumber()
   institute_id?: number;
+
+    @IsOptional()
+  @IsBoolean()
+is_active?: boolean;
 
   @IsOptional()
   @Type(() => Number)
@@ -122,6 +127,10 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   preffered_time?: string;
+
+   @IsOptional()
+  @IsBoolean()
+is_active?: boolean;
 
   @IsOptional()
   @Type(() => Number)

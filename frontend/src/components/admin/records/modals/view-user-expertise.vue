@@ -23,7 +23,7 @@
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
-            <h1 class="font-bold tracking-wide text-lg">Faculty Expertise</h1>
+           <h1 class="header1">Faculty Expertise</h1>
           </div>
           <button
             @click="$emit('close')"
