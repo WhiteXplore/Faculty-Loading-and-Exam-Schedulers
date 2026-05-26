@@ -10,7 +10,7 @@
        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon name="add-account1.1" />
-            <h1 class="font-bold tracking-wide text-lg">
+           <h1 class="header1">
               {{ isEditMode ? "Edit College Branch" : "Add College Branch" }}
             </h1>
           </div>

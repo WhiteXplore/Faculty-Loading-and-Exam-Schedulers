@@ -5,7 +5,7 @@
         <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
-            <h1 class="font-bold tracking-wide text-lg">
+            <h1 class="header1">
               {{ isEditMode ? "Edit User" : "Add User" }}
             </h1>
           </div>
@@ -14,6 +14,39 @@
         </div>
 
         <div class="p-5 w-[32vw] space-y-6">
+          <div class="w-full space-y-2 text-left flex flex-col">
+            <label class="input-label">Account Status:</label>
+
+            <div
+              class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 bg-gray-50"
+            >
+              <div class="flex flex-col">
+                <span class="font-medium text-sm text-gray-700">
+                  {{ form.is_active ? "Active" : "Inactive" }}
+                </span>
+
+                <span class="text-xs text-gray-400">
+                  User can login only when active
+                </span>
+              </div>
+
+              <button
+                type="button"
+                @click="form.is_active = !form.is_active"
+                :class="[
+                  'relative inline-flex h-6 w-11 items-center rounded-full transition',
+                  form.is_active ? 'bg-green-500' : 'bg-gray-300',
+                ]"
+              >
+                <span
+                  :class="[
+                    'inline-block h-4 w-4 transform rounded-full bg-white transition',
+                    form.is_active ? 'translate-x-6' : 'translate-x-1',
+                  ]"
+                />
+              </button>
+            </div>
+          </div>
           <!-- STEP 1 -->
           <div v-if="currentStep === 1" class="grid grid-cols-2 items-start gap-3">
             <div class="w-full space-y-2 text-left flex flex-col">
@@ -44,6 +77,7 @@
                 <option disabled value="">Select role</option>
                 <option value="Admin">Admin</option>
                 <option value="Program Chairperson">Program Chairperson</option>
+                <option value="Department Chairperson">Department Chairperson</option>
                 <option value="Faculty">Faculty</option>
               </select>
             </div>
@@ -224,6 +258,7 @@ export default {
         designation: "",
         preffered_time: "",
         unit_load: 0,
+        is_active: true,
         institute_id: null,
         program_id: null,
       },
@@ -335,6 +370,7 @@ export default {
         last_name: this.form.last_name?.trim(),
         email: this.form.email?.trim().toLowerCase(),
         role: this.form.role,
+        is_active: this.form.is_active,
       };
 
       if (!this.isAdminRole) {
@@ -433,6 +469,7 @@ export default {
         designation: this.userData.designation || "",
         preffered_time: this.userData.preffered_time || "",
         unit_load: Number(this.userData.unit_load || 0),
+        is_active: this.userData.is_active ?? true,
 
         institute_id:
           this.userData.institute_id || this.userData.institute?.institute_id || null,

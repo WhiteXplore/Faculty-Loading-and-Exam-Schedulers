@@ -96,59 +96,90 @@ async createMany(createCourseDtos: CreateCourseDto[]): Promise<Course[]> {
       return [];
     }
 
-    const normalize = (val: string) =>
+    const normalize = (val: string | number) =>
       String(val || '')
         .replace(/\s+/g, '')
         .toUpperCase()
         .trim();
 
-    // remove duplicate course_code inside uploaded file
+    // =====================================================
+    // REMOVE DUPLICATES INSIDE THE UPLOADED FILE
+    // SAME CODE + LEVEL + SEMESTER = DUPLICATE
+    // =====================================================
     const uniqueDtos = Array.from(
       new Map(
-        createCourseDtos.map((item) => [normalize(item.course_code), item]),
+        createCourseDtos.map((item) => {
+          const key = [
+            normalize(item.course_code),
+            normalize(item.course_level),
+            normalize(item.course_semester),
+          ].join('-');
+
+          return [key, item];
+        }),
       ).values(),
     );
 
-    const courseCodes = uniqueDtos
-      .map((item) => item.course_code)
-      .filter(Boolean);
+    // =====================================================
+    // FIND EXISTING COURSES
+    // =====================================================
+    const existingCourses = await queryRunner.manager.find(Course);
 
-    // find already existing courses
-    const existingCourses = await queryRunner.manager.find(Course, {
-      where: courseCodes.map((code) => ({ course_code: code })),
+    // =====================================================
+    // EXISTING MAP
+    // =====================================================
+    const existingMap = new Map(
+      existingCourses.map((course) => {
+        const key = [
+          normalize(course.course_code),
+          normalize(course.course_level),
+          normalize(course.course_semester),
+        ].join('-');
+
+        return [key, course];
+      }),
+    );
+
+    // =====================================================
+    // FILTER NEW COURSES ONLY
+    // =====================================================
+    const toInsert = uniqueDtos.filter((item) => {
+      const key = [
+        normalize(item.course_code),
+        normalize(item.course_level),
+        normalize(item.course_semester),
+      ].join('-');
+
+      return !existingMap.has(key);
     });
 
-    const existingMap = new Map(
-      existingCourses.map((course) => [normalize(course.course_code), course]),
-    );
-
-    // only insert new course_code
-    const toInsert = uniqueDtos.filter(
-      (item) => !existingMap.has(normalize(item.course_code)),
-    );
-
+    // =====================================================
+    // INSERT NEW COURSES
+    // =====================================================
     if (toInsert.length) {
       const newCourses = queryRunner.manager.create(
         Course,
         toInsert.map((item) => ({
-          course_level: item.course_level,
-          course_semester: item.course_semester,
+          course_level: Number(item.course_level),
+          course_semester: Number(item.course_semester),
           course_code: item.course_code,
           course_title: item.course_title,
-          course_lec: item.course_lec,
-          course_lab: item.course_lab,
+          course_lec: Number(item.course_lec),
+          course_lab: Number(item.course_lab),
+          course_requisite: item.course_requisite || '',
         })),
       );
 
       await queryRunner.manager.save(Course, newCourses);
     }
 
-    // return all matched/saved courses so frontend gets course_id
-    const finalCourses = await queryRunner.manager.find(Course, {
-      where: courseCodes.map((code) => ({ course_code: code })),
-    });
+    // =====================================================
+    // RETURN ALL MATCHING COURSES
+    // =====================================================
+    const finalCourses = await queryRunner.manager.find(Course);
 
     await queryRunner.commitTransaction();
+
     return finalCourses;
   } catch (error) {
     await queryRunner.rollbackTransaction();

@@ -55,6 +55,7 @@ export class AuthService {
       last_name: user.last_name,
       institute_id: user.institute?.institute_id ?? null, // ✅ only the ID
       program_id: user.program?.program_id ?? null, // optional if you also want program_id
+      designation: user.designation, // ✅ include designation
     };
 
     const token = this.jwtService.sign(payload, { expiresIn: '1h' });
@@ -71,6 +72,7 @@ export class AuthService {
       role: user.role,
       institute_id: user.institute?.institute_id ?? null, // ✅ also in response
       program_id: user.program?.program_id ?? null,
+      designation: user.designation, // ✅ include designation
     });
   }
 

@@ -43,6 +43,8 @@ export class User_Accounts {
 
   @Column({ nullable: true })
   preffered_time: string;
+  @Column({ type: 'boolean', default: true })
+is_active: boolean;
 
 @ManyToOne(() => Program, { nullable: true })
 @JoinColumn({ name: 'program_id' })

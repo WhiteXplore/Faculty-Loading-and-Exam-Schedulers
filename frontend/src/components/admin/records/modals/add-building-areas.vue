@@ -10,7 +10,7 @@
        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon name="circle-add" />
-            <h1 class="font-bold tracking-wide text-lg">
+           <h1 class="header1">
               {{ isEditMode ? "Edit Building Area" : "Add Building Area" }}
             </h1>
           </div>

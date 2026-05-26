@@ -9,7 +9,7 @@
        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'edit'" />
-            <h1 class="font-bold tracking-wide text-lg">Edit Expertise</h1>
+           <h1 class="header1">Edit Expertise</h1>
           </div>
           <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>

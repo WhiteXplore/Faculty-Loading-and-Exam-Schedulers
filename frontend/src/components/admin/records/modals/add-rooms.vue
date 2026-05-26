@@ -6,9 +6,7 @@
         <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
-            <h1 class="font-bold tracking-wide text-lg">
-              {{ isEditMode ? "Edit " : "Add " }}Room
-            </h1>
+            <h1 class="header1">{{ isEditMode ? "Edit " : "Add " }}Room</h1>
           </div>
 
           <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
@@ -149,47 +147,37 @@
           </div>
 
           <!-- Status -->
-          <div class="dropdown-container">
-            <label class="dropdown-label">Status:</label>
+          <div class="w-full space-y-2 text-left flex flex-col">
+            <label class="input-label">Room Status:</label>
 
-            <div class="dropdown-wrapper">
-              <!-- DISPLAY -->
-              <div
-                class="dropdown-input cursor-pointer flex items-center justify-between"
-                @click="showStatusDropdown = !showStatusDropdown"
-              >
-                <span :class="form.status ? '' : 'text-gray-400'">
-                  {{ form.status || "Select Status" }}
+            <div
+              class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 bg-gray-50"
+            >
+              <div class="flex flex-col">
+                <span class="font-medium text-sm text-gray-700">
+                  {{ form.is_active ? "Active" : "Inactive" }}
                 </span>
 
-                <!-- ARROW -->
-                <svg
-                  class="w-4 h-4 ml-2 transition-transform duration-200"
-                  :class="{ 'rotate-180': showStatusDropdown }"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                <span class="text-xs text-gray-400">
+                  Room can only be used when active
+                </span>
               </div>
 
-              <!-- DROPDOWN -->
-              <div v-if="showStatusDropdown" class="dropdown-menu">
-                <div
-                  v-for="status in statusOptions"
-                  :key="status"
-                  class="dropdown-item"
-                  @click="selectStatus(status)"
-                >
-                  {{ status }}
-                </div>
-              </div>
+              <button
+                type="button"
+                @click="form.is_active = !form.is_active"
+                :class="[
+                  'relative inline-flex h-6 w-11 items-center rounded-full transition',
+                  form.is_active ? 'bg-green-500' : 'bg-gray-300',
+                ]"
+              >
+                <span
+                  :class="[
+                    'inline-block h-4 w-4 transform rounded-full bg-white transition',
+                    form.is_active ? 'translate-x-6' : 'translate-x-1',
+                  ]"
+                />
+              </button>
             </div>
           </div>
 
@@ -233,16 +221,16 @@ export default {
   data() {
     return {
       roomTypes: ["Lecture", "Laboratory"],
-      statusOptions: ["Active", "Inactive"],
+
       showRoomTypeDropdown: false,
-      showStatusDropdown: false,
+
       form: {
         institute_id: "",
         building_id: "",
         room_name: "",
         room_type: "",
         room_capacity: "",
-        status: "",
+        is_active: true,
       },
 
       searchInstituteQuery: "",
@@ -374,9 +362,9 @@ export default {
           room_name: this.form.room_name,
           room_type: this.form.room_type,
           room_capacity: Number(this.form.room_capacity),
-          status: this.form.status,
 
-          // IMPORTANT: send null when cleared
+          is_active: this.form.is_active,
+
           institute_id:
             this.form.institute_id === "" || this.form.institute_id === null
               ? null
@@ -427,7 +415,7 @@ export default {
         room_name: this.roomData.room_name,
         room_type: this.roomData.room_type,
         room_capacity: this.roomData.room_capacity,
-        status: this.roomData.status || "Active",
+        is_active: this.roomData.is_active ?? true,
       };
 
       this.searchInstituteQuery = this.roomData.institute?.institute_name || "";
