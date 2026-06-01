@@ -100,8 +100,8 @@
                 <span
                   :class="
                     sy.is_active
-                      ? 'border-green-600 text-green-600 '
-                      : 'border-gray-600 text-gray-800'
+                      ? 'border-green-600 text-green-600 bg-green-50 '
+                      : 'border-red-600 text-red-600 bg-red-50'
                   "
                   class="font-semibold text-xs px-2 py-1 rounded-full border"
                 >

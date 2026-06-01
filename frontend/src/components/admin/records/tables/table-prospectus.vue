@@ -3,7 +3,7 @@
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4 font-regular">Pages / Prospectus</div>
 
-      <div @click="toggleAdd" class="btn-add">
+      <!-- <div @click="toggleAdd" class="btn-add">
         <div
           class="flex items-center justify-center w-5 h-5 bg-white rounded-full group-hover:bg-green-100 transition-colors duration-300"
         >
@@ -13,7 +13,7 @@
           />
         </div>
         <span class="btn-add-text">Generate Report</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- Table -->
