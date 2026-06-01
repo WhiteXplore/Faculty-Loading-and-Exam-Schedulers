@@ -37,6 +37,7 @@
       <tableFacultyLoading2 v-if="activeTab === 'Scheduled by Rooms'" />
       <tableFacultyLoading3 v-if="activeTab === 'Scheduled by Rooms2'" />
       <tableAvailableRooms v-if="activeTab === 'Available Rooms'" />
+      <tableTestSearch v-if="activeTab === 'Table Search'" />
       <!-- Future tabs can be added here -->
     </div>
   </div>
@@ -47,6 +48,7 @@ import tableAvailableRooms from "./tables/table-available-rooms.vue";
 import tableFacultyLoading from "./tables/table-faculty-loading.vue";
 import tableFacultyLoading2 from "./tables/table-schedule-by-room.vue";
 import tableFacultyLoading3 from "./tables/table-schedule-by-room copy.vue";
+import tableTestSearch from "./tables/table-test-search.vue";
 export default {
   name: "FacultyLoadingPage",
   components: {
@@ -54,6 +56,7 @@ export default {
     tableFacultyLoading2,
     tableAvailableRooms,
     tableFacultyLoading3,
+    tableTestSearch,
   },
   data() {
     return {
@@ -63,6 +66,7 @@ export default {
         { label: "Scheduled by Rooms", value: "Scheduled by Rooms" },
         // { label: "Scheduled by Rooms2", value: "Scheduled by Rooms2" },
         { label: "Available Rooms", value: "Available Rooms" },
+        { label: "Table Search", value: "Table Search" },
       ],
     };
   },

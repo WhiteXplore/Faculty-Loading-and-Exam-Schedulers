@@ -14,7 +14,7 @@
         >
           <div class="per-page-container">
             <icon name="edit" />
-            <h3 class="text-lg font-bold">Edit Schedules</h3>
+            <h1 class="header1">Edit Schedules</h1>
           </div>
 
           <icon
@@ -44,7 +44,7 @@
                   class="py-3 px-4 border-b bg-gray-100 flex items-center justify-between"
                 >
                   <div class="flex flex-col">
-                    <span class="text-xs font-bold">{{ instructor }}</span>
+                    <span class="text-md font-bold">{{ instructor }}</span>
 
                     <div v-if="facultyTotalUnits[instructor]">
                       <p class="font-normal text-xs">
@@ -110,9 +110,12 @@
                         v-for="slot in timeSlots"
                         :key="slot.start + slot.end"
                         class="odd:bg-white even:bg-gray-50"
+                        :style="{ height: timeSlotHeight + 'px' }"
                       >
                         <!-- Time Column -->
-                        <td class="px-2 py-5 border text-center text-[10px]">
+                        <td
+                          class="px-2 py-5 border text-center text-[12px] w-auto whitespace-nowrap text-gray-700"
+                        >
                           {{ formatTime(slot.start) }} -
                           {{ formatTime(slot.end) }}
                         </td>
@@ -142,25 +145,44 @@
                           >
                             <div
                               v-if="isStartingSlot(item, slot)"
-                              :draggable="!(isJoined && Number(item.class_size) >= 30)"
-                              @mouseenter="showScheduleTooltip($event, item)"
+                              :draggable="
+                                canEditSchedule(item) &&
+                                !(isJoined && Number(item.class_size) >= 30)
+                              "
+                              @mouseenter.passive="showScheduleTooltip($event, item)"
                               @mouseleave="hideScheduleTooltip"
                               @dragstart="onDragStart($event, item)"
                               @dblclick="attemptUnjoin(item)"
                               @click="highlightRow(item)"
                               :class="[
-                                'absolute inset-x-1 border rounded-lg text-[11px] p-1 shadow-sm truncate transition cursor-pointer',
+                                'absolute inset-x-1 border rounded-lg text-[11px] p-1 shadow-sm truncate transition overflow-hidden',
+
+                                // temp schedule
                                 item.id?.toString().startsWith('temp-')
                                   ? 'bg-purple-200 border-purple-400 text-purple-900'
-                                  : getTypeColor(item.type),
+                                  : // cannot edit → gray disabled style
+                                  !canEditSchedule(item)
+                                  ? 'bg-gray-200 border-gray-300 text-gray-500 opacity-80 cursor-not-allowed'
+                                  : // normal schedule color
+                                    getTypeColor(item.type),
+
+                                // room conflict
                                 hasRoomConflict(item)
                                   ? 'bg-red-300 border-red-500 text-red-900'
                                   : '',
+
+                                // joined schedule
                                 item.is_joined ? 'bg-blue-100 border-blue-400' : '',
+
+                                // joined disabled
                                 isJoined && Number(item.class_size) >= 30
                                   ? 'opacity-50 pointer-events-none cursor-not-allowed'
                                   : '',
-                                'hover:bg-yellow-100',
+
+                                // hover only if editable
+                                canEditSchedule(item)
+                                  ? 'cursor-pointer hover:bg-yellow-100'
+                                  : '',
                               ]"
                               :style="{
                                 top: getBlockTop(item, slot.start) + 'px',
@@ -190,17 +212,23 @@
                                 {{ item.course_code }}
                               </div>
                               <div class="truncate">{{ item.room_name }}</div>
+
                               <div class="truncate">
-                                {{ item.program_code }}-{{ item.set_name }}
+                                {{
+                                  item.classInfo?.program?.program_code ||
+                                  item.program_code
+                                }}
+                                -
+                                {{ item.set_name }}
                               </div>
 
                               <div class="w-full flex justify-center">
                                 <button
                                   v-if="hasRoomConflict(item)"
                                   @click.stop="openConflictModal(item)"
-                                  class="mt-1 px-2 h-5 text-[10px] bg-red-100 text-red-600 rounded"
+                                  class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-md bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
                                 >
-                                  ⚠ View
+                                  !
                                 </button>
                               </div>
                             </div>
@@ -218,18 +246,9 @@
 
         <!-- FOOTER -->
         <div class="flex justify-end gap-2 p-4 bg-white border-t shadow-md text-xs">
-          <button
-            @click="$emit('close')"
-            class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200"
-          >
-            Cancel
-          </button>
+          <button @click="$emit('close')" class="btn-cancel">Cancel</button>
 
-          <button
-            @click="saveEdit"
-            class="bg-defaultGreen text-white px-4 py-2 rounded-lg hover:bg-defaultGreen"
-            :disabled="saving || !isValid"
-          >
+          <button @click="saveEdit" class="btn-save" :disabled="saving || !isValid">
             {{ saving ? "Saving..." : "Save" }}
           </button>
         </div>
@@ -292,6 +311,7 @@
                     <td class="px-2 py-2 border relative">
                       <input
                         v-model="record.searchSectionQuery"
+                        :disabled="!canEditSchedule(record)"
                         type="text"
                         placeholder="Select section..."
                         class="px-3 py-2 w-full rounded-md text-xs"
@@ -320,6 +340,7 @@
                     <td class="px-2 py-2 border relative">
                       <input
                         v-model="record.searchCourseQuery"
+                        :disabled="!canEditSchedule(record)"
                         type="text"
                         placeholder="Select course..."
                         class="px-3 py-2 w-full rounded-md text-xs"
@@ -346,6 +367,7 @@
                     <td class="px-2 py-2 border relative">
                       <select
                         v-model.number="record.college_branch_id"
+                        :disabled="!canEditSchedule(record)"
                         class="w-full rounded px-2 py-2 text-xs"
                         @change="onCampusChange(record)"
                       >
@@ -365,6 +387,7 @@
                     <td class="px-2 py-2 border relative">
                       <input
                         v-model="record.searchRoomQuery"
+                        :disabled="!canEditSchedule(record)"
                         type="text"
                         placeholder="Select room..."
                         class="px-3 py-2 w-full rounded-md text-xs"
@@ -391,6 +414,7 @@
                     <td class="px-2 py-2 border">
                       <input
                         v-model="record.day"
+                        :disabled="!canEditSchedule(record)"
                         class="w-full px-3 py-2 boder rounded-md text-center text-xs"
                       />
                     </td>
@@ -399,6 +423,7 @@
                     <td class="px-2 py-2 border text-center">
                       <input
                         v-model.number="record.start_hour"
+                        :disabled="!canEditSchedule(record)"
                         type="number"
                         step="0.5"
                         min="8"
@@ -411,6 +436,7 @@
                     <td class="px-2 py-2 border text-center">
                       <input
                         v-model.number="record.duration"
+                        :disabled="!canEditSchedule(record)"
                         type="number"
                         class="w-full px-3 py-2 boder rounded-md text-center text-xs"
                       />
@@ -420,6 +446,7 @@
                     <td class="px-2 py-2 border">
                       <select
                         v-model="record.mode"
+                        :disabled="!canEditSchedule(record)"
                         @change="onModeChange(record)"
                         class="w-full rounded px-2 py-1 text-xs"
                       >
@@ -431,7 +458,11 @@
 
                     <!-- Action -->
                     <td class="px-2 py-3 border text-center">
-                      <button @click="toggleDelete(record)" class="hover:text-red-900">
+                      <button
+                        @click="toggleDelete(record)"
+                        :disabled="!canEditSchedule(record)"
+                        class="hover:text-red-900"
+                      >
                         <icon name="delete" />
                       </button>
                     </td>
@@ -442,19 +473,11 @@
 
             <!-- Footer Buttons -->
             <div class="flex justify-end gap-2 p-3 text-xs border-t">
-              <button
-                @click="addNewRow"
-                class="bg-defaultGreen text-white px-3 py-2 rounded-lg flex items-center gap-1"
-              >
-                <icon name="circle-add1" />
+              <button @click="addNewRow" class="btn-save">
+                <!-- <icon name="circle-add1" /> -->
                 Add Row
               </button>
-              <button
-                @click="cancelNewRow"
-                class="bg-gray-300 text-gray-800 px-2 py-2 rounded-lg"
-              >
-                Clear
-              </button>
+              <button @click="cancelNewRow" class="btn-cancel">Clear</button>
             </div>
           </div>
         </div>
@@ -467,214 +490,254 @@
     </div>
     <div
       v-if="conflictModalVisible"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[2px] px-4"
     >
+      <!-- Modal -->
       <div
-        class="w-full max-w-[940px] overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-slate-200"
+        class="w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.12)]"
       >
         <!-- Header -->
         <div
-          class="flex items-center justify-between border-b border-slate-100 px-6 py-5"
+          class="flex items-center justify-between border-b border-slate-200 px-5 py-4"
         >
           <div class="flex items-center gap-3">
             <div
-              class="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600 ring-1 ring-red-100"
+              class="flex h-10 w-10 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-600"
             >
-              <icon name="exclamation-circle" class="h-6 w-6" />
+              <icon name="exclamation-circle" class="h-5 w-5" />
             </div>
 
             <div>
-              <h3 class="text-base font-semibold text-slate-900">
-                Scheduled Conflict Detected
+              <h3 class="text-[16px] font-semibold tracking-tight text-slate-900">
+                Schedule Conflict
               </h3>
-              <p class="mt-0.5 text-xs text-slate-500">
-                Review the selected schedule and conflicting records below.
+
+              <p class="mt-0.5 text-[12px] font-medium text-slate-500">
+                Existing schedules overlap with the selected time slot.
               </p>
             </div>
           </div>
 
           <button
             @click="closeConflictModal"
-            class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
           >
             ✕
           </button>
         </div>
 
         <!-- Body -->
-        <div class="grid grid-cols-1 gap-5 p-6 lg:grid-cols-2">
+        <div class="grid grid-cols-1 gap-5 bg-slate-50/40 p-5 xl:grid-cols-2">
           <!-- Selected Schedule -->
-          <div class="rounded-xl border border-slate-200 bg-slate-50/60 p-5">
-            <div class="mb-4 flex items-center justify-between">
-              <span
-                class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100"
+          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="mb-5 flex items-center justify-between">
+              <div
+                class="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700"
               >
                 Selected Schedule
-              </span>
+              </div>
 
-              <span
-                class="rounded-full px-2.5 py-1 text-xs font-semibold"
+              <div
+                class="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wide"
                 :class="{
-                  'bg-orange-50 text-orange-700 ring-1 ring-orange-100':
+                  'border border-orange-200 bg-orange-50 text-orange-700':
                     selectedSchedule.mode === 'face to face',
-                  'bg-purple-50 text-purple-700 ring-1 ring-purple-100':
+
+                  'border border-violet-200 bg-violet-50 text-violet-700':
                     selectedSchedule.mode === 'online',
                 }"
               >
                 {{ selectedSchedule.mode === "face to face" ? "Face to Face" : "Online" }}
-              </span>
+              </div>
             </div>
 
-            <h4 class="mb-4 text-lg font-bold text-slate-900">
-              {{ selectedSchedule.course_code || "No Course Selected" }}
-            </h4>
+            <!-- Course -->
+            <div class="mb-5">
+              <h2 class="text-[20px] font-semibold tracking-tight text-slate-900">
+                {{ selectedSchedule.course_code || "No Course" }}
+              </h2>
 
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Faculty</p>
-                <p class="mt-1 font-semibold text-slate-800">
+              <p class="mt-1 text-[13px] text-slate-500">
+                {{ selectedSchedule.program_code || "-" }} -
+                {{ selectedSchedule.set_name || "-" }}
+              </p>
+            </div>
+
+            <!-- Details -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                <p
+                  class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Faculty
+                </p>
+
+                <p class="mt-1 text-[13px] font-medium text-slate-800">
                   {{ selectedSchedule.faculty_name || "-" }}
                 </p>
               </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Section</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ selectedSchedule.program_code || "-" }}-{{
-                    selectedSchedule.set_name || "-"
-                  }}
+              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                <p
+                  class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Room
                 </p>
-              </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Room</p>
-                <p class="mt-1 font-semibold text-slate-800">
+                <p class="mt-1 text-[13px] font-medium text-slate-800">
                   {{ selectedSchedule.room_name || "-" }}
                 </p>
               </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Room Type</p>
-                <p class="mt-1 font-semibold text-slate-800">
+              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                <p
+                  class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Room Type
+                </p>
+
+                <p class="mt-1 text-[13px] font-medium text-slate-800">
                   {{ selectedSchedule.room_type || "-" }}
                 </p>
               </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Day</p>
-                <p class="mt-1 font-semibold text-slate-800">
+              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+                <p
+                  class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Day
+                </p>
+
+                <p class="mt-1 text-[13px] font-medium text-slate-800">
                   {{ selectedSchedule.day || "-" }}
                 </p>
               </div>
 
-              <div class="rounded-lg bg-white p-3 ring-1 ring-slate-100">
-                <p class="text-xs text-slate-500">Time</p>
-                <p class="mt-1 font-semibold text-slate-800">
-                  {{ formatTime(selectedSchedule.time_start) }} –
+              <div
+                class="col-span-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
+              >
+                <p
+                  class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
+                >
+                  Time Schedule
+                </p>
+
+                <p class="mt-1 text-[14px] font-semibold text-slate-900">
+                  {{ formatTime(selectedSchedule.time_start) }}
+                  —
                   {{ formatTime(selectedSchedule.time_end) }}
                 </p>
               </div>
             </div>
           </div>
 
-          <!-- Conflicting Schedules -->
-          <div class="rounded-xl border border-slate-200 bg-white p-5">
-            <div class="mb-4 flex items-center justify-between">
-              <span
-                class="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-red-100"
+          <!-- Conflict Records -->
+          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div class="mb-5 flex items-center justify-between">
+              <div
+                class="rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700"
               >
-                Conflicting Schedules
-              </span>
+                Conflict Records
+              </div>
 
-              <span class="text-xs font-medium text-slate-400">
-                {{ conflictRecords.length }} record(s)
-              </span>
+              <div class="text-[12px] font-medium text-slate-400">
+                {{ conflictRecords.length }} conflict(s)
+              </div>
             </div>
 
-            <div class="max-h-[420px] space-y-3 overflow-y-auto pr-2">
+            <div class="max-h-[480px] space-y-3 overflow-y-auto pr-1">
               <div
                 v-for="conflict in conflictRecords"
                 :key="conflict.id"
-                class="rounded-xl border p-4 transition hover:shadow-sm"
+                class="rounded-xl border bg-white p-4 transition-all duration-200 hover:shadow-sm"
                 :class="{
-                  'border-red-100 bg-red-50/60':
-                    conflict.reason !== 'Part of the joined schedule',
-                  'border-amber-100 bg-amber-50/70':
-                    conflict.reason === 'Part of the joined schedule',
+                  'border-red-200': conflict.reason !== 'Part of the joined schedule',
+
+                  'border-amber-200': conflict.reason === 'Part of the joined schedule',
                 }"
               >
-                <div class="mb-3 flex items-center justify-between gap-3">
-                  <h5 class="font-semibold text-slate-900">
-                    {{ conflict.course_code || "-" }}
-                  </h5>
+                <!-- Top -->
+                <div class="mb-4 flex items-start justify-between gap-3">
+                  <div>
+                    <h4 class="text-[15px] font-semibold tracking-tight text-slate-900">
+                      {{ conflict.course_code || "-" }}
+                    </h4>
 
-                  <span
-                    class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold"
+                    <p class="mt-1 text-[12px] text-slate-500">
+                      {{ conflict.program_code || "-" }} -
+                      {{ conflict.set_name || "-" }}
+                    </p>
+                  </div>
+
+                  <div
+                    class="rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wide"
                     :class="{
-                      'bg-orange-100 text-orange-700': conflict.mode === 'face to face',
-                      'bg-purple-100 text-purple-700': conflict.mode === 'online',
+                      'bg-orange-50 text-orange-700 border border-orange-200':
+                        conflict.mode === 'face to face',
+
+                      'bg-violet-50 text-violet-700 border border-violet-200':
+                        conflict.mode === 'online',
                     }"
                   >
                     {{ conflict.mode === "face to face" ? "Face to Face" : "Online" }}
-                  </span>
+                  </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 text-sm">
+                <!-- Details -->
+                <div class="grid grid-cols-2 gap-3">
                   <div>
-                    <p class="text-xs text-slate-500">Faculty</p>
-                    <p class="font-medium text-slate-800">
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                      Faculty
+                    </p>
+
+                    <p class="mt-1 text-[13px] font-medium text-slate-800">
                       {{ conflict.faculty_name || "-" }}
                     </p>
                   </div>
 
                   <div>
-                    <p class="text-xs text-slate-500">Section</p>
-                    <p class="font-medium text-slate-800">
-                      {{ conflict.program_code || "-" }}-{{ conflict.set_name || "-" }}
-                    </p>
-                  </div>
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Room</p>
 
-                  <div>
-                    <p class="text-xs text-slate-500">Room</p>
-                    <p class="font-medium text-slate-800">
+                    <p class="mt-1 text-[13px] font-medium text-slate-800">
                       {{ conflict.room_name || "-" }}
                     </p>
                   </div>
 
                   <div>
-                    <p class="text-xs text-slate-500">Room Type</p>
-                    <p class="font-medium text-slate-800">
-                      {{ conflict.room_type || "-" }}
-                    </p>
-                  </div>
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Day</p>
 
-                  <div>
-                    <p class="text-xs text-slate-500">Day</p>
-                    <p class="font-medium text-slate-800">
+                    <p class="mt-1 text-[13px] font-medium text-slate-800">
                       {{ conflict.day || "-" }}
                     </p>
                   </div>
 
                   <div>
-                    <p class="text-xs text-slate-500">Time</p>
-                    <p class="font-medium text-slate-800">
-                      {{ formatTime(conflict.start_hour) }} –
+                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Time</p>
+
+                    <p class="mt-1 text-[13px] font-semibold text-slate-900">
+                      {{ formatTime(conflict.start_hour) }}
+                      —
                       {{ formatTime(conflict.start_hour + conflict.duration) }}
                     </p>
                   </div>
                 </div>
 
+                <!-- Reason -->
                 <div
-                  class="mt-4 flex items-start gap-2 rounded-lg bg-white px-3 py-2 text-xs font-medium ring-1"
+                  class="mt-4 flex items-start gap-2 rounded-lg border px-3 py-2 text-[12px] font-medium"
                   :class="{
-                    'text-red-700 ring-red-100':
+                    'border-red-200 bg-red-50 text-red-700':
                       conflict.reason !== 'Part of the joined schedule',
-                    'text-amber-700 ring-amber-100':
+
+                    'border-amber-200 bg-amber-50 text-amber-700':
                       conflict.reason === 'Part of the joined schedule',
                   }"
                 >
                   <span>⚠</span>
-                  <span>{{ conflict.reason || "Schedule overlap detected" }}</span>
+
+                  <span>
+                    {{ conflict.reason || "Schedule overlap detected." }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -682,13 +745,10 @@
         </div>
 
         <!-- Footer -->
-        <div class="flex justify-end border-t border-slate-100 bg-slate-50 px-6 py-4">
-          <button
-            @click="closeConflictModal"
-            class="rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-          >
-            Close
-          </button>
+        <div
+          class="flex items-center justify-end border-t border-slate-200 bg-white px-5 py-4"
+        >
+          <button @click="closeConflictModal" class="btn-cancel">Close</button>
         </div>
       </div>
     </div>
@@ -725,18 +785,8 @@
 
         <!-- TODO  Buttons -->
         <div class="flex justify-center gap-2 text-xs">
-          <button
-            @click="cancelDelete"
-            class="px-4 py-2 border rounded-xl hover:bg-gray-100 transition"
-          >
-            Cancel
-          </button>
-          <button
-            @click="confirmDelete"
-            class="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
-          >
-            Yes, Delete
-          </button>
+          <button @click="cancelDelete" class="btn-cancel">Cancel</button>
+          <button @click="confirmDelete" class="btn-cancel-confirm">Yes, Delete</button>
         </div>
       </div>
     </div>
@@ -748,25 +798,26 @@
     :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
   >
     <div
-      class="bg-white border border-gray-300 rounded-xl p-3 scale-125 origin-top-left shadow-lg w-[250px]"
+      class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.18)]"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between gap-2 mb-2 w-full">
-        <div class="text-xs font-bold text-defaultGreen leading-none truncate">
-          {{ tooltipItem.course_code }}
-        </div>
-        <div class="relative flex gap-1 items-center py-1 text-[8px]">
-          <!-- Joined Badge -->
-          <span
-            v-if="tooltipItem.is_joined"
-            class="inline-flex items-center justify-center px-2 py-1 bg-blue-600 text-white rounded-full shadow"
-          >
-            Joined
-          </span>
-          <!-- Mode Badge -->
+      <div
+        class="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white px-4 py-3"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+              Schedule Details
+            </p>
+
+            <h3 class="mt-0.5 text-sm font-bold text-defaultGreen leading-tight">
+              {{ tooltipItem.course_code }}
+            </h3>
+          </div>
+
           <span
             v-if="tooltipItem.mode"
-            class="inline-flex items-center justify-center px-2 py-1 rounded-full text-white"
+            class="shrink-0 inline-flex items-center rounded-full px-2.5 py-1 text-[9px] font-semibold text-white shadow-sm"
             :class="
               tooltipItem.mode === 'face to face' ? 'bg-orange-500' : 'bg-purple-500'
             "
@@ -776,37 +827,105 @@
         </div>
       </div>
 
-      <!-- Content -->
-      <div class="text-[10px] text-gray-700 space-y-1">
-        <p><strong>Faculty:</strong> {{ tooltipItem.faculty_name }}</p>
+      <!-- Body -->
+      <div class="px-4 py-3">
+        <div class="space-y-3 text-[11px] text-gray-700">
+          <!-- Faculty -->
+          <!-- <div>
+                      <p
+                        class="text-[9px] font-semibold uppercase tracking-wide text-gray-400"
+                      >
+                        Faculty
+                      </p>
+                      <p class="mt-0.5 font-semibold text-gray-800">
+                        {{ tooltipItem.faculty_name || "Not assigned" }}
+                      </p>
+                    </div> -->
 
-        <!-- Joined Sections -->
-        <div>
-          <p class="font-semibold">Year & Section:</p>
-          <ul class="ml-3 list-disc space-y-0.5">
-            <template v-if="tooltipItem.joinedItems?.length">
-              <li v-for="s in tooltipItem.joinedItems" :key="s.id">
-                {{ s.program_code }} - {{ s.set_name }} ({{ s.class_size }})
-              </li>
-            </template>
-            <template v-else>
-              <li>
-                {{ tooltipItem.program_code }} - {{ tooltipItem.set_name }} ({{
-                  tooltipItem.class_size
-                }})
-              </li>
-            </template>
-          </ul>
+          <!-- Year and Section -->
+          <div>
+            <p class="text-[9px] font-semibold uppercase tracking-wide text-gray-400">
+              Year & Section
+            </p>
+
+            <div class="mt-1 space-y-1">
+              <template v-if="tooltipItem.is_joined && tooltipItem.join_group_id">
+                <div
+                  v-for="s in finalSchedules.filter(
+                    (s) => s.join_group_id === tooltipItem.join_group_id
+                  )"
+                  :key="s.class_id"
+                  class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
+                >
+                  <p class="font-semibold text-gray-800">
+                    {{ s.display_program_code }} -
+                    {{ s.set_name }}
+                  </p>
+                  <p class="text-[10px] text-gray-500">Class Size: {{ s.class_size }}</p>
+                </div>
+              </template>
+
+              <template v-else>
+                <div class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5">
+                  <!-- <p class="font-semibold text-gray-800">
+                              {{ tooltipItem.display_institute_name }}
+                            </p>
+
+                            <p class="text-[10px] text-gray-600">
+                              {{ tooltipItem.display_program_name }}
+                              ({{ tooltipItem.display_program_code }})
+                            </p> -->
+
+                  <p class="font-semibold text-gray-800">
+                    {{ tooltipItem.display_program_code }}-{{ tooltipItem.set_name }}
+                  </p>
+                  <p class="text-[10px] text-gray-500">
+                    Class Size: {{ tooltipItem.class_size }}
+                  </p>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Details Grid -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+              <p class="text-[9px] font-semibold uppercase text-gray-400">Room</p>
+              <p class="mt-0.5 font-semibold text-gray-800">
+                {{ tooltipItem.room_name || "TBA" }}
+              </p>
+            </div>
+
+            <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+              <p class="text-[9px] font-semibold uppercase text-gray-400">Day</p>
+              <p class="mt-0.5 font-semibold text-gray-800">
+                {{ tooltipItem.day || "-" }}
+              </p>
+            </div>
+
+            <div class="rounded-lg bg-gray-50 px-2.5 py-2 col-span-2">
+              <p class="text-[9px] font-semibold uppercase text-gray-400">Time</p>
+              <p class="mt-0.5 font-semibold text-gray-800">
+                {{ formatTime(tooltipItem.start_hour) }} –
+                {{ formatTime(tooltipItem.start_hour + Number(tooltipItem.duration)) }}
+              </p>
+            </div>
+
+            <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+              <p class="text-[9px] font-semibold uppercase text-gray-400">Type</p>
+              <p class="mt-0.5 font-semibold text-gray-800">
+                {{ tooltipItem.type || "-" }}
+              </p>
+            </div>
+
+            <div class="rounded-lg bg-gray-50 px-2.5 py-2">
+              <p class="text-[9px] font-semibold uppercase text-gray-400">Campus</p>
+              <p class="mt-0.5 font-semibold text-gray-800 truncate">
+                {{ getCollegeBranchName(tooltipItem.college_branch_id) }}
+              </p>
+            </div>
+          </div>
         </div>
-
-        <p><strong>Room:</strong> {{ tooltipItem.room_name || "N/A" }}</p>
-        <p><strong>Day:</strong> {{ tooltipItem.day }}</p>
-        <p>
-          <strong>Time:</strong>
-          {{ formatTime(tooltipItem.start_hour) }} –
-          {{ formatTime(tooltipItem.start_hour + Number(tooltipItem.duration)) }}
-        </p>
-        <p><strong>Type:</strong> {{ tooltipItem.type }}</p>
       </div>
     </div>
   </div>
@@ -889,10 +1008,64 @@ export default {
       tooltipY: 0,
       unjoinModalVisible: false,
       unjoinTarget: null,
+
+      timeSlotHeight: 60,
     };
   },
   computed: {
     ...mapState(useFetchDataStore, ["rooms", "curriculum_courses"]),
+    conflictMap() {
+      const map = {};
+
+      this.localData.forEach((record) => {
+        const key = record.id || record.tempId;
+
+        map[key] = this.getConflictingRecords(record);
+      });
+
+      return map;
+    },
+    scheduleGrid() {
+      const grid = {};
+
+      this.localData.forEach((r) => {
+        const key = `${r.faculty_name}-${r.day}`;
+
+        if (!grid[key]) {
+          grid[key] = [];
+        }
+
+        grid[key].push(r);
+      });
+
+      return grid;
+    },
+    canEditSchedule() {
+      return (item) => {
+        // ✅ Newly added rows always editable
+        if (item.isNew) return true;
+
+        // ✅ Program Chairperson
+        // ONLY own program editable
+        if (this.user.role === "Program Chairperson") {
+          return (
+            Number(item.institute_id) === Number(this.user.institute_id) &&
+            Number(item.program_id) === Number(this.user.program_id)
+          );
+        }
+
+        // ✅ Department Chairperson
+        // EVERYTHING editable EXCEPT own exact program
+        if (this.user.role === "Department Chairperson") {
+          return !(
+            Number(item.institute_id) === Number(this.user.institute_id) &&
+            Number(item.program_id) === Number(this.user.program_id)
+          );
+        }
+
+        return true;
+      };
+    },
     isDraggable(record) {
       // If Join is active and class size >= 30 → not draggable
       return !(this.isJoined && Number(record.class_size) >= 30);
@@ -1049,23 +1222,19 @@ export default {
             showCourseDropdown: false,
             searchSectionQuery: rec.set_name || "",
             showSectionDropdown: false,
-            program_id: rec.program_id || this.user.program_id || null,
-            institute_id: rec.institute_id || this.user.institute_id || null,
+            program_id:
+              rec.class_program_id || rec.program_id || this.user.program_id || null,
+
+            institute_id:
+              rec.class_institute_id ||
+              rec.institute_id ||
+              this.user.institute_id ||
+              null,
           };
         });
 
         // Reset drag state to prevent false conflicts
         this.draggedRecord = null;
-      },
-      localData: {
-        deep: true,
-        handler(newVal) {
-          newVal.forEach((r) => {
-            if (r.start_hour != null && r.duration != null) {
-              r.time_slot = this.generateTimeSlot(r.start_hour, r.duration);
-            }
-          });
-        },
       },
     },
 
@@ -1074,17 +1243,6 @@ export default {
       immediate: false,
       handler(isVisible) {
         if (isVisible) {
-          // Refresh user info
-          this.fetchUser();
-
-          // Refresh Pinia stores
-          this.fetchRooms();
-          this.fetchClassSections();
-          this.fetchCurriculumCourses();
-          // Reload full schedules from API
-          this.loadData();
-
-          // Refresh localData to sync with parent props
           this.refreshInstructorData([...this.instructorData]);
         }
       },
@@ -1097,6 +1255,20 @@ export default {
       "fetchCurriculumCourses",
       "fetchClassSections",
     ]),
+
+    async fetchCollegeBranch() {
+      const store = useFetchDataStore();
+      await store.fetchCollegeBranch();
+
+      this.collegeBranches = store.collegeBranches || [];
+    },
+    getCollegeBranchName(branchId) {
+      const branch = this.collegeBranches.find(
+        (b) => Number(b.college_branch_id) === Number(branchId)
+      );
+
+      return branch ? branch.college_branch_name : `Branch ${branchId}`;
+    },
     onCampusChange(record) {
       const selectedCampus = this.availableCampuses().find(
         (campus) => Number(campus.college_branch_id) === Number(record.college_branch_id)
@@ -1436,6 +1608,7 @@ export default {
         "is_joined",
         "join_group_id",
         "joined_with",
+        "college_branch_id",
       ];
 
       const payload = {};
@@ -1487,13 +1660,17 @@ export default {
       return item.start_hour >= slot.start && item.start_hour < slot.end;
     },
     getBlockTop(item, slotStart) {
-      return (item.start_hour - slotStart) * this.hourHeight;
+      if (!item || item.start_hour == null) return 0;
+
+      const start = this.normalizeHour(Number(item.start_hour));
+      return (start - slotStart) * this.timeSlotHeight;
     },
 
     getBlockHeight(item) {
-      return Math.max(1, Number(item.duration)) * this.hourHeight - 1;
-    },
+      if (!item || !item.duration) return this.timeSlotHeight;
 
+      return Number(item.duration) * this.timeSlotHeight - 1;
+    },
     getTypeColor(type) {
       switch (type) {
         case "Lecture":
@@ -1511,10 +1688,12 @@ export default {
         const fetchDataStore = useFetchDataStore();
         await fetchDataStore.fetchFinalSchedules();
         this.fullSchedules = (fetchDataStore.final_schedules || []).map((rec) => {
-          const cloned = JSON.parse(JSON.stringify(rec)); // deep clone
+          const cloned = structuredClone(rec);
+
           if (!cloned.id && !cloned.tempId) {
             cloned.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
           }
+
           return {
             ...cloned,
             searchRoomQuery: cloned.room_name || "",
@@ -1549,7 +1728,10 @@ export default {
 
       let url = `${process.env.VUE_APP_API_BASE_URL}/courses/get-courses`;
 
-      if (this.user.role === "Program Chairperson") {
+      if (
+        this.user.role === "Program Chairperson" ||
+        this.user.role === "Department Chairperson"
+      ) {
         const params = new URLSearchParams();
         if (this.user.institute_id) params.append("institute_id", this.user.institute_id);
         if (this.user.program_id) params.append("program_id", this.user.program_id);
@@ -1565,22 +1747,25 @@ export default {
     },
     refreshInstructorData(newData) {
       this.localData = (newData || []).map((rec) => {
-        const cloned = JSON.parse(JSON.stringify(rec)); // deep clone
+        const cloned = structuredClone(rec);
+
         if (!cloned.id && !cloned.tempId) {
           cloned.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
         }
+
         return {
           ...cloned,
           searchRoomQuery: cloned.room_name || "",
           showRoomDropdown: false,
+
           searchCourseQuery: cloned.course_code || "",
           showCourseDropdown: false,
+
           searchSectionQuery: cloned.set_name || "",
           showSectionDropdown: false,
         };
       });
 
-      // Reset drag state
       this.draggedRecord = null;
     },
 
@@ -1623,12 +1808,27 @@ export default {
 
       let filtered = sections;
 
-      // Filter for Program Chairperson
+      // ✅ Department Chairperson
+      // cannot select own exact program
+      if (this.user.role === "Department Chairperson") {
+        filtered = filtered.filter(
+          (s) =>
+            !(
+              Number(s.program?.institute?.institute_id) ===
+                Number(this.user.institute_id) &&
+              Number(s.program_id) === Number(this.user.program_id)
+            )
+        );
+      }
+
+      // ✅ Program Chairperson
+      // only own program
       if (this.user.role === "Program Chairperson") {
         filtered = filtered.filter(
           (s) =>
-            s.program?.institute?.institute_id === this.user.institute_id &&
-            s.program_id === this.user.program_id
+            Number(s.program?.institute?.institute_id) ===
+              Number(this.user.institute_id) &&
+            Number(s.program_id) === Number(this.user.program_id)
         );
       }
 
@@ -1646,14 +1846,17 @@ export default {
 
       return filtered;
     },
-
     filteredCourses(record) {
       const fetchDataStore = useFetchDataStore();
       const curriculumCourses = fetchDataStore.curriculum_courses || [];
 
       let filtered = curriculumCourses;
 
-      if (this.user.role === "Program Chairperson") {
+      // ✅ Restrict BOTH Program Chairperson and Department Chairperson
+      if (
+        this.user.role === "Program Chairperson" ||
+        this.user.role === "Department Chairperson"
+      ) {
         filtered = filtered.filter(
           (cc) =>
             cc.curriculum?.institute_id === this.user.institute_id &&
@@ -1667,6 +1870,7 @@ export default {
         filtered = filtered.filter((cc) => {
           const courseCode = cc.course?.course_code?.toLowerCase() || "";
           const courseTitle = cc.course?.course_title?.toLowerCase() || "";
+
           return courseCode.includes(query) || courseTitle.includes(query);
         });
       }
@@ -1674,43 +1878,57 @@ export default {
       return filtered;
     },
     /* ------------------ 4. SELECT ACTIONS ------------- */
-
+    selectRoom(record, room) {
+      // Only update if room changed
+      if (record.room_id !== room.room_id) {
+        record.room_id = room.room_id;
+        record.room_name = room.room_name;
+        record.room_type = room.room_type;
+        record.room_capacity = room.room_capacity;
+      }
+      record.searchRoomQuery = room.room_name; // for display only
+      record.showRoomDropdown = false;
+    },
     selectSection(record, section) {
+      // ✅ CLASS INFO
       record.class_id = section.class_id;
       record.set_name = section.set_name;
+      record.class_size = section.class_size || 0;
+
+      // ✅ PROGRAM INFO
       record.program_id = section.program?.program_id || null;
+
       record.program_code = section.program?.program_code || "";
+
+      record.program_name = section.program?.program_name || "";
+
+      // ✅ INSTITUTE INFO
       record.institute_id = section.program?.institute?.institute_id || null;
 
-      // ✅ campus from selected section
-      record.college_branch_id = section.colleges?.college_branch_id || null;
-      record.college_branch_name = section.colleges?.college_branch_name || "";
+      record.institute_name = section.program?.institute?.institute_name || "";
 
+      record.institute_code = section.program?.institute?.institute_code || "";
+
+      // ✅ CAMPUS INFO
+      record.college_branch_id =
+        section.college_branch_id || section.classInfo?.college_branch_id || null;
+
+      record.college_branch_name =
+        section.classInfo?.collegeBranch?.college_branch_name || "";
+
+      // ✅ DISPLAY VALUE
       record.searchSectionQuery = `${section.program?.program_code || ""} - ${
         section.set_name
       }`;
+
       record.showSectionDropdown = false;
 
-      // reset room if room is not in selected campus
+      // ✅ RESET ROOM WHEN SECTION CHANGES
       record.room_id = null;
       record.room_name = "";
+      record.room_type = "";
+      record.room_capacity = "";
       record.searchRoomQuery = "";
-    },
-    selectRoom(record, room) {
-      record.room_id = room.room_id;
-      record.room_name = room.room_name;
-      record.room_type = room.room_type;
-      record.room_capacity = room.room_capacity;
-
-      const campus = room.building?.buildingArea?.collegeBranch;
-
-      record.college_branch_id =
-        campus?.college_branch_id || record.college_branch_id || null;
-      record.college_branch_name =
-        campus?.college_branch_name || record.college_branch_name || "";
-
-      record.searchRoomQuery = room.room_name;
-      record.showRoomDropdown = false;
     },
     selectCourse(record, curriculumCourse) {
       const course = curriculumCourse.course;
@@ -1736,12 +1954,30 @@ export default {
 
     addNewRow() {
       const first = this.instructorData[0];
+
       const tempId = `temp-${Date.now()}`;
+
       const class_id = first?.class_id || null;
       const class_size = first?.class_size || null;
 
-      const startHour = 8;
-      const duration = 3;
+      // ✅ FIND FIRST AVAILABLE SLOT
+      let selectedDay = "Monday";
+      let selectedHour = 7;
+
+      outerLoop: for (const day of this.days) {
+        for (let hour = 7; hour <= 20; hour++) {
+          const occupied = this.localData.some(
+            (r) => r.day === day && Number(r.start_hour) === Number(hour)
+          );
+
+          // ✅ slot is empty
+          if (!occupied) {
+            selectedDay = day;
+            selectedHour = hour;
+            break outerLoop;
+          }
+        }
+      }
 
       const formatTime = (h) => {
         const period = h >= 12 ? "PM" : "AM";
@@ -1751,16 +1987,22 @@ export default {
 
       this.localData.push({
         tempId,
-        isNew: true, // <-- mark as new
+        isNew: true,
+
         faculty_name: first?.faculty_name || "TBD",
         faculty_id: first?.faculty_id || null,
+
         class_id,
         class_size,
+
         mode: "face to face",
-        day: "Monday",
-        start_hour: startHour,
-        duration: Math.floor(duration),
-        time_slot: `${formatTime(startHour)} - ${formatTime(startHour + duration)}`,
+
+        // ✅ AUTO AVAILABLE SLOT
+        day: selectedDay,
+        start_hour: selectedHour,
+        duration: 3,
+
+        time_slot: `${formatTime(selectedHour)} - ${formatTime(selectedHour + 3)}`,
 
         room_id: null,
         room_name: "",
@@ -1777,8 +2019,10 @@ export default {
 
         searchRoomQuery: "",
         showRoomDropdown: false,
+
         searchCourseQuery: "",
         showCourseDropdown: false,
+
         searchSectionQuery: "",
         showSectionDropdown: false,
       });
@@ -1841,12 +2085,16 @@ export default {
         .flat()
         .filter((r) => r.faculty_name !== instructor);
     },
-    getConflictingRecords(record) {
-      return this.localData
-        .map((r) => {
-          if (r.id === record.id) return null;
 
-          // Ignore joined schedules in the same group
+    getConflictingRecords(record) {
+      return this.allData
+        .map((r) => {
+          // skip self
+          if ((r.id && r.id === record.id) || (r.tempId && r.tempId === record.tempId)) {
+            return null;
+          }
+
+          // ignore same join group
           if (
             record.join_group_id &&
             r.join_group_id &&
@@ -1855,54 +2103,92 @@ export default {
             return null;
           }
 
+          // different day
           if (r.day !== record.day) return null;
 
-          const recordStart = record.start_hour;
+          const recordStart = Number(record.start_hour);
           const recordEnd = recordStart + Number(record.duration || 0);
 
-          const rStart = r.start_hour;
+          const rStart = Number(r.start_hour);
           const rEnd = rStart + Number(r.duration || 0);
 
+          // overlap check
           const overlap = recordStart < rEnd && recordEnd > rStart;
 
           if (!overlap) return null;
 
           let reason = [];
 
-          /* -----------------------------
-      SAME FACULTY
-      ------------------------------*/
-          if (r.faculty_id === record.faculty_id) {
+          // =====================================
+          // FACULTY CONFLICT
+          // =====================================
+          if (
+            r.faculty_id &&
+            record.faculty_id &&
+            Number(r.faculty_id) === Number(record.faculty_id)
+          ) {
             reason.push("Same faculty assigned at the same time");
           }
 
-          /* -----------------------------
-      SAME ROOM (Face to Face)
-      ------------------------------*/
+          // =====================================
+          // ROOM CONFLICT
+          // ALL INSTITUTES
+          // =====================================
           if (
-            record.mode === "face to face" &&
-            r.mode === "face to face" &&
-            r.room_name &&
-            record.room_name &&
-            r.room_name === record.room_name
+            record.mode?.toLowerCase() === "face to face" &&
+            r.mode?.toLowerCase() === "face to face" &&
+            r.room_id &&
+            record.room_id &&
+            Number(r.room_id) === Number(record.room_id)
           ) {
             reason.push("Room already occupied");
           }
 
-          /* -----------------------------
-      ONLINE SECTION CONFLICT
-      Same program + same section
-      ------------------------------*/
+          // =====================================
+          // SAME CLASS CONFLICT
+          // =====================================
           if (
-            record.mode === "online" &&
-            r.mode === "online" &&
-            r.program_id === record.program_id &&
-            r.college_branch_id === record.college_branch_id &&
+            r.class_id &&
+            record.class_id &&
+            Number(r.class_id) === Number(record.class_id)
+          ) {
+            reason.push("Class already has another schedule");
+          }
+
+          // =====================================
+          // ONLINE CONFLICT
+          // =====================================
+          if (
+            record.mode?.toLowerCase() === "online" &&
+            r.mode?.toLowerCase() === "online" &&
+            Number(r.program_id) === Number(record.program_id) &&
+            Number(r.college_branch_id) === Number(record.college_branch_id) &&
             r.set_name === record.set_name
           ) {
             reason.push(
-              "ONLINE conflict: Same program section cannot attend two online classes at the same time."
+              "ONLINE conflict: Same section cannot attend two online classes simultaneously."
             );
+          }
+
+          // =====================================
+          // ROOM CAPACITY
+          // =====================================
+          if (
+            record.room_capacity &&
+            record.class_size &&
+            Number(record.class_size) > Number(record.room_capacity)
+          ) {
+            reason.push("Room capacity exceeded");
+          }
+
+          // =====================================
+          // ROOM TYPE
+          // =====================================
+          if (
+            record.type?.toLowerCase() === "laboratory" &&
+            record.room_type?.toLowerCase() !== "laboratory"
+          ) {
+            reason.push("Laboratory subjects require laboratory rooms");
           }
 
           if (!reason.length) return null;
@@ -1938,7 +2224,9 @@ export default {
     /* ------------------ 7. CONFLICT LOGIC ------------- */
 
     hasRoomConflict(record) {
-      return this.getConflictingRecords(record).length > 0;
+      const key = record.id || record.tempId;
+
+      return (this.conflictMap[key] || []).length > 0;
     },
 
     getConflictTooltip(record) {
@@ -1952,10 +2240,10 @@ export default {
     },
 
     getScheduleForCell(slot, day, instructor) {
-      return (this.localData || []).filter(
+      const key = `${instructor}-${day}`;
+
+      return (this.scheduleGrid[key] || []).filter(
         (r) =>
-          r.faculty_name === instructor &&
-          r.day === day &&
           r.start_hour != null &&
           r.duration != null &&
           r.start_hour < slot.end &&
@@ -2203,6 +2491,7 @@ export default {
 
     await this.fetchClassSections();
     await this.fetchCurriculumCourses();
+    await this.fetchCollegeBranch();
     await this.loadData();
   },
 };

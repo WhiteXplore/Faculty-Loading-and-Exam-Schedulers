@@ -7,10 +7,10 @@
         ref="buildingForm"
       >
         <!-- HEADER -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon name="add-account1.1" />
-           <h1 class="header1">
+            <h1 class="header1">
               {{ isEditMode ? "Edit Building" : "Add Building" }}
             </h1>
           </div>
@@ -22,19 +22,19 @@
         <div class="p-5 w-[28vw] space-y-4">
           <!-- BUILDING NAME -->
           <div>
-            <label class="font-bold">Building Name:</label>
+            <label class="input-label">Building Name:</label>
             <input
               v-model="form.building_name"
               type="text"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md"
+              class="input-text"
               placeholder="Enter building name"
             />
           </div>
 
           <!-- BUILDING AREA -->
           <div class="flex flex-col space-y-2 w-full relative">
-            <label class="font-bold">Building Area :</label>
+            <label class="input-label">Building Area :</label>
 
             <input
               v-model="searchAreaQuery"

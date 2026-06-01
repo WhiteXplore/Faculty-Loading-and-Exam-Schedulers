@@ -120,24 +120,39 @@
                         @mouseenter="showScheduleTooltip($event, item)"
                         @mouseleave="hideScheduleTooltip"
                         :class="[
-                          'absolute inset-x-1 border rounded text-[11px] p-1 shadow-sm cursor-pointer overflow-hidden transition-all duration-200 whitespace-nowrap',
+                          'absolute inset-x-1 border rounded-md text-[11px] p-1 shadow-sm overflow-hidden transition-all duration-200 whitespace-nowrap',
+
+                          // temp schedule
                           item.id?.toString().startsWith('temp-')
                             ? 'bg-purple-200 border-purple-400 text-purple-900'
-                            : getTypeColor(item.type),
+                            : // cannot edit schedule → gray style
+                            !canEditSchedule(item)
+                            ? 'bg-gray-200 border-gray-300 text-gray-500 opacity-80 cursor-not-allowed'
+                            : // normal type color
+                              getTypeColor(item.type),
+
+                          // room conflict
                           hasRoomConflict(item) && !isJoined
                             ? 'bg-red-300 border-red-500 text-red-900'
                             : '',
+
+                          // swap selected
                           swapSelection.includes(item)
                             ? 'border-yellow-500 bg-yellow-100'
                             : '',
+
+                          // joined schedule
                           item.is_joined ? 'bg-blue-100 border-blue-400' : '',
+
+                          // joined disabled
                           isJoined && Number(item.class_size) >= 30
                             ? 'opacity-50 pointer-events-none cursor-not-allowed'
                             : '',
-                          'hover:bg-yellow-100',
-                          !canEditSchedule(item)
-                            ? 'opacity-60 cursor-not-allowed pointer-events-none'
-                            : 'cursor-pointer hover:bg-yellow-100',
+
+                          // hover only if editable
+                          canEditSchedule(item)
+                            ? 'cursor-pointer hover:bg-yellow-100'
+                            : '',
                         ]"
                         :style="{
                           top: getBlockTop(item, slot.start) + 'px',
@@ -191,7 +206,7 @@
                         <button
                           v-if="hasRoomConflict(item) && !isJoined"
                           @click.stop="openConflictModal(item)"
-                          class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
+                          class="absolute bottom-1 right-1 flex items-center justify-center w-4 h-4 rounded-md bg-red-600 text-white text-[9px] font-bold shadow hover:bg-red-700"
                           title="View conflict"
                         >
                           !
@@ -752,7 +767,13 @@ export default {
     canEditSchedule(schedule) {
       if (!schedule) return false;
 
+      // ✅ Newly added schedules always editable
+      if (schedule.isNew) return true;
+
+      // ================================
       // PROGRAM CHAIRPERSON
+      // ONLY own institute + own program
+      // ================================
       if (this.user.role === "Program Chairperson") {
         const sameClassProgram =
           Number(schedule.class_program_id) === Number(this.user.program_id);
@@ -763,28 +784,24 @@ export default {
         return sameClassProgram && sameClassInstitute;
       }
 
+      // ==========================================
       // DEPARTMENT CHAIRPERSON
+      // Can edit EVERYTHING
+      // EXCEPT own exact institute + program
+      // ==========================================
       if (this.user.role === "Department Chairperson") {
-        const sameFacultyProgram =
-          Number(schedule.faculty_program_id) === Number(this.user.program_id);
-
-        const sameFacultyInstitute =
-          Number(schedule.faculty_institute_id) === Number(this.user.institute_id);
-
         const sameClassProgram =
           Number(schedule.class_program_id) === Number(this.user.program_id);
 
         const sameClassInstitute =
           Number(schedule.class_institute_id) === Number(this.user.institute_id);
 
-        const facultyOwned = sameFacultyProgram && sameFacultyInstitute;
-
-        const externalClass = !sameClassProgram || !sameClassInstitute;
-
-        return facultyOwned && externalClass;
+        // ❌ lock ONLY own exact program
+        return !(sameClassProgram && sameClassInstitute);
       }
 
-      return false;
+      // ✅ Other roles
+      return true;
     },
     async fetchCollegeBranch() {
       const store = useFetchDataStore();
