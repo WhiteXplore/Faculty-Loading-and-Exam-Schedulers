@@ -3598,10 +3598,9 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
     for key, sections in remaining_sections.items():
         if not expertise_to_fids.get(key):
             for course in sections:
-                print(f"[WARNING] No qualified faculty found for course: {course['course_code']}")
-                course_branch_id = course.get("branch_id")
-                if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
-                    unassigned_branch_courses.append(course)
+                print(f"[WARNING] No qualified faculty found for course: {course['course_code']} "
+                      f"(class_id={course.get('class_id')}, section={course.get('set_name', '?')})")
+                unassigned_branch_courses.append(course)
             remaining_sections[key] = []
 
     # ----------------------------------------------------------------
@@ -3673,10 +3672,9 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
     # Any sections that couldn't be assigned after all tiers exhausted
     for expertise_key, courses in remaining_sections.items():
         for course in courses:
-            print(f"[WARNING] No qualified faculty found for course: {course['course_code']}")
-            course_branch_id = course.get("branch_id")
-            if course_branch_id is not None and course_branch_id != MAIN_BRANCH_ID:
-                unassigned_branch_courses.append(course)
+            print(f"[WARNING] All qualified faculty at maximum load for course: {course['course_code']} "
+                  f"(class_id={course.get('class_id')}, section={course.get('set_name', '?')})")
+            unassigned_branch_courses.append(course)
 
     return faculty_loads, unassigned_branch_courses
 
@@ -3893,6 +3891,8 @@ if __name__ == "__main__":
     branch_expertise_needed = {}
     for course in unassigned_branch_courses:
         bid = course.get("branch_id")
+        if bid == MAIN_BRANCH_ID:
+            continue  # Main branch unassigned courses handled separately below
         bname = branch_map.get(bid, f"Branch {bid}")
         program_code = course.get("program_code", "Unknown")
         year_level = course.get("course_level", 0)
@@ -3913,6 +3913,17 @@ if __name__ == "__main__":
             for prog_key, courses in programs.items():
                 print(f"    {prog_key}: {', '.join(courses)}")
 
+    # Log Main-branch unassigned separately for visibility
+    main_unassigned = [c for c in unassigned_branch_courses if c.get("branch_id") == MAIN_BRANCH_ID]
+    if main_unassigned:
+        print(f"\n[INFO] {len(main_unassigned)} Main-branch course section(s) could not be assigned a faculty "
+              f"(no qualified faculty or all qualified faculty at load capacity):")
+        by_course = {}
+        for c in main_unassigned:
+            by_course.setdefault(c.get("course_code", "?"), []).append(c.get("set_name", "?"))
+        for code, sections in sorted(by_course.items()):
+            print(f"  {code}: {', '.join(sections)}")
+
     # ------------------------------------------
     # CREATE ROOM AND TIME SCHEDULE
     # ------------------------------------------
@@ -3922,12 +3933,19 @@ if __name__ == "__main__":
         branch_map
     )
 
-    # Append branch expertise needed courses to unscheduled_meetings
+    # Append all unassigned courses (all branches) to unscheduled_meetings
     for course in unassigned_branch_courses:
         bid = course.get("branch_id")
-        bname = branch_map.get(bid, f"Branch {bid}")
+        bname = branch_map.get(bid, f"Branch {bid}") if branch_map else f"Branch {bid}"
         program_code = course.get("program_code", "Unknown")
         year_level = course.get("course_level", 0)
+        set_name = course.get("set_name", "?")
+        if bid == MAIN_BRANCH_ID:
+            reason = (f"No faculty assignment — no qualified faculty or all qualified faculty "
+                      f"at maximum load capacity ({program_code}-{year_level}, section {set_name})")
+        else:
+            reason = (f"No qualified faculty — branch expertise needed "
+                      f"({bname}, {program_code}-{year_level}, section {set_name})")
         unscheduled_meetings.append({
             "class_id": course.get("class_id"),
             "course_code": course.get("course_code", "Unknown"),
@@ -3938,9 +3956,10 @@ if __name__ == "__main__":
             "program_id": course.get("program_id"),
             "program_name": course.get("program_name", "Unknown"),
             "program_code": program_code,
+            "set_name": set_name,
             "type": "Lecture" if course.get("course_lab", 0) == 0 else "Lecture+Lab",
             "hours": f"{course.get('course_lec', 0)}h lec + {course.get('course_lab', 0)}h lab",
-            "reason": f"No qualified faculty - branch expertise needed ({bname}, {program_code}-{year_level})"
+            "reason": reason
         })
 
     # Generate timestamp for filenames
