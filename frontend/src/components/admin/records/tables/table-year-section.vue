@@ -84,7 +84,7 @@
                   <th class="px-4 py-3 text-center w-[10%]">Class Size</th>
                   <th class="px-4 py-3 text-center w-[15%]">School Year</th>
                   <th class="px-4 py-3 text-center w-[5%]">Campus</th>
-                  <th class="px-4 py-3 text-center w-[5%]">Action</th>
+                  <th class="px-4 py-3 text-center w-[8%]">Action</th>
                 </tr>
               </thead>
 
@@ -124,9 +124,16 @@
                   </td>
                   <!-- ✅ Action Column -->
 
-                  <td class="flex justify-center items-center">
+                  <td class="flex justify-center items-center gap-2">
                     <button @click="showClassCourses(cls)" class="btn-view">
                       See Details
+                    </button>
+
+                    <button
+                      @click="showClassSchedules(cls)"
+                      class="text-[12px] py-2 px-3 rounded-xl bg-defaultGreen text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;"
+                    >
+                      See Schedules
                     </button>
                   </td>
                 </tr>
@@ -232,13 +239,82 @@
       </div>
     </div>
   </div>
+  <!-- Schedule Modal -->
+  <div
+    v-if="scheduleModal"
+    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+    @click.self="closeScheduleModal"
+  >
+    <div class="bg-white rounded-xl shadow-2xl w-[1000px] max-h-[80vh] overflow-y-auto">
+      <div class="bg-defaultGreen text-white px-6 py-4 flex justify-between items-center">
+        <h3 class="font-bold text-lg">
+          {{ selectedClass?.program?.program_code }} -
+          {{ selectedClass?.set_name }}
+        </h3>
+
+        <button @click="closeScheduleModal" class="text-white text-xl">✕</button>
+      </div>
+
+      <div class="p-2">
+        <table v-if="selectedSchedules.length" class="min-w-full border text-sm">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border px-3 py-2">Course</th>
+              <th class="border px-3 py-2">Day</th>
+              <th class="border px-3 py-2">Time</th>
+              <th class="border px-3 py-2">Faculty</th>
+              <th class="border px-3 py-2">Room</th>
+              <th class="border px-3 py-2">Type</th>
+              <th class="border px-3 py-2">Mode</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="schedule in selectedSchedules" :key="schedule.id">
+              <td class="border px-3 py-2">
+                {{ schedule.course_code }}
+              </td>
+
+              <td class="border px-3 py-2">
+                {{ schedule.day }}
+              </td>
+
+              <td class="border px-3 py-2">
+                {{ schedule.time_slot }}
+              </td>
+
+              <td class="border px-3 py-2">
+                {{ schedule.faculty_name }}
+              </td>
+
+              <td class="border px-3 py-2">
+                {{ schedule.room_name }}
+              </td>
+
+              <td class="border px-3 py-2">
+                {{ schedule.type }}
+              </td>
+
+              <td class="border px-3 py-2">
+                {{ schedule.mode }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div v-else class="text-center py-8 text-gray-500">
+          No schedules found for this class.
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import icon from "@/assets/icon.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
-
+import { useFetchDataStore } from "../../../../store/fetch-data-store";
 export default {
   name: "TableClassAssignedCourses",
   components: { icon },
@@ -259,6 +335,8 @@ export default {
       itemsPerPage: 10,
 
       loading: true,
+      scheduleModal: false,
+      selectedSchedules: [],
     };
   },
   computed: {
@@ -340,6 +418,28 @@ export default {
     },
   },
   methods: {
+    async showClassSchedules(cls) {
+      try {
+        const fetchDataStore = useFetchDataStore();
+
+        await fetchDataStore.fetchFinalSchedules();
+
+        this.selectedSchedules = fetchDataStore.final_schedules.filter(
+          (schedule) => schedule.class_id === cls.class_id
+        );
+
+        this.selectedClass = cls;
+        this.scheduleModal = true;
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to load schedules");
+      }
+    },
+
+    closeScheduleModal() {
+      this.scheduleModal = false;
+      this.selectedSchedules = [];
+    },
     changePage(page) {
       if (page < 1 || page > this.totalPages) return;
       this.classPage = page;

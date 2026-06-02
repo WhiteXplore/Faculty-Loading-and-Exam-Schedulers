@@ -85,7 +85,28 @@
       <!-- TODO  Buttons -->
       <div class="flex justify-center gap-2 text-sm">
         <button @click="showConfirmSaved = false" class="btn-cancel">Cancel</button>
-        <button @click="saveScheduledConfirmed" class="btn-save">Yes, Save</button>
+        <button
+          @click="saveScheduledConfirmed"
+          :disabled="savingSchedule"
+          class="btn-save disabled:opacity-70 disabled:cursor-not-allowed"
+        >
+          <span v-if="savingSchedule" class="flex items-center gap-2">
+            <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="3"
+                opacity="0.25"
+              />
+              <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="3" />
+            </svg>
+            Saving...
+          </span>
+
+          <span v-else>Yes, Save</span>
+        </button>
       </div>
     </div>
   </div>
@@ -498,6 +519,82 @@
         </div>
       </div>
     </div>
+    <div
+      v-if="showOverrideModal"
+      class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40"
+    >
+      <div class="w-[430px] rounded-2xl bg-white shadow-xl">
+        <!-- Header -->
+        <div class="flex items-center gap-3 px-6 py-5 border-b">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+            <icon name="exclamation-circle" class="w-5 h-5 text-red-700" />
+          </div>
+
+          <div>
+            <h3 class="text-base font-semibold text-gray-900">
+              Schedule Already Generated
+            </h3>
+            <p class="text-sm text-gray-500">An existing schedule was found.</p>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="px-6 py-5">
+          <div class="space-y-3">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">School Year</span>
+              <span class="font-medium text-gray-900">
+                {{ overrideInfo?.school_year }}
+              </span>
+            </div>
+
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Semester</span>
+              <span class="font-medium text-gray-900">
+                {{ overrideInfo?.semester }}
+              </span>
+            </div>
+          </div>
+
+          <p class="mt-5 text-sm text-gray-600 italic">
+            Note: "Continuing will replace the existing generated schedule for this school
+            year and semester".
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end gap-2 px-6 py-4 border-t bg-gray-50 rounded-b-2xl">
+          <button @click="showOverrideModal = false" class="btn-cancel">Cancel</button>
+
+          <button
+            @click="overrideSchedule"
+            :disabled="overridingSchedule"
+            class="btn-save disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <span v-if="overridingSchedule" class="flex items-center gap-2">
+              <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  opacity="0.25"
+                />
+                <path
+                  d="M22 12a10 10 0 0 1-10 10"
+                  stroke="currentColor"
+                  stroke-width="3"
+                />
+              </svg>
+              Saving...
+            </span>
+
+            <span v-else>Override & Save</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
     <ConflictModal
       :visible="conflictModalVisible"
@@ -515,6 +612,7 @@ import icon from "@/assets/icon.vue";
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import ConflictModal from "@/components/program-chairperson/program-record/faculty-components/conflict-modal.vue";
 import { toast } from "vue3-toastify";
+import { eventBus } from "@/bus/event-bus";
 // import sample_schedule from "./sample_schedule.json";
 export default {
   name: "FacultySchedule",
@@ -569,6 +667,12 @@ export default {
       cardsPerPage: 6,
       pageWindow: 3,
       searchQuery: "",
+      showOverrideModal: false,
+      overrideInfo: null,
+      savingSchedule: false,
+      overridingSchedule: false,
+      stopEventBus: null,
+      activeSchoolYear: null,
     };
   },
 
@@ -1150,6 +1254,7 @@ export default {
     },
 
     async saveScheduledConfirmed() {
+      this.savingSchedule = true;
       this.showConfirmSaved = false;
 
       try {
@@ -1193,11 +1298,20 @@ export default {
         }));
 
         if (scheduledPayload.length > 0) {
-          await axios.post(
+          const response = await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
             scheduledPayload,
             { withCredentials: true }
           );
+
+          if (response.data?.exists) {
+            this.overrideInfo = response.data;
+
+            this.showConfirmSaved = false;
+            this.showOverrideModal = true;
+
+            return;
+          }
         }
 
         // ----------------------------------------
@@ -1228,7 +1342,76 @@ export default {
         toast.success("✅ Schedule and unscheduled meetings saved successfully!");
       } catch (error) {
         console.error(error);
-        alert("❌ Failed to save schedule.");
+
+        const data = error?.response?.data;
+
+        // NestJS BadRequestException response
+        if (data?.school_year && data?.semester) {
+          toast.error(
+            `Schedule for School Year ${data.school_year} Semester ${data.semester} is already generated.`,
+            {
+              autoClose: 5000,
+            }
+          );
+          return;
+        }
+
+        toast.error(data?.message || "Failed to save schedule.");
+      } finally {
+        this.savingSchedule = false;
+      }
+    },
+    async overrideSchedule() {
+      this.overridingSchedule = true;
+      try {
+        await this.fetchSchoolYears();
+
+        const latestSchoolYear = this.latestActiveSchoolYear;
+
+        const scheduledPayload = this.schedule.map((item) => ({
+          class_id: item.class_id,
+          set_name: item.set_name,
+          course_code: item.course_code,
+          program_id: item.program_id,
+          college_branch_id: item.college_branch_id,
+          program_code: item.program_code,
+          institute_id: item.institute_id,
+          type: item.type,
+          day: item.day,
+          start_hour: item.start_hour,
+          duration: item.duration,
+          time_slot: `${this.formatTime(item.start_hour)} - ${this.formatTime(
+            item.start_hour + Number(item.duration)
+          )}`,
+          room_id: item.room_id,
+          room_name: item.room_name,
+          room_type: item.room_type,
+          room_capacity: item.room_capacity,
+          class_size: item.class_size,
+          faculty_id: item.faculty_id,
+          faculty_name: item.faculty_name,
+          school_year: latestSchoolYear.school_year_name,
+          semester: latestSchoolYear.semester,
+          mode: item.schedule_type,
+        }));
+
+        await axios.post(
+          `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
+          {
+            schedules: scheduledPayload,
+            override: true,
+          },
+          { withCredentials: true }
+        );
+
+        this.showOverrideModal = false;
+
+        toast.success("Schedule overridden successfully!");
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to override schedule.");
+      } finally {
+        this.overridingSchedule = false;
       }
     },
   },
@@ -1255,6 +1438,15 @@ export default {
 
     this.groupedSchedule = this.groupByInstructor(this.schedule);
     this.filteredGroupedSchedule = this.groupedSchedule;
+
+    this.stopEventBus = eventBus.on((newYear) => {
+      console.log("EventBus Data:", newYear);
+
+      if (!newYear) return;
+
+      this.activeSchoolYear = newYear;
+      this.currentPage = 1;
+    });
   },
 };
 </script>

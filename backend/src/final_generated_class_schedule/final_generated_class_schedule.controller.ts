@@ -22,11 +22,13 @@ export class FinalGeneratedClassScheduleController {
   }
 
   // Bulk schedules
-  @Post('bulk')
-  createMany(@Body() createDtos: CreateFinalGeneratedClassScheduleDto[]) {
-    return this.service.createMany(createDtos);
-  }
-
+@Post('bulk')
+createMany(@Body() body: any) {
+  return this.service.createMany(
+    body.schedules || body,
+    body.override || false,
+  );
+}
   @Get('get-all-final-schedules')
   findAll() {
     return this.service.findAll();
