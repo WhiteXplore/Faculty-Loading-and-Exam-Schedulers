@@ -470,6 +470,7 @@ import FacultyTopControls from "../faculty-components/faculty-top-controls.vue";
 import ConflictModal from "../faculty-components/conflict-modal.vue";
 import UnjoinModal from "../faculty-components/unjoin-validation-modal.vue";
 import JoinValidationModal from "../faculty-components/join-validation-modal.vue";
+import { eventBus } from "@/bus/event-bus";
 export default {
   name: "FacultySchedule",
   components: {
@@ -552,6 +553,7 @@ export default {
       },
       joinIndex: {},
       searchQuery: "",
+      activeSchoolYear: null,
     };
   },
 
@@ -751,19 +753,47 @@ export default {
         )
       );
     },
+    activeSchoolYearDisplay() {
+      if (!this.activeSchoolYear) return "";
+
+      return `${this.activeSchoolYear.school_year_name} - ${
+        this.activeSchoolYear.semester === 1
+          ? "1st Semester"
+          : this.activeSchoolYear.semester === 2
+          ? "2nd Semester"
+          : "Summer"
+      }`;
+    },
   },
 
   watch: {
+    activeSchoolYear: {
+      handler() {
+        this.fetchFinalSchedules();
+      },
+      deep: true,
+    },
+
     selectedInstituteId() {
       this.filterSchedules();
       this.selectedProgramId = "";
     },
+
     selectedProgramId() {
       this.filterSchedules();
     },
   },
 
   methods: {
+    applyActiveYearFilter(schedules) {
+      if (!this.activeSchoolYear) return schedules;
+
+      return schedules.filter(
+        (s) =>
+          Number(s.school_year_id) === Number(this.activeSchoolYear.school_year_id) &&
+          Number(s.semester) === Number(this.activeSchoolYear.semester)
+      );
+    },
     canEditSchedule(schedule) {
       if (!schedule) return false;
 
@@ -1232,145 +1262,6 @@ export default {
         })
         .filter(Boolean);
     },
-    //   if (!record || record.start_hour == null || !record.duration) return [];
-
-    //   const recordStart = this.normalizeHour(record.start_hour);
-    //   const recordEnd = recordStart + Number(record.duration);
-
-    //   const sameDaySchedules = this.scheduleIndex.byDay[record.day] || [];
-
-    //   return sameDaySchedules
-    //     .filter((r) => {
-    //       if (!r || r.id === record.id) return false;
-
-    //       // Ignore same join group
-    //       if (
-    //         record.is_joined &&
-    //         r.is_joined &&
-    //         record.join_group_id &&
-    //         r.join_group_id &&
-    //         record.join_group_id === r.join_group_id
-    //       ) {
-    //         return false;
-    //       }
-
-    //       const rStart = this.normalizeHour(r.start_hour);
-    //       const rEnd = rStart + Number(r.duration);
-
-    //       if (rStart == null || rEnd == null) return false;
-
-    //       // Check time overlap first
-    //       const overlaps = Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
-
-    //       if (!overlaps) return false;
-
-    //       // ✅ 1. FACULTY CONFLICT (always conflict)
-    //       const sameFaculty =
-    //         (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
-    //         (r.faculty_name &&
-    //           record.faculty_name &&
-    //           r.faculty_name.trim().toLowerCase() ===
-    //             record.faculty_name.trim().toLowerCase());
-
-    //       if (sameFaculty) {
-    //         return true;
-    //       }
-
-    //       // ✅ 2. ROOM CONFLICT (Face to Face only)
-    //       if (
-    //         r.room_id &&
-    //         record.room_id &&
-    //         r.room_id === record.room_id &&
-    //         r.mode?.toLowerCase() === "face to face" &&
-    //         record.mode?.toLowerCase() === "face to face"
-    //       ) {
-    //         if (!this.isJoined || r.faculty_id === record.faculty_id) {
-    //           return true;
-    //         }
-    //       }
-
-    //       // ✅ 3. CLASS CONFLICT
-    //       if (r.class_id && record.class_id && r.class_id === record.class_id) {
-    //         return true;
-    //       }
-
-    //       // ✅ 4. ONLINE SECTION CONFLICT (NEW RULE)
-    //       if (
-    //         record.mode?.toLowerCase() === "online" &&
-    //         r.mode?.toLowerCase() === "online" &&
-    //         r.set_name &&
-    //         record.set_name &&
-    //         r.set_name === record.set_name
-    //       ) {
-    //         return true;
-    //       }
-
-    //       return false;
-    //     })
-    //     .map((r) => {
-    //       let reason = "";
-
-    //       // Faculty conflict
-    //       if (
-    //         (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
-    //         (r.faculty_name &&
-    //           record.faculty_name &&
-    //           r.faculty_name.trim().toLowerCase() ===
-    //             record.faculty_name.trim().toLowerCase())
-    //       ) {
-    //         reason =
-    //           "Same faculty assigned to overlapping schedules (Mode does not matter)";
-    //       }
-
-    //       // Room conflict
-    //       else if (
-    //         r.room_id === record.room_id &&
-    //         r.mode?.toLowerCase() === "face to face" &&
-    //         record.mode?.toLowerCase() === "face to face"
-    //       ) {
-    //         reason = "Same room, same day, and overlapping time (Face-to-Face)";
-    //       }
-
-    //       // Class conflict
-    //       else if (r.class_id === record.class_id) {
-    //         reason = "Same class/section has overlapping schedules";
-    //       }
-
-    //       // ✅ Online conflict
-    //       //   else if (
-    //       //     record.mode?.toLowerCase() === "online" &&
-    //       //     r.mode?.toLowerCase() === "online" &&
-    //       //     r.set_name === record.set_name &&
-    //       //     r.program_id === record.program_id &&
-    //       //     Number(r.college_branch_id) === Number(record.college_branch_id)
-    //       //   ) {
-    //       //     reason =
-    //       //       "ONLINE conflict: Same section cannot attend two online classes at the same time.";
-    //       //   }
-
-    //       //   return { ...r, reason };
-    //       // });
-
-    //       // ✅ ONLINE CONFLICT (same program + same section only)
-    //       if (
-    //         (record.room_name || "").toLowerCase() === "online" &&
-    //         (r.mode || "").toLowerCase() === "online" &&
-    //         r.set_name === record.set_name &&
-    //         r.program_id === record.program_id &&
-    //         r.college_branch_id === record.college_branch_id &&
-    //         r.college_branch_id === record.college_branch_id
-    //       ) {
-    //         reason.push(
-    //           "ONLINE conflict: Same program section cannot attend two online classes at the same time."
-    //         );
-    //       }
-
-    //       if (!reason.length) return null;
-
-    //       return { ...r, reason: reason.join(", ") };
-    //     })
-    //     .filter(Boolean);
-    // },
 
     hasRoomConflict(record) {
       return this.getConflictingRecords(record).length > 0;
@@ -1747,6 +1638,10 @@ export default {
       this.loading = true;
       this.error = null;
 
+      this.finalSchedules = [];
+      this.groupedSchedule = {};
+      this.filteredGroupedSchedule = {};
+
       try {
         // ================================
         // FETCH SCHEDULES
@@ -1766,6 +1661,29 @@ export default {
         );
 
         // ================================
+        // INITIAL DATA
+        // ================================
+        let schedules = schedulesData || [];
+
+        // ================================
+        // FILTER BY ACTIVE SCHOOL YEAR
+        // ================================
+        if (this.activeSchoolYear) {
+          schedules = schedules.filter(
+            (s) =>
+              String(s.school_year).trim() ===
+                String(this.activeSchoolYear.school_year_name).trim() &&
+              Number(s.semester) === Number(this.activeSchoolYear.semester)
+          );
+
+          console.log("Active School Year:", this.activeSchoolYear.school_year_name);
+
+          console.log("Semester:", this.activeSchoolYear.semester);
+
+          console.log("Filtered Schedules:", schedules.length);
+        }
+
+        // ================================
         // CLASS MAP
         // ================================
         const classMap = {};
@@ -1773,8 +1691,6 @@ export default {
         classSections.forEach((cls) => {
           classMap[Number(cls.class_id)] = cls;
         });
-
-        let schedules = schedulesData || [];
 
         // ================================
         // ATTACH CLASS / PROGRAM INFO
@@ -1791,29 +1707,22 @@ export default {
 
             // ====================================
             // FACULTY OWNER
-            // original owner sa faculty
             // ====================================
             faculty_program_id: s.program_id || null,
-
             faculty_institute_id: s.institute_id || null,
 
             // ====================================
             // CLASS OWNER
-            // gikan sa class/get-classes
             // ====================================
             class_program_id: cls?.program_id || null,
-
             class_institute_id: cls?.program?.institute_id || null,
 
             // ====================================
             // DISPLAY VALUES
-            // ALWAYS gikan sa class/get-classes
             // ====================================
-            // preserve original ownership
             program_id: s.program_id,
             institute_id: s.institute_id,
 
-            // 🔥 DISPLAY ONLY
             display_program_code: cls?.program?.program_code || "Unknown Program",
 
             display_program_name: cls?.program?.program_name || "Unknown Program",
@@ -1831,7 +1740,6 @@ export default {
 
         // ================================
         // PROGRAM CHAIRPERSON
-        // show all schedules sa ilang faculty
         // ================================
         if (this.user.role === "Program Chairperson") {
           const ownedFacultyIds = [
@@ -1846,13 +1754,11 @@ export default {
             ),
           ];
 
-          // show tanan schedules handled by their faculty
           schedules = schedules.filter((s) => ownedFacultyIds.includes(s.faculty_id));
         }
 
         // ================================
         // DEPARTMENT CHAIRPERSON
-        // show all schedules sa ilang faculty
         // ================================
         else if (this.user.role === "Department Chairperson") {
           const ownedFacultyIds = [
@@ -1879,7 +1785,6 @@ export default {
         this.changePage(1);
       } catch (err) {
         this.error = err.message || "Failed to fetch final schedules";
-
         console.error(err);
       } finally {
         this.loading = false;
@@ -1911,8 +1816,22 @@ export default {
     await this.fetchClassSections();
     await this.loadFetchData();
     await this.fetchSchoolYears();
-    await this.fetchFinalSchedules();
     await this.fetchCollegeBranch();
+
+    // Get active school year first
+    this.activeSchoolYear = eventBus.data || null;
+
+    // Then load schedules
+    await this.fetchFinalSchedules();
+
+    // Listen for changes
+    this.stopEventBus = eventBus.on(async (newYear) => {
+      console.log("NEW ACTIVE YEAR:", newYear);
+
+      this.activeSchoolYear = { ...newYear };
+
+      await this.fetchFinalSchedules();
+    });
   },
 };
 </script>

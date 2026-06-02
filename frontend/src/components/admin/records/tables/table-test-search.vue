@@ -32,6 +32,8 @@
               <th class="px-4 py-3 font-semibold">Course Code</th>
 
               <th class="px-4 py-3 font-semibold">Room</th>
+              <th class="px-4 py-3 font-semibold">Day</th>
+              <th class="px-4 py-3 font-semibold">Time</th>
 
               <th class="px-4 py-3 font-semibold">Faculty</th>
             </tr>
@@ -56,6 +58,16 @@
               <!-- ROOM -->
               <td class="px-4 py-3">
                 {{ item.room_name || "N/A" }}
+              </td>
+
+              <!-- DAY -->
+              <td class="px-4 py-3">
+                {{ item.day || "N/A" }}
+              </td>
+
+              <!-- TIME SLOT -->
+              <td class="px-4 py-3">
+                {{ item.time_slot || "N/A" }}
               </td>
 
               <!-- FACULTY -->
@@ -135,7 +147,9 @@ export default {
           String(item.class_display).toLowerCase().includes(keyword) ||
           String(item.course_code).toLowerCase().includes(keyword) ||
           String(item.room_name).toLowerCase().includes(keyword) ||
-          String(item.faculty_name).toLowerCase().includes(keyword)
+          String(item.faculty_name).toLowerCase().includes(keyword) ||
+          String(item.day).toLowerCase().includes(keyword) ||
+          String(item.time_slot).toLowerCase().includes(keyword)
         );
       });
     },
