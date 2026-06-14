@@ -366,7 +366,7 @@
               :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
             >
               <div
-                class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.18)] ring-1 ring-black/5"
+                class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]"
               >
                 <div
                   class="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white px-4 py-3"
@@ -1255,7 +1255,6 @@ export default {
 
     async saveScheduledConfirmed() {
       this.savingSchedule = true;
-      this.showConfirmSaved = false;
 
       try {
         // Always fetch latest school years before saving
@@ -1340,6 +1339,7 @@ export default {
         }
 
         toast.success("✅ Schedule and unscheduled meetings saved successfully!");
+        this.showConfirmSaved = false;
       } catch (error) {
         console.error(error);
 

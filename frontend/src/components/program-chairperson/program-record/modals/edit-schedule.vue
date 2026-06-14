@@ -30,7 +30,7 @@
           <div
             :class="[
               'transition-all duration-300 overflow-hidden h-full',
-              showAddSchedulePanel ? 'w-[100%]' : 'w-full',
+              panelMode ? 'w-[100%]' : 'w-full',
             ]"
           >
             <div class="flex-1 overflow-auto bg-gray-50 h-full">
@@ -81,6 +81,10 @@
                         </button>
                       </div>
                     </div>
+                    <button @click="openUnscheduledPanel(instructor)" class="btn-save">
+                      Unscheduled
+                    </button>
+
                     <button @click="openAddSchedulePanel(instructor)" class="btn-save">
                       Add
                     </button>
@@ -128,12 +132,7 @@
                           :class="{
                             'bg-red-100':
                               draggedRecord &&
-                              getConflictsForDrag(
-                                draggedRecord,
-                                instructor,
-                                day,
-                                slot.start
-                              ).length,
+                              dragConflictMap[`${instructor}-${day}-${slot.start}`],
                           }"
                           :style="{ height: timeSlotHeight + 'px' }"
                           @dragover.prevent
@@ -152,6 +151,7 @@
                               @mouseenter.passive="showScheduleTooltip($event, item)"
                               @mouseleave="hideScheduleTooltip"
                               @dragstart="onDragStart($event, item)"
+                              @dragend="onDragEnd"
                               @dblclick="attemptUnjoin(item)"
                               @click="highlightRow(item)"
                               :class="[
@@ -183,6 +183,7 @@
                                 canEditSchedule(item)
                                   ? 'cursor-pointer hover:bg-yellow-100'
                                   : '',
+                                draggedRecord?.id === item.id ? 'schedule-dragging' : '',
                               ]"
                               :style="{
                                 top: getBlockTop(item, slot.start) + 'px',
@@ -256,7 +257,7 @@
       <!-- RIGHT: SLIDING ADD PANEL -->
       <div class="flex flex-col gap-2">
         <div
-          v-if="showAddSchedulePanel"
+          v-if="panelMode === 'add'"
           class="w-[45vw] max-h-[50vh] bg-white border shadow-xl transition-all duration-300 flex justify-start rounded-xl"
         >
           <div class="p-1 flex flex-col">
@@ -264,7 +265,7 @@
             <div
               class="flex items-center justify-between px-4 py-3 bg-defaultGreen text-white rounded-t-lg"
             >
-              <h3 class="font-semibold">Add Schedule</h3>
+              <h3 class="header1">Add Schedule</h3>
               <icon
                 name="circle-close3"
                 @click="closeAddSchedulePanel"
@@ -482,7 +483,7 @@
           </div>
         </div>
         <unscheduled
-          v-if="showAddSchedulePanel"
+          v-if="panelMode === 'unscheduled'"
           :close-add-schedule-panel="closeAddSchedulePanel"
           @open-edit-schedule="addUnscheduledToCalendar"
         />
@@ -793,7 +794,7 @@
   </div>
   <!-- Schedule Tooltip -->
   <div
-    v-if="scheduleTooltipVisible && tooltipItem"
+    v-if="scheduleTooltipVisible && tooltipItem && !draggedRecord"
     class="fixed z-[9999] pointer-events-none"
     :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
   >
@@ -960,6 +961,10 @@ export default {
   props: {
     show: Boolean,
     instructorData: { type: Array, default: () => [] },
+    activeSchoolYear: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
@@ -1010,6 +1015,12 @@ export default {
       unjoinTarget: null,
 
       timeSlotHeight: 60,
+
+      dragConflictMap: {},
+      isDragging: false,
+      conflictMapCache: {},
+
+      panelMode: null,
     };
   },
   computed: {
@@ -1241,9 +1252,11 @@ export default {
     // Watch for modal open (show = true) to refresh all data
     show: {
       immediate: false,
-      handler(isVisible) {
+      async handler(isVisible) {
         if (isVisible) {
           this.refreshInstructorData([...this.instructorData]);
+
+          await this.loadData(); // ADD THIS
         }
       },
     },
@@ -1255,7 +1268,18 @@ export default {
       "fetchCurriculumCourses",
       "fetchClassSections",
     ]),
-
+    getAllSchedulesForConflict(record) {
+      return [
+        ...this.fullSchedules,
+        ...this.localData.filter(
+          (r) => !this.fullSchedules.some((f) => Number(f.id) === Number(r.id))
+        ),
+      ].filter(
+        (s) =>
+          String(s.school_year).trim() === String(record.school_year).trim() &&
+          Number(s.semester) === Number(record.semester)
+      );
+    },
     async fetchCollegeBranch() {
       const store = useFetchDataStore();
       await store.fetchCollegeBranch();
@@ -1686,7 +1710,12 @@ export default {
     async loadData() {
       try {
         const fetchDataStore = useFetchDataStore();
+
+        // Always fetch latest schedules
         await fetchDataStore.fetchFinalSchedules();
+
+        // Load ALL final schedules
+        // Conflict filtering will be handled later in getSchedulesForConflictCheck()
         this.fullSchedules = (fetchDataStore.final_schedules || []).map((rec) => {
           const cloned = structuredClone(rec);
 
@@ -1696,14 +1725,20 @@ export default {
 
           return {
             ...cloned,
+
+            // UI fields
             searchRoomQuery: cloned.room_name || "",
             showRoomDropdown: false,
+
             searchCourseQuery: cloned.course_code || "",
             showCourseDropdown: false,
+
             searchSectionQuery: cloned.set_name || "",
             showSectionDropdown: false,
           };
         });
+
+        console.log("[Edit Schedule] Loaded Final Schedules:", this.fullSchedules.length);
       } catch (error) {
         console.error("Failed to load full schedules:", error);
         this.fullSchedules = [];
@@ -1768,13 +1803,17 @@ export default {
 
       this.draggedRecord = null;
     },
-
     openAddSchedulePanel(instructor) {
       this.selectedInstructorName = instructor;
-      this.showAddSchedulePanel = true;
+      this.panelMode = "add";
     },
+    openUnscheduledPanel(instructor) {
+      this.selectedInstructorName = instructor;
+      this.panelMode = "unscheduled";
+    },
+
     closeAddSchedulePanel() {
-      this.showAddSchedulePanel = false;
+      this.panelMode = null;
     },
 
     /* ------------------ 3. FILTERING ------------------ */
@@ -1936,16 +1975,14 @@ export default {
 
       record.course_id = course.course_id;
       record.course_code = course.course_code;
-      record.semester = String(course.course_semester);
+
+      // ✅ gikan sa PROP
+      record.school_year = this.activeSchoolYear?.school_year_name || "";
+      record.semester = String(this.activeSchoolYear?.semester || "");
+
       record.program_id = curriculum?.program_id || null;
       record.program_code = curriculum?.program?.program_code || "";
       record.institute_id = curriculum?.institute_id || null;
-
-      const startYear = curriculum?.curriculum_start_year;
-      const endYear = curriculum?.curriculum_end_year;
-
-      record.school_year =
-        startYear && endYear ? `${startYear} - ${endYear}` : startYear || "";
 
       record.searchCourseQuery = course.course_code;
       record.showCourseDropdown = false;
@@ -1953,6 +1990,7 @@ export default {
     /* ------------------ 5. ROW MANAGEMENT ------------- */
 
     addNewRow() {
+      console.log("activeSchoolYear", this.activeSchoolYear);
       const first = this.instructorData[0];
 
       const tempId = `temp-${Date.now()}`;
@@ -1970,7 +2008,6 @@ export default {
             (r) => r.day === day && Number(r.start_hour) === Number(hour)
           );
 
-          // ✅ slot is empty
           if (!occupied) {
             selectedDay = day;
             selectedHour = hour;
@@ -1997,7 +2034,6 @@ export default {
 
         mode: "face to face",
 
-        // ✅ AUTO AVAILABLE SLOT
         day: selectedDay,
         start_hour: selectedHour,
         duration: 3,
@@ -2012,7 +2048,14 @@ export default {
         course_id: null,
         course_code: "",
         type: "Lecture",
-        semester: "",
+
+        // ✅ GET FROM PROP
+        school_year:
+          this.activeSchoolYear?.school_year_name ||
+          this.activeSchoolYear?.school_year ||
+          "",
+
+        semester: this.activeSchoolYear?.semester || "",
 
         program_id: this.user.program_id || null,
         institute_id: this.user.institute_id || null,
@@ -2026,6 +2069,8 @@ export default {
         searchSectionQuery: "",
         showSectionDropdown: false,
       });
+
+      console.log("Added row using activeSchoolYear:", this.activeSchoolYear);
     },
     cancelNewRow() {
       // Remove the last temp row only
@@ -2085,120 +2130,93 @@ export default {
         .flat()
         .filter((r) => r.faculty_name !== instructor);
     },
+    getSchedulesForConflictCheck(record) {
+      return this.fullSchedules.filter(
+        (s) =>
+          String(s.school_year).trim() === String(record.school_year).trim() &&
+          Number(s.semester) === Number(record.semester)
+      );
+    },
 
     getConflictingRecords(record) {
-      return this.allData
-        .map((r) => {
+      if (!record || record.start_hour == null || !record.duration) {
+        return [];
+      }
+
+      const recordStart = this.normalizeHour(record.start_hour);
+      const recordEnd = recordStart + Number(record.duration);
+
+      const sameDaySchedules = this.getAllSchedulesForConflict(record).filter(
+        (s) => s.day === record.day
+      );
+
+      return sameDaySchedules
+        .filter((r) => {
           // skip self
           if ((r.id && r.id === record.id) || (r.tempId && r.tempId === record.tempId)) {
-            return null;
+            return false;
           }
 
           // ignore same join group
           if (
+            record.is_joined &&
+            r.is_joined &&
             record.join_group_id &&
             r.join_group_id &&
             record.join_group_id === r.join_group_id
           ) {
-            return null;
+            return false;
           }
 
-          // different day
-          if (r.day !== record.day) return null;
+          const rStart = this.normalizeHour(r.start_hour);
+          const rEnd = rStart + Number(r.duration);
 
-          const recordStart = Number(record.start_hour);
-          const recordEnd = recordStart + Number(record.duration || 0);
+          const overlaps = Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
 
-          const rStart = Number(r.start_hour);
-          const rEnd = rStart + Number(r.duration || 0);
+          if (!overlaps) return false;
 
-          // overlap check
-          const overlap = recordStart < rEnd && recordEnd > rStart;
+          const sameFaculty =
+            (r.faculty_id &&
+              record.faculty_id &&
+              Number(r.faculty_id) === Number(record.faculty_id)) ||
+            (r.faculty_name &&
+              record.faculty_name &&
+              r.faculty_name.trim().toLowerCase() ===
+                record.faculty_name.trim().toLowerCase());
 
-          if (!overlap) return null;
-
-          let reason = [];
-
-          // =====================================
-          // FACULTY CONFLICT
-          // =====================================
-          if (
-            r.faculty_id &&
-            record.faculty_id &&
-            Number(r.faculty_id) === Number(record.faculty_id)
-          ) {
-            reason.push("Same faculty assigned at the same time");
-          }
-
-          // =====================================
-          // ROOM CONFLICT
-          // ALL INSTITUTES
-          // =====================================
-          if (
-            record.mode?.toLowerCase() === "face to face" &&
-            r.mode?.toLowerCase() === "face to face" &&
+          const sameRoom =
             r.room_id &&
             record.room_id &&
-            Number(r.room_id) === Number(record.room_id)
-          ) {
-            reason.push("Room already occupied");
-          }
+            Number(r.room_id) === Number(record.room_id) &&
+            r.mode?.toLowerCase() === "face to face" &&
+            record.mode?.toLowerCase() === "face to face";
 
-          // =====================================
-          // SAME CLASS CONFLICT
-          // =====================================
-          if (
+          const sameClass =
             r.class_id &&
             record.class_id &&
-            Number(r.class_id) === Number(record.class_id)
-          ) {
-            reason.push("Class already has another schedule");
-          }
+            Number(r.class_id) === Number(record.class_id);
 
-          // =====================================
-          // ONLINE CONFLICT
-          // =====================================
-          if (
+          const sameOnlineSection =
             record.mode?.toLowerCase() === "online" &&
             r.mode?.toLowerCase() === "online" &&
+            r.set_name === record.set_name &&
             Number(r.program_id) === Number(record.program_id) &&
-            Number(r.college_branch_id) === Number(record.college_branch_id) &&
-            r.set_name === record.set_name
-          ) {
-            reason.push(
-              "ONLINE conflict: Same section cannot attend two online classes simultaneously."
-            );
-          }
+            Number(r.college_branch_id) === Number(record.college_branch_id);
 
-          // =====================================
-          // ROOM CAPACITY
-          // =====================================
-          if (
-            record.room_capacity &&
-            record.class_size &&
-            Number(record.class_size) > Number(record.room_capacity)
-          ) {
-            reason.push("Room capacity exceeded");
-          }
+          const reasons = [];
 
-          // =====================================
-          // ROOM TYPE
-          // =====================================
-          if (
-            record.type?.toLowerCase() === "laboratory" &&
-            record.room_type?.toLowerCase() !== "laboratory"
-          ) {
-            reason.push("Laboratory subjects require laboratory rooms");
-          }
+          if (sameFaculty) reasons.push("Faculty conflict");
+          if (sameRoom) reasons.push("Room conflict");
+          if (sameClass) reasons.push("Class conflict");
+          if (sameOnlineSection) reasons.push("Online section conflict");
 
-          if (!reason.length) return null;
+          r.reason = reasons.join(", ");
 
-          return {
-            ...r,
-            reason: reason.join(", "),
-          };
+          return reasons.length > 0;
         })
-        .filter(Boolean);
+        .map((r) => ({
+          ...r,
+        }));
     },
     openConflictModal(record) {
       this.selectedSchedule = {
@@ -2282,17 +2300,32 @@ export default {
       );
     },
     onDragStart(event, record) {
+      this.isDragging = true;
       event.dataTransfer.effectAllowed = "move";
+
+      this.hideScheduleTooltip();
+
       this.draggedRecord = record;
 
-      // Drag whole group if joined
-      if (record.join_group_id) {
-        this.draggedGroup = this.localData.filter(
-          (r) => r.join_group_id === record.join_group_id
-        );
-      } else {
-        this.draggedGroup = [record];
-      }
+      this.dragConflictMap = {};
+
+      Object.keys(this.groupedSchedule).forEach((faculty) => {
+        this.days.forEach((day) => {
+          this.timeSlots.forEach((slot) => {
+            const key = `${faculty}-${day}-${slot.start}`;
+
+            this.dragConflictMap[key] =
+              this.getConflictsForDrag(record, faculty, day, slot.start).length > 0;
+          });
+        });
+      });
+    },
+    onDragEnd() {
+      this.isDragging = false;
+      this.hideScheduleTooltip();
+
+      this.draggedRecord = null;
+      this.draggedGroup = [];
     },
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
       if (!this.draggedRecord) return;
@@ -2444,8 +2477,11 @@ export default {
         // -----------------------------
         if (newRows.length) {
           const { data } = await axios.post(
-            `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
-            newRows
+            `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/manual-bulk`,
+            {
+              schedules: newRows,
+              override: true,
+            }
           );
 
           // Assign returned IDs to localData
@@ -2501,5 +2537,27 @@ export default {
 td {
   transition: background 0.2s;
   position: relative;
+}
+.schedule-dragging {
+  animation: clothGrab 180ms ease-out forwards;
+
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), 0 10px 25px rgba(0, 0, 0, 0.12);
+
+  cursor: grabbing;
+  z-index: 9999 !important;
+}
+
+@keyframes clothGrab {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scaleX(1.03) scaleY(0.97);
+  }
+
+  100% {
+    transform: scale(1.06) rotate(-2deg);
+  }
 }
 </style>

@@ -124,14 +124,15 @@
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
               <tr>
-                <th class="px-4 py-3 text-left font-normal w-[15%]">Name</th>
-                <th class="px-4 py-3 text-left font-normal w-[25%]">Email</th>
-                <th class="px-4 py-3 text-left font-normal">Unit Loads</th>
-                <th class="px-4 py-3 text-left font-normal">Designation</th>
-                <th class="px-4 py-3 text-left font-normal">Institute</th>
-                <th class="px-4 py-3 text-left font-normal">Program</th>
-                <th class="px-4 py-3 text-left font-normal">Position</th>
-                <th class="px-4 py-3 text-left font-normal">Status</th>
+                <th class="px-4 py-3 text-left font-normal w-[12%]">Name</th>
+                <th class="px-4 py-3 text-left font-normal w-[14%]">Email</th>
+                <th class="px-4 py-3 text-left font-normal w-[12%]">Designation</th>
+                <th class="px-4 py-3 text-left font-normal w-[7%]">Unit</th>
+
+                <th class="px-4 py-3 text-left font-normal w-[10%]">Institute</th>
+                <th class="px-4 py-3 text-left font-normal w-[10%]">Program</th>
+                <th class="px-4 py-3 text-left font-normal w-[10%]">Position</th>
+                <th class="px-4 py-3 text-left font-normal w-[8%]">Status</th>
 
                 <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
                   Actions
@@ -149,11 +150,12 @@
                 </td>
                 <td class="px-4 py-3 text-left">{{ user.email }}</td>
                 <td class="px-4 py-3 text-left">
-                  {{ user.unit_load }}
-                </td>
-                <td class="px-4 py-3 text-left">
                   {{ user.designation }}
                 </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.unit_load }}
+                </td>
+
                 <td class="px-4 py-3 text-left">
                   {{ user.institute?.institute_code }}
                 </td>

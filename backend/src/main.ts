@@ -56,8 +56,8 @@ async function bootstrap() {
 
     // 🔹 Listen on environment port or fallback to 8000
     const port = process.env.PORT || 8000;
-    // await app.listen(port);
-await app.listen(port, '0.0.0.0');
+    await app.listen(port);
+// await app.listen(port, '0.0.0.0');
     console.log(`Application is running on: http://localhost:${port}`);
   } catch (error) {
     console.error('Error starting application:', error);

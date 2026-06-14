@@ -29,6 +29,15 @@ createMany(@Body() body: any) {
     body.override || false,
   );
 }
+
+@Post('manual-bulk')
+createManualMany(@Body() body: any) {
+  console.log('MANUAL BULK:', body);
+
+  return this.service.createManualMany(
+    body.schedules || body,
+  );
+}
   @Get('get-all-final-schedules')
   findAll() {
     return this.service.findAll();

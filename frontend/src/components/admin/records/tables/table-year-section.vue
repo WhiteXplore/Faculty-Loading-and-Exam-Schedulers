@@ -259,13 +259,13 @@
         <table v-if="selectedSchedules.length" class="min-w-full border text-sm">
           <thead class="bg-gray-100">
             <tr>
-              <th class="border px-3 py-2">Course</th>
-              <th class="border px-3 py-2">Day</th>
-              <th class="border px-3 py-2">Time</th>
-              <th class="border px-3 py-2">Faculty</th>
-              <th class="border px-3 py-2">Room</th>
-              <th class="border px-3 py-2">Type</th>
-              <th class="border px-3 py-2">Mode</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Course</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Day</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Time</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Faculty</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Room</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Type</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Mode</th>
             </tr>
           </thead>
 
@@ -315,6 +315,7 @@ import icon from "@/assets/icon.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import { useFetchDataStore } from "../../../../store/fetch-data-store";
+import { eventBus } from "@/bus/event-bus";
 export default {
   name: "TableClassAssignedCourses",
   components: { icon },
@@ -326,31 +327,41 @@ export default {
       selectedClass: null,
       showCoursesModal: false,
 
-      // Filters
       classSearch: "",
       selectedProgram: "",
 
-      // Pagination
       classPage: 1,
       itemsPerPage: 10,
 
       loading: true,
       scheduleModal: false,
       selectedSchedules: [],
+
+      // ADD THIS
+      activeSchoolYear: null,
+      stopEventBus: null,
     };
   },
   computed: {
     filteredClasses() {
-      let result = this.classes;
+      let result = [...this.classes];
+
+      // FILTER BY ACTIVE SCHOOL YEAR
+      if (this.activeSchoolYear?.school_year_id) {
+        result = result.filter(
+          (c) => Number(c.school_year_id) === Number(this.activeSchoolYear.school_year_id)
+        );
+      }
 
       if (this.classSearch) {
         const query = this.classSearch.toLowerCase();
+
         result = result.filter((c) => {
           return (
-            c.set_name?.toLowerCase().includes(query) || // Year & Section
-            c.program?.program_name?.toLowerCase().includes(query) || // Program
-            c.schoolYear?.school_year_name?.toLowerCase().includes(query) || // School Year
-            c.colleges?.college_branch_name?.toLowerCase().includes(query) // ✅ Campus FIX
+            c.set_name?.toLowerCase().includes(query) ||
+            c.program?.program_name?.toLowerCase().includes(query) ||
+            c.schoolYear?.school_year_name?.toLowerCase().includes(query) ||
+            c.colleges?.college_branch_name?.toLowerCase().includes(query)
           );
         });
       }
@@ -363,14 +374,14 @@ export default {
         result = result.filter((c) => c.program_id === this.user.program_id);
       }
 
-      // Sort by year level and section letter
-      result = result.sort((a, b) => {
+      result.sort((a, b) => {
         const yearA = this.extractYearLevel(a.set_name) || 0;
         const yearB = this.extractYearLevel(b.set_name) || 0;
 
-        if (yearA !== yearB) return yearA - yearB;
+        if (yearA !== yearB) {
+          return yearA - yearB;
+        }
 
-        // Extract section letter (last character after dash, e.g., 'A' in '1st Year - A')
         const sectionA = a.set_name?.split("-").pop().trim() || "";
         const sectionB = b.set_name?.split("-").pop().trim() || "";
 
@@ -424,9 +435,16 @@ export default {
 
         await fetchDataStore.fetchFinalSchedules();
 
+        console.log("ACTIVE SCHOOL YEAR:", this.activeSchoolYear);
+
         this.selectedSchedules = fetchDataStore.final_schedules.filter(
-          (schedule) => schedule.class_id === cls.class_id
+          (schedule) =>
+            schedule.class_id === cls.class_id &&
+            schedule.school_year === this.activeSchoolYear?.school_year_name &&
+            Number(schedule.semester) === Number(this.activeSchoolYear?.semester)
         );
+
+        console.log("FILTERED SCHEDULES:", this.selectedSchedules);
 
         this.selectedClass = cls;
         this.scheduleModal = true;
@@ -435,7 +453,6 @@ export default {
         toast.error("Failed to load schedules");
       }
     },
-
     closeScheduleModal() {
       this.scheduleModal = false;
       this.selectedSchedules = [];
@@ -459,10 +476,13 @@ export default {
         const response = await axios.get(
           process.env.VUE_APP_API_BASE_URL + "/class/get-classes"
         );
+
         this.classes = response.data;
+
+        console.log("ACTIVE YEAR:", this.activeSchoolYear);
+        console.log("CLASSES:", this.classes);
       } catch (error) {
-        console.error("Failed to load classes:", error);
-        toast.error("Failed to load classes data");
+        console.error(error);
       }
     },
     async showClassCourses(cls) {
@@ -515,6 +535,17 @@ export default {
     await this.fetchUser();
     await this.loadClasses();
     this.loading = false;
+    // Current active school year
+    this.activeSchoolYear = eventBus.data ? { ...eventBus.data } : null;
+
+    console.log("INITIAL ACTIVE YEAR:", this.activeSchoolYear);
+
+    // Listen for active year changes
+    this.stopEventBus = eventBus.on((newYear) => {
+      console.log("NEW ACTIVE YEAR:", newYear);
+
+      this.activeSchoolYear = { ...newYear };
+    });
   },
 };
 </script>
