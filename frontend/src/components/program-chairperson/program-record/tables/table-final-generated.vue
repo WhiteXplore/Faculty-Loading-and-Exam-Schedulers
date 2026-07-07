@@ -101,7 +101,7 @@
                           .length,
                     }"
                     @dragover.prevent
-                    @drop="onDrop($event, instructor, day, slot.start)"
+                    @drop="showCompareView && onDrop($event, instructor, day, slot.start)"
                   >
                     <template
                       v-for="item in getScheduleForCell(slot, day, instructor)"
@@ -112,13 +112,15 @@
                       <div
                         v-if="isStartingSlot(item, slot)"
                         :draggable="
+                          showCompareView &&
                           canEditSchedule(item) &&
                           !(isJoined && Number(item.class_size) >= 30)
                         "
                         @dblclick.stop="handleUnjoin(item)"
                         @dragstart="onDragStart($event, item)"
-                        @mouseenter="showScheduleTooltip($event, item)"
-                        @mouseleave="hideScheduleTooltip"
+                        @mouseenter="!isDragging && scheduleHoverStart($event, item)"
+                        @dragend="isDragging = false"
+                        @mouseleave="scheduleHoverEnd"
                         :class="[
                           'absolute inset-x-1 border rounded-md text-[11px] p-1 shadow-sm overflow-hidden transition-all duration-200 whitespace-nowrap',
 
@@ -153,6 +155,7 @@
                           canEditSchedule(item)
                             ? 'cursor-pointer hover:bg-yellow-100'
                             : '',
+                          draggedRecord?.id === item.id ? 'schedule-dragging' : '',
                         ]"
                         :style="{
                           top: getBlockTop(item, slot.start) + 'px',
@@ -453,10 +456,10 @@
   <editSchedule
     :show="showEditModal"
     :instructorData="editInstructorData"
+    :activeSchoolYear="activeSchoolYear"
     @close="showEditModal = false"
     @saved="handleModalSaved"
     @refresh="fetchFinalSchedules"
-    @deleted="handleDeletedSchedule"
   />
 </template>
 
@@ -524,7 +527,7 @@ export default {
       editInstructorData: [],
       compareInstructorA: "",
       compareInstructorB: "",
-      showCompareView: false,
+
       showCompareSelection: false,
       conflictModalVisible: false,
       scheduleTooltipVisible: false,
@@ -554,6 +557,8 @@ export default {
       joinIndex: {},
       searchQuery: "",
       activeSchoolYear: null,
+      showCompareView: false,
+      hoverTimer: null,
     };
   },
 
@@ -785,6 +790,35 @@ export default {
   },
 
   methods: {
+    scheduleHoverStart(event, item) {
+      clearTimeout(this.hoverTimer);
+
+      this.hoverTimer = setTimeout(() => {
+        this.showScheduleTooltip(event, item);
+      }, 150); // delay
+    },
+
+    scheduleHoverEnd() {
+      clearTimeout(this.hoverTimer);
+      this.hideScheduleTooltip();
+    },
+    refreshCompareView() {
+      if (!this.showCompareView) return;
+
+      this.filteredGroupedSchedule = {
+        [this.compareInstructorA]: this.groupedSchedule[this.compareInstructorA] || [],
+
+        [this.compareInstructorB]: this.groupedSchedule[this.compareInstructorB] || [],
+      };
+    },
+    handleDrop(event, instructor, day, slotStart) {
+      if (!this.showCompareView) {
+        toast.info("Enable Compare Faculty first.");
+        return;
+      }
+
+      this.onDrop(event, instructor, day, slotStart);
+    },
     applyActiveYearFilter(schedules) {
       if (!this.activeSchoolYear) return schedules;
 
@@ -1118,10 +1152,12 @@ export default {
       );
     },
     getConflictsForDrag(record, targetInstructor, targetDay, targetStartHour) {
-      const clonedRecord = { ...record };
-      clonedRecord.faculty_name = targetInstructor;
-      clonedRecord.day = targetDay;
-      clonedRecord.start_hour = targetStartHour;
+      const clonedRecord = {
+        ...record,
+        faculty_name: targetInstructor,
+        day: targetDay,
+        start_hour: Number(targetStartHour),
+      };
 
       return this.getConflictingRecords(clonedRecord);
     },
@@ -1160,18 +1196,25 @@ export default {
     getConflictingRecords(record) {
       if (!record || record.start_hour == null || !record.duration) return [];
 
-      const recordStart = this.normalizeHour(record.start_hour);
+      const recordStart = Number(record.start_hour);
       const recordEnd = recordStart + Number(record.duration);
 
-      const sameDaySchedules = this.scheduleIndex.byDay[record.day] || [];
+      const sourceSchedules = this.allSchedulesForConflict?.length
+        ? this.allSchedulesForConflict
+        : this.finalSchedules;
 
-      return sameDaySchedules
+      return sourceSchedules
         .filter((r) => {
-          if (!r || r.id === record.id) return false;
+          if (!r) return false;
 
           if (
-            record.is_joined &&
-            r.is_joined &&
+            (record.id && r.id === record.id) ||
+            (record.tempId && r.tempId === record.tempId)
+          ) {
+            return false;
+          }
+
+          if (
             record.join_group_id &&
             r.join_group_id &&
             record.join_group_id === r.join_group_id
@@ -1179,103 +1222,84 @@ export default {
             return false;
           }
 
-          const rStart = this.normalizeHour(r.start_hour);
+          if (r.day !== record.day) return false;
+
+          const rStart = Number(r.start_hour);
           const rEnd = rStart + Number(r.duration);
 
-          if (rStart == null || rEnd == null) return false;
+          const overlaps = Math.max(recordStart, rStart) < Math.min(recordEnd, rEnd);
 
-          const overlaps = Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
           if (!overlaps) return false;
 
           const sameFaculty =
-            (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
-            (r.faculty_name &&
-              record.faculty_name &&
-              r.faculty_name.trim().toLowerCase() ===
-                record.faculty_name.trim().toLowerCase());
+            (r.faculty_id &&
+              record.faculty_id &&
+              Number(r.faculty_id) === Number(record.faculty_id)) ||
+            r.faculty_name?.trim().toLowerCase() ===
+              record.faculty_name?.trim().toLowerCase();
 
           const sameRoom =
-            r.room_id &&
-            record.room_id &&
-            r.room_id === record.room_id &&
+            record.mode?.toLowerCase() === "face to face" &&
             r.mode?.toLowerCase() === "face to face" &&
-            record.mode?.toLowerCase() === "face to face";
+            Number(r.room_id) === Number(record.room_id);
 
-          const sameClass =
-            r.class_id && record.class_id && r.class_id === record.class_id;
+          const sameClass = Number(r.class_id) === Number(record.class_id);
 
           const sameOnlineSection =
             record.mode?.toLowerCase() === "online" &&
             r.mode?.toLowerCase() === "online" &&
             r.set_name === record.set_name &&
-            r.program_id === record.program_id &&
+            Number(r.program_id) === Number(record.program_id) &&
             Number(r.college_branch_id) === Number(record.college_branch_id);
 
           return sameFaculty || sameRoom || sameClass || sameOnlineSection;
         })
         .map((r) => {
-          const reason = [];
+          const reasons = [];
 
-          const sameFaculty =
-            (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
-            (r.faculty_name &&
-              record.faculty_name &&
-              r.faculty_name.trim().toLowerCase() ===
-                record.faculty_name.trim().toLowerCase());
-
-          if (sameFaculty) {
-            reason.push("Same faculty assigned to overlapping schedules");
+          if (Number(r.faculty_id) === Number(record.faculty_id)) {
+            reasons.push("Faculty conflict");
           }
 
           if (
-            r.room_id &&
-            record.room_id &&
-            r.room_id === record.room_id &&
+            record.mode?.toLowerCase() === "face to face" &&
             r.mode?.toLowerCase() === "face to face" &&
-            record.mode?.toLowerCase() === "face to face"
+            Number(r.room_id) === Number(record.room_id)
           ) {
-            reason.push("Same room, same day, and overlapping time");
+            reasons.push("Room conflict");
           }
 
-          if (r.class_id && record.class_id && r.class_id === record.class_id) {
-            reason.push("Same class/section has overlapping schedules");
+          if (Number(r.class_id) === Number(record.class_id)) {
+            reasons.push("Class conflict");
           }
 
           if (
             record.mode?.toLowerCase() === "online" &&
             r.mode?.toLowerCase() === "online" &&
             r.set_name === record.set_name &&
-            r.program_id === record.program_id &&
+            Number(r.program_id) === Number(record.program_id) &&
             Number(r.college_branch_id) === Number(record.college_branch_id)
           ) {
-            reason.push(
-              "ONLINE conflict: Same program section cannot attend two online classes at the same time"
-            );
+            reasons.push("Online section conflict");
           }
-
-          if (!reason.length) return null;
 
           return {
             ...r,
-            reason: reason.join(", "),
+            reason: reasons.join(", "),
           };
-        })
-        .filter(Boolean);
+        });
     },
-
     hasRoomConflict(record) {
-      return this.getConflictingRecords(record).length > 0;
-    }, // Open the conflict modal for a record
-    openConflictModal(record) {
       const conflicts = this.getConflictingRecords(record);
 
-      if (!conflicts.length) return;
-
-      this.selectedSchedule = record; // 👈 LEFT SIDE
-      this.conflictRecords = conflicts; // 👉 RIGHT SIDE
-      this.conflictModalVisible = true;
+      return conflicts.some(
+        (c) =>
+          c.reason.includes("Faculty") ||
+          c.reason.includes("Room") ||
+          c.reason.includes("Class") ||
+          c.reason.includes("Online")
+      );
     },
-
     closeConflictModal() {
       this.conflictModalVisible = false;
       this.conflictRecords = [];
@@ -1364,6 +1388,13 @@ export default {
       });
     },
     onDragStart(event, record) {
+      this.isDragging = true;
+      event.dataTransfer.effectAllowed = "move";
+      if (!this.showCompareView) {
+        event.preventDefault();
+        toast.info("Drag and drop is only available in Compare Faculty mode.");
+        return;
+      }
       // Block large classes if Join is active
       if (this.isJoined && Number(record.class_size) >= 30) {
         toast.info("Cannot move classes with 30 or more students when Join is active.");
@@ -1381,13 +1412,18 @@ export default {
     },
 
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
+      if (!this.showCompareView) {
+        return;
+      }
       if (!this.draggedRecord) return;
+
       // 🔒 BLOCK IF NO EDIT PERMISSION
       if (!this.canEditSchedule(this.draggedRecord)) {
         toast.error("This schedule is locked.");
         this.draggedRecord = null;
         return;
       }
+
       const baseRecord = this.draggedRecord;
 
       // 🔥 Join mode
@@ -1399,7 +1435,7 @@ export default {
           this.pendingJoinTargets = joinable;
           this.joinValidationModalVisible = true;
           this.draggedRecord = null;
-          return; // wait for user confirmation
+          return;
         }
       }
 
@@ -1411,28 +1447,29 @@ export default {
             )
           : [baseRecord];
 
-      // Apply new position
-      recordsToMove.forEach((r) => {
-        r.faculty_name = targetInstructor;
-        r.day = targetDay;
-        r.start_hour = targetStartHour;
-      });
+      // Preview records at new position
+      const previewRecords = recordsToMove.map((r) => ({
+        ...r,
+        faculty_name: targetInstructor,
+        day: targetDay,
+        start_hour: Number(targetStartHour),
+      }));
 
-      // Conflict check
-      if (!this.isJoined) {
-        for (const r of recordsToMove) {
-          const conflicts = this.getConflictingRecords(r);
-          if (conflicts.length) {
-            this.selectedSchedule = r;
-            this.conflictRecords = conflicts;
-            this.conflictModalVisible = true;
-            this.draggedRecord = null;
-            return;
-          }
+      // 🔥 Check conflicts using preview position
+      for (const preview of previewRecords) {
+        const conflicts = this.getConflictingRecords(preview);
+
+        if (conflicts.length) {
+          this.selectedSchedule = preview;
+          this.conflictRecords = conflicts;
+          this.conflictModalVisible = true;
+          this.draggedRecord = null;
+
+          toast.error("Schedule conflict detected.");
+          return;
         }
       }
 
-      // Save
       try {
         await Promise.all(
           recordsToMove.map((r) =>
@@ -1440,9 +1477,9 @@ export default {
               `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${r.id}`,
               {
                 faculty_id: r.faculty_id,
-                faculty_name: r.faculty_name,
-                day: r.day,
-                start_hour: r.start_hour,
+                faculty_name: targetInstructor,
+                day: targetDay,
+                start_hour: Number(targetStartHour),
                 duration: r.duration,
                 room_id: r.room_id,
                 room_name: r.room_name,
@@ -1452,13 +1489,26 @@ export default {
             )
           )
         );
-        // toast.success("Schedule moved successfully!");
-        await this.fetchFinalSchedules();
+
+        // update actual schedule in finalSchedules
+        recordsToMove.forEach((moved) => {
+          const realRecord = this.finalSchedules.find((s) => s.id === moved.id);
+
+          if (realRecord) {
+            realRecord.faculty_name = targetInstructor;
+            realRecord.day = targetDay;
+            realRecord.start_hour = Number(targetStartHour);
+          }
+        });
+
+        this.rebuildAllIndexes();
+        this.refreshCompareView();
+
+        toast.success("Schedule moved successfully");
       } catch (err) {
         console.error(err);
         toast.error("Failed to move schedule.");
       }
-
       this.draggedRecord = null;
     },
 
@@ -1660,14 +1710,8 @@ export default {
           { withCredentials: true }
         );
 
-        // ================================
-        // INITIAL DATA
-        // ================================
         let schedules = schedulesData || [];
 
-        // ================================
-        // FILTER BY ACTIVE SCHOOL YEAR
-        // ================================
         if (this.activeSchoolYear) {
           schedules = schedules.filter(
             (s) =>
@@ -1675,14 +1719,10 @@ export default {
                 String(this.activeSchoolYear.school_year_name).trim() &&
               Number(s.semester) === Number(this.activeSchoolYear.semester)
           );
-
-          console.log("Active School Year:", this.activeSchoolYear.school_year_name);
-
-          console.log("Semester:", this.activeSchoolYear.semester);
-
-          console.log("Filtered Schedules:", schedules.length);
         }
 
+        // GLOBAL DATA FOR CONFLICT CHECKING
+        this.allSchedulesForConflict = schedules.map((s) => ({ ...s }));
         // ================================
         // CLASS MAP
         // ================================
@@ -1781,6 +1821,8 @@ export default {
         // ================================
         this.finalSchedules = schedules;
 
+        this.buildScheduleIndex();
+        this.buildJoinIndex();
         this.rebuildAllIndexes();
         this.changePage(1);
       } catch (err) {
@@ -1835,3 +1877,28 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.schedule-dragging {
+  animation: clothGrab 180ms ease-out forwards;
+
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2), 0 10px 25px rgba(0, 0, 0, 0.12);
+
+  cursor: grabbing;
+  z-index: 9999 !important;
+}
+
+@keyframes clothGrab {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scaleX(1.03) scaleY(0.97);
+  }
+
+  100% {
+    transform: scale(1.06) rotate(-2deg);
+  }
+}
+</style>

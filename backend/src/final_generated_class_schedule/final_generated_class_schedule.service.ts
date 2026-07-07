@@ -62,6 +62,20 @@ async createMany(
     success: true,
   };
 }
+
+async createManualMany(
+  createDtos: CreateFinalGeneratedClassScheduleDto[],
+) {
+  console.log('Received:', createDtos);
+
+  if (!Array.isArray(createDtos) || !createDtos.length) {
+    throw new BadRequestException('No schedules provided');
+  }
+
+  const schedules = this.scheduleRepo.create(createDtos);
+
+  return await this.scheduleRepo.save(schedules);
+}
   findAll() {
     return this.scheduleRepo.find();
   }

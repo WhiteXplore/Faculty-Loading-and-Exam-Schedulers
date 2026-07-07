@@ -253,7 +253,7 @@
         <div
           class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center"
         >
-         <h1 class="header1">Update Faculty</h1>
+          <h1 class="header1">Update Faculty</h1>
 
           <button type="button" @click="closeUpdateModal" class="text-white text-lg">
             ✕
@@ -527,11 +527,17 @@
     <div class="w-full max-w-5xl rounded-2xl bg-white shadow-xl overflow-hidden">
       <!-- Header -->
       <div class="flex items-center justify-between px-6 py-4 border-b">
-        <div>
-          <h2 class="text-lg font-semibold text-gray-900">Faculty Information</h2>
-          <p class="text-sm text-gray-500">Faculty details and expertise overview</p>
+        <div class="flex items-center gap-2">
+          <div
+            class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shadow-sm"
+          >
+            <icon name="users" class="text-white" />
+          </div>
+          <div>
+            <h2 class="text-md font-semibold text-gray-900">Faculty Information</h2>
+            <p class="text-sm text-gray-500">Faculty details and expertise overview</p>
+          </div>
         </div>
-
         <button
           @click="showViewModal = false"
           class="text-gray-400 hover:text-gray-600 transition"

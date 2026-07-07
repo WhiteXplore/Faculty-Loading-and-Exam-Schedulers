@@ -267,7 +267,7 @@ export default {
       // ===============================
       if (this.activeTab === "Other Expertise") {
         users.forEach((u) => {
-          (u.other_expertise || []).forEach((e) => {
+          (u.expertise || []).forEach((e) => {
             if (!e?.course) return; // ✅ CRITICAL FIX
 
             expanded.push({

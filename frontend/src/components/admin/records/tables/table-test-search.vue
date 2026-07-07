@@ -27,7 +27,7 @@
         <table class="w-full text-sm text-left">
           <thead class="bg-gray-100 text-gray-700">
             <tr>
-              <th class="px-4 py-3 font-semibold">Class</th>
+              <th class="px-4 py-3 font-semibold w-">Class</th>
 
               <th class="px-4 py-3 font-semibold">Course Code</th>
 
