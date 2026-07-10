@@ -1,9 +1,6 @@
 <template>
   <div class="px-2 mt-2">
     <!-- Headers -->
-    <div class="flex justify-between items-start">
-      <h1 class="font-semibold tracking-wide text-sm px-1">My Loading</h1>
-    </div>
 
     <!-- Main Content  -->
     <div class="mt-3">

@@ -1,15 +1,12 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitExpertise"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-      >
+      <form @submit.prevent="submitExpertise" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg ">
         <!-- Header -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'edit'" />
-           <h1 class="header1">Edit Expertise</h1>
+            <h1 class="header1">Edit Expertise</h1>
           </div>
           <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
@@ -20,10 +17,8 @@
           <!-- Semester Dropdown -->
           <div class="w-full mx-auto space-y-1">
             <label class="font-bold text-sm">Select Semester:</label>
-            <select
-              v-model="selectedSemester"
-              class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none"
-            >
+            <select v-model="selectedSemester"
+              class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none">
               <option v-for="sem in [1, 2, 3]" :key="sem" :value="sem">
                 {{ getSemesterName(sem) }}
               </option>
@@ -35,88 +30,60 @@
             <div v-if="selectedSemester" :key="selectedSemester" class="space-y-5">
               <!-- Expertise -->
               <div class="relative space-y-2">
-                <label class="font-bold"
-                  >Field of Expertise ({{ getSemesterName(selectedSemester) }}):</label
-                >
+                <label class="font-bold">Field of Expertise ({{ getSemesterName(selectedSemester) }}):</label>
 
                 <!-- Searchable input -->
-                <input
-                  v-model="searchQuery"
-                  @focus="dropdownOpen = true"
-                  type="text"
-                  placeholder="Search courses..."
-                  class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none"
-                />
+                <input v-model="searchQuery" @focus="dropdownOpen = true" type="text" placeholder="Search courses..."
+                  class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none" />
 
                 <!-- Dropdown -->
-                <ul
-                  v-if="dropdownOpen && filteredCourses.length"
-                  @mouseleave="dropdownOpen = false"
-                  class="animate-slideUp absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md"
-                >
-                  <li
-                    v-for="course in filteredCourses"
-                    :key="course.course_id"
-                    :class="[
-                      'px-3 py-2 text-sm flex justify-between items-center cursor-pointer transition',
-                      currentSemesterData.expertise.some(
-                        (c) => c.course_id === course.course_id
-                      )
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-800 hover:bg-green-100',
-                    ]"
-                    @click="
+                <ul v-if="dropdownOpen && filteredCourses.length" @mouseleave="dropdownOpen = false"
+                  class="animate-slideUp absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md">
+                  <li v-for="course in filteredCourses" :key="course.course_id" :class="[
+                    'px-3 py-2 text-sm flex justify-between items-center cursor-pointer transition',
+                    currentSemesterData.expertise.some(
+                      (c) => c.course_id === course.course_id
+                    )
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-800 hover:bg-green-100',
+                  ]" @click="
                       !currentSemesterData.expertise.some(
                         (c) => c.course_id === course.course_id
                       ) && addCourse(course)
-                    "
-                  >
+                      ">
                     <span>
                       {{ course.curriculum?.program?.program_code }}
                       ( {{ course.course_level }} ) - {{ course.course_code }} -
                       {{ course.course_title }}
                     </span>
-                    <span
-                      v-if="
-                        currentSemesterData.expertise.some(
-                          (c) => c.course_id === course.course_id
-                        )
-                      "
-                      class="text-xs text-red-500"
-                    >
+                    <span v-if="
+                      currentSemesterData.expertise.some(
+                        (c) => c.course_id === course.course_id
+                      )
+                    " class="text-xs text-red-500">
                       (Already selected)
                     </span>
                   </li>
                 </ul>
 
                 <!-- No results -->
-                <div
-                  v-if="dropdownOpen && !filteredCourses.length && searchQuery"
-                  class="absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 px-3 py-2 text-gray-500 text-sm"
-                >
+                <div v-if="dropdownOpen && !filteredCourses.length && searchQuery"
+                  class="absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 px-3 py-2 text-gray-500 text-sm">
                   No results found
                 </div>
 
                 <!-- Selected list -->
-                <div
-                  v-if="currentSemesterData.expertise.length"
-                  class="mt-3 border border-gray-200 rounded-md divide-y shadow-sm"
-                >
-                  <div
-                    v-for="(item, index) in currentSemesterData.expertise"
-                    :key="index"
-                    class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer"
-                  >
+                <div v-if="currentSemesterData.expertise.length"
+                  class="mt-3 border border-gray-200 rounded-md divide-y shadow-sm">
+                  <div v-for="(item, index) in currentSemesterData.expertise" :key="index"
+                    class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer">
                     <span>
                       {{ item.curriculum?.program?.program_code }}
                       ({{ item.course_level }}) - {{ item.course_code }} -
                       {{ item.course_title }}
                     </span>
-                    <button
-                      type="button"
-                      @click="removeCourse(index)"
-                      class="text-red-500 hover:text-red-700 hover:scale-125 duration-200 leading-none"
-                    >
+                    <button type="button" @click="removeCourse(index)"
+                      class="text-red-500 hover:text-red-700 hover:scale-125 duration-200 leading-none">
                       <icon :name="'delete'" />
                     </button>
                   </div>
@@ -125,82 +92,57 @@
 
               <!-- Non-specialized Subjects -->
               <div class="relative space-y-2">
-                <label class="font-bold"
-                  >Non-specialized Subjects ({{
-                    getSemesterName(selectedSemester)
-                  }}):</label
-                >
+                <label class="font-bold">Non-specialized Subjects ({{
+                  getSemesterName(selectedSemester)
+                }}):</label>
 
                 <!-- Searchable input -->
-                <input
-                  v-model="otherSearchQuery"
-                  @focus="otherDropdownOpen = true"
-                  type="text"
+                <input v-model="otherSearchQuery" @focus="otherDropdownOpen = true" type="text"
                   placeholder="Search other courses..."
-                  class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none"
-                />
+                  class="w-full border px-3 py-2.5 border-gray-600 rounded-md text-sm text-gray-800 focus:ring-2 focus:ring-defaultGreen outline-none" />
 
                 <!-- Dropdown -->
-                <ul
-                  v-if="otherDropdownOpen && filteredOtherCourses.length"
-                  @mouseleave="otherDropdownOpen = false"
-                  class="animate-slideUp absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md"
-                >
-                  <li
-                    v-for="course in filteredOtherCourses"
-                    :key="course.course_id"
-                    :class="[
-                      'px-3 py-2 text-sm flex justify-between items-center transition',
-                      currentSemesterData.other_expertise.some(
-                        (c) => c.course_id === course.course_id
-                      )
-                        ? 'text-gray-400 cursor-not-allowed'
-                        : 'text-gray-800 hover:bg-green-100 cursor-pointer',
-                    ]"
-                    @click="
+                <ul v-if="otherDropdownOpen && filteredOtherCourses.length" @mouseleave="otherDropdownOpen = false"
+                  class="animate-slideUp absolute z-50 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-40 overflow-y-auto shadow-md">
+                  <li v-for="course in filteredOtherCourses" :key="course.course_id" :class="[
+                    'px-3 py-2 text-sm flex justify-between items-center transition',
+                    currentSemesterData.other_expertise.some(
+                      (c) => c.course_id === course.course_id
+                    )
+                      ? 'text-gray-400 cursor-not-allowed'
+                      : 'text-gray-800 hover:bg-green-100 cursor-pointer',
+                  ]" @click="
                       !currentSemesterData.other_expertise.some(
                         (c) => c.course_id === course.course_id
                       ) && addOtherCourse(course)
-                    "
-                  >
+                      ">
                     <span>
                       {{ course.curriculum?.program?.program_code }}
                       ( {{ course.course_level }} ) - {{ course.course_code }} -
                       {{ course.course_title }}
                     </span>
-                    <span
-                      v-if="
-                        currentSemesterData.other_expertise.some(
-                          (c) => c.course_id === course.course_id
-                        )
-                      "
-                      class="text-xs text-red-500"
-                    >
+                    <span v-if="
+                      currentSemesterData.other_expertise.some(
+                        (c) => c.course_id === course.course_id
+                      )
+                    " class="text-xs text-red-500">
                       (Already Selected)
                     </span>
                   </li>
                 </ul>
 
                 <!-- Selected list -->
-                <div
-                  v-if="currentSemesterData.other_expertise.length"
-                  class="mt-3 border border-gray-200 rounded-md divide-y shadow-sm"
-                >
-                  <div
-                    v-for="(item, index) in currentSemesterData.other_expertise"
-                    :key="index"
-                    class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer"
-                  >
+                <div v-if="currentSemesterData.other_expertise.length"
+                  class="mt-3 border border-gray-200 rounded-md divide-y shadow-sm">
+                  <div v-for="(item, index) in currentSemesterData.other_expertise" :key="index"
+                    class="flex justify-between items-center px-3 py-3 bg-green-50 hover:bg-gray-100 transition cursor-pointer">
                     <span>
                       {{ item.curriculum?.program?.program_code }}
                       ({{ item.course_level }}) - {{ item.course_code }} -
                       {{ item.course_title }}
                     </span>
-                    <button
-                      type="button"
-                      @click="removeOtherCourse(index)"
-                      class="text-red-500 hover:text-red-700 hover:scale-125 duration-200 leading-none"
-                    >
+                    <button type="button" @click="removeOtherCourse(index)"
+                      class="text-red-500 hover:text-red-700 hover:scale-125 duration-200 leading-none">
                       <icon :name="'delete'" />
                     </button>
                   </div>
@@ -213,8 +155,7 @@
           <div class="flex justify-end pt-4">
             <button
               class="bg-defaultGreen p-2 px-3 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transition tracking-wider"
-              type="submit"
-            >
+              type="submit">
               Save Changes
             </button>
           </div>
@@ -265,7 +206,7 @@ export default {
         (c) =>
           c.course_semester === this.selectedSemester &&
           c.curriculum?.program?.institute_id ===
-            this.userData?.institute?.institute_id &&
+          this.userData?.institute?.institute_id &&
           c.curriculum?.program_id === this.userData?.program?.program_id &&
           !this.currentSemesterData.other_expertise.some(
             (e) => e.course_id === c.course_id
@@ -284,7 +225,7 @@ export default {
         (c) =>
           c.course_semester === this.selectedSemester &&
           c.curriculum?.program?.institute_id ===
-            this.userData?.institute?.institute_id &&
+          this.userData?.institute?.institute_id &&
           !this.currentSemesterData.expertise.some((e) => e.course_id === c.course_id) &&
           ((c.course_code?.toLowerCase() || "").includes(
             this.otherSearchQuery.toLowerCase()
@@ -365,11 +306,11 @@ export default {
         const courseObj = matched
           ? matched
           : {
-              course_id: courseData.course_id,
-              course_code: courseData.course_code,
-              course_title: courseData.course_title,
-              course_semester: courseData.course_semester || 1,
-            };
+            course_id: courseData.course_id,
+            course_code: courseData.course_code,
+            course_title: courseData.course_title,
+            course_semester: courseData.course_semester || 1,
+          };
 
         const sem = courseObj.course_semester || 1;
         this.form.semesters[sem].expertise.push(courseObj);
@@ -383,11 +324,11 @@ export default {
         const courseObj = matched
           ? matched
           : {
-              course_id: courseData.course_id,
-              course_code: courseData.course_code,
-              course_title: courseData.course_title,
-              course_semester: courseData.course_semester || 1,
-            };
+            course_id: courseData.course_id,
+            course_code: courseData.course_code,
+            course_title: courseData.course_title,
+            course_semester: courseData.course_semester || 1,
+          };
 
         const sem = courseObj.course_semester || 1;
         this.form.semesters[sem].other_expertise.push(courseObj);
@@ -406,6 +347,7 @@ export default {
 .fade-leave-active {
   transition: opacity 0.2s;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

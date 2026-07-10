@@ -157,7 +157,10 @@
                       :key="cls.class_id"
                       class="hover:bg-green-50 transition-all border-t"
                     >
-                      <td v-if="user.role === 'Admin'" class="px-4 py-3 text-left">
+                      <td
+                        v-if="user.role === 'Admin'"
+                        class="px-4 py-3 text-left"
+                      >
                         {{ cls.program?.program_name }}
                       </td>
 
@@ -268,8 +271,12 @@
     </div>
 
     <div v-else class="bg-white border p-8 rounded-xl text-center">
-      <p class="text-gray-600 font-medium">No program found for your account.</p>
-      <p class="text-sm text-gray-400 mt-1">Please contact the administrator.</p>
+      <p class="text-gray-600 font-medium">
+        No program found for your account.
+      </p>
+      <p class="text-sm text-gray-400 mt-1">
+        Please contact the administrator.
+      </p>
     </div>
   </div>
 
@@ -293,9 +300,12 @@
           class="w-8 h-8 md:w-10 md:h-10 text-white flex justify-center items-center"
         />
       </div>
-      <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">Delete Confirmation</h1>
+      <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">
+        Delete Confirmation
+      </h1>
       <p class="mt-2 text-[12px] md:text-[13px] text-center px-8">
-        Are you sure you want to delete this record? This action cannot be undone.
+        Are you sure you want to delete this record? This action cannot be
+        undone.
       </p>
       <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
       <div class="tracking-wide flex gap-2 mt-4">
@@ -358,14 +368,15 @@ export default {
       if (!active?.school_year_id) return [];
 
       let result = this.sections.filter(
-        (cls) => String(cls.school_year_id) === String(active.school_year_id)
+        (cls) => String(cls.school_year_id) === String(active.school_year_id),
       );
 
       if (this.user?.role === "Admin") return result;
 
       if (this.userProgram) {
         return result.filter(
-          (cls) => String(cls.program_id) === String(this.userProgram.program_id)
+          (cls) =>
+            String(cls.program_id) === String(this.userProgram.program_id),
         );
       }
 
@@ -384,7 +395,8 @@ export default {
     },
     activeSemesterYear() {
       return (
-        (this.activeSchoolYear || this.activeYear)?.semester || "Current semester Year"
+        (this.activeSchoolYear || this.activeYear)?.semester ||
+        "Current semester Year"
       );
     },
 
@@ -417,7 +429,7 @@ export default {
     totalPages() {
       return Math.max(
         1,
-        Math.ceil(this.filteredAndSearchedClasses.length / this.itemsPerPage)
+        Math.ceil(this.filteredAndSearchedClasses.length / this.itemsPerPage),
       );
     },
     startIndex() {
@@ -429,13 +441,16 @@ export default {
     endIndex() {
       return Math.min(
         this.startIndex + this.itemsPerPage - 1,
-        this.filteredAndSearchedClasses.length
+        this.filteredAndSearchedClasses.length,
       );
     },
 
     paginatedClasses() {
       const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.filteredAndSearchedClasses.slice(start, start + this.itemsPerPage);
+      return this.filteredAndSearchedClasses.slice(
+        start,
+        start + this.itemsPerPage,
+      );
     },
 
     paginatedNumbers() {
@@ -479,16 +494,19 @@ export default {
     },
 
     async fetchUser() {
-      const { data } = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(
+        process.env.VUE_APP_API_BASE_URL + "/auth/me",
+        {
+          withCredentials: true,
+        },
+      );
       this.user = data;
     },
 
     async loadUserProgram() {
       if (this.user?.role === "Program Chairperson") {
         this.userProgram = this.programs.find(
-          (p) => String(p.program_id) === String(this.user.program_id)
+          (p) => String(p.program_id) === String(this.user.program_id),
         );
       }
     },
@@ -503,8 +521,9 @@ export default {
 
       try {
         await axios.delete(
-          process.env.VUE_APP_API_BASE_URL + `/class/delete-id/${this.deleteTargetId}`,
-          { withCredentials: true }
+          process.env.VUE_APP_API_BASE_URL +
+            `/class/delete-id/${this.deleteTargetId}`,
+          { withCredentials: true },
         );
         await this.fetchClassSections();
         toast.success("Record deleted successfully");

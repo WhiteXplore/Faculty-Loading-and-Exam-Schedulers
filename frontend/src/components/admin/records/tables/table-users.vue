@@ -1,9 +1,10 @@
 <template>
   <div v-if="isTable">
     <!-- Header -->
-    <!-- Header -->
     <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4 font-regular">Pages / User Accounts</div>
+      <div class="text-[13px] text-text mt-4 font-regular">
+        Pages / User Accounts
+      </div>
 
       <div class="flex gap-2">
         <!-- IMPORT DROPDOWN -->
@@ -68,7 +69,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -84,7 +89,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -122,19 +131,29 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
                 <th class="px-4 py-3 text-left font-normal w-[12%]">Name</th>
                 <th class="px-4 py-3 text-left font-normal w-[14%]">Email</th>
-                <th class="px-4 py-3 text-left font-normal w-[12%]">Designation</th>
+                <th class="px-4 py-3 text-left font-normal w-[12%]">
+                  Designation
+                </th>
                 <th class="px-4 py-3 text-left font-normal w-[7%]">Unit</th>
 
-                <th class="px-4 py-3 text-left font-normal w-[10%]">Institute</th>
+                <th class="px-4 py-3 text-left font-normal w-[10%]">
+                  Institute
+                </th>
                 <th class="px-4 py-3 text-left font-normal w-[10%]">Program</th>
-                <th class="px-4 py-3 text-left font-normal w-[10%]">Position</th>
+                <th class="px-4 py-3 text-left font-normal w-[10%]">
+                  Position
+                </th>
                 <th class="px-4 py-3 text-left font-normal w-[8%]">Status</th>
 
-                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
+                <th
+                  class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]"
+                >
                   Actions
                 </th>
               </tr>
@@ -218,7 +237,10 @@
                       class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
                       @click="toggleDelete(user)"
                     >
-                      <icon name="delete" class="rounded-lg bg-red-800 text-white p-1" />
+                      <icon
+                        name="delete"
+                        class="rounded-lg bg-red-800 text-white p-1"
+                      />
                       Delete
                     </button>
                   </div>
@@ -236,7 +258,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -278,7 +301,11 @@
     @close="closeModal"
     @refresh="loadUsers"
   />
-  <importUsers v-if="showImportModal" @close="closeImportModal" @refresh="loadUsers" />
+  <importUsers
+    v-if="showImportModal"
+    @close="closeImportModal"
+    @refresh="loadUsers"
+  />
   <importExpertise
     v-if="showImportExpertiseModal"
     @close="closeImportExpertiseModal"
@@ -301,13 +328,19 @@
 
       <p class="delete-text">
         Are you sure you want to delete
-        <b> {{ recordToDelete?.first_name }} {{ recordToDelete?.last_name }} </b>
+        <b>
+          {{ recordToDelete?.first_name }} {{ recordToDelete?.last_name }}
+        </b>
         ? This action cannot be undone.
       </p>
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -317,24 +350,34 @@
     v-if="showImportSelector"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
   >
-    <div class="bg-white rounded-2xl shadow-xl w-[450px] p-0.5 animate-slideUp">
+    <div class="bg-white rounded-2xl shadow-xl w-[450px] animate-slideUp">
       <!-- Title -->
-      <div
-        class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[14px] flex justify-between items-center border-b shadow"
-      >
-        <div class="flex gap-1 items-center">
-          <icon :name="'add-students'" />
-          <h1 class="header1">Choose Import</h1>
+      <div class="modal-header">
+        <div class="flex items-center gap-3">
+          <!-- Icon -->
+          <div class="glass-container">
+            <icon name="circle-add2" class="text-white" />
+          </div>
+
+          <!-- Title -->
+          <div>
+            <h2 class="text-lg font-semibold text-white">Choose import</h2>
+
+            <p class="text-xs text-green-100">
+              View, add, and update user details
+            </p>
+          </div>
         </div>
+
         <icon
           :name="'circle-close3'"
           @click="showImportSelector = false"
-          class="cursor-pointer"
+          class="close-button-header"
         />
       </div>
 
       <!-- Cards -->
-      <div class="grid grid-cols-2 gap-4 p-2">
+      <div class="grid grid-cols-2 gap-4 p-4">
         <!-- Import Users -->
         <div
           @click="openImportUsers"
@@ -357,9 +400,13 @@
             </svg>
           </div>
 
-          <span class="text-sm font-semibold text-gray-700"> Import Users </span>
+          <span class="text-sm font-semibold text-gray-700">
+            Import Users
+          </span>
 
-          <p class="text-xs text-gray-500 text-center mt-1">Upload user accounts CSV</p>
+          <p class="text-xs text-gray-500 text-center mt-1">
+            Upload user accounts CSV
+          </p>
         </div>
 
         <!-- Import Expertise -->
@@ -384,18 +431,19 @@
             </svg>
           </div>
 
-          <span class="text-sm font-semibold text-gray-700"> Import Expertise </span>
+          <span class="text-sm font-semibold text-gray-700">
+            Import Expertise
+          </span>
 
-          <p class="text-xs text-gray-500 text-center mt-1">Upload expertise data CSV</p>
+          <p class="text-xs text-gray-500 text-center mt-1">
+            Upload expertise data CSV
+          </p>
         </div>
       </div>
 
       <!-- Cancel -->
-      <div class="p-1.5 text-center flex justify-end">
-        <button
-          @click="showImportSelector = false"
-          class="text-sm px-4 py-2 border rounded-lg hover:bg-gray-100"
-        >
+      <div class="p-4 text-center flex justify-end">
+        <button @click="showImportSelector = false" class="btn-cancel">
           Cancel
         </button>
       </div>
@@ -460,7 +508,7 @@ export default {
      ${user.email}
      ${user.is_active ? "Active" : "Inactive"}`
           .toLowerCase()
-          .includes(query)
+          .includes(query),
       );
     },
     totalPages() {
@@ -573,7 +621,9 @@ export default {
       this.isDeleting = true;
 
       try {
-        await axios.delete(process.env.VUE_APP_API_BASE_URL + `/auth/remove/${userId}`);
+        await axios.delete(
+          process.env.VUE_APP_API_BASE_URL + `/auth/remove/${userId}`,
+        );
         this.recordToDelete = null;
         this.showDeleteModal = false;
 

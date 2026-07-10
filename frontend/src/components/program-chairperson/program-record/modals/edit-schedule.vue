@@ -6,21 +6,31 @@
     <div class="flex justify-center gap-2 w-full">
       <!-- MAIN MODAL WRAPPER -->
       <div
-        class="bg-white w-[60vw] h-[98vh] rounded-xl shadow-xl flex flex-col overflow-hidden p-1"
+        class="bg-white w-[60vw] h-[98vh] rounded-xl shadow-xl flex flex-col overflow-hidden"
       >
         <!-- HEADER -->
-        <div
-          class="flex items-center justify-between bg-defaultGreen text-white px-6 py-3 rounded-t-lg"
-        >
-          <div class="per-page-container">
-            <icon name="edit" />
-            <h1 class="header1">Edit Schedules</h1>
+
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">Edit Schedules</h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update faculty schedule details
+              </p>
+            </div>
           </div>
 
           <icon
-            name="circle-close3"
+            :name="'circle-close3'"
             @click="$emit('close')"
-            class="cursor-pointer text-white w-6 h-6"
+            class="close-button-header"
           />
         </div>
 
@@ -49,7 +59,7 @@
                     <div v-if="facultyTotalUnits[instructor]">
                       <p class="font-normal text-xs">
                         Total Units:
-                        {{ facultyTotalUnits[instructor].totalUnits }}
+                        {{ facultyTotalUnits[instructor]?.totalUnits || 0 }}
                       </p>
                     </div>
                   </div>
@@ -57,7 +67,9 @@
                     <div
                       class="flex items-center gap-4 py-2 px-3 ml-2 rounded-full border w-max bg-gray-50 text-xs"
                     >
-                      <span class="font-medium text-gray-700">Join Scheduled:</span>
+                      <span class="font-medium text-gray-700"
+                        >Join Scheduled:</span
+                      >
 
                       <div class="per-page-container">
                         <span
@@ -76,27 +88,35 @@
                         >
                           <span
                             class="bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300"
-                            :class="isJoined ? 'translate-x-6' : 'translate-x-0'"
+                            :class="
+                              isJoined ? 'translate-x-6' : 'translate-x-0'
+                            "
                           ></span>
                         </button>
                       </div>
                     </div>
-                    <button @click="openUnscheduledPanel(instructor)" class="btn-save">
+                    <button
+                      @click="openUnscheduledPanel(instructor)"
+                      class="btn-save"
+                    >
                       Unscheduled
                     </button>
 
-                    <button @click="openAddSchedulePanel(instructor)" class="btn-save">
+                    <button
+                      @click="openAddSchedulePanel(instructor)"
+                      class="btn-save"
+                    >
                       Add
                     </button>
                   </div>
                 </div>
 
                 <!-- TABLE -->
-                <div class="overflow-x-auto">
+                <div class="">
                   <table
                     class="w-full table-auto border-separate border-spacing-0 text-[11px]"
                   >
-                    <thead class="bg-gray-200 sticky top-0 z-10">
+                    <thead class="bg-gray-200 sticky top-0 z-50">
                       <tr>
                         <th class="px-3 py-3 border text-center w-24">Time</th>
                         <th
@@ -132,14 +152,20 @@
                           :class="{
                             'bg-red-100':
                               draggedRecord &&
-                              dragConflictMap[`${instructor}-${day}-${slot.start}`],
+                              dragConflictMap[
+                                `${instructor}-${day}-${slot.start}`
+                              ],
                           }"
                           :style="{ height: timeSlotHeight + 'px' }"
                           @dragover.prevent
                           @drop="onDrop($event, instructor, day, slot.start)"
                         >
                           <template
-                            v-for="item in getScheduleForCell(slot, day, instructor)"
+                            v-for="item in getScheduleForCell(
+                              slot,
+                              day,
+                              instructor,
+                            )"
                             :key="item.id || item.tempId"
                           >
                             <div
@@ -148,7 +174,9 @@
                                 canEditSchedule(item) &&
                                 !(isJoined && Number(item.class_size) >= 30)
                               "
-                              @mouseenter.passive="showScheduleTooltip($event, item)"
+                              @mouseenter.passive="
+                                showScheduleTooltip($event, item)
+                              "
                               @mouseleave="hideScheduleTooltip"
                               @dragstart="onDragStart($event, item)"
                               @dragend="onDragEnd"
@@ -172,7 +200,9 @@
                                   : '',
 
                                 // joined schedule
-                                item.is_joined ? 'bg-blue-100 border-blue-400' : '',
+                                item.is_joined
+                                  ? 'bg-blue-100 border-blue-400'
+                                  : '',
 
                                 // joined disabled
                                 isJoined && Number(item.class_size) >= 30
@@ -183,7 +213,9 @@
                                 canEditSchedule(item)
                                   ? 'cursor-pointer hover:bg-yellow-100'
                                   : '',
-                                draggedRecord?.id === item.id ? 'schedule-dragging' : '',
+                                draggedRecord?.id === item.id
+                                  ? 'schedule-dragging'
+                                  : '',
                               ]"
                               :style="{
                                 top: getBlockTop(item, slot.start) + 'px',
@@ -197,11 +229,15 @@
                                 v-if="item.mode"
                                 :class="[
                                   'absolute top-2 right-2 w-auto h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center text-white',
-                                  item.mode === 'face to face' ? 'bg-orange-500' : '',
+                                  item.mode === 'face to face'
+                                    ? 'bg-orange-500'
+                                    : '',
                                   item.mode === 'online' ? 'bg-purple-500' : '',
                                 ]"
                               >
-                                {{ item.mode === "face to face" ? "F2F" : "OL" }}
+                                {{
+                                  item.mode === "face to face" ? "F2F" : "OL"
+                                }}
                               </span>
                               <span
                                 v-if="item.is_joined"
@@ -246,35 +282,35 @@
         </div>
 
         <!-- FOOTER -->
-        <div class="flex justify-end gap-2 p-4 bg-white border-t shadow-md text-xs">
+        <div
+          class="flex justify-end gap-2 p-4 bg-white border-t shadow-md text-xs"
+        >
           <button @click="$emit('close')" class="btn-cancel">Cancel</button>
 
-          <button @click="saveEdit" class="btn-save" :disabled="saving || !isValid">
+          <button
+            @click="saveEdit"
+            class="btn-save"
+            :disabled="saving || !isValid"
+          >
             {{ saving ? "Saving..." : "Save" }}
           </button>
         </div>
       </div>
       <!-- RIGHT: SLIDING ADD PANEL -->
-      <div class="flex flex-col gap-2">
+      <div
+        v-if="showAddPanel || showUnscheduledPanel"
+        class="w-[45vw] h-[98vh] flex flex-col gap-2"
+      >
         <div
-          v-if="panelMode === 'add'"
-          class="w-[45vw] max-h-[50vh] bg-white border shadow-xl transition-all duration-300 flex justify-start rounded-xl"
+          v-if="showAddPanel"
+          :class="[
+            'w-[45vw] bg-white border shadow-xl transition-all duration-300 flex justify-start rounded-xl',
+            showUnscheduledPanel ? 'h-[50vh]' : 'h-full',
+          ]"
         >
-          <div class="p-1 flex flex-col">
-            <!-- Header -->
-            <div
-              class="flex items-center justify-between px-4 py-3 bg-defaultGreen text-white rounded-t-lg"
-            >
-              <h3 class="header1">Add Schedule</h3>
-              <icon
-                name="circle-close3"
-                @click="closeAddSchedulePanel"
-                class="cursor-pointer text-white w-6 h-6"
-              />
-            </div>
-
+          <div class="p-0.5 flex flex-col">
             <!-- Table Wrapper for Scroll -->
-            <div class="overflow-y-auto max-h-[50vh] border-t">
+            <div class="overflow-y-auto h-full border-t rounded-t-xl">
               <table class="min-w-full divide-y divide-gray-200 text-xs">
                 <!-- Table Head -->
                 <thead class="bg-gray-100 sticky top-0 z-20">
@@ -321,7 +357,8 @@
                       />
                       <div
                         v-if="
-                          record.showSectionDropdown && filteredSections(record).length
+                          record.showSectionDropdown &&
+                          filteredSections(record).length
                         "
                         class="absolute z-10 w-[8vw] bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                         @mouseleave="record.showSectionDropdown = false"
@@ -332,7 +369,8 @@
                           class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
                           @mousedown.prevent="selectSection(record, section)"
                         >
-                          {{ section?.program?.program_code }} - {{ section.set_name }}
+                          {{ section?.program?.program_code }} -
+                          {{ section.set_name }}
                         </div>
                       </div>
                     </td>
@@ -350,7 +388,10 @@
                       />
                       <div
                         @mouseleave="record.showCourseDropdown = false"
-                        v-if="record.showCourseDropdown && filteredCourses(record).length"
+                        v-if="
+                          record.showCourseDropdown &&
+                          filteredCourses(record).length
+                        "
                         class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
                         <div
@@ -397,7 +438,10 @@
                       />
                       <div
                         @mouseleave="record.showRoomDropdown = false"
-                        v-if="record.showRoomDropdown && filteredRooms(record).length"
+                        v-if="
+                          record.showRoomDropdown &&
+                          filteredRooms(record).length
+                        "
                         class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
                       >
                         <div
@@ -482,11 +526,15 @@
             </div>
           </div>
         </div>
-        <unscheduled
-          v-if="panelMode === 'unscheduled'"
-          :close-add-schedule-panel="closeAddSchedulePanel"
-          @open-edit-schedule="addUnscheduledToCalendar"
-        />
+        <div
+          v-if="showUnscheduledPanel"
+          class="w-[45vw] h-[50vh] overflow-hidden"
+        >
+          <unscheduled
+            :close-add-schedule-panel="closeAddSchedulePanel"
+            @open-edit-schedule="addUnscheduledToCalendar"
+          />
+        </div>
       </div>
     </div>
     <div
@@ -498,7 +546,7 @@
         class="w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.12)]"
       >
         <!-- Header -->
-        <div
+        <!-- <div
           class="flex items-center justify-between border-b border-slate-200 px-5 py-4"
         >
           <div class="flex items-center gap-3">
@@ -509,8 +557,10 @@
             </div>
 
             <div>
-              <h3 class="text-[16px] font-semibold tracking-tight text-slate-900">
-                Schedule Conflict
+              <h3
+                class="text-[16px] font-semibold tracking-tight text-slate-900"
+              >
+                Schedule Conflicts
               </h3>
 
               <p class="mt-0.5 text-[12px] font-medium text-slate-500">
@@ -525,12 +575,39 @@
           >
             ✕
           </button>
+        </div> -->
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="exclamation-circle" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                Schedule Conflicts
+              </h2>
+
+              <p class="text-xs text-green-100">
+                Existing schedules overlap with the selected time slot.
+              </p>
+            </div>
+          </div>
+
+          <icon
+            :name="'circle-close3'"
+            @click="closeConflictModal"
+            class="close-button-header"
+          />
         </div>
 
         <!-- Body -->
         <div class="grid grid-cols-1 gap-5 bg-slate-50/40 p-5 xl:grid-cols-2">
           <!-- Selected Schedule -->
-          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div
+            class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
             <div class="mb-5 flex items-center justify-between">
               <div
                 class="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-700"
@@ -548,13 +625,19 @@
                     selectedSchedule.mode === 'online',
                 }"
               >
-                {{ selectedSchedule.mode === "face to face" ? "Face to Face" : "Online" }}
+                {{
+                  selectedSchedule.mode === "face to face"
+                    ? "Face to Face"
+                    : "Online"
+                }}
               </div>
             </div>
 
             <!-- Course -->
             <div class="mb-5">
-              <h2 class="text-[20px] font-semibold tracking-tight text-slate-900">
+              <h2
+                class="text-[20px] font-semibold tracking-tight text-slate-900"
+              >
                 {{ selectedSchedule.course_code || "No Course" }}
               </h2>
 
@@ -566,7 +649,9 @@
 
             <!-- Details -->
             <div class="grid grid-cols-2 gap-3">
-              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+              <div
+                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
+              >
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -578,7 +663,9 @@
                 </p>
               </div>
 
-              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+              <div
+                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
+              >
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -590,7 +677,9 @@
                 </p>
               </div>
 
-              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+              <div
+                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
+              >
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -602,7 +691,9 @@
                 </p>
               </div>
 
-              <div class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
+              <div
+                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
+              >
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -633,7 +724,9 @@
           </div>
 
           <!-- Conflict Records -->
-          <div class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div
+            class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
             <div class="mb-5 flex items-center justify-between">
               <div
                 class="rounded-full border border-red-100 bg-red-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700"
@@ -652,15 +745,19 @@
                 :key="conflict.id"
                 class="rounded-xl border bg-white p-4 transition-all duration-200 hover:shadow-sm"
                 :class="{
-                  'border-red-200': conflict.reason !== 'Part of the joined schedule',
+                  'border-red-200':
+                    conflict.reason !== 'Part of the joined schedule',
 
-                  'border-amber-200': conflict.reason === 'Part of the joined schedule',
+                  'border-amber-200':
+                    conflict.reason === 'Part of the joined schedule',
                 }"
               >
                 <!-- Top -->
                 <div class="mb-4 flex items-start justify-between gap-3">
                   <div>
-                    <h4 class="text-[15px] font-semibold tracking-tight text-slate-900">
+                    <h4
+                      class="text-[15px] font-semibold tracking-tight text-slate-900"
+                    >
                       {{ conflict.course_code || "-" }}
                     </h4>
 
@@ -680,14 +777,20 @@
                         conflict.mode === 'online',
                     }"
                   >
-                    {{ conflict.mode === "face to face" ? "Face to Face" : "Online" }}
+                    {{
+                      conflict.mode === "face to face"
+                        ? "Face to Face"
+                        : "Online"
+                    }}
                   </div>
                 </div>
 
                 <!-- Details -->
                 <div class="grid grid-cols-2 gap-3">
                   <div>
-                    <p class="text-[10px] uppercase tracking-wide text-slate-400">
+                    <p
+                      class="text-[10px] uppercase tracking-wide text-slate-400"
+                    >
                       Faculty
                     </p>
 
@@ -697,7 +800,11 @@
                   </div>
 
                   <div>
-                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Room</p>
+                    <p
+                      class="text-[10px] uppercase tracking-wide text-slate-400"
+                    >
+                      Room
+                    </p>
 
                     <p class="mt-1 text-[13px] font-medium text-slate-800">
                       {{ conflict.room_name || "-" }}
@@ -705,7 +812,11 @@
                   </div>
 
                   <div>
-                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Day</p>
+                    <p
+                      class="text-[10px] uppercase tracking-wide text-slate-400"
+                    >
+                      Day
+                    </p>
 
                     <p class="mt-1 text-[13px] font-medium text-slate-800">
                       {{ conflict.day || "-" }}
@@ -713,7 +824,11 @@
                   </div>
 
                   <div>
-                    <p class="text-[10px] uppercase tracking-wide text-slate-400">Time</p>
+                    <p
+                      class="text-[10px] uppercase tracking-wide text-slate-400"
+                    >
+                      Time
+                    </p>
 
                     <p class="mt-1 text-[13px] font-semibold text-slate-900">
                       {{ formatTime(conflict.start_hour) }}
@@ -787,7 +902,9 @@
         <!-- TODO  Buttons -->
         <div class="flex justify-center gap-2 text-xs">
           <button @click="cancelDelete" class="btn-cancel">Cancel</button>
-          <button @click="confirmDelete" class="btn-cancel-confirm">Yes, Delete</button>
+          <button @click="confirmDelete" class="btn-cancel-confirm">
+            Yes, Delete
+          </button>
         </div>
       </div>
     </div>
@@ -799,7 +916,7 @@
     :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
   >
     <div
-      class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.18)]"
+      class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white"
     >
       <!-- Header -->
       <div
@@ -807,11 +924,15 @@
       >
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+            <p
+              class="text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+            >
               Schedule Details
             </p>
 
-            <h3 class="mt-0.5 text-sm font-bold text-defaultGreen leading-tight">
+            <h3
+              class="mt-0.5 text-sm font-bold text-defaultGreen leading-tight"
+            >
               {{ tooltipItem.course_code }}
             </h3>
           </div>
@@ -820,10 +941,14 @@
             v-if="tooltipItem.mode"
             class="shrink-0 inline-flex items-center rounded-full px-2.5 py-1 text-[9px] font-semibold text-white shadow-sm"
             :class="
-              tooltipItem.mode === 'face to face' ? 'bg-orange-500' : 'bg-purple-500'
+              tooltipItem.mode === 'face to face'
+                ? 'bg-orange-500'
+                : 'bg-purple-500'
             "
           >
-            {{ tooltipItem.mode === "face to face" ? "Face to Face" : "Online" }}
+            {{
+              tooltipItem.mode === "face to face" ? "Face to Face" : "Online"
+            }}
           </span>
         </div>
       </div>
@@ -845,15 +970,19 @@
 
           <!-- Year and Section -->
           <div>
-            <p class="text-[9px] font-semibold uppercase tracking-wide text-gray-400">
+            <p
+              class="text-[9px] font-semibold uppercase tracking-wide text-gray-400"
+            >
               Year & Section
             </p>
 
             <div class="mt-1 space-y-1">
-              <template v-if="tooltipItem.is_joined && tooltipItem.join_group_id">
+              <template
+                v-if="tooltipItem.is_joined && tooltipItem.join_group_id"
+              >
                 <div
                   v-for="s in finalSchedules.filter(
-                    (s) => s.join_group_id === tooltipItem.join_group_id
+                    (s) => s.join_group_id === tooltipItem.join_group_id,
                   )"
                   :key="s.class_id"
                   class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
@@ -862,12 +991,16 @@
                     {{ s.display_program_code }} -
                     {{ s.set_name }}
                   </p>
-                  <p class="text-[10px] text-gray-500">Class Size: {{ s.class_size }}</p>
+                  <p class="text-[10px] text-gray-500">
+                    Class Size: {{ s.class_size }}
+                  </p>
                 </div>
               </template>
 
               <template v-else>
-                <div class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5">
+                <div
+                  class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
+                >
                   <!-- <p class="font-semibold text-gray-800">
                               {{ tooltipItem.display_institute_name }}
                             </p>
@@ -878,7 +1011,9 @@
                             </p> -->
 
                   <p class="font-semibold text-gray-800">
-                    {{ tooltipItem.display_program_code }}-{{ tooltipItem.set_name }}
+                    {{ tooltipItem.display_program_code }}-{{
+                      tooltipItem.set_name
+                    }}
                   </p>
                   <p class="text-[10px] text-gray-500">
                     Class Size: {{ tooltipItem.class_size }}
@@ -891,36 +1026,50 @@
           <!-- Details Grid -->
           <div class="grid grid-cols-2 gap-2">
             <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-              <p class="text-[9px] font-semibold uppercase text-gray-400">Room</p>
+              <p class="text-[9px] font-semibold uppercase text-gray-400">
+                Room
+              </p>
               <p class="mt-0.5 font-semibold text-gray-800">
                 {{ tooltipItem.room_name || "TBA" }}
               </p>
             </div>
 
             <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-              <p class="text-[9px] font-semibold uppercase text-gray-400">Day</p>
+              <p class="text-[9px] font-semibold uppercase text-gray-400">
+                Day
+              </p>
               <p class="mt-0.5 font-semibold text-gray-800">
                 {{ tooltipItem.day || "-" }}
               </p>
             </div>
 
             <div class="rounded-lg bg-gray-50 px-2.5 py-2 col-span-2">
-              <p class="text-[9px] font-semibold uppercase text-gray-400">Time</p>
+              <p class="text-[9px] font-semibold uppercase text-gray-400">
+                Time
+              </p>
               <p class="mt-0.5 font-semibold text-gray-800">
                 {{ formatTime(tooltipItem.start_hour) }} –
-                {{ formatTime(tooltipItem.start_hour + Number(tooltipItem.duration)) }}
+                {{
+                  formatTime(
+                    tooltipItem.start_hour + Number(tooltipItem.duration),
+                  )
+                }}
               </p>
             </div>
 
             <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-              <p class="text-[9px] font-semibold uppercase text-gray-400">Type</p>
+              <p class="text-[9px] font-semibold uppercase text-gray-400">
+                Type
+              </p>
               <p class="mt-0.5 font-semibold text-gray-800">
                 {{ tooltipItem.type || "-" }}
               </p>
             </div>
 
             <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-              <p class="text-[9px] font-semibold uppercase text-gray-400">Campus</p>
+              <p class="text-[9px] font-semibold uppercase text-gray-400">
+                Campus
+              </p>
               <p class="mt-0.5 font-semibold text-gray-800 truncate">
                 {{ getCollegeBranchName(tooltipItem.college_branch_id) }}
               </p>
@@ -998,7 +1147,8 @@ export default {
 
       showAddSchedulePanel: false,
       selectedInstructorName: "",
-
+      showAddPanel: false,
+      showUnscheduledPanel: false,
       deletedIds: new Set(),
       highlightedRecordId: null,
       isJoined: false,
@@ -1025,6 +1175,7 @@ export default {
   },
   computed: {
     ...mapState(useFetchDataStore, ["rooms", "curriculum_courses"]),
+
     conflictMap() {
       const map = {};
 
@@ -1126,42 +1277,45 @@ export default {
       const result = {};
 
       Object.entries(this.groupedSchedule).forEach(([faculty, schedules]) => {
-        let totalLecture = 0;
-        let totalLab = 0;
+        let totalUnits = 0;
+
+        // Prevent duplicate counting
+        const counted = new Set();
 
         schedules.forEach((sched) => {
+          const key = `${sched.set_name}-${sched.course_code}`;
+
+          if (counted.has(key)) return;
+
+          counted.add(key);
+
           const course = this.coursesList.find(
-            (c) => c.course_code === sched.course_code
+            (c) => c.course_code === sched.course_code,
           );
-          if (course) {
-            if (sched.type === "Lecture") {
-              totalLecture += Number(course.course_lec || 0);
-            } else if (sched.type === "Laboratory") {
-              totalLab += Number(course.course_lab || 0);
-            }
-          }
+
+          if (!course) return;
+
+          totalUnits +=
+            Number(course.course_lec || 0) + Number(course.course_lab || 0);
         });
 
-        const totalUnits = totalLecture + totalLab;
-
         result[faculty] = {
-          lectureUnits: totalLecture,
-          labUnits: totalLab,
-          totalUnits,
+          totalUnits: Number(totalUnits.toFixed(2)),
         };
       });
 
       return result;
     },
+
     unscheduledCourses() {
       const scheduledCourseIds = new Set(
-        this.localData.map((r) => r.course_id).filter(Boolean)
+        this.localData.map((r) => r.course_id).filter(Boolean),
       );
 
       const fetchDataStore = useFetchDataStore();
 
       let courses = fetchDataStore.courses.filter(
-        (c) => !scheduledCourseIds.has(c.course_id)
+        (c) => !scheduledCourseIds.has(c.course_id),
       );
 
       // Only show courses matching user's institute & program if Program Chairperson
@@ -1169,7 +1323,7 @@ export default {
         courses = courses.filter(
           (c) =>
             c.institute_id === this.user.institute_id &&
-            c.program_id === this.user.program_id
+            c.program_id === this.user.program_id,
         );
       }
 
@@ -1234,7 +1388,10 @@ export default {
             searchSectionQuery: rec.set_name || "",
             showSectionDropdown: false,
             program_id:
-              rec.class_program_id || rec.program_id || this.user.program_id || null,
+              rec.class_program_id ||
+              rec.program_id ||
+              this.user.program_id ||
+              null,
 
             institute_id:
               rec.class_institute_id ||
@@ -1272,12 +1429,12 @@ export default {
       return [
         ...this.fullSchedules,
         ...this.localData.filter(
-          (r) => !this.fullSchedules.some((f) => Number(f.id) === Number(r.id))
+          (r) => !this.fullSchedules.some((f) => Number(f.id) === Number(r.id)),
         ),
       ].filter(
         (s) =>
           String(s.school_year).trim() === String(record.school_year).trim() &&
-          Number(s.semester) === Number(record.semester)
+          Number(s.semester) === Number(record.semester),
       );
     },
     async fetchCollegeBranch() {
@@ -1288,14 +1445,15 @@ export default {
     },
     getCollegeBranchName(branchId) {
       const branch = this.collegeBranches.find(
-        (b) => Number(b.college_branch_id) === Number(branchId)
+        (b) => Number(b.college_branch_id) === Number(branchId),
       );
 
       return branch ? branch.college_branch_name : `Branch ${branchId}`;
     },
     onCampusChange(record) {
       const selectedCampus = this.availableCampuses().find(
-        (campus) => Number(campus.college_branch_id) === Number(record.college_branch_id)
+        (campus) =>
+          Number(campus.college_branch_id) === Number(record.college_branch_id),
       );
 
       record.college_branch_name = selectedCampus?.college_branch_name || "";
@@ -1378,7 +1536,9 @@ export default {
       const groupId = record.join_group_id;
 
       // Find all schedules in this join group
-      const groupRecords = this.localData.filter((r) => r.join_group_id === groupId);
+      const groupRecords = this.localData.filter(
+        (r) => r.join_group_id === groupId,
+      );
 
       // Reset join info for the entire group
       groupRecords.forEach((r) => {
@@ -1402,9 +1562,9 @@ export default {
                 is_joined: false,
                 join_group_id: null,
                 joined_with: [],
-              }
-            )
-          )
+              },
+            ),
+          ),
         );
         toast.success("All schedules in the join group have been unjoined!");
       } catch (err) {
@@ -1414,7 +1574,9 @@ export default {
         groupRecords.forEach((r) => {
           r.is_joined = true;
           r.join_group_id = groupId;
-          r.joined_with = groupRecords.filter((x) => x.id !== r.id).map((x) => x.id);
+          r.joined_with = groupRecords
+            .filter((x) => x.id !== r.id)
+            .map((x) => x.id);
         });
       } finally {
         this.unjoinModalVisible = false;
@@ -1448,7 +1610,9 @@ export default {
       let joinedItems = [];
 
       if (item.is_joined && item.join_group_id) {
-        joinedItems = schedules.filter((s) => s.join_group_id === item.join_group_id);
+        joinedItems = schedules.filter(
+          (s) => s.join_group_id === item.join_group_id,
+        );
       }
 
       this.tooltipItem = {
@@ -1461,7 +1625,10 @@ export default {
       const tooltipWidth = 260;
       const tooltipHeight = 200;
 
-      this.tooltipX = Math.min(rect.right + 12, window.innerWidth - tooltipWidth);
+      this.tooltipX = Math.min(
+        rect.right + 12,
+        window.innerWidth - tooltipWidth,
+      );
 
       this.tooltipY = Math.min(rect.top, window.innerHeight - tooltipHeight);
     },
@@ -1536,7 +1703,7 @@ export default {
 
       // Filter only valid join targets
       const validTargets = this.pendingJoinTargets.filter((target) =>
-        this.canJoin(baseRecord, target)
+        this.canJoin(baseRecord, target),
       );
 
       if (!validTargets.length) {
@@ -1594,18 +1761,20 @@ export default {
             join_group_id: s.join_group_id,
             is_joined: s.is_joined,
             joined_with: s.joined_with,
-          }))
+          })),
         )
         .catch((err) => console.error("Failed to save joined schedules:", err));
 
       toast.success(
         `Classes joined! Total students: ${allToJoin.reduce(
           (a, s) => a + Number(s.class_size || 0),
-          0
-        )}`
+          0,
+        )}`,
       );
     }, // called whenever mode changes
-    /* ------------------ 1. UTILITY ------------------ */ sanitizePayload(record) {
+    /* ------------------ 1. UTILITY ------------------ */ sanitizePayload(
+      record,
+    ) {
       const allowed = [
         "class_id",
         "course_id",
@@ -1642,7 +1811,10 @@ export default {
       });
 
       // ✅ ALWAYS regenerate time_slot
-      payload.time_slot = this.generateTimeSlot(record.start_hour, record.duration);
+      payload.time_slot = this.generateTimeSlot(
+        record.start_hour,
+        record.duration,
+      );
 
       return payload;
     },
@@ -1716,29 +1888,36 @@ export default {
 
         // Load ALL final schedules
         // Conflict filtering will be handled later in getSchedulesForConflictCheck()
-        this.fullSchedules = (fetchDataStore.final_schedules || []).map((rec) => {
-          const cloned = structuredClone(rec);
+        this.fullSchedules = (fetchDataStore.final_schedules || []).map(
+          (rec) => {
+            const cloned = structuredClone(rec);
 
-          if (!cloned.id && !cloned.tempId) {
-            cloned.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-          }
+            if (!cloned.id && !cloned.tempId) {
+              cloned.tempId = `temp-${Date.now()}-${Math.floor(
+                Math.random() * 1000,
+              )}`;
+            }
 
-          return {
-            ...cloned,
+            return {
+              ...cloned,
 
-            // UI fields
-            searchRoomQuery: cloned.room_name || "",
-            showRoomDropdown: false,
+              // UI fields
+              searchRoomQuery: cloned.room_name || "",
+              showRoomDropdown: false,
 
-            searchCourseQuery: cloned.course_code || "",
-            showCourseDropdown: false,
+              searchCourseQuery: cloned.course_code || "",
+              showCourseDropdown: false,
 
-            searchSectionQuery: cloned.set_name || "",
-            showSectionDropdown: false,
-          };
-        });
+              searchSectionQuery: cloned.set_name || "",
+              showSectionDropdown: false,
+            };
+          },
+        );
 
-        console.log("[Edit Schedule] Loaded Final Schedules:", this.fullSchedules.length);
+        console.log(
+          "[Edit Schedule] Loaded Final Schedules:",
+          this.fullSchedules.length,
+        );
       } catch (error) {
         console.error("Failed to load full schedules:", error);
         this.fullSchedules = [];
@@ -1747,9 +1926,12 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || {};
         await this.fetchCoursesForUser();
       } catch {
@@ -1768,8 +1950,10 @@ export default {
         this.user.role === "Department Chairperson"
       ) {
         const params = new URLSearchParams();
-        if (this.user.institute_id) params.append("institute_id", this.user.institute_id);
-        if (this.user.program_id) params.append("program_id", this.user.program_id);
+        if (this.user.institute_id)
+          params.append("institute_id", this.user.institute_id);
+        if (this.user.program_id)
+          params.append("program_id", this.user.program_id);
         url += `?${params.toString()}`;
       }
 
@@ -1785,7 +1969,9 @@ export default {
         const cloned = structuredClone(rec);
 
         if (!cloned.id && !cloned.tempId) {
-          cloned.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+          cloned.tempId = `temp-${Date.now()}-${Math.floor(
+            Math.random() * 1000,
+          )}`;
         }
 
         return {
@@ -1805,15 +1991,22 @@ export default {
     },
     openAddSchedulePanel(instructor) {
       this.selectedInstructorName = instructor;
-      this.panelMode = "add";
+
+      this.showAddPanel = true;
+      this.showUnscheduledPanel = false;
     },
+
     openUnscheduledPanel(instructor) {
       this.selectedInstructorName = instructor;
-      this.panelMode = "unscheduled";
+
+      // Show BOTH panels
+      this.showAddPanel = true;
+      this.showUnscheduledPanel = true;
     },
 
     closeAddSchedulePanel() {
-      this.panelMode = null;
+      this.showAddPanel = false;
+      this.showUnscheduledPanel = false;
     },
 
     /* ------------------ 3. FILTERING ------------------ */
@@ -1826,7 +2019,7 @@ export default {
       if (selectedCampusId) {
         rooms = rooms.filter((room) => {
           const roomCampusId = Number(
-            room.building?.buildingArea?.collegeBranch?.college_branch_id
+            room.building?.buildingArea?.collegeBranch?.college_branch_id,
           );
 
           return roomCampusId === selectedCampusId;
@@ -1836,7 +2029,9 @@ export default {
       const query = record.searchRoomQuery?.trim().toLowerCase();
 
       if (query) {
-        rooms = rooms.filter((room) => room.room_name?.toLowerCase().includes(query));
+        rooms = rooms.filter((room) =>
+          room.room_name?.toLowerCase().includes(query),
+        );
       }
 
       return rooms;
@@ -1856,7 +2051,7 @@ export default {
               Number(s.program?.institute?.institute_id) ===
                 Number(this.user.institute_id) &&
               Number(s.program_id) === Number(this.user.program_id)
-            )
+            ),
         );
       }
 
@@ -1867,7 +2062,7 @@ export default {
           (s) =>
             Number(s.program?.institute?.institute_id) ===
               Number(this.user.institute_id) &&
-            Number(s.program_id) === Number(this.user.program_id)
+            Number(s.program_id) === Number(this.user.program_id),
         );
       }
 
@@ -1899,7 +2094,7 @@ export default {
         filtered = filtered.filter(
           (cc) =>
             cc.curriculum?.institute_id === this.user.institute_id &&
-            cc.curriculum?.program_id === this.user.program_id
+            cc.curriculum?.program_id === this.user.program_id,
         );
       }
 
@@ -1950,7 +2145,9 @@ export default {
 
       // ✅ CAMPUS INFO
       record.college_branch_id =
-        section.college_branch_id || section.classInfo?.college_branch_id || null;
+        section.college_branch_id ||
+        section.classInfo?.college_branch_id ||
+        null;
 
       record.college_branch_name =
         section.classInfo?.collegeBranch?.college_branch_name || "";
@@ -1990,6 +2187,10 @@ export default {
     /* ------------------ 5. ROW MANAGEMENT ------------- */
 
     addNewRow() {
+      this.closeAddSchedulePanel(); // closes both panels
+
+      // Reopen only Add panel
+      this.showAddPanel = true;
       console.log("activeSchoolYear", this.activeSchoolYear);
       const first = this.instructorData[0];
 
@@ -2005,7 +2206,7 @@ export default {
       outerLoop: for (const day of this.days) {
         for (let hour = 7; hour <= 20; hour++) {
           const occupied = this.localData.some(
-            (r) => r.day === day && Number(r.start_hour) === Number(hour)
+            (r) => r.day === day && Number(r.start_hour) === Number(hour),
           );
 
           if (!occupied) {
@@ -2038,7 +2239,9 @@ export default {
         start_hour: selectedHour,
         duration: 3,
 
-        time_slot: `${formatTime(selectedHour)} - ${formatTime(selectedHour + 3)}`,
+        time_slot: `${formatTime(selectedHour)} - ${formatTime(
+          selectedHour + 3,
+        )}`,
 
         room_id: null,
         room_name: "",
@@ -2075,7 +2278,10 @@ export default {
     cancelNewRow() {
       // Remove the last temp row only
       for (let i = this.localData.length - 1; i >= 0; i--) {
-        if (this.localData[i].tempId && this.localData[i].tempId.startsWith("temp-")) {
+        if (
+          this.localData[i].tempId &&
+          this.localData[i].tempId.startsWith("temp-")
+        ) {
           this.localData.splice(i, 1);
           break;
         }
@@ -2098,12 +2304,12 @@ export default {
 
         // 🔥 CALL API DELETE ENDPOINT
         await axios.delete(
-          `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${this.deleteTarget.id}`
+          `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${this.deleteTarget.id}`,
         );
 
         // After removing locally
         this.localData = this.localData.filter(
-          (item) => item.id !== this.deleteTarget.id
+          (item) => item.id !== this.deleteTarget.id,
         );
 
         this.$emit("deleted", this.deleteTarget.id);
@@ -2134,74 +2340,79 @@ export default {
       return this.fullSchedules.filter(
         (s) =>
           String(s.school_year).trim() === String(record.school_year).trim() &&
-          Number(s.semester) === Number(record.semester)
+          Number(s.semester) === Number(record.semester),
       );
     },
 
     getConflictingRecords(record) {
-      if (!record || record.start_hour == null || !record.duration) {
+      if (!record || record.start_hour == null || record.duration == null) {
         return [];
       }
 
-      const recordStart = this.normalizeHour(record.start_hour);
+      const recordStart = Number(record.start_hour);
       const recordEnd = recordStart + Number(record.duration);
 
-      const sameDaySchedules = this.getAllSchedulesForConflict(record).filter(
-        (s) => s.day === record.day
-      );
+      const sourceSchedules = this.getAllSchedulesForConflict(record);
 
-      return sameDaySchedules
+      return sourceSchedules
         .filter((r) => {
-          // skip self
-          if ((r.id && r.id === record.id) || (r.tempId && r.tempId === record.tempId)) {
-            return false;
-          }
+          if (!r) return false;
 
-          // ignore same join group
+          // Skip itself
           if (
-            record.is_joined &&
-            r.is_joined &&
-            record.join_group_id &&
-            r.join_group_id &&
-            record.join_group_id === r.join_group_id
+            (record.id && r.id === record.id) ||
+            (record.tempId && r.tempId === record.tempId)
           ) {
             return false;
           }
 
-          const rStart = this.normalizeHour(r.start_hour);
+          // Ignore schedules in the same joined group
+          if (
+            record.join_group_id &&
+            r.join_group_id &&
+            Number(record.join_group_id) === Number(r.join_group_id)
+          ) {
+            return false;
+          }
+
+          // Same day only
+          if (r.day !== record.day) return false;
+
+          const rStart = Number(r.start_hour);
           const rEnd = rStart + Number(r.duration);
 
-          const overlaps = Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
-
-          if (!overlaps) return false;
+          // Time overlap
+          if (Math.max(recordStart, rStart) >= Math.min(recordEnd, rEnd)) {
+            return false;
+          }
 
           const sameFaculty =
-            (r.faculty_id &&
-              record.faculty_id &&
-              Number(r.faculty_id) === Number(record.faculty_id)) ||
-            (r.faculty_name &&
-              record.faculty_name &&
-              r.faculty_name.trim().toLowerCase() ===
-                record.faculty_name.trim().toLowerCase());
+            (record.faculty_id &&
+              r.faculty_id &&
+              Number(record.faculty_id) === Number(r.faculty_id)) ||
+            (record.faculty_name &&
+              r.faculty_name &&
+              record.faculty_name.trim().toLowerCase() ===
+                r.faculty_name.trim().toLowerCase());
 
           const sameRoom =
-            r.room_id &&
-            record.room_id &&
-            Number(r.room_id) === Number(record.room_id) &&
+            record.mode?.toLowerCase() === "face to face" &&
             r.mode?.toLowerCase() === "face to face" &&
-            record.mode?.toLowerCase() === "face to face";
+            record.room_id &&
+            r.room_id &&
+            Number(record.room_id) === Number(r.room_id);
 
           const sameClass =
-            r.class_id &&
             record.class_id &&
-            Number(r.class_id) === Number(record.class_id);
+            r.class_id &&
+            Number(record.class_id) === Number(r.class_id);
 
           const sameOnlineSection =
             record.mode?.toLowerCase() === "online" &&
             r.mode?.toLowerCase() === "online" &&
-            r.set_name === record.set_name &&
-            Number(r.program_id) === Number(record.program_id) &&
-            Number(r.college_branch_id) === Number(record.college_branch_id);
+            record.set_name === r.set_name &&
+            Number(record.program_id) === Number(r.program_id) &&
+            Number(record.college_branch_id) === Number(r.college_branch_id);
 
           const reasons = [];
 
@@ -2210,13 +2421,46 @@ export default {
           if (sameClass) reasons.push("Class conflict");
           if (sameOnlineSection) reasons.push("Online section conflict");
 
-          r.reason = reasons.join(", ");
+          if (!reasons.length) return false;
 
-          return reasons.length > 0;
+          return true;
         })
-        .map((r) => ({
-          ...r,
-        }));
+        .map((r) => {
+          const reasons = [];
+
+          const sameFaculty =
+            (record.faculty_id &&
+              r.faculty_id &&
+              Number(record.faculty_id) === Number(r.faculty_id)) ||
+            (record.faculty_name &&
+              r.faculty_name &&
+              record.faculty_name.trim().toLowerCase() ===
+                r.faculty_name.trim().toLowerCase());
+
+          const sameRoom =
+            record.mode?.toLowerCase() === "face to face" &&
+            r.mode?.toLowerCase() === "face to face" &&
+            Number(record.room_id) === Number(r.room_id);
+
+          const sameClass = Number(record.class_id) === Number(r.class_id);
+
+          const sameOnlineSection =
+            record.mode?.toLowerCase() === "online" &&
+            r.mode?.toLowerCase() === "online" &&
+            record.set_name === r.set_name &&
+            Number(record.program_id) === Number(r.program_id) &&
+            Number(record.college_branch_id) === Number(r.college_branch_id);
+
+          if (sameFaculty) reasons.push("Faculty conflict");
+          if (sameRoom) reasons.push("Room conflict");
+          if (sameClass) reasons.push("Class conflict");
+          if (sameOnlineSection) reasons.push("Online section conflict");
+
+          return {
+            ...r,
+            reason: reasons.join(", "),
+          };
+        });
     },
     openConflictModal(record) {
       this.selectedSchedule = {
@@ -2252,7 +2496,8 @@ export default {
       if (!conflicts.length) return "";
       return conflicts
         .map(
-          (c) => `Conflict with: ${c.faculty_name} (${c.course_code}) in ${c.room_name}`
+          (c) =>
+            `Conflict with: ${c.faculty_name} (${c.course_code}) in ${c.room_name}`,
         )
         .join("\n");
     },
@@ -2265,7 +2510,7 @@ export default {
           r.start_hour != null &&
           r.duration != null &&
           r.start_hour < slot.end &&
-          r.start_hour + r.duration > slot.start
+          r.start_hour + r.duration > slot.start,
       );
     },
     isValid() {
@@ -2275,7 +2520,7 @@ export default {
           r.day &&
           r.start_hour != null &&
           r.duration != null &&
-          !this.hasRoomConflict(r)
+          !this.hasRoomConflict(r),
       );
     },
 
@@ -2296,7 +2541,7 @@ export default {
         this.draggedRecord,
         instructor,
         day,
-        slotStart
+        slotStart,
       );
     },
     onDragStart(event, record) {
@@ -2315,7 +2560,8 @@ export default {
             const key = `${faculty}-${day}-${slot.start}`;
 
             this.dragConflictMap[key] =
-              this.getConflictsForDrag(record, faculty, day, slot.start).length > 0;
+              this.getConflictsForDrag(record, faculty, day, slot.start)
+                .length > 0;
           });
         });
       });
@@ -2330,7 +2576,9 @@ export default {
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
       if (!this.draggedRecord) return;
 
-      const group = this.draggedGroup?.length ? this.draggedGroup : [this.draggedRecord];
+      const group = this.draggedGroup?.length
+        ? this.draggedGroup
+        : [this.draggedRecord];
 
       /* ===============================
      STEP 1: JOIN MODE CHECK
@@ -2369,7 +2617,7 @@ export default {
         };
 
         const conflicts = this.getConflictingRecords(tempRecord).filter(
-          (c) => !group.some((g) => g.id === c.id)
+          (c) => !group.some((g) => g.id === c.id),
         );
 
         groupConflicts.push(...conflicts);
@@ -2415,7 +2663,7 @@ export default {
         try {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${id}`,
-            payload
+            payload,
           );
         } catch (error) {
           console.error("Failed to update schedule:", error);
@@ -2454,15 +2702,21 @@ export default {
         this.localData.forEach((record) => {
           // Ensure new records have a tempId
           if (!record.id && !record.tempId) {
-            record.tempId = `temp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+            record.tempId = `temp-${Date.now()}-${Math.floor(
+              Math.random() * 1000,
+            )}`;
           }
 
           const payload = this.sanitizePayload({
             ...record,
-            mode: record.mode?.toLowerCase() === "online" ? "online" : "face to face",
+            mode:
+              record.mode?.toLowerCase() === "online"
+                ? "online"
+                : "face to face",
           });
 
-          const id = record.id || record.schedule_id || record.final_generated_id;
+          const id =
+            record.id || record.schedule_id || record.final_generated_id;
 
           if (id) updatedRows.push({ id, payload });
           else {
@@ -2481,13 +2735,13 @@ export default {
             {
               schedules: newRows,
               override: true,
-            }
+            },
           );
 
           // Assign returned IDs to localData
           data.forEach((row) => {
             const tempRecord = this.localData.find(
-              (r) => !r.id && r.tempId === row.tempId
+              (r) => !r.id && r.tempId === row.tempId,
             );
             if (tempRecord) tempRecord.id = row.id;
           });
@@ -2501,9 +2755,9 @@ export default {
             updatedRows.map(({ id, payload }) =>
               axios.patch(
                 `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${id}`,
-                payload
-              )
-            )
+                payload,
+              ),
+            ),
           );
         }
 

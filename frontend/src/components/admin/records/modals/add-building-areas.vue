@@ -1,5 +1,5 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg animate-slideUp">
       <form
         @submit.prevent="submitData"
@@ -7,7 +7,7 @@
         ref="areaForm"
       >
         <!-- HEADER -->
-       <div class="modal-header">
+        <!-- <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon name="circle-add" />
            <h1 class="header1">
@@ -20,13 +20,39 @@
             @click="$emit('close')"
             class="cursor-pointer"
           />
+        </div> -->
+
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit Building Area" : "Add Building Area" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update building area details
+              </p>
+            </div>
+          </div>
+
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <!-- FORM -->
         <div class="p-5 w-[28vw] space-y-4">
           <!-- COLLEGE BRANCH -->
           <div class="flex flex-col space-y-2 w-full relative">
-            <label class="font-bold">College Branch :</label>
+            <label class="input-label">College Branch :</label>
 
             <input
               v-model="searchBranchQuery"
@@ -38,13 +64,13 @@
 
             <div
               v-if="showBranchDropdown && filteredBranches.length"
-              class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
+              class="dropdown-menu"
               @mouseleave="showBranchDropdown = false"
             >
               <div
                 v-for="branch in filteredBranches"
                 :key="branch.college_branch_id"
-                class="px-3 py-3 hover:bg-gray-100 cursor-pointer"
+                class="dropdown-item"
                 @mousedown="selectBranch(branch)"
               >
                 {{ branch.college_branch_name }}
@@ -53,51 +79,69 @@
           </div>
 
           <!-- AREA NAME -->
-          <div>
-            <label class="font-bold">Area Name:</label>
+          <div class="w-full space-y-2">
+            <label class="input-label">Area Name:</label>
             <input
               v-model="form.area_name"
               type="text"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md"
+              class="input-text"
               placeholder="Enter area name"
             />
           </div>
 
           <!-- TRAVEL TIME -->
-          <div>
-            <label class="font-bold">Travel Time</label>
+          <div class="dropdown-container">
+            <label class="dropdown-label">Travel Time:</label>
 
-            <select
-              v-model.number="form.time_travel"
-              required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md"
-            >
-              <option disabled value="">Select travel time</option>
-              <option :value="15">15 Minutes</option>
-              <option :value="30">30 Minutes</option>
-              <option :value="60">1 Hour</option>
-              <option :value="90">1 Hour 30 Minutes</option>
-              <option :value="120">2 Hours</option>
-              <option :value="150">2 Hours 30 Minutes</option>
-              <option :value="180">3 Hours</option>
-            </select>
+            <div class="dropdown-wrapper">
+              <!-- DISPLAY -->
+              <div
+                class="dropdown-input cursor-pointer flex items-center justify-between"
+                @click="showTimeTravel = !showTimeTravel"
+              >
+                <span :class="form.time_travel ? '' : 'text-gray-400'">
+                  {{ selectedTravelLabel || "Select Travel Time" }}
+                </span>
+
+                <!-- ARROW -->
+                <svg
+                  class="w-4 h-4 ml-2 transition-transform duration-200"
+                  :class="{ 'rotate-180': showTimeTravel }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+
+              <!-- DROPDOWN -->
+              <div v-if="showTimeTravel" class="dropdown-menu">
+                <div
+                  v-for="time in travelTimes"
+                  :key="time.value"
+                  class="dropdown-item"
+                  @click="selectTravelTime(time)"
+                >
+                  {{ time.label }}
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- BUTTONS -->
           <div class="tracking-wide flex justify-end gap-2 pt-3">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="btn-cancel"
-            >
+            <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
 
-            <button
-              type="submit"
-              class="btn-save"
-            >
+            <button type="submit" class="btn-save">
               {{ isEditMode ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -179,6 +223,16 @@ export default {
 
       searchBranchQuery: "",
       showBranchDropdown: false,
+      travelTimes: [
+        { value: 15, label: "15 Minutes" },
+        { value: 30, label: "30 Minutes" },
+        { value: 60, label: "1 Hour" },
+        { value: 90, label: "1 Hour 30 Minutes" },
+        { value: 120, label: "2 Hours" },
+        { value: 150, label: "2 Hours 30 Minutes" },
+        { value: 180, label: "3 Hours" },
+      ],
+      showTimeTravel: false,
     };
   },
 
@@ -198,11 +252,21 @@ export default {
           a.college_branch_name.localeCompare(b.college_branch_name),
         );
     },
+    selectedTravelLabel() {
+      const selected = this.travelTimes.find(
+        (t) => t.value === this.form.time_travel,
+      );
+
+      return selected ? selected.label : "";
+    },
   },
 
   methods: {
     ...mapActions(useFetchDataStore, ["fetchCollegeBranch"]),
-
+    selectTravelTime(time) {
+      this.form.time_travel = time.value;
+      this.showTimeTravel = false;
+    },
     selectBranch(branch) {
       this.form.college_branch_id = branch.college_branch_id;
       this.searchBranchQuery = branch.college_branch_name;

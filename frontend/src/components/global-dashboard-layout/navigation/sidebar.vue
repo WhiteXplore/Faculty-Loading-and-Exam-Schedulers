@@ -1,9 +1,26 @@
 <template>
-  <div class="bg-defaultGreen h-screen flex animate-scaleUp">
+  <!-- Mobile Floating Hamburger -->
+  <button
+    v-if="isMobile"
+    @click="toggleSidebar"
+    :class="{ hidden: isExpanded }"
+    class="fixed top-4 left-4 z-[1001] h-12 w-12 rounded-xl bg-white flex items-center justify-center text-defaultGreen"
+  >
+    <icon name="burger" />
+  </button>
+  <div class="bg-defaultGreen h-screen flex animate-scaleUp z-0">
     <!-- Sidebar -->
     <div
-      :class="{ 'w-[60px]': !isExpanded, 'w-[240px]': isExpanded }"
-      class="h-full fixed left-0 top-0 bg-defaultGreen text-white p-3 transition-all duration-300 ease-in-out"
+      class="fixed top-0 left-0 h-screen bg-defaultGreen text-white p-1.5 transition-all duration-300 ease-in-out z-50"
+      :class="[
+        isMobile
+          ? isExpanded
+            ? 'translate-x-0 w-[280px]'
+            : '-translate-x-full w-[280px]'
+          : isExpanded
+          ? 'w-[240px]'
+          : 'w-[70px]',
+      ]"
       v-if="user.role"
     >
       <!-- Toggle Sidebar -->
@@ -15,7 +32,6 @@
         />
       </div>
 
-      <!-- Logo and user info -->
       <!-- Logo and user info -->
       <div
         v-if="isExpanded"
@@ -44,7 +60,9 @@
       <div
         :class="[
           'flex flex-col justify-between tracking-wide text-[13px] w-full transition-all duration-200 ',
-          isExpanded ? 'mt-4 h-[calc(100vh-120px)]' : 'mt-3 h-[calc(102vh-90px)]',
+          isExpanded
+            ? 'mt-4 h-[calc(100vh-120px)]'
+            : 'mt-3 h-[calc(102vh-90px)]',
         ]"
       >
         <!-- TOP MENU -->
@@ -57,8 +75,8 @@
               class="flex items-center w-full gap-5 rounded-md transition-all duration-200 cursor-pointer select-none"
               :class="[
                 $route.path.startsWith(item.route)
-                  ? 'bg-white text-green-700 p-2'
-                  : 'text-white hover:bg-white hover:text-gray-800 p-2',
+                  ? 'bg-white/95 text-defaultGreen shadow-lg p-2'
+                  : 'text-white/90 hover:bg-white/10 hover:text-white p-2',
                 !isExpanded ? 'justify-center h-8' : 'justify-start',
               ]"
             >
@@ -70,12 +88,15 @@
             <router-link
               v-else-if="!item.children"
               :to="item.route"
-              class="flex items-center w-full gap-5 rounded-md transition-all duration-200"
+              class="flex items-center rounded-md transition-all duration-200"
               :class="[
                 $route.path.startsWith(item.route)
-                  ? 'bg-white text-green-700 p-2'
-                  : 'text-white hover:bg-white hover:text-gray-800 p-2',
-                !isExpanded ? 'justify-center h-8' : 'justify-start',
+                  ? 'bg-white/95 text-defaultGreen shadow-lg'
+                  : 'text-white/90 hover:bg-white/10 hover:text-white',
+
+                isExpanded
+                  ? 'w-full justify-start gap-5 px-3 py-2'
+                  : 'w-9 h-9 mx-auto justify-center p-0',
               ]"
             >
               <icon :name="item.icon" />
@@ -92,11 +113,15 @@
                     ? `bg-white text-gray-800 ${
                         !isExpanded ? 'rounded-md' : 'rounded-t-md'
                       }`
-                    : 'text-white hover:bg-white hover:text-gray-800 hover:rounded-md',
+                    : 'text-white/90 hover:bg-white/10 hover:text-white hover:rounded-md',
                 ]"
               >
                 <div
-                  :class="[!isExpanded ? 'justify-center w-full' : 'justify-start gap-5']"
+                  :class="[
+                    !isExpanded
+                      ? 'justify-center w-full'
+                      : 'justify-start gap-5',
+                  ]"
                   class="flex items-center"
                 >
                   <icon :name="item.icon" />
@@ -146,8 +171,8 @@
               class="flex items-center w-full gap-5 rounded-md transition-all duration-200"
               :class="[
                 $route.path.startsWith(item.route)
-                  ? 'bg-white text-green-700 p-2'
-                  : 'text-white hover:bg-white hover:text-gray-800 p-2',
+                  ? 'bg-white/95 text-defaultGreen shadow-lg p-2'
+                  : 'text-white/90 hover:bg-white/10 hover:text-white p-2',
                 !isExpanded ? 'justify-center h-8' : 'justify-start',
               ]"
             >
@@ -165,11 +190,15 @@
                     ? `bg-white text-gray-800 ${
                         !isExpanded ? 'rounded-md' : 'rounded-t-md'
                       }`
-                    : 'text-white hover:bg-white hover:text-gray-800 hover:rounded-md',
+                    : 'text-white/90 hover:bg-white/10 hover:text-white hover:rounded-md',
                 ]"
               >
                 <div
-                  :class="[!isExpanded ? 'justify-center w-full' : 'justify-start gap-5']"
+                  :class="[
+                    !isExpanded
+                      ? 'justify-center w-full'
+                      : 'justify-start gap-5',
+                  ]"
                   class="flex items-center"
                 >
                   <icon :name="item.icon" />
@@ -215,17 +244,16 @@
 
     <div
       :class="{
-        'ml-[70px]': !isExpanded,
-        'ml-[240px]': isExpanded,
+        'ml-0': isMobile,
+        'ml-16': !isMobile && !isExpanded,
+        'ml-60': !isMobile && isExpanded,
       }"
-      class="flex-grow transition-all max-h-screen rounded-t-xl overflow-y-auto z-50 mt-2"
+      class="flex-grow transition-all duration-300 pt-0 lg:pt-2 pb-0 min-h-screen rounded-t-lg overflow-hidden"
     >
       <slot>
-        <div class="bg-white shadow rounded-t-xl h-full w-full">
+        <div class="bg-white w-auto h-full rounded-t-lg shadow m-1 lg:mr-2">
           <adminTopbar />
-          <div class="">
-            <router-view></router-view>
-          </div>
+          <router-view></router-view>
         </div>
       </slot>
     </div>
@@ -242,7 +270,8 @@ export default {
   components: { icon, adminTopbar },
   data() {
     return {
-      isExpanded: false,
+      isExpanded: window.innerWidth >= 768,
+      isMobile: window.innerWidth < 768,
       isDropdownOpen: null,
       user: {},
 
@@ -505,31 +534,34 @@ export default {
     },
     topMenuItems() {
       return this.roleMenuSections.flatMap((section) =>
-        section.items.filter((item) => !item.bottom)
+        section.items.filter((item) => !item.bottom),
       );
     },
 
     bottomMenuItems() {
       return this.roleMenuSections.flatMap((section) =>
-        section.items.filter((item) => item.bottom)
+        section.items.filter((item) => item.bottom),
       );
     },
   },
-  mounted() {
-    this.fetchUser();
-    this.expandDropdownForCurrentRoute(this.$route.path);
-  },
+
   watch: {
     "$route.path"(newPath) {
       this.expandDropdownForCurrentRoute(newPath);
+
+      if (this.isMobile) {
+        this.isExpanded = false;
+        this.isDropdownOpen = null;
+      }
     },
   },
   methods: {
     async syncProgramYearCourses(route) {
       try {
         const response = await axios.post(
-          process.env.VUE_APP_API_BASE_URL + "/program-year-courses/sync-from-classes",
-          { withCredentials: true }
+          process.env.VUE_APP_API_BASE_URL +
+            "/program-year-courses/sync-from-classes",
+          { withCredentials: true },
         );
         console.log("Sync successful:", response.data);
         this.$router.push(route);
@@ -558,7 +590,9 @@ export default {
       });
       for (const item of allDropdownItems) {
         if (item.children) {
-          const match = item.children.find((child) => path.startsWith(child.route));
+          const match = item.children.find((child) =>
+            path.startsWith(child.route),
+          );
           if (match || path.startsWith(item.route)) {
             this.isExpanded = true;
             this.isDropdownOpen = item.name;
@@ -569,9 +603,12 @@ export default {
     },
     async fetchUser() {
       try {
-        const response = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
         if (response.data) {
           this.user = response.data;
           console.log("Authenticated User:", this.user);
@@ -583,6 +620,24 @@ export default {
         this.$router.push("/");
       }
     },
+    handleResize() {
+      this.isMobile = window.innerWidth < 768;
+
+      if (!this.isMobile) {
+        this.isExpanded = true;
+      }
+    },
+  },
+  mounted() {
+    this.fetchUser();
+    this.expandDropdownForCurrentRoute(this.$route.path);
+
+    window.addEventListener("resize", this.handleResize);
+    this.handleResize();
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
   },
 };
 </script>

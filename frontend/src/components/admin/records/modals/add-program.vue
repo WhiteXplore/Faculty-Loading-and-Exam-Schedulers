@@ -1,24 +1,17 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="programForm"
-      >
+      <form @submit.prevent="submitData" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg "
+        ref="programForm">
         <!-- Header -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
-           <h1 class="header1">
+            <h1 class="header1">
               {{ isEdit ? "Edit " : "Add " }} Program
             </h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <!-- Body -->
@@ -26,24 +19,14 @@
           <!-- Institute -->
           <div class="flex flex-col space-y-2 w-full relative">
             <label class="font-bold">Institute :</label>
-            <input
-              v-model="searchInstituteQuery"
-              type="text"
-              placeholder="Search institute..."
+            <input v-model="searchInstituteQuery" type="text" placeholder="Search institute..."
               class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
-              @focus="showInstituteDropdown = true"
-            />
-            <div
-              v-if="showInstituteDropdown && filteredInstitutes.length"
+              @focus="showInstituteDropdown = true" />
+            <div v-if="showInstituteDropdown && filteredInstitutes.length"
               class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
-              @mouseleave="showInstituteDropdown = false"
-            >
-              <div
-                v-for="inst in filteredInstitutes"
-                :key="inst.institute_id"
-                class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                @mousedown="selectInstitute(inst)"
-              >
+              @mouseleave="showInstituteDropdown = false">
+              <div v-for="inst in filteredInstitutes" :key="inst.institute_id"
+                class="px-3 py-2 hover:bg-gray-100 cursor-pointer" @mousedown="selectInstitute(inst)">
                 {{ inst.institute_name }}
               </div>
             </div>
@@ -52,42 +35,29 @@
           <!-- Program Code -->
           <div class="w-full space-y-2">
             <label for="program_code" class="font-bold">Program Code:</label>
-            <input
-              v-model="form.program_code"
-              type="text"
-              id="program_code"
-              required
+            <input v-model="form.program_code" type="text" id="program_code" required
               class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              placeholder="e.g., BSCS, BSIT, BSBA"
-            />
+              placeholder="e.g., BSCS, BSIT, BSBA" />
           </div>
 
           <!-- Program Name -->
           <div class="w-full space-y-2">
             <label for="program_name" class="font-bold">Program Name:</label>
-            <input
-              v-model="form.program_name"
-              type="text"
-              id="program_name"
-              required
+            <input v-model="form.program_name" type="text" id="program_name" required
               class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              placeholder="e.g., Bachelor of Science in Computer Science"
-            />
+              placeholder="e.g., Bachelor of Science in Computer Science" />
           </div>
 
           <!-- Buttons -->
           <div class="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
+            <button type="button"
               class="bg-gray-100 text-gray-600 p-2 px-3 rounded-lg hover:bg-white border hover:border-gray-800 hover:text-gray-800"
-              @click="$emit('close')"
-            >
+              @click="$emit('close')">
               Cancel
             </button>
             <button
               class="bg-defaultGreen p-2 px-3 rounded-lg text-white hover:bg-white border hover:border-green-800 hover:text-green-800"
-              type="submit"
-            >
+              type="submit">
               {{ isEdit ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -149,7 +119,7 @@ export default {
         if (this.isEdit) {
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
-              `/programs/update-program/${this.programData.program_id}`,
+            `/programs/update-program/${this.programData.program_id}`,
             payload
           );
           toast.success("Program updated successfully!");

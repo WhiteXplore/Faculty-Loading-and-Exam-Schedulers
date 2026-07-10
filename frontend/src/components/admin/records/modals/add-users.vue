@@ -1,16 +1,35 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-wrapper">
-      <form @submit.prevent="submitData" class="modal-container" ref="usersForm">
+      <form
+        @submit.prevent="submitData"
+        class="modal-container"
+        ref="usersForm"
+      >
         <div class="modal-header">
-          <div class="flex gap-1 items-center">
-            <icon :name="'add-students'" />
-            <h1 class="header1">
-              {{ isEditMode ? "Edit User" : "Add User" }}
-            </h1>
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit User" : "Add User" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update user details
+              </p>
+            </div>
           </div>
 
-          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <div class="p-5 w-[32vw] space-y-6">
@@ -48,7 +67,10 @@
             </div>
           </div>
           <!-- STEP 1 -->
-          <div v-if="currentStep === 1" class="grid grid-cols-2 items-start gap-3">
+          <div
+            v-if="currentStep === 1"
+            class="grid grid-cols-2 items-start gap-3"
+          >
             <div class="w-full space-y-2 text-left flex flex-col">
               <label class="input-label">First Name:</label>
               <input
@@ -77,7 +99,9 @@
                 <option disabled value="">Select role</option>
                 <option value="Admin">Admin</option>
                 <option value="Program Chairperson">Program Chairperson</option>
-                <option value="Department Chairperson">Department Chairperson</option>
+                <option value="Department Chairperson">
+                  Department Chairperson
+                </option>
                 <option value="Faculty">Faculty</option>
               </select>
             </div>
@@ -110,7 +134,9 @@
                   <option value="">Select employment type</option>
                   <option value="Permanent">Permanent</option>
                   <option value="Temporary">Temporary</option>
-                  <option value="Contract of Service">ontract of Service</option>
+                  <option value="Contract of Service">
+                    ontract of Service
+                  </option>
                   <option value="Part Time">Part Time</option>
                 </select>
               </div>
@@ -181,7 +207,9 @@
             </template>
 
             <div class="col-span-2 flex justify-end pt-2">
-              <button class="btn-save" type="button" @click="goToStep2">Next</button>
+              <button class="btn-save" type="button" @click="goToStep2">
+                Next
+              </button>
             </div>
           </div>
 
@@ -198,7 +226,10 @@
               />
             </div>
 
-            <div v-if="!isEditMode" class="w-full space-y-2 text-left flex flex-col">
+            <div
+              v-if="!isEditMode"
+              class="w-full space-y-2 text-left flex flex-col"
+            >
               <label class="input-label">Password:</label>
               <input
                 v-model="form.password"
@@ -307,7 +338,7 @@ export default {
         .filter(
           (institute) =>
             institute.institute_name?.toLowerCase().includes(query) ||
-            institute.institute_code?.toLowerCase().includes(query)
+            institute.institute_code?.toLowerCase().includes(query),
         )
         .sort((a, b) => a.institute_name.localeCompare(b.institute_name));
     },
@@ -349,7 +380,8 @@ export default {
     },
 
     goToStep2() {
-      const { first_name, last_name, role, institute_id, program_id } = this.form;
+      const { first_name, last_name, role, institute_id, program_id } =
+        this.form;
 
       if (!first_name || !last_name || !role) {
         toast.error("Please complete first name, last name, and role.");
@@ -412,7 +444,10 @@ export default {
         return;
       }
 
-      if (!this.isAdminRole && (!this.form.institute_id || !this.form.program_id)) {
+      if (
+        !this.isAdminRole &&
+        (!this.form.institute_id || !this.form.program_id)
+      ) {
         toast.error("Institute and Program are required.");
         return;
       }
@@ -432,14 +467,18 @@ export default {
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL + `/users/${this.form.id}`,
             payload,
-            { withCredentials: true }
+            { withCredentials: true },
           );
 
           toast.success("User updated successfully!");
         } else {
-          await axios.post(process.env.VUE_APP_API_BASE_URL + "/auth/register", payload, {
-            withCredentials: true,
-          });
+          await axios.post(
+            process.env.VUE_APP_API_BASE_URL + "/auth/register",
+            payload,
+            {
+              withCredentials: true,
+            },
+          );
 
           toast.success("User registered successfully!");
 
@@ -472,9 +511,12 @@ export default {
         is_active: this.userData.is_active ?? true,
 
         institute_id:
-          this.userData.institute_id || this.userData.institute?.institute_id || null,
+          this.userData.institute_id ||
+          this.userData.institute?.institute_id ||
+          null,
 
-        program_id: this.userData.program_id || this.userData.program?.program_id || null,
+        program_id:
+          this.userData.program_id || this.userData.program?.program_id || null,
       };
 
       if (this.form.role === "Admin") {
@@ -489,7 +531,9 @@ export default {
       }
 
       this.searchInstituteQuery =
-        this.userData.institute?.institute_name || this.userData.institute_name || "";
+        this.userData.institute?.institute_name ||
+        this.userData.institute_name ||
+        "";
 
       this.searchProgramQuery =
         this.userData.program?.program_name || this.userData.program_name || "";

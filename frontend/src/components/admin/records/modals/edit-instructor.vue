@@ -1,22 +1,15 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="instructorForm"
-      >
+      <form @submit.prevent="submitData" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg "
+        ref="instructorForm">
         <!-- Header -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
-           <h1 class="header1">Add Instructor</h1>
+            <h1 class="header1">Add Instructor</h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <!-- Body -->
@@ -27,45 +20,26 @@
             <div class="w-[25vw] text-left gap-3 flex flex-col mt-2">
               <div class="w-full space-y-2">
                 <label for="instructor_fname">First Name:</label>
-                <input
-                  v-model="form.instructor_fname"
-                  type="text"
-                  id="instructor_fname"
-                  required
+                <input v-model="form.instructor_fname" type="text" id="instructor_fname" required
                   class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                  placeholder="Enter first name"
-                />
+                  placeholder="Enter first name" />
               </div>
               <div class="w-full space-y-2">
                 <label for="instructor_mname">Middle Name:</label>
-                <input
-                  v-model="form.instructor_mname"
-                  type="text"
-                  id="instructor_mname"
-                  required
+                <input v-model="form.instructor_mname" type="text" id="instructor_mname" required
                   class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                  placeholder="Enter middle name"
-                />
+                  placeholder="Enter middle name" />
               </div>
               <div class="w-full space-y-2">
                 <label for="instructor_lname">Last Name:</label>
-                <input
-                  v-model="form.instructor_lname"
-                  type="text"
-                  id="instructor_lname"
-                  required
+                <input v-model="form.instructor_lname" type="text" id="instructor_lname" required
                   class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                  placeholder="Enter last name"
-                />
+                  placeholder="Enter last name" />
               </div>
               <div class="w-full space-y-2">
                 <label for="instructor_gender">Gender:</label>
-                <select
-                  v-model="form.instructor_gender"
-                  id="instructor_gender"
-                  required
-                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="form.instructor_gender" id="instructor_gender" required
+                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                   <option value="" disabled>Select Gender</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
@@ -80,17 +54,10 @@
             <div class="w-[25vw] text-left gap-3 flex flex-col mt-2">
               <div class="w-full space-y-2">
                 <label for="institute_id">Institute:</label>
-                <select
-                  v-model="form.institute_id"
-                  id="institute_id"
-                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="form.institute_id" id="institute_id"
+                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                   <option value="" disabled>Select Institute</option>
-                  <option
-                    v-for="institute in institutes"
-                    :key="institute.institute_id"
-                    :value="institute.institute_id"
-                  >
+                  <option v-for="institute in institutes" :key="institute.institute_id" :value="institute.institute_id">
                     {{ institute.institute_name }}
                   </option>
                 </select>
@@ -98,17 +65,10 @@
 
               <div class="w-full space-y-2">
                 <label for="program_id">Program:</label>
-                <select
-                  v-model="form.program_id"
-                  id="program_id"
-                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="form.program_id" id="program_id"
+                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                   <option value="" disabled>Select Program</option>
-                  <option
-                    v-for="program in filteredPrograms"
-                    :key="program.program_id"
-                    :value="program.program_id"
-                  >
+                  <option v-for="program in filteredPrograms" :key="program.program_id" :value="program.program_id">
                     {{ program.program_name }}
                   </option>
                 </select>
@@ -116,38 +76,24 @@
               <!-- Instructor Expertise Multi-Select -->
               <div class="flex flex-col space-y-2 w-[25vw] relative">
                 <label>Instructor Expertise :</label>
-                <input
-                  :value="form.instructor_expertise.join(', ')"
-                  @input="searchExpertiseQuery = $event.target.value"
-                  @focus="showExpertiseDropdown = true"
-                  type="text"
-                  placeholder="Select expertise..."
-                  class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
-                />
+                <input :value="form.instructor_expertise.join(', ')" @input="searchExpertiseQuery = $event.target.value"
+                  @focus="showExpertiseDropdown = true" type="text" placeholder="Select expertise..."
+                  class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800" />
 
-                <div
-                  v-if="showExpertiseDropdown && filteredExpertise.length"
+                <div v-if="showExpertiseDropdown && filteredExpertise.length"
                   class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
-                  @mouseleave="showExpertiseDropdown = false"
-                >
-                  <div
-                    v-for="expertise in filteredExpertise"
-                    :key="expertise"
-                    class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                    @mousedown="selectExpertise(expertise)"
-                  >
+                  @mouseleave="showExpertiseDropdown = false">
+                  <div v-for="expertise in filteredExpertise" :key="expertise"
+                    class="px-3 py-2 hover:bg-gray-100 cursor-pointer" @mousedown="selectExpertise(expertise)">
                     {{ expertise }}
                   </div>
                 </div>
 
                 <!-- Display selected expertise -->
                 <div class="flex flex-wrap gap-2">
-                  <span
-                    v-for="expertise in form.instructor_expertise"
-                    :key="expertise"
+                  <span v-for="expertise in form.instructor_expertise" :key="expertise"
                     class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs cursor-pointer"
-                    @click="removeExpertise(expertise)"
-                  >
+                    @click="removeExpertise(expertise)">
                     {{ expertise }} ✕
                   </span>
                 </div>
@@ -155,12 +101,8 @@
 
               <div class="w-full space-y-2">
                 <label for="instructor_jobtype">Job Type:</label>
-                <select
-                  v-model="form.instructor_jobtype"
-                  id="instructor_jobtype"
-                  required
-                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="form.instructor_jobtype" id="instructor_jobtype" required
+                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                   <option value="" disabled>Select Job Type:</option>
                   <option value="Regular">Regular</option>
                   <option value="Weekend">Weekend</option>
@@ -173,20 +115,12 @@
 
           <!-- Navigation Buttons -->
           <div class="tracking-wide flex justify-between mt-4">
-            <button
-              v-if="currentStep > 1"
-              type="button"
-              class="bg-gray-600 p-2 px-3 rounded-md text-white hover:bg-gray-800"
-              @click="prevStep"
-            >
+            <button v-if="currentStep > 1" type="button"
+              class="bg-gray-600 p-2 px-3 rounded-md text-white hover:bg-gray-800" @click="prevStep">
               Back
             </button>
-            <button
-              v-if="currentStep < 2"
-              type="button"
-              class="bg-defaultGreen p-2 px-3 rounded-md text-white hover:"
-              @click="nextStep"
-            >
+            <button v-if="currentStep < 2" type="button" class="bg-defaultGreen p-2 px-3 rounded-md text-white hover:"
+              @click="nextStep">
               Next
             </button>
           </div>
@@ -196,17 +130,13 @@
 
           <!-- Submit/Cancel -->
           <div class="tracking-wide flex justify-end gap-2 mt-4">
-            <button
-              type="button"
+            <button type="button"
               class="bg-red-600 p-2 px-3 rounded-md text-white hover:bg-white border hover:border-red-800 hover:text-red-800 hover:shadow-md"
-              @click="$emit('close')"
-            >
+              @click="$emit('close')">
               Cancel
             </button>
-            <button
-              type="submit"
-              class="bg-defaultGreen p-2 px-3 rounded-md text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
-            >
+            <button type="submit"
+              class="bg-defaultGreen p-2 px-3 rounded-md text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md">
               Submit
             </button>
           </div>
@@ -329,7 +259,7 @@ export default {
       try {
         await axios.patch(
           process.env.VUE_APP_API_BASE_URL +
-            `/instructors/update-instructor/${this.form.instructor_id}`,
+          `/instructors/update-instructor/${this.form.instructor_id}`,
           this.form
         );
 

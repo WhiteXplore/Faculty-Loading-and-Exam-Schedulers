@@ -1,28 +1,19 @@
 <template>
-  <div
-    <div class="modal-overlay">
-  >
+  <div <div class="modal-overlay">
+    >
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="assignClassForm"
-      >
+      <form @submit.prevent="submitData" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg "
+        ref="assignClassForm">
         <!-- Header -->
         <div
-          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow"
-        >
+          class="w-full p-5 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b shadow">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
             <h1 class="font-bold tracking-wide text-lg">
               {{ isEditMode ? "Edit Class" : "Add Class" }}
             </h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <!-- Body -->
@@ -31,16 +22,10 @@
             <!-- Program Institute Filter -->
             <div v-if="user?.role === 'Admin'" class="w-full space-y-2">
               <label class="font-bold">Filter by Institute :</label>
-              <select
-                v-model="selectedInstitute"
-                class="px-3 py-3.5 border w-full border-gray-600 rounded-md text-md text-gray-800"
-              >
+              <select v-model="selectedInstitute"
+                class="px-3 py-3.5 border w-full border-gray-600 rounded-md text-md text-gray-800">
                 <option value="">All Institutes</option>
-                <option
-                  v-for="inst in institutes"
-                  :key="inst.institute_id"
-                  :value="inst.institute_id"
-                >
+                <option v-for="inst in institutes" :key="inst.institute_id" :value="inst.institute_id">
                   {{ inst.institute_name }}
                 </option>
               </select>
@@ -50,10 +35,8 @@
             <div class="w-full flex gap-2">
               <div class="w-1/2 space-y-2">
                 <label class="font-bold">Filter by Semester :</label>
-                <select
-                  v-model="selectedSemester"
-                  class="px-3 py-3.5 border w-full border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="selectedSemester"
+                  class="px-3 py-3.5 border w-full border-gray-600 rounded-md text-md text-gray-800">
                   <option value="">All</option>
                   <option v-for="sem in semesters" :key="sem" :value="sem">
                     {{ semesterLabel(sem) }}
@@ -63,10 +46,8 @@
 
               <div class="w-1/2 space-y-2">
                 <label class="font-bold">Filter by Level :</label>
-                <select
-                  v-model="selectedLevel"
-                  class="px-3 py-3.5 border w-full border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="selectedLevel"
+                  class="px-3 py-3.5 border w-full border-gray-600 rounded-md text-md text-gray-800">
                   <option value="">All</option>
                   <option v-for="lvl in levels" :key="lvl" :value="lvl">
                     {{ lvl }}
@@ -77,24 +58,14 @@
             <!-- Program -->
             <div class="flex flex-col space-y-2 w-full relative">
               <label class="font-bold">Program :</label>
-              <input
-                v-model="searchProgramQuery"
-                type="text"
-                placeholder="Search program..."
+              <input v-model="searchProgramQuery" type="text" placeholder="Search program..."
                 class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
-                @focus="showProgramDropdown = true"
-              />
-              <div
-                v-if="showProgramDropdown && filteredPrograms.length"
+                @focus="showProgramDropdown = true" />
+              <div v-if="showProgramDropdown && filteredPrograms.length"
                 class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
-                @mouseleave="showProgramDropdown = false"
-              >
-                <div
-                  v-for="program in filteredPrograms"
-                  :key="program.program_id"
-                  class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                  @mousedown="selectProgram(program)"
-                >
+                @mouseleave="showProgramDropdown = false">
+                <div v-for="program in filteredPrograms" :key="program.program_id"
+                  class="px-3 py-2 hover:bg-gray-100 cursor-pointer" @mousedown="selectProgram(program)">
                   {{ program.program_name }} - {{ program.program_code }}
                 </div>
               </div>
@@ -103,25 +74,15 @@
             <!-- Course -->
             <div class="flex flex-col space-y-2 w-full relative mt-2">
               <label class="font-bold">Course :</label>
-              <input
-                v-model="searchCourseQuery"
-                type="text"
-                placeholder="Search course..."
+              <input v-model="searchCourseQuery" type="text" placeholder="Search course..."
                 class="px-3 py-3 border w-full border-gray-600 rounded-md text-md text-gray-800"
-                @focus="showCourseDropdown = true"
-              />
+                @focus="showCourseDropdown = true" />
 
-              <div
-                v-if="showCourseDropdown"
+              <div v-if="showCourseDropdown"
                 class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-48 overflow-y-auto z-10"
-                @mouseleave="showCourseDropdown = false"
-              >
-                <div
-                  v-for="course in filteredCourses"
-                  :key="course.course_id"
-                  class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                  @mousedown="selectCourse(course)"
-                >
+                @mouseleave="showCourseDropdown = false">
+                <div v-for="course in filteredCourses" :key="course.course_id"
+                  class="px-3 py-2 hover:bg-gray-100 cursor-pointer" @mousedown="selectCourse(course)">
                   <div class="font-semibold text-gray-800">
                     {{ course.course_code }} - {{ course.course_name }}
                   </div>
@@ -131,10 +92,7 @@
                   </div>
                 </div>
 
-                <div
-                  v-if="!filteredCourses.length"
-                  class="px-3 py-2 text-gray-500 text-sm italic"
-                >
+                <div v-if="!filteredCourses.length" class="px-3 py-2 text-gray-500 text-sm italic">
                   No courses found
                 </div>
               </div>
@@ -143,37 +101,17 @@
             <div class="w-full space-y-2">
               <label class="font-bold">Set :</label>
               <div class="relative">
-                <select
-                  v-model="form.set"
-                  required
-                  class="w-full px-4 py-3.5 border border-gray-300 rounded-md text-sm text-gray-800 bg-white shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition ease-in-out duration-200 appearance-none"
-                >
+                <select v-model="form.set" required
+                  class="w-full px-4 py-3.5 border border-gray-300 rounded-md text-sm text-gray-800 bg-white shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 transition ease-in-out duration-200 appearance-none">
                   <option disabled value="">Select a set</option>
-                  <option
-                    v-for="set in sets"
-                    :key="set"
-                    :value="set"
-                    class="py-2"
-                  >
+                  <option v-for="set in sets" :key="set" :value="set" class="py-2">
                     {{ set }}
                   </option>
                 </select>
                 <!-- Custom dropdown arrow -->
-                <div
-                  class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500"
-                >
-                  <svg
-                    class="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M19 9l-7 7-7-7"
-                    />
+                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
@@ -184,17 +122,10 @@
 
           <!-- Buttons -->
           <div class="tracking-wide flex justify-end gap-2 mt-4">
-            <button
-              class="btn-cancel"
-              @click="$emit('close')"
-              type="button"
-            >
+            <button class="btn-cancel" @click="$emit('close')" type="button">
               Cancel
             </button>
-            <button
-             class="btn-save"
-              type="submit"
-            >
+            <button class="btn-save" type="submit">
               {{ isEditMode ? "Save Changes" : "Submit" }}
             </button>
           </div>
@@ -203,38 +134,22 @@
     </div>
 
     <!-- Conflict Modal -->
-    <div
-      v-if="showConflictModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60"
-    >
-      <div
-        class="bg-white rounded-2xl shadow-2xl w-[420px] p-6 animate-slideUp border border-gray-100"
-      >
+    <div v-if="showConflictModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60">
+      <div class="bg-white rounded-2xl shadow-2xl w-[420px] p-6 animate-slideUp border border-gray-100">
         <!-- Icon + Title -->
         <div class="flex items-center gap-3 mb-4">
           <div class="bg-red-100 text-red-600 p-3 rounded-full">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <h2 class="text-lg font-semibold text-gray-900">Conflict Detected</h2>
         </div>
 
         <!-- Body -->
-        <p
-          class="text-sm text-gray-700 leading-relaxed mb-6 bg-red-50 rounded-lg p-4"
-        >
+        <p class="text-sm text-gray-700 leading-relaxed mb-6 bg-red-50 rounded-lg p-4">
           A class with the same <span class="font-semibold">Program</span>,
           <span class="font-semibold">Course</span>, and
           <span class="font-semibold">Set</span> already exists. Please choose
@@ -243,16 +158,12 @@
 
         <!-- Buttons -->
         <div class="flex justify-end gap-3">
-          <button
-            @click="showConflictModal = false"
-            class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition"
-          >
+          <button @click="showConflictModal = false"
+            class="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition">
             Close
           </button>
-          <button
-            @click="showConflictModal = false"
-            class="px-4 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition"
-          >
+          <button @click="showConflictModal = false"
+            class="px-4 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition">
             Try Again
           </button>
         </div>
@@ -478,7 +389,7 @@ export default {
         if (this.isEditMode) {
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
-              `/assign-class/update-id/${this.assignClassData.assign_class_id}`,
+            `/assign-class/update-id/${this.assignClassData.assign_class_id}`,
             this.form,
           );
           toast.success("Class updated successfully!");
@@ -541,11 +452,13 @@ export default {
     transform: translateY(40px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
   }
 }
+
 .animate-slideUp {
   animation: fadeInUp 0.3s ease-out;
 }

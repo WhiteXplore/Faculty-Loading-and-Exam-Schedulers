@@ -1,19 +1,19 @@
 <template>
   <div
-    class="w-[45vw] h-[47vh] bg-white border shadow-xl transition-all duration-300 flex flex-col justify-start rounded-xl overflow-hidden p-1"
+    class="w-[45vw] h-[47vh] bg-white border shadow-xl transition-all duration-300 flex flex-col justify-start rounded-xl overflow-hidden p-0.5"
   >
     <!-- Header -->
     <div
       class="flex items-center justify-between px-2 py-2 text-white bg-defaultGreen rounded-t-lg"
     >
-      <h3 class="font-semibold text-base ml-2">Unscheduled Courses</h3>
+      <h3 class="header1">Unscheduled Courses</h3>
 
       <input
         v-model="searchQuery"
         @input="changePage(1)"
         type="text"
         placeholder="Search course, type, SY..."
-        class="rounded-xl border border-green-600 px-4 py-2 text-xs w-64 focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-700"
+        class="rounded-lg border border-green-600 px-4 py-2 text-xs w-64 focus:outline-none focus:ring-2 focus:ring-green-400 text-gray-700"
       />
     </div>
 
@@ -21,13 +21,33 @@
     <div class="flex-1 overflow-y-auto">
       <div class="w-full h-[35vh] border bg-white overflow-auto">
         <table class="min-w-full text-xs text-gray-700">
-          <thead class="bg-gray-100 text-defaultGreen">
+          <thead class=" ">
             <tr>
-              <th class="px-4 py-3 text-left">Set</th>
-              <th class="px-4 py-3 text-left">Course</th>
-              <th class="px-4 py-3 text-center">Type</th>
-              <th class="px-4 py-3 text-center">Semester</th>
-              <th class="px-4 py-3 text-center w-[25%]">Action</th>
+              <th
+                class="px-4 py-3 text-left bg-gray-50 text-defaultGreen font-semibold"
+              >
+                Set
+              </th>
+              <th
+                class="px-4 py-3 text-left bg-gray-50 text-defaultGreen font-semibold"
+              >
+                Course
+              </th>
+              <th
+                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold"
+              >
+                Type
+              </th>
+              <th
+                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold"
+              >
+                Semester
+              </th>
+              <th
+                class="px-4 py-3 text-center w-[25%] bg-gray-50 text-defaultGreen font-semibold"
+              >
+                Action
+              </th>
             </tr>
           </thead>
 
@@ -55,21 +75,22 @@
 
               <td class="px-4 py-3">
                 <div class="flex items-center justify-center gap-2">
-                  <button
-                    @click="openDetailsModal(item)"
-                    class="px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-gray-700 text-xs font-medium hover:bg-gray-50 hover:border-defaultGreen transition"
-                  >
+                  <button @click="openDetailsModal(item)" class="btn-view">
                     See Details
                   </button>
 
-                  <button @click="openAssignModal(item)" class="btn-save">Assign</button>
+                  <button @click="openAssignModal(item)" class="btn-save">
+                    Assign
+                  </button>
                 </div>
               </td>
             </tr>
 
             <tr v-if="paginatedData.length === 0">
               <td colspan="5" class="py-8">
-                <div class="flex justify-center items-center text-gray-400 text-xs">
+                <div
+                  class="flex justify-center items-center text-gray-400 text-xs"
+                >
                   No unscheduled courses found
                 </div>
               </td>
@@ -81,7 +102,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4 text-xs">
         <div class="text-gray-700">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
 
         <div class="flex items-center gap-1">
@@ -124,20 +146,26 @@
           class="bg-white rounded-xl shadow-2xl w-[42vw] overflow-hidden border border-gray-100"
         >
           <!-- Header -->
-          <div
-            class="flex items-center justify-between px-5 py-4 bg-defaultGreen text-white"
-          >
-            <div>
-              <h1 class="font-bold text-lg">Course Details</h1>
-              <p class="text-xs text-green-100">
-                Review all unscheduled course information
-              </p>
+
+          <div class="modal-header">
+            <div class="flex items-center gap-3">
+              <!-- Icon -->
+              <div class="glass-container">
+                <icon name="circle-add2" class="text-white" />
+              </div>
+
+              <!-- Title -->
+              <div>
+                <h2 class="text-lg font-semibold text-white">Course Detail</h2>
+
+                <p class="text-xs text-green-100">View course details</p>
+              </div>
             </div>
 
             <icon
-              name="circle-close3"
+              :name="'circle-close3'"
               @click="closeDetailsModal"
-              class="cursor-pointer"
+              class="close-button-header"
             />
           </div>
 
@@ -219,7 +247,9 @@
             <div class="rounded-xl border border-gray-100 p-4 bg-white">
               <div class="flex items-center justify-between mb-3">
                 <div>
-                  <h3 class="font-semibold text-sm text-gray-800">Assign Instructor</h3>
+                  <h3 class="font-semibold text-sm text-gray-800">
+                    Assign Instructor
+                  </h3>
                   <p class="text-xs text-gray-500">
                     You can assign directly here without going back.
                   </p>
@@ -257,9 +287,13 @@
               </div>
 
               <div class="flex justify-end gap-2 mt-5">
-                <button @click="closeDetailsModal" class="btn-cancel">Close</button>
+                <button @click="closeDetailsModal" class="btn-cancel">
+                  Close
+                </button>
 
-                <button @click="assignCourse" class="btn-save">Assign Now</button>
+                <button @click="confirmAssign" class="btn-save">
+                  Assign Now
+                </button>
               </div>
             </div>
           </div>
@@ -272,8 +306,27 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <div class="modal-header">
-            <h1 class="font-bold text-lg">Assign Course</h1>
-            <icon name="circle-close3" @click="closeAssignModal" class="cursor-pointer" />
+            <div class="flex items-center gap-3">
+              <!-- Icon -->
+              <div class="glass-container">
+                <icon name="circle-add2" class="text-white" />
+              </div>
+
+              <!-- Title -->
+              <div>
+                <h2 class="text-lg font-semibold text-white">Assign Course</h2>
+
+                <p class="text-xs text-green-100">
+                  Select an instructor and assign a course.
+                </p>
+              </div>
+            </div>
+
+            <icon
+              :name="'circle-close3'"
+              @click="closeAssignModal"
+              class="close-button-header"
+            />
           </div>
 
           <div class="modal-body w-[25vw]">
@@ -318,10 +371,80 @@
             </div>
 
             <div class="modal-footer">
-              <button @click="closeAssignModal" class="btn-cancel">Cancel</button>
-              <button @click="assignCourse" class="btn-save">Assign</button>
+              <button @click="closeAssignModal" class="btn-cancel">
+                Cancel
+              </button>
+              <button @click="confirmAssign" class="btn-save">Assign</button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirm Assign Modal -->
+    <div
+      v-if="showConfirmAssign"
+      class="fixed inset-0 flex items-center justify-center bg-black/30 z-50"
+    >
+      <div class="bg-white rounded-2xl shadow-2xl p-6 w-[420px]">
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b pb-3 mb-5">
+          <div class="flex items-center gap-2">
+            <icon
+              name="exclamation-circle"
+              class="w-7 h-7 p-1 rounded-full bg-green-100 text-defaultGreen"
+            />
+
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">
+                Confirm Assignment
+              </h3>
+              <p class="text-xs text-gray-500">Please confirm this action.</p>
+            </div>
+          </div>
+
+          <button
+            @click="cancelAssign"
+            class="text-gray-400 hover:text-gray-600 transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="space-y-4">
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Are you sure you want to assign
+            <span class="font-semibold text-defaultGreen">
+              {{ selectedCourse.course_code }}
+            </span>
+            to
+            <span class="font-semibold text-defaultGreen">
+              {{ searchInstructorQuery }}
+            </span>
+            ?
+          </p>
+
+          <div class="rounded-lg bg-amber-50 border border-amber-200 p-3">
+            <div class="flex gap-2">
+              <icon name="exclamation-circle" class="text-amber-600 mt-0.5" />
+
+              <p class="text-xs text-amber-700">
+                Once assigned, this course will be removed from the
+                <strong>Unscheduled Courses</strong> list and opened in the
+                schedule editor for further scheduling.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-center gap-2 mt-6 text-xs">
+          <button @click="cancelAssign" class="btn-cancel">Cancel</button>
+
+          <button @click="confirmAssignCourse" class="btn-save">
+            Yes, Assign Course
+          </button>
         </div>
       </div>
     </div>
@@ -352,7 +475,7 @@ export default {
       currentPage: 1,
       itemsPerPage: 10,
       searchQuery: "",
-
+      showConfirmAssign: false,
       user: {},
 
       assignModalVisible: false,
@@ -374,7 +497,7 @@ export default {
       const query = this.searchInstructorQuery?.toLowerCase() || "";
 
       return this.uniqueInstructors.filter((instr) =>
-        instr.faculty_name?.toLowerCase().includes(query)
+        instr.faculty_name?.toLowerCase().includes(query),
       );
     },
 
@@ -432,7 +555,10 @@ export default {
     },
 
     endIndex() {
-      return Math.min(this.currentPage * this.itemsPerPage, this.filteredData.length);
+      return Math.min(
+        this.currentPage * this.itemsPerPage,
+        this.filteredData.length,
+      );
     },
 
     uniqueInstructors() {
@@ -442,7 +568,9 @@ export default {
 
       return (this.store.final_schedules || [])
         .filter(
-          (s) => s.faculty_id && Number(s.program_id) === Number(this.user.program_id)
+          (s) =>
+            s.faculty_id &&
+            Number(s.program_id) === Number(this.user.program_id),
         )
         .filter((s) => {
           if (seen.has(s.faculty_id)) return false;
@@ -454,6 +582,22 @@ export default {
   },
 
   methods: {
+    confirmAssign() {
+      if (!this.selectedInstructor) {
+        return alert("Please select an instructor");
+      }
+
+      this.showConfirmAssign = true;
+    },
+
+    cancelAssign() {
+      this.showConfirmAssign = false;
+    },
+
+    async confirmAssignCourse() {
+      this.showConfirmAssign = false;
+      await this.assignCourse();
+    },
     handleClickOutside(event) {
       const instructorDropdown = this.$refs.instructorDropdown;
       const detailsInstructorDropdown = this.$refs.detailsInstructorDropdown;
@@ -462,7 +606,8 @@ export default {
         instructorDropdown && instructorDropdown.contains(event.target);
 
       const clickedInsideDetails =
-        detailsInstructorDropdown && detailsInstructorDropdown.contains(event.target);
+        detailsInstructorDropdown &&
+        detailsInstructorDropdown.contains(event.target);
 
       if (!clickedInsideAssign && !clickedInsideDetails) {
         this.showInstructorDropdown = false;
@@ -493,18 +638,19 @@ export default {
 
     setSelectedCourse(item) {
       const courseInfo = this.store.courses?.find(
-        (c) => Number(c.course_id) === Number(item.course_id)
+        (c) => Number(c.course_id) === Number(item.course_id),
       );
 
       const programInfo = this.store.programs?.find(
-        (p) => Number(p.program_id) === Number(item.program_id)
+        (p) => Number(p.program_id) === Number(item.program_id),
       );
 
       this.selectedCourse = {
         ...item,
         course_code: item.course_code || courseInfo?.course_code || "Unknown",
         course_title: item.course_title || courseInfo?.course_title || "",
-        program_code: item.program_code || programInfo?.program_code || "Unknown",
+        program_code:
+          item.program_code || programInfo?.program_code || "Unknown",
         program_name: item.program_name || programInfo?.program_name || "",
         set_name: this.getSetName(item.class_id) || item.class_id,
         hours: item.hours || "3h lec",
@@ -554,12 +700,17 @@ export default {
         return alert("Please select an instructor");
       }
 
+      // Keep the original unscheduled meeting ID
+      const unscheduledId = this.selectedCourse.id;
+
       const course = {
         ...JSON.parse(JSON.stringify(this.selectedCourse)),
         faculty_id: this.selectedInstructor,
         faculty_name: this.getFacultyName(this.selectedInstructor),
+        unscheduled_id: unscheduledId,
       };
 
+      // Remove the original id since the schedule table has its own id
       delete course.id;
 
       const lectureMatch = course.hours?.match(/(\d+(\.\d+)?)h lec/);
@@ -609,8 +760,18 @@ export default {
         ];
       }
 
+      // Delete from database
+      await axios.delete(
+        `${process.env.VUE_APP_API_BASE_URL}/unscheduled-meetings/${unscheduledId}`,
+      );
+
+      // Refresh the table
+      await this.store.fetchUnscheduledMeetings();
+
+      // Open Edit Schedule
       this.$emit("open-edit-schedule", payload);
 
+      // Reset UI
       this.assignModalVisible = false;
       this.detailsModalVisible = false;
       this.selectedCourse = {};
@@ -621,9 +782,12 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
 
         this.user = res.data || {};
       } catch {
@@ -633,7 +797,7 @@ export default {
 
     getInstituteId(programId) {
       const program = (this.store.programs || []).find(
-        (p) => Number(p.program_id) === Number(programId)
+        (p) => Number(p.program_id) === Number(programId),
       );
 
       return program ? program.institute_id : null;
@@ -641,7 +805,7 @@ export default {
 
     getFacultyName(facultyId) {
       const user = (this.store.rawusers || []).find(
-        (u) => Number(u.id) === Number(facultyId)
+        (u) => Number(u.id) === Number(facultyId),
       );
 
       if (!user) return "Unknown Faculty";
