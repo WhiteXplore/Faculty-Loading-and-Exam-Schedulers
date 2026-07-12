@@ -3635,12 +3635,11 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
             classes_by_expertise[key] = []
         classes_by_expertise[key].append(course)
 
-    # Mutable per-group queues of sections still waiting to be assigned
+    # Mutable per-group queues of sections still waiting to be assigned.
+    # Sorted by class_id for deterministic, reproducible ordering.
     remaining_sections = {}
     for k, v in classes_by_expertise.items():
-        sections = list(v)
-        random.shuffle(sections)
-        remaining_sections[k] = sections
+        remaining_sections[k] = sorted(v, key=lambda c: c.get("class_id", 0))
 
     # Expertise groups with no qualified faculty at all — mark immediately
     for key, sections in remaining_sections.items():
@@ -3653,128 +3652,111 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
             remaining_sections[key] = []
 
     # ----------------------------------------------------------------
-    # COVERAGE PASS: guarantee at least 1 class per registered expertise.
-    # If a faculty is registered for 2+ expertise (course_code, program_id)
-    # combos, each one must get at least 1 section assigned (subject to
-    # remaining load capacity and PREP_LIMIT), BEFORE the load-balanced
-    # tiered round-robin runs. Otherwise a faculty's 2nd/3rd expertise can be
-    # starved if their capacity fills up on the 1st expertise alone.
-    # ----------------------------------------------------------------
-    fids_for_coverage = list(faculty_loads.keys())
-    random.shuffle(fids_for_coverage)
-    for fid in fids_for_coverage:
-        keys = list(faculty_expertise_keys.get(fid, ()))
-        random.shuffle(keys)
-        for key in keys:
-            if key in faculty_loads[fid]["preps"]:
-                continue  # already covered
-            sections = remaining_sections.get(key)
-            if not sections:
-                continue  # no sections available (or none exist) for this expertise
-            if len(faculty_loads[fid]["preps"]) >= PREP_LIMIT:
-                continue  # faculty already at the prep limit
-            course = sections[0]
-            units = compute_load(course["course_lec"], course["course_lab"])
-            if faculty_loads[fid]["total_units"] + units > faculty_loads[fid]["load_unit"]:
-                continue  # not enough remaining capacity
-            faculty_loads[fid]["assigned_classes"].append(course)
-            faculty_loads[fid]["total_units"] += units
-            faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
-            faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
-            faculty_loads[fid]["preps"].add(key)
-            sections.pop(0)
-
-    # ----------------------------------------------------------------
-    # TIERED ASSIGNMENT: process expertise groups in ascending order of
-    # units_per_section.  Smaller-unit courses (e.g. ITELEC2 @ 4.25 units)
-    # are fully scheduled before larger-unit courses (e.g. IT111 @ 7.5 units).
-    # This prevents large-unit monopoly courses from consuming shared faculty
-    # capacity before smaller, higher-section-count courses can claim their share.
+    # SATURATION ASSIGNMENT
+    # Replaces the old Coverage Pass + Tiered Round-Robin approach.
     #
-    # Within each tier: load-balanced round-robin (1 section per expertise group
-    # per pass) distributes sections across all qualified faculty fairly.
+    # Why saturation instead of round-robin:
+    #   Round-robin splits sections of the same expertise across multiple
+    #   faculty for "fairness", but this wastes capacity: a faculty who
+    #   could teach all 6 sections of IT311 gets only 2-3 because the
+    #   remaining sections were spread to others who then fill up on other
+    #   courses and leave IT311 sections unscheduled.
+    #
+    # New rule: for each expertise key, assign ALL sections to the first
+    # qualified faculty who has capacity. Only when that faculty is full
+    # do the remaining sections overflow to the next qualified faculty.
+    # "Splitting" only occurs when a single faculty genuinely lacks the
+    # load capacity to absorb every section of that expertise.
+    #
+    # Ordering is fully deterministic (no random shuffles):
+    #   Expertise keys : ascending units_per_section, then key string
+    #   Faculty order  : branch-priority first, then lowest total_units,
+    #                    then faculty_id (stable tiebreaker)
+    # This makes every run produce the same output for the same input.
     # ----------------------------------------------------------------
 
-    # Build tier map: units_per_section → [expertise_key, ...]
-    unit_to_keys = {}
-    for key in classes_by_expertise.keys():
-        if not expertise_to_fids.get(key):
-            continue  # No qualified faculty — already warned above
-        if not remaining_sections.get(key):
+    def _key_sort(k):
+        secs = remaining_sections.get(k)
+        if not secs:
+            return (999.0, 999, k)
+        s = secs[0]
+        # Primary: ascending units_per_section (small courses first — prevents large-unit starvation)
+        # Secondary: ascending qualified-faculty count (scarcest keys first — prevents sole-faculty
+        #            keys from being processed after their only qualified faculty is already full)
+        # Tertiary: key string (stable deterministic tiebreaker)
+        n_qualified = len(expertise_to_fids.get(k, []))
+        return (compute_load(s["course_lec"], s["course_lab"]), n_qualified, k)
+
+    sorted_expertise_keys = sorted(
+        [k for k in remaining_sections if expertise_to_fids.get(k)],
+        key=_key_sort,
+    )
+
+    for expertise_key in sorted_expertise_keys:
+        if not remaining_sections.get(expertise_key):
             continue
-        sample = remaining_sections[key][0]
-        ups = compute_load(sample["course_lec"], sample["course_lab"])
-        if ups not in unit_to_keys:
-            unit_to_keys[ups] = []
-        unit_to_keys[ups].append(key)
 
-    # Process tiers from smallest to largest units_per_section
-    for ups in sorted(unit_to_keys.keys()):
-        tier_keys = unit_to_keys[ups]
-        random.shuffle(tier_keys)  # Fair ordering within tier
+        qualified_fids = expertise_to_fids.get(expertise_key, [])
+        sample = remaining_sections[expertise_key][0]
+        course_branch_id = sample.get("branch_id")
 
-        # Round-robin within tier: assign 1 section per group per pass
-        made_progress = True
-        while made_progress:
-            made_progress = False
-            for expertise_key in tier_keys:
-                if not remaining_sections.get(expertise_key):
-                    continue
+        # Deterministic faculty ordering: branch-priority → lowest load → faculty_id
+        sorted_fids = sorted(
+            qualified_fids,
+            key=lambda fid: (
+                0 if (
+                    course_branch_id is not None
+                    and course_branch_id != MAIN_BRANCH_ID
+                    and course_branch_id in faculty_branches_map.get(fid, set())
+                ) else 1,
+                faculty_loads[fid]["total_units"],
+                fid,
+            ),
+        )
 
-                qualified_fids = expertise_to_fids[expertise_key]
+        for fid in sorted_fids:
+            # Saturate: keep assigning sections of this expertise until the
+            # faculty hits their load_unit cap or the PREP_LIMIT for new preps.
+            while remaining_sections.get(expertise_key):
+                # PREP_LIMIT: a new prep slot is required only the first time
+                # this expertise key is assigned to this faculty.
+                if (expertise_key not in faculty_loads[fid]["preps"]
+                        and len(faculty_loads[fid]["preps"]) >= PREP_LIMIT):
+                    break  # faculty is at prep limit — try next faculty
+
                 course = remaining_sections[expertise_key][0]
-                course_branch_id = course.get("branch_id")
+                units = compute_load(course["course_lec"], course["course_lab"])
 
-                # Sort: branch priority → load balance → random tiebreaker
-                sorted_fids = sorted(
-                    qualified_fids,
-                    key=lambda fid: (
-                        0 if (
-                            course_branch_id is not None
-                            and course_branch_id != MAIN_BRANCH_ID
-                            and course_branch_id in faculty_branches_map.get(fid, set())
-                        ) else 1,
-                        faculty_loads[fid]["total_units"],
-                        random.random(),
-                    )
-                )
+                if faculty_loads[fid]["total_units"] + units > faculty_loads[fid]["load_unit"]:
+                    break  # faculty is at load capacity — try next faculty
 
-                for fid in sorted_fids:
-                    units = compute_load(course["course_lec"], course["course_lab"])
-                    # PREP_LIMIT: don't let a faculty pick up a brand-new prep
-                    # once they already hold PREP_LIMIT distinct expertise —
-                    # additional sections of an existing prep are still fine.
-                    if (expertise_key not in faculty_loads[fid]["preps"]
-                            and len(faculty_loads[fid]["preps"]) >= PREP_LIMIT):
-                        continue
-                    if faculty_loads[fid]["total_units"] + units <= faculty_loads[fid]["load_unit"]:
-                        faculty_loads[fid]["assigned_classes"].append(course)
-                        faculty_loads[fid]["total_units"] += units
-                        faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
-                        faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
-                        faculty_loads[fid]["preps"].add(expertise_key)
-                        remaining_sections[expertise_key].pop(0)
-                        made_progress = True
-                        break
+                faculty_loads[fid]["assigned_classes"].append(course)
+                faculty_loads[fid]["total_units"] += units
+                faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
+                faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
+                faculty_loads[fid]["preps"].add(expertise_key)
+                remaining_sections[expertise_key].pop(0)
 
     # ----------------------------------------------------------------
-    # EXHAUSTION PASS: the tiered round-robin is fairness-first, so it can
-    # leave a faculty under-loaded even though more sections they're
-    # qualified for are still sitting unassigned (e.g. their round-robin
-    # turn keeps losing to other less-loaded faculty). Before giving up on
-    # any remaining sections, greedily top off every faculty's remaining
-    # load capacity from their own registered expertise, respecting
-    # PREP_LIMIT. This minimizes unscheduled sections and unused capacity.
+    # EXHAUSTION PASS: safety net for sections that the saturation loop
+    # couldn't place because the primary faculty was already near capacity
+    # from a later-processed expertise key. Iterates deterministically
+    # (lowest-loaded faculty first) and tops off any remaining capacity
+    # from each faculty's full registered expertise set.
     # ----------------------------------------------------------------
-    fids_for_exhaustion = list(faculty_loads.keys())
-    random.shuffle(fids_for_exhaustion)
-    for fid in fids_for_exhaustion:
-        keys = list(faculty_expertise_keys.get(fid, ()))
-        random.shuffle(keys)
+    fids_sorted = sorted(
+        faculty_loads.keys(),
+        key=lambda fid: (faculty_loads[fid]["total_units"], fid),
+    )
+    for fid in fids_sorted:
+        exhaust_keys = sorted(
+            faculty_expertise_keys.get(fid, ()),
+            key=_key_sort,
+        )
         progressed = True
         while progressed:
             progressed = False
-            for key in keys:
+            for key in exhaust_keys:
                 sections = remaining_sections.get(key)
                 if not sections:
                     continue
@@ -4098,6 +4080,16 @@ if __name__ == "__main__":
             "hours": f"{course.get('course_lec', 0)}h lec + {course.get('course_lab', 0)}h lab",
             "reason": reason
         })
+
+    # Attach each faculty's actual load_unit to their scheduled meetings so that
+    # downstream validators can compare against the real DB-sourced limit rather
+    # than guessing from employment_type strings.
+    _fac_load_unit_map = {
+        fid: info.get("load_unit", MAX_LOAD)
+        for fid, info in faculty_load_result.items()
+    }
+    for _m in complete_schedule:
+        _m["faculty_load_unit"] = _fac_load_unit_map.get(_m["faculty_id"], MAX_LOAD)
 
     # Generate timestamp for filenames
     # Create output directory if it doesn't exist
