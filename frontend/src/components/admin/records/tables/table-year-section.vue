@@ -20,7 +20,11 @@
         <div class="flex justify-between items-center gap-4 w-full rounded-lg">
           <div class="per-page-container">
             <div class="select-wrapper">
-              <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+              <select
+                v-model="itemsPerPage"
+                class="select-input"
+                @change="changePage(1)"
+              >
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
@@ -76,7 +80,9 @@
         <div class="w-full mt-1 rounded-xl border bg-white overflow-hidden">
           <div class="max-h-[69vh] overflow-y-auto">
             <table class="min-w-full text-sm text-gray-700 border-collapse">
-              <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+              <thead
+                class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+              >
                 <tr>
                   <!-- <th class="px-4 py-3 text-left    w-[2%]">ID</th> -->
                   <th class="px-4 py-3 text-left w-[5%]">Year & Section</th>
@@ -196,14 +202,33 @@
       class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
       @click.self="closeCoursesModal"
     >
-      <div class="bg-white rounded-xl shadow-2xl w-[800px] max-h-[80vh] overflow-y-auto">
-        <div
-          class="bg-defaultGreen text-white px-6 py-4 flex justify-between items-center sticky top-0"
-        >
-          <h3 class="font-bold text-lg">Courses for {{ selectedClass?.set_name }}</h3>
-          <button @click="closeCoursesModal" class="text-white hover:text-gray-200">
-            <icon name="close" class="w-6 h-6" />
-          </button>
+      <div
+        class="bg-white rounded-2xl shadow-2xl w-[800px] max-h-[80vh] overflow-y-auto"
+      >
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="book-open" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                Courses for {{ selectedClass?.set_name }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View and manage courses assigned to this class section
+              </p>
+            </div>
+          </div>
+
+          <icon
+            name="circle-close3"
+            @click="closeCoursesModal"
+            class="close-button-header"
+          />
         </div>
 
         <div class="p-6">
@@ -222,7 +247,10 @@
                     {{ course.course?.course_description }}
                   </p>
                   <div class="mt-2 flex gap-4 text-xs text-gray-500">
-                    <span>Year Level: {{ getYearLevelLabel(course.year_level) }}</span>
+                    <span
+                      >Year Level:
+                      {{ getYearLevelLabel(course.year_level) }}</span
+                    >
                     <span>Lec: {{ course.course?.course_lec || 0 }} hrs</span>
                     <span>Lab: {{ course.course?.course_lab || 0 }} hrs</span>
                     <span>Units: {{ course.course?.course_credit || 0 }}</span>
@@ -232,7 +260,6 @@
             </div>
           </div>
           <div v-else class="text-center py-8 text-gray-500">
-            <icon name="question" class="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <p>No courses assigned to this class yet.</p>
           </div>
         </div>
@@ -245,27 +272,64 @@
     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
     @click.self="closeScheduleModal"
   >
-    <div class="bg-white rounded-xl shadow-2xl w-[1000px] max-h-[80vh] overflow-y-auto">
-      <div class="bg-defaultGreen text-white px-6 py-4 flex justify-between items-center">
-        <h3 class="font-bold text-lg">
-          {{ selectedClass?.program?.program_code }} -
-          {{ selectedClass?.set_name }}
-        </h3>
+    <div
+      class="bg-white rounded-2xl shadow-2xl w-[800px] max-h-[80vh] overflow-y-auto"
+    >
+      <div class="modal-header">
+        <div class="flex items-center gap-3">
+          <!-- Icon -->
+          <div class="glass-container">
+            <icon name="book-open" class="text-white" />
+          </div>
 
-        <button @click="closeScheduleModal" class="text-white text-xl">✕</button>
+          <!-- Title -->
+          <div>
+            <h2 class="text-lg font-semibold text-white">
+              Schedule for {{ selectedClass?.program?.program_code }} -
+              {{ selectedClass?.set_name }}
+            </h2>
+
+            <p class="text-xs text-green-100">
+              View and manage scheduled assigned to this class section
+            </p>
+          </div>
+        </div>
+
+        <icon
+          name="circle-close3"
+          @click="closeScheduleModal"
+          class="cursor-pointer text-white hover:opacity-80 transition"
+        />
       </div>
 
-      <div class="p-2">
-        <table v-if="selectedSchedules.length" class="min-w-full border text-sm">
+      <div class="p-6">
+        <table
+          v-if="selectedSchedules.length"
+          class="min-w-full border text-sm"
+        >
           <thead class="bg-gray-100">
             <tr>
-              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Course</th>
-              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Day</th>
-              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Time</th>
-              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Faculty</th>
-              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Room</th>
-              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Type</th>
-              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">Mode</th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">
+                Course
+              </th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">
+                Day
+              </th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">
+                Time
+              </th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">
+                Faculty
+              </th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">
+                Room
+              </th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">
+                Type
+              </th>
+              <th class="border px-3 py-2 bg-gray-50 text-gray-400 text-left">
+                Mode
+              </th>
             </tr>
           </thead>
 
@@ -349,7 +413,9 @@ export default {
       // FILTER BY ACTIVE SCHOOL YEAR
       if (this.activeSchoolYear?.school_year_id) {
         result = result.filter(
-          (c) => Number(c.school_year_id) === Number(this.activeSchoolYear.school_year_id)
+          (c) =>
+            Number(c.school_year_id) ===
+            Number(this.activeSchoolYear.school_year_id),
         );
       }
 
@@ -367,7 +433,9 @@ export default {
       }
 
       if (this.selectedProgram) {
-        result = result.filter((c) => c.program?.program_name === this.selectedProgram);
+        result = result.filter(
+          (c) => c.program?.program_name === this.selectedProgram,
+        );
       }
 
       if (this.user?.role === "Program Chairperson" && this.user?.program_id) {
@@ -396,7 +464,10 @@ export default {
     },
 
     totalPages() {
-      return Math.max(1, Math.ceil(this.filteredClasses.length / this.itemsPerPage));
+      return Math.max(
+        1,
+        Math.ceil(this.filteredClasses.length / this.itemsPerPage),
+      );
     },
     pageNumbers() {
       const total = this.totalPages;
@@ -420,11 +491,16 @@ export default {
     },
 
     classEndIndex() {
-      return Math.min(this.classPage * this.itemsPerPage, this.filteredClasses.length);
+      return Math.min(
+        this.classPage * this.itemsPerPage,
+        this.filteredClasses.length,
+      );
     },
 
     uniquePrograms() {
-      const programs = this.classes.map((c) => c.program?.program_name).filter(Boolean);
+      const programs = this.classes
+        .map((c) => c.program?.program_name)
+        .filter(Boolean);
       return [...new Set(programs)];
     },
   },
@@ -441,7 +517,8 @@ export default {
           (schedule) =>
             schedule.class_id === cls.class_id &&
             schedule.school_year === this.activeSchoolYear?.school_year_name &&
-            Number(schedule.semester) === Number(this.activeSchoolYear?.semester)
+            Number(schedule.semester) ===
+              Number(this.activeSchoolYear?.semester),
         );
 
         console.log("FILTERED SCHEDULES:", this.selectedSchedules);
@@ -463,9 +540,12 @@ export default {
     },
     async fetchUser() {
       try {
-        const res = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data;
       } catch (err) {
         console.error("Failed to fetch user:", err);
@@ -474,7 +554,7 @@ export default {
     async loadClasses() {
       try {
         const response = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/class/get-classes"
+          process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
         );
 
         this.classes = response.data;
@@ -498,7 +578,7 @@ export default {
               program_id: cls.program_id,
               school_year_id: cls.school_year_id,
             },
-          }
+          },
         );
 
         const yearLevel = this.extractYearLevel(cls.set_name);

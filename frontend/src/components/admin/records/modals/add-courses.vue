@@ -1,16 +1,36 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-wrapper">
-      <form @submit.prevent="submitData" class="modal-container" ref="coursesForm">
+      <form
+        @submit.prevent="submitData"
+        class="modal-container"
+        ref="coursesForm"
+      >
+        <!-- Header -->
         <div class="modal-header">
-          <div class="flex gap-1 items-center">
-            <icon :name="'add-students'" />
-           <h1 class="header1">
-              {{ isEdit ? "Edit " : "Add " }} Course
-            </h1>
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit Course" : "Add Course" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update course details
+              </p>
+            </div>
           </div>
 
-          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <div class="w-[35vw] modal-body">
@@ -24,7 +44,9 @@
                 type="text"
                 placeholder="Search curriculum..."
                 class="dropdown-input"
-                :class="isEdit ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''"
+                :class="
+                  isEdit ? 'bg-gray-100 cursor-not-allowed text-gray-500' : ''
+                "
                 :disabled="isEdit"
                 @input="handleCurriculumInput"
                 @focus="!isEdit && (showCurriculumDropdown = true)"
@@ -49,7 +71,9 @@
                   </div>
                 </div>
 
-                <div v-else class="dropdown-item text-gray-400">No curriculum found</div>
+                <div v-else class="dropdown-item text-gray-400">
+                  No curriculum found
+                </div>
               </div>
             </div>
           </div>
@@ -92,7 +116,11 @@
 
             <div class="w-full space-y-2">
               <label class="input-label">Semester:</label>
-              <select v-model="form.course_semester" required class="input-text">
+              <select
+                v-model="form.course_semester"
+                required
+                class="input-text"
+              >
                 <option disabled value="">Select Semester</option>
                 <option value="1">First</option>
                 <option value="2">Second</option>
@@ -134,7 +162,11 @@
               class="bg-defaultGreen text-white px-3 py-3 tracking-wider rounded-md text-sm hover:bg-green-700"
               @click="openRequisiteInput"
             >
-              {{ form.course_requisite.length ? "Update Requisite" : "Add Requisite" }}
+              {{
+                form.course_requisite.length
+                  ? "Update Requisite"
+                  : "Add Requisite"
+              }}
             </button>
 
             <div v-if="showRequisiteInput" class="flex flex-col gap-2">
@@ -170,14 +202,19 @@
                   </div>
 
                   <div v-else class="dropdown-menu">
-                    <div class="dropdown-item text-gray-400">No requisite found</div>
+                    <div class="dropdown-item text-gray-400">
+                      No requisite found
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Selected Requisites -->
-            <div v-if="form.course_requisite.length" class="flex flex-wrap gap-2 mt-2">
+            <div
+              v-if="form.course_requisite.length"
+              class="flex flex-wrap gap-2 mt-2"
+            >
               <div
                 v-for="code in form.course_requisite"
                 :key="code"
@@ -257,9 +294,14 @@ export default {
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["curriculums", "courses", "curriculum_courses"]),
+    ...mapState(useFetchDataStore, [
+      "curriculums",
+      "courses",
+      "curriculum_courses",
+    ]),
     curriculumCourseList() {
-      if (Array.isArray(this.curriculum_courses)) return this.curriculum_courses;
+      if (Array.isArray(this.curriculum_courses))
+        return this.curriculum_courses;
       if (Array.isArray(this.curriculum_courses?.data))
         return this.curriculum_courses.data;
       return [];
@@ -295,7 +337,9 @@ export default {
       // Program Chairperson = show only same program_id
       if (role === "program chairperson") {
         list = list.filter((c) => {
-          const curriculumProgramId = Number(c.program_id || c.program?.program_id);
+          const curriculumProgramId = Number(
+            c.program_id || c.program?.program_id,
+          );
           const userProgramId = Number(this.user?.program_id);
 
           return curriculumProgramId === userProgramId;
@@ -331,10 +375,13 @@ export default {
         const code = String(course.course_code || "").toLowerCase();
         const title = String(course.course_title || "").toLowerCase();
 
-        const isSelected = this.form.course_requisite.includes(course.course_code);
+        const isSelected = this.form.course_requisite.includes(
+          course.course_code,
+        );
 
         const isCurrentCourse =
-          this.isEdit && Number(course.course_id) === Number(this.courseData?.course_id);
+          this.isEdit &&
+          Number(course.course_id) === Number(this.courseData?.course_id);
 
         const matchSearch = !q || code.includes(q) || title.includes(q);
 
@@ -375,9 +422,12 @@ export default {
     ]),
     async fetchUser() {
       try {
-        const response = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
 
         if (response.data) {
           this.user = response.data;
@@ -402,7 +452,7 @@ export default {
       if (directId) return directId;
 
       const match = this.curriculumCourseList.find(
-        (item) => Number(item.course_id) === Number(this.courseData?.course_id)
+        (item) => Number(item.course_id) === Number(this.courseData?.course_id),
       );
 
       console.log("MATCHED CURRICULUM COURSE:", match);
@@ -411,16 +461,16 @@ export default {
     },
 
     formatCurriculum(curriculum) {
-      return `${curriculum.curriculum_start_year} - ${curriculum.curriculum_end_year} - ${
-        curriculum.program?.program_name || "No Program"
-      }`;
+      return `${curriculum.curriculum_start_year} - ${
+        curriculum.curriculum_end_year
+      } - ${curriculum.program?.program_name || "No Program"}`;
     },
 
     findSelectedCurriculum() {
       const curriculumId = this.form.curriculum_id || this.getCurriculumId();
 
       return this.curriculumList.find(
-        (c) => Number(c.curriculum_id) === Number(curriculumId)
+        (c) => Number(c.curriculum_id) === Number(curriculumId),
       );
     },
 
@@ -436,14 +486,21 @@ export default {
       }
 
       const match = this.curriculumCourseList.find(
-        (item) => Number(item.course_id) === Number(this.courseData?.course_id)
+        (item) => Number(item.course_id) === Number(this.courseData?.course_id),
       );
 
       if (match?.curriculum) {
-        console.log("CURRICULUM START YEAR:", match.curriculum.curriculum_start_year);
-        console.log("CURRICULUM END YEAR:", match.curriculum.curriculum_end_year);
+        console.log(
+          "CURRICULUM START YEAR:",
+          match.curriculum.curriculum_start_year,
+        );
+        console.log(
+          "CURRICULUM END YEAR:",
+          match.curriculum.curriculum_end_year,
+        );
 
-        this.form.curriculum_id = match.curriculum_id || match.curriculum.curriculum_id;
+        this.form.curriculum_id =
+          match.curriculum_id || match.curriculum.curriculum_id;
         this.selectedCurriculumText = this.formatCurriculum(match.curriculum);
         return;
       }
@@ -480,7 +537,7 @@ export default {
 
     removeRequisite(code) {
       this.form.course_requisite = this.form.course_requisite.filter(
-        (item) => item !== code
+        (item) => item !== code,
       );
     },
 
@@ -525,7 +582,9 @@ export default {
         course_lab: String(this.courseData?.course_lab || ""),
         course_lec: String(this.courseData?.course_lec || ""),
         course_level: String(this.courseData?.course_level || ""),
-        course_requisite: this.normalizeRequisites(this.courseData?.course_requisite),
+        course_requisite: this.normalizeRequisites(
+          this.courseData?.course_requisite,
+        ),
       };
 
       console.log("==================================");
@@ -588,13 +647,13 @@ export default {
         if (this.isEdit) {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/courses/update-course/${this.courseData.course_id}`,
-            payload
+            payload,
           );
           toast.success("Course updated successfully!");
         } else {
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/courses/add-courses`,
-            payload
+            payload,
           );
           toast.success("Course added successfully!");
         }

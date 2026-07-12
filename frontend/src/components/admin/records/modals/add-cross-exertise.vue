@@ -1,14 +1,9 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submit"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-      >
+      <form @submit.prevent="submit" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg ">
         <!-- HEADER -->
-        <div
-          class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center"
-        >
+        <div class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center">
           <h1 class="font-bold text-lg">Cross Assign Expertise</h1>
           <span @click="$emit('close')" class="cursor-pointer">✕</span>
         </div>
@@ -18,33 +13,17 @@
           <div class="relative space-y-2">
             <label>Search Courses</label>
 
-            <input
-              v-model="search"
-              @focus="dropdownOpen = true"
-              placeholder="Search courses..."
-              class="w-full border px-3 py-2.5 rounded-md"
-            />
+            <input v-model="search" @focus="dropdownOpen = true" placeholder="Search courses..."
+              class="w-full border px-3 py-2.5 rounded-md" />
 
-            <ul
-              v-if="dropdownOpen && filteredCourses.length"
-              @mouseleave="dropdownOpen = false"
-              class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
-            >
-              <li
-                v-for="course in filteredCourses"
-                :key="course.course_id"
-                @click="add(course)"
-                class="px-3 py-2 flex justify-between items-center cursor-pointer hover:bg-green-100"
-                :class="
-                  isSelected(course) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''
-                "
-              >
+            <ul v-if="dropdownOpen && filteredCourses.length" @mouseleave="dropdownOpen = false"
+              class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto">
+              <li v-for="course in filteredCourses" :key="course.course_id" @click="add(course)"
+                class="px-3 py-2 flex justify-between items-center cursor-pointer hover:bg-green-100" :class="isSelected(course) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''
+                  ">
                 <span> {{ course.course_code }} - {{ course.course_title }} </span>
 
-                <span
-                  v-if="isSelected(course)"
-                  class="text-[10px] bg-green-200 px-2 rounded"
-                >
+                <span v-if="isSelected(course)" class="text-[10px] bg-green-200 px-2 rounded">
                   Selected
                 </span>
               </li>
@@ -53,11 +32,8 @@
 
           <!-- SELECTED COURSES -->
           <div class="space-y-1">
-            <div
-              v-for="(c, i) in selected"
-              :key="i"
-              class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded"
-            >
+            <div v-for="(c, i) in selected" :key="i"
+              class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded">
               <span>{{ c.course_code }} — {{ c.course_title }}</span>
               <button @click.prevent="remove(i)">✕</button>
             </div>

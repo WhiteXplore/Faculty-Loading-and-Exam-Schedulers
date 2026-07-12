@@ -3,25 +3,50 @@
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
       <form
         @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
+        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg"
         ref="buildingForm"
       >
         <!-- HEADER -->
-        <div class="modal-header">
+        <!-- <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon name="add-account1.1" />
             <h1 class="header1">
-              {{ isEditMode ? "Edit Building" : "Add Building" }}
+              {{ isEdit ? "Edit Building" : "Add Building" }}
             </h1>
           </div>
 
           <icon name="circle-close3" @click="$emit('close')" class="cursor-pointer" />
+        </div> -->
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit Building" : "Building" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update building details
+              </p>
+            </div>
+          </div>
+
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <!-- FORM -->
         <div class="p-5 w-[28vw] space-y-4">
           <!-- BUILDING NAME -->
-          <div>
+          <div class="w-full space-y-2">
             <label class="input-label">Building Name:</label>
             <input
               v-model="form.building_name"
@@ -46,13 +71,13 @@
 
             <div
               v-if="showAreaDropdown && filteredAreas.length"
-              class="absolute top-[75px] w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-10"
+              class="dropdown-menu"
               @mouseleave="showAreaDropdown = false"
             >
               <div
                 v-for="area in filteredAreas"
                 :key="area.building_area_id"
-                class="px-3 py-3 hover:bg-gray-100 cursor-pointer"
+                class="dropdown-item"
                 @mousedown="selectArea(area)"
               >
                 {{ area.area_name }} -
@@ -68,7 +93,7 @@
             </button>
 
             <button type="submit" class="btn-save">
-              {{ isEditMode ? "Save Changes" : "Submit" }}
+              {{ isEdit ? "Save Changes" : "Submit" }}
             </button>
           </div>
         </div>
@@ -110,7 +135,7 @@ export default {
   },
 
   computed: {
-    isEditMode() {
+    isEdit() {
       return !!this.buildingData;
     },
 
@@ -152,18 +177,23 @@ export default {
           building_area_id: Number(this.form.building_area_id),
         };
 
-        if (this.isEditMode) {
+        if (this.isEdit) {
           await axios.patch(
-            process.env.VUE_APP_API_BASE_URL + `/buildings/${this.form.building_id}`,
+            process.env.VUE_APP_API_BASE_URL +
+              `/buildings/${this.form.building_id}`,
             payload,
-            { withCredentials: true }
+            { withCredentials: true },
           );
 
           toast.success("Building updated successfully!");
         } else {
-          await axios.post(process.env.VUE_APP_API_BASE_URL + "/buildings", payload, {
-            withCredentials: true,
-          });
+          await axios.post(
+            process.env.VUE_APP_API_BASE_URL + "/buildings",
+            payload,
+            {
+              withCredentials: true,
+            },
+          );
 
           toast.success("Building created successfully!");
         }
@@ -171,7 +201,9 @@ export default {
         this.$emit("refresh");
         this.$emit("close");
       } catch (error) {
-        toast.error(error?.response?.data?.message || "Failed to save building");
+        toast.error(
+          error?.response?.data?.message || "Failed to save building",
+        );
       }
     },
   },
@@ -179,7 +211,7 @@ export default {
   mounted() {
     this.fetchBuildingAreas();
 
-    if (this.isEditMode) {
+    if (this.isEdit) {
       this.form = {
         ...this.form,
         ...this.buildingData,
@@ -188,7 +220,8 @@ export default {
       this.searchAreaQuery =
         this.buildingData?.buildingArea?.area_name +
           " - " +
-          this.buildingData?.buildingArea?.collegeBranch?.college_branch_name || "";
+          this.buildingData?.buildingArea?.collegeBranch?.college_branch_name ||
+        "";
     }
   },
 };

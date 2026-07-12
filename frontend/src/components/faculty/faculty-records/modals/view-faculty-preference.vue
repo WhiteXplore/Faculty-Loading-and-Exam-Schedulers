@@ -4,9 +4,13 @@
     class="w-full lg:flex-1 rounded bg-gray-50"
   >
     <!-- Header -->
-    <div class="mb-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div
+      class="mb-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+    >
       <div>
-        <h1 class="mt-1 text-xl font-bold text-gray-900">My Teaching Preferences</h1>
+        <h1 class="mt-1 text-xl font-bold text-gray-900">
+          My Teaching Preferences
+        </h1>
         <p class="mt-1 text-xs text-gray-500">
           View and manage your assigned expertise by semester.
         </p>
@@ -113,7 +117,9 @@
             <div class="expertise-card-header">
               <div>
                 <h3 class="expertise-title text-blue-800">Other Expertise</h3>
-                <p class="expertise-subtitle">Secondary courses you can also handle</p>
+                <p class="expertise-subtitle">
+                  Secondary courses you can also handle
+                </p>
               </div>
 
               <span class="count-pill bg-blue-50 text-blue-700">
@@ -147,7 +153,10 @@
                 </div>
               </div>
 
-              <div v-if="filteredOtherBySemester(sem).length === 0" class="empty-state">
+              <div
+                v-if="filteredOtherBySemester(sem).length === 0"
+                class="empty-state"
+              >
                 <div class="empty-icon bg-blue-50 text-blue-700">
                   <icon name="exclamationmark" />
                 </div>
@@ -160,7 +169,9 @@
           <div class="expertise-card">
             <div class="expertise-card-header">
               <div>
-                <h3 class="expertise-title text-amber-800">Cross Assign Expertise</h3>
+                <h3 class="expertise-title text-amber-800">
+                  Cross Assign Expertise
+                </h3>
                 <p class="expertise-subtitle">
                   Courses assigned across programs or institutes
                 </p>
@@ -197,7 +208,10 @@
                 </div>
               </div>
 
-              <div v-if="filteredCrossBySemester(sem).length === 0" class="empty-state">
+              <div
+                v-if="filteredCrossBySemester(sem).length === 0"
+                class="empty-state"
+              >
                 <div class="empty-icon bg-amber-50 text-amber-700">
                   <icon name="exclamationmark" />
                 </div>
@@ -264,7 +278,8 @@ export default {
       return (
         this.currentUser?.expertise?.filter(
           (e) =>
-            e.status === "PRIMARY" && Number(e.course?.course_semester) === Number(sem)
+            e.status === "PRIMARY" &&
+            Number(e.course?.course_semester) === Number(sem),
         ) || []
       );
     },
@@ -272,7 +287,9 @@ export default {
     filteredOtherBySemester(sem) {
       return (
         this.currentUser?.expertise?.filter(
-          (e) => e.status === "OTHER" && Number(e.course?.course_semester) === Number(sem)
+          (e) =>
+            e.status === "OTHER" &&
+            Number(e.course?.course_semester) === Number(sem),
         ) || []
       );
     },
@@ -280,7 +297,9 @@ export default {
     filteredCrossBySemester(sem) {
       return (
         this.currentUser?.expertise?.filter(
-          (e) => e.status === "CROSS" && Number(e.course?.course_semester) === Number(sem)
+          (e) =>
+            e.status === "CROSS" &&
+            Number(e.course?.course_semester) === Number(sem),
         ) || []
       );
     },
@@ -295,9 +314,12 @@ export default {
 
     async getSubId() {
       try {
-        const res = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
 
         if (res.data?.sub) {
           this.subId = res.data.sub;

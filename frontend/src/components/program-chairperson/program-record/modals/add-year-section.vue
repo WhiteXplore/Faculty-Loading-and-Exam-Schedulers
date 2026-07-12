@@ -2,26 +2,39 @@
   <div
     class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-40 z-50"
   >
-    <div class="rounded-[16px] shadow-lg flex flex-col animate-slideUp overflow-hidden">
+    <div
+      class="rounded-[16px] shadow-lg flex flex-col animate-slideUp overflow-hidden"
+    >
       <form
         @submit.prevent="submitData"
         class="w-[60vw] text-[13px] bg-white rounded-[16px] shadow-md flex flex-col"
         ref="yearSectionForm"
       >
         <!-- Header -->
-        <div
-          class="w-full p-4 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center border-b border-green-700 shadow"
-        >
-          <div class="flex gap-2 items-center">
-            <icon :name="'add-students'" class="size-5" />
-            <h1 class="font-semibold tracking-wide text-lg">
-              Add Year/Section – {{ programData.program_name }}
-            </h1>
+
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                Add Year/Section – {{ programData.program_name }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update year & section details
+              </p>
+            </div>
           </div>
+
           <icon
             :name="'circle-close3'"
             @click="$emit('close')"
-            class="cursor-pointer hover:scale-110 transition-transform"
+            class="close-button-header"
           />
         </div>
 
@@ -30,7 +43,7 @@
           <!-- PROGRAM INFO -->
           <div class="p-4 bg-gray-50 border rounded-xl">
             <p class="text-gray-800">
-              <span class="font-semibold text-gray-800">Program:</span>
+              <span class="input-label">Program:</span>
               {{ programData.program_name }}
               ({{ programData.program_code }})
             </p>
@@ -39,7 +52,9 @@
           <!-- Instructions -->
           <div class="p-4 bg-blue-50 border rounded-xl">
             <h3 class="font-bold text-gray-800">Instructions</h3>
-            <ul class="list-disc list-inside text-gray-700 space-y-1 text-[12px]">
+            <ul
+              class="list-disc list-inside text-gray-700 space-y-1 text-[12px]"
+            >
               <li>Click "Add Year/Section" to configure sections.</li>
               <li>Set number of sections for each year level (1st–4th).</li>
               <li>Sections will be automatically named (A, B, C, etc.).</li>
@@ -48,7 +63,7 @@
 
           <!-- SCHOOL YEAR -->
           <div class="flex flex-col space-y-2 w-full relative">
-            <label class="font-semibold text-gray-800">
+            <label class="input-label">
               School Year <span class="text-red-500">*</span>
             </label>
 
@@ -78,7 +93,7 @@
           </div>
 
           <div class="flex flex-col space-y-2 w-full relative">
-            <label class="font-semibold text-gray-800">
+            <label class="input-label">
               College Branch <span class="text-red-500">*</span>
             </label>
 
@@ -135,7 +150,9 @@
                     </div>
 
                     <div class="flex items-center gap-2 text-sm">
-                      <label class="text-gray-700 font-medium"> Sections: </label>
+                      <label class="text-gray-700 font-medium">
+                        Sections:
+                      </label>
 
                       <input
                         v-model.number="year.numSections"
@@ -161,7 +178,9 @@
                       <div class="flex justify-between items-center">
                         <span class="font-semibold text-defaultGreen text-sm">
                           Section
-                          {{ getSectionLetter(getStartIndex(year.label) + index) }}
+                          {{
+                            getSectionLetter(getStartIndex(year.label) + index)
+                          }}
                         </span>
 
                         <span
@@ -197,7 +216,10 @@
             </div>
 
             <!-- RIGHT: SUMMARY -->
-            <div v-if="totalSections > 0" class="flex-1 h-fit max-h-full overflow-y-auto">
+            <div
+              v-if="totalSections > 0"
+              class="flex-1 h-fit max-h-full overflow-y-auto"
+            >
               <div class="flex items-center justify-between">
                 <div class="font-semibold text-sm mb-2 flex items-center gap-2">
                   <icon name="summary" class="text-green-700" />
@@ -230,7 +252,9 @@
                       >
                         <span>
                           Section
-                          {{ getSectionLetter(getStartIndex(year.label) + index) }}
+                          {{
+                            getSectionLetter(getStartIndex(year.label) + index)
+                          }}
                         </span>
 
                         <span class="text-xs text-gray-600">
@@ -247,7 +271,9 @@
 
         <!-- BUTTONS -->
         <div class="flex justify-end gap-2 pt-4 border-t p-4">
-          <button type="button" class="btn-cancel" @click="$emit('close')">Cancel</button>
+          <button type="button" class="btn-cancel" @click="$emit('close')">
+            Cancel
+          </button>
 
           <button
             class="btn-save"
@@ -316,7 +342,7 @@ export default {
     filteredSchoolYears() {
       // show only active school years
       const activeSchoolYears = this.schoolYears.filter(
-        (sy) => Number(sy.is_active) === 1
+        (sy) => Number(sy.is_active) === 1,
       );
 
       // if no search query
@@ -327,7 +353,7 @@ export default {
       const q = this.searchSchoolYearQuery.toLowerCase();
 
       return activeSchoolYears.filter((sy) =>
-        sy.school_year_name?.toLowerCase().includes(q)
+        sy.school_year_name?.toLowerCase().includes(q),
       );
     },
 
@@ -337,12 +363,15 @@ export default {
       const q = this.searchCollegeBranchQuery.toLowerCase();
 
       return this.college_branch.filter((cb) =>
-        cb.college_branch_name?.toLowerCase().includes(q)
+        cb.college_branch_name?.toLowerCase().includes(q),
       );
     },
 
     totalSections() {
-      return this.yearLevels.reduce((sum, year) => sum + (year.numSections || 0), 0);
+      return this.yearLevels.reduce(
+        (sum, year) => sum + (year.numSections || 0),
+        0,
+      );
     },
   },
 
@@ -387,7 +416,8 @@ export default {
         return (
           String(cls.program_id) === String(this.programData.program_id) &&
           String(cls.school_year_id) === String(this.selectedSchoolYearId) &&
-          String(cls.college_branch_id) === String(this.selectedCollegeBranchId) &&
+          String(cls.college_branch_id) ===
+            String(this.selectedCollegeBranchId) &&
           cls.set_name?.toLowerCase().includes(yearLabel.toLowerCase())
         );
       });
@@ -464,12 +494,17 @@ export default {
         });
 
         const promises = classesToCreate.map((classData) =>
-          axios.post(process.env.VUE_APP_API_BASE_URL + "/class/add-class", classData)
+          axios.post(
+            process.env.VUE_APP_API_BASE_URL + "/class/add-class",
+            classData,
+          ),
         );
 
         await Promise.all(promises);
 
-        toast.success(`Successfully created ${classesToCreate.length} section(s)!`);
+        toast.success(
+          `Successfully created ${classesToCreate.length} section(s)!`,
+        );
 
         this.$emit("refresh");
         this.$emit("close");

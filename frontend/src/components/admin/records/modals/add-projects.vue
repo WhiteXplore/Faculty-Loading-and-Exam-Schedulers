@@ -1,38 +1,25 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="projectsForm"
-      >
+      <form @submit.prevent="submitData" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg "
+        ref="projectsForm">
         <!-- Header -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
-           <h1 class="header1">Add Projects</h1>
+            <h1 class="header1">Add Projects</h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
         <div class="p-5 w-[30vw] space-y-3">
           <div class="w-full space-y-2 text-left flex flex-col">
             <label for="curriculum_id" class="font-bold">Curriculum:</label>
             <div>
-              <select
-                v-model="form.curriculum_id"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              >
+              <select v-model="form.curriculum_id" required
+                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                 <option disabled value="">Select Curriculum</option>
-                <option
-                  v-for="curriculum in curriculums"
-                  :key="curriculum.curriculum_id"
-                  :value="curriculum.curriculum_id"
-                >
+                <option v-for="curriculum in curriculums" :key="curriculum.curriculum_id"
+                  :value="curriculum.curriculum_id">
                   {{ curriculum.curriculum_name }}
                 </option>
               </select>
@@ -40,28 +27,16 @@
           </div>
           <div class="w-full space-y-2 text-left flex flex-col">
             <label for="project_level" class="font-bold">Project Level:</label>
-            <input
-              v-model="form.project_level"
-              type="text"
-              id="project_level"
-              required
+            <input v-model="form.project_level" type="text" id="project_level" required
               class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              placeholder="Enter project level"
-            />
+              placeholder="Enter project level" />
           </div>
 
           <div class="w-full space-y-2 text-left flex flex-col">
-            <label for="project_section" class="font-bold"
-              >Project Section:</label
-            >
-            <input
-              v-model="form.project_section"
-              type="text"
-              id="project_section"
-              required
+            <label for="project_section" class="font-bold">Project Section:</label>
+            <input v-model="form.project_section" type="text" id="project_section" required
               class="w-full border px-3 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              placeholder="Enter project section"
-            />
+              placeholder="Enter project section" />
           </div>
 
           <!-- Divider -->
@@ -71,14 +46,12 @@
           <div class="tracking-wide flex justify-end gap-2 mt-4">
             <button
               class="bg-red-600 p-2 px-3 rounded-md text-white hover:bg-white border hover:border-red-800 hover:text-red-800 hover:shadow-md"
-              @click="$emit('close')"
-            >
+              @click="$emit('close')">
               Cancel
             </button>
             <button
               class="bg-defaultGreen p-2 px-3 rounded-md text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
-              type="submit"
-            >
+              type="submit">
               Submit
             </button>
           </div>

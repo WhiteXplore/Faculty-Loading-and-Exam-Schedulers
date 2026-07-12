@@ -1,15 +1,11 @@
 <template>
   <div class="modal-overlay">
-    <div
-      class="rounded-[16px] shadow-lg justify-center animate-slideUp max-h-[90vh] overflow-y-auto"
-    >
-      <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5">
+    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp max-h-[90vh] overflow-y-auto">
+      <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg ">
         <!-- Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b">
           <div class="flex items-center gap-2">
-            <div
-              class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shadow-sm"
-            >
+            <div class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shadow-sm">
               <icon name="users" class="text-white" />
             </div>
             <div>
@@ -19,17 +15,9 @@
               </p>
             </div>
           </div>
-          <button
-            @click="$emit('close')"
-            class="text-gray-400 hover:text-gray-600 transition"
-          >
+          <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600 transition">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -109,6 +97,7 @@ export default {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

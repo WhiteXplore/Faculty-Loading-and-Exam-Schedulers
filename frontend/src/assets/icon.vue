@@ -131,6 +131,22 @@
         d="M351.83-480.83H609q4.31 0 7.74-3.42 3.43-3.41 3.43-8.33t-3.43-8.17Q613.31-504 609-504H351.83q-5.26 0-8.63 3.48-3.37 3.47-3.37 7.85 0 5.34 3.37 8.59t8.63 3.25Zm0 106.33H609q4.31 0 7.74-3 3.43-2.99 3.43-8.33t-3.43-8.59q-3.43-3.25-7.74-3.25H351.83q-5.26 0-8.63 3.42-3.37 3.41-3.37 8.75 0 5.33 3.37 8.17 3.37 2.83 8.63 2.83Zm0 107.17H489q4.31 0 7.74-3.42 3.43-3.41 3.43-8.33t-3.43-8.17q-3.43-3.25-7.74-3.25H351.83q-5.26 0-8.63 3.48-3.37 3.47-3.37 7.85 0 5.34 3.37 8.59t8.63 3.25Zm-83.36 133.66q-22.78 0-38.87-16.09-16.1-16.1-16.1-38.85v-582.78q0-22.75 16.1-38.85 16.09-16.09 39.07-16.09h298.66q11.9 0 21.87 4.58t18.42 11.51l122.26 122.65q7.79 8.42 12.2 18.28 4.42 9.87 4.42 21.64v458.84q0 22.97-16.1 39.07-16.09 16.09-38.87 16.09H268.47ZM723.33-659H620.67q-17.18 0-29.68-12.49-12.49-12.5-12.49-29.68v-102H268.67q-12 0-22 10t-10 22v582.34q0 12 10 22t22 10h422.66q12 0 22-10t10-22V-659ZM236.67-803.17V-659v-144.17 646.34-646.34Z"
       />
     </svg>
+
+    <svg
+      v-if="name === 'user-account3'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 -950 920 900"
+      stroke-width="35"
+      stroke="currentColor"
+      class="size-7"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M258.09-265.5Q312.5-300 365-316.5T480-333q62.5 0 115 16.5t107.5 51q41.5-41.5 64.25-96.15Q789.5-416.3 789.5-479.9q0-128.77-90.48-219.19-90.48-90.41-219.25-90.41-128.77 0-219.02 90.41-90.25 90.42-90.25 219.19 0 63.6 22.75 118.25t64.84 96.15ZM480.14-435Q431-435 397-468.86t-34-83Q363-601 396.86-635t83-34Q529-669 563-635.14t34 83Q597-503 563.14-469t-83 34Zm.14 282q-67.69 0-127.6-25.26-59.9-25.27-104.54-70Q203.5-293 178.25-352.8 153-412.59 153-480.71q0-68.2 25.26-127.36 25.27-59.15 70-103.79Q293-756.5 352.8-781.75 412.59-807 480.71-807q68.2 0 127.36 25.26 59.15 25.27 103.79 70Q756.5-667 781.75-607.73T807-480.28q0 67.69-25.26 127.6-25.27 59.9-70 104.54Q667-203.5 607.73-178.25T480.28-153Zm-.31-17.5q54.53 0 110.28-21.25T689-251q-44-29.5-96.72-47t-112.19-17.5q-59.47 0-113.78 16T271-251q43 38 98.72 59.25t110.25 21.25Zm.03-282q40.5 0 70-29.5t29.5-70q0-40.5-29.5-70t-70-29.5q-40.5 0-70 29.5t-29.5 70q0 40.5 29.5 70t70 29.5Zm0-99.5Zm0 304Z"
+      />
+    </svg>
     <svg
       v-if="name === 'user-account'"
       xmlns="http://www.w3.org/2000/svg"
@@ -244,6 +260,37 @@
         d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
       />
     </svg>
+    <svg
+      v-if="name == 'compute'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-7"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z"
+      />
+    </svg>
+
+    <svg
+      v-if="name == 'circle-down'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-4"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="m9 12.75 3 3m0 0 3-3m-3 3v-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    </svg>
 
     <svg
       v-if="name == 'circle-add1'"
@@ -253,6 +300,21 @@
       stroke-width="1.5"
       stroke="currentColor"
       class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    </svg>
+    <svg
+      v-if="name == 'circle-add2'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
     >
       <path
         stroke-linecap="round"
@@ -331,7 +393,11 @@
       stroke="currentColor"
       class="size-4 hover:text-defaultGreen"
     >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6 18 18 6M6 6l12 12"
+      />
     </svg>
     <svg
       v-if="name == 'logout'"
@@ -593,6 +659,20 @@
         stroke-linecap="round"
         stroke-linejoin="round"
         d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+      /></svg
+    ><svg
+      v-if="name == 'book-open1'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
       />
     </svg>
 
@@ -605,7 +685,11 @@
       stroke="currentColor"
       class="size-5"
     >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M12 4.5v15m7.5-7.5h-15"
+      />
     </svg>
     <svg
       v-if="name == 'import'"
@@ -721,6 +805,21 @@
       stroke-width="1.5"
       stroke="currentColor"
       class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    </svg>
+    <svg
+      v-if="name == 'circle-check2'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-7"
     >
       <path
         stroke-linecap="round"
@@ -935,6 +1034,23 @@
       />
     </svg>
     <svg
+      x
+      v-if="name == 'document-plus'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+      />
+    </svg>
+
+    <svg
       v-if="name == 'additional-requirements'"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -1008,6 +1124,42 @@
         stroke-linecap="round"
         stroke-linejoin="round"
         d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+      />
+    </svg>
+    <svg
+      v-if="name == 'building'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
+      />
+    </svg>
+
+    <svg
+      v-if="name == 'location'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+      />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
       />
     </svg>
 
@@ -1219,6 +1371,22 @@
     </svg>
 
     <svg
+      v-if="name == 'calendar3'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-7"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"
+      />
+    </svg>
+
+    <svg
       v-if="name == 'add-account1.1'"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -1227,7 +1395,11 @@
       stroke="currentColor"
       class="size-4"
     >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M12 4.5v15m7.5-7.5h-15"
+      />
     </svg>
 
     <svg
@@ -1323,6 +1495,22 @@
         stroke-linecap="round"
         stroke-linejoin="round"
         d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+      />
+    </svg>
+
+    <svg
+      v-if="name == 'filters'"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2.0"
+      stroke="currentColor"
+      class="size-5"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
       />
     </svg>
   </div>

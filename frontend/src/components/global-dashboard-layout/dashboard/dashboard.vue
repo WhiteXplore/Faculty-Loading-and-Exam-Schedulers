@@ -1,11 +1,17 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4 rounded-md font-dashboard">
+  <div
+    class="min-h-screen bg-gray-50 p-2 lg:p-1 lg:px-2 lg:px-3 rounded-md font-dashboard"
+  >
     <!-- KEEP YOUR HEADER + CARDS -->
-    <div class="flex flex-col xl:flex-row xl:items-stretch xl:justify-between gap-4 mb-6">
+    <div
+      class="flex flex-col xl:flex-row xl:items-stretch xl:justify-between gap-4 mb-6"
+    >
       <div
         class="relative overflow-hidden flex flex-col justify-between bg-defaultGreen xl:w-[43vw] w-full rounded-2xl px-5 py-9 text-white shadow-lg"
       >
-        <div class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"></div>
+        <div
+          class="absolute -right-10 -top-10 w-32 h-32 bg-white/10 rounded-full"
+        ></div>
         <div
           class="absolute right-10 bottom-[-60px] w-28 h-28 bg-white/10 rounded-full"
         ></div>
@@ -16,8 +22,8 @@
             Welcome, {{ user.first_name }} 👋
           </h1>
           <p class="text-xs text-white/80 mt-1">
-            Monitor faculty loads, subject assignments, room usage, and exam schedule
-            conflicts.
+            Monitor faculty loads, subject assignments, room usage, and exam
+            schedule conflicts.
           </p>
         </div>
       </div>
@@ -31,7 +37,9 @@
           <div class="relative flex items-start justify-between">
             <div>
               <p class="text-xs font-medium text-gray-500">{{ card.title }}</p>
-              <h2 class="mt-4 text-2xl font-semibold text-gray-900">{{ card.value }}</h2>
+              <h2 class="mt-4 text-2xl font-semibold text-gray-900">
+                {{ card.value }}
+              </h2>
 
               <div class="mt-4 flex items-center gap-2">
                 <span
@@ -64,7 +72,9 @@
           <div class="card-header">
             <div>
               <h2 class="card-title">Faculty Load Overview</h2>
-              <p class="card-subtitle">Total teaching units assigned per faculty</p>
+              <p class="card-subtitle">
+                Total teaching units assigned per faculty
+              </p>
             </div>
 
             <button class="filter-btn">This Semester ▾</button>
@@ -91,14 +101,18 @@
                 :key="item.name"
                 class="flex-1 h-full flex flex-col justify-end items-center group"
               >
-                <p class="mb-2 text-xs font-semibold text-gray-700">{{ item.units }}</p>
+                <p class="mb-2 text-xs font-semibold text-gray-700">
+                  {{ item.units }}
+                </p>
 
                 <div
                   class="w-full max-w-[55px] rounded-t-md bg-gradient-to-t from-defaultGreen to-emerald-400 shadow-lg shadow-green-100 transition group-hover:scale-105"
                   :style="{ height: item.height + '%' }"
                 ></div>
 
-                <p class="mt-3 text-[11px] text-gray-500 text-center whitespace-nowrap">
+                <p
+                  class="mt-3 text-[11px] text-gray-500 text-center whitespace-nowrap"
+                >
                   {{ item.name }}
                 </p>
               </div>
@@ -173,7 +187,9 @@
               <h2 class="card-title">Recent Faculty Loading Activities</h2>
             </div>
 
-            <button class="text-xs font-semibold text-blue-600">View All</button>
+            <button class="text-xs font-semibold text-blue-600">
+              View All
+            </button>
           </div>
 
           <div class="mt-5 overflow-x-auto">
@@ -203,7 +219,9 @@
                       >
                         {{ row.initials }}
                       </div>
-                      <span class="font-medium text-gray-800">{{ row.faculty }}</span>
+                      <span class="font-medium text-gray-800">{{
+                        row.faculty
+                      }}</span>
                     </div>
                   </td>
                   <td class="py-4 text-gray-500">{{ row.subject }}</td>
@@ -244,13 +262,18 @@
               class="flex items-start justify-between gap-3"
             >
               <div class="flex gap-3">
-                <span class="mt-1 h-3 w-3 rounded-full" :class="item.dot"></span>
+                <span
+                  class="mt-1 h-3 w-3 rounded-full"
+                  :class="item.dot"
+                ></span>
                 <div>
                   <p class="text-sm text-gray-600">{{ item.label }}</p>
                   <p class="text-xs text-gray-400">{{ item.desc }}</p>
                 </div>
               </div>
-              <p class="text-sm font-semibold text-gray-800">{{ item.value }}</p>
+              <p class="text-sm font-semibold text-gray-800">
+                {{ item.value }}
+              </p>
             </div>
           </div>
         </div>
@@ -278,12 +301,16 @@
 
               <div class="flex-1">
                 <p class="text-xs text-gray-400">{{ exam.time }}</p>
-                <h3 class="text-sm font-semibold text-gray-800">{{ exam.subject }}</h3>
+                <h3 class="text-sm font-semibold text-gray-800">
+                  {{ exam.subject }}
+                </h3>
               </div>
 
               <p class="text-xs text-gray-500">{{ exam.room }}</p>
 
-              <span class="status-badge" :class="exam.statusClass"> Scheduled </span>
+              <span class="status-badge" :class="exam.statusClass">
+                Scheduled
+              </span>
             </div>
           </div>
         </div>
@@ -309,11 +336,15 @@
               </div>
 
               <div class="flex-1">
-                <h3 class="text-sm font-semibold text-gray-800">{{ conflict.title }}</h3>
+                <h3 class="text-sm font-semibold text-gray-800">
+                  {{ conflict.title }}
+                </h3>
                 <p class="text-xs text-gray-400">{{ conflict.description }}</p>
               </div>
 
-              <p class="text-lg font-bold text-gray-900">{{ conflict.count }}</p>
+              <p class="text-lg font-bold text-gray-900">
+                {{ conflict.count }}
+              </p>
               <span class="text-gray-400">›</span>
             </div>
           </div>
@@ -534,7 +565,8 @@ export default {
 
   computed: {
     examPoints() {
-      const maxValue = Math.max(...this.examTrend.map((item) => item.value)) || 1;
+      const maxValue =
+        Math.max(...this.examTrend.map((item) => item.value)) || 1;
       const startX = 55;
       const gap = 100;
       const chartBottom = 215;
@@ -549,7 +581,9 @@ export default {
 
     examLinePath() {
       return this.examPoints
-        .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+        .map(
+          (point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`,
+        )
         .join(" ");
     },
 

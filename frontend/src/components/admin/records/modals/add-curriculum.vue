@@ -4,14 +4,27 @@
       <form ref="curriculumnForm" @submit.prevent="submitData" class="modal-container">
         <!-- Header -->
         <div class="modal-header">
-          <div class="flex gap-1 items-center">
-            <icon name="add-students" />
-            <h1 class="header1">
-              {{ isEdit ? "Edit Curriculum" : "Add Curriculum" }}
-            </h1>
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white " />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit Curriculum" : "Add Curriculum" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update Curriculum details
+              </p>
+            </div>
           </div>
-          <icon name="circle-close3" class="cursor-pointer" @click="$emit('close')" />
+
+          <icon :name="'circle-close3'" @click="$emit('close')" class="close-button-header" />
         </div>
+
 
         <!-- Body -->
         <div class="w-[25vw] modal-body">
@@ -30,29 +43,15 @@
             <label class="dropdown-label">Program:</label>
 
             <div class="dropdown-wrapper">
-              <input
-                v-model="searchProgramQuery"
-                type="text"
-                placeholder="Search program..."
-                class="dropdown-input"
-                @focus="showProgramDropdown = true"
-                :disabled="isEdit"
-                required
-              />
+              <input v-model="searchProgramQuery" type="text" placeholder="Search program..." class="dropdown-input"
+                @focus="showProgramDropdown = true" :disabled="isEdit" required />
 
-              <div
-                v-if="showProgramDropdown && !isEdit"
-                class="dropdown-menu"
-                @mouseleave="showProgramDropdown = false"
-              >
+              <div v-if="showProgramDropdown && !isEdit" class="dropdown-menu"
+                @mouseleave="showProgramDropdown = false">
                 <!-- WITH RESULTS -->
                 <div v-if="filteredPrograms.length">
-                  <div
-                    v-for="program in filteredPrograms"
-                    :key="program.program_id"
-                    class="dropdown-item"
-                    @mousedown.prevent="selectProgram(program)"
-                  >
+                  <div v-for="program in filteredPrograms" :key="program.program_id" class="dropdown-item"
+                    @mousedown.prevent="selectProgram(program)">
                     {{ program.program_name }}
                   </div>
                 </div>
@@ -73,24 +72,14 @@
             <div class="flex gap-3">
               <!-- FROM -->
               <div class="flex-1">
-                <input
-                  v-model="form.curriculum_start_year"
-                  type="number"
-                  required
-                  class="input-text"
-                  placeholder="e.g. 2025"
-                />
+                <input v-model="form.curriculum_start_year" type="number" required class="input-text"
+                  placeholder="e.g. 2025" />
               </div>
 
               <!-- TO -->
               <div class="flex-1">
-                <input
-                  v-model="form.curriculum_end_year"
-                  type="number"
-                  required
-                  class="input-text"
-                  placeholder="e.g. 2026"
-                />
+                <input v-model="form.curriculum_end_year" type="number" required class="input-text"
+                  placeholder="e.g. 2026" />
               </div>
             </div>
           </div>
@@ -218,7 +207,7 @@ export default {
             return (
               Number(item.program_id) === Number(this.form.program_id) &&
               Number(item.curriculum_start_year) ===
-                Number(this.form.curriculum_start_year) &&
+              Number(this.form.curriculum_start_year) &&
               Number(item.curriculum_end_year) === Number(this.form.curriculum_end_year)
             );
           });

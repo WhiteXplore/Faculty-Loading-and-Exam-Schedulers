@@ -30,8 +30,10 @@ export class GeneratedScheduledService {
 
       console.log('Running Python script:', scriptPath);
 
-      const pythonProcess = spawn('python', [scriptPath]);
-
+      const pythonProcess = spawn(
+        'C:\\Program Files\\Python314\\python3.14t.exe',
+        [scriptPath],
+      );
       let stdoutData = '';
       let stderrData = '';
 

@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isOpen"
-    class="fixed inset-0 bg-black/40 flex justify-center items-center z-50"
+    class="fixed inset-0 bg-black/40 flex justify-center items-center z-[5000]"
   >
     <div
       class="rounded-2xl shadow-lg w-[18%] bg-white py-6 px-5 flex flex-col items-center animate-slideUp"

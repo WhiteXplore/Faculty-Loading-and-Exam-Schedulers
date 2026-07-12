@@ -1,15 +1,37 @@
 <template>
   <div class="modal-overlay">
     <div class="modal-wrapper">
-      <form @submit.prevent="submitData" class="modal-container" ref="roomsForm">
+      <form
+        @submit.prevent="submitData"
+        class="modal-container"
+        ref="roomsForm"
+      >
         <!-- HEADER -->
+
         <div class="modal-header">
-          <div class="flex gap-1 items-center">
-            <icon :name="'add-students'" />
-            <h1 class="header1">{{ isEditMode ? "Edit " : "Add " }}Room</h1>
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit Room" : "Add Room" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update room details
+              </p>
+            </div>
           </div>
 
-          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <!-- BODY -->
@@ -135,7 +157,9 @@
                     class="dropdown-item"
                     @mousedown="selectBuilding(building)"
                   >
-                    {{ building.buildingArea?.collegeBranch?.college_branch_name }}
+                    {{
+                      building.buildingArea?.collegeBranch?.college_branch_name
+                    }}
                     -
                     {{ building.buildingArea?.area_name }}
                     -
@@ -267,7 +291,7 @@ export default {
       return this.institutes.filter((institute) =>
         institute.institute_name
           .toLowerCase()
-          .includes(this.searchInstituteQuery.toLowerCase())
+          .includes(this.searchInstituteQuery.toLowerCase()),
       );
     },
 
@@ -278,14 +302,16 @@ export default {
         filtered = filtered.filter((building) =>
           building.building_name
             .toLowerCase()
-            .includes(this.searchBuildingQuery.toLowerCase())
+            .includes(this.searchBuildingQuery.toLowerCase()),
         );
       }
 
       // Sort by Area number (Area 1 → Area 7)
       return filtered.sort((a, b) => {
-        const areaA = parseInt(a.buildingArea?.area_name?.replace("Area ", "")) || 0;
-        const areaB = parseInt(b.buildingArea?.area_name?.replace("Area ", "")) || 0;
+        const areaA =
+          parseInt(a.buildingArea?.area_name?.replace("Area ", "")) || 0;
+        const areaB =
+          parseInt(b.buildingArea?.area_name?.replace("Area ", "")) || 0;
 
         return areaA - areaB;
       });
@@ -337,9 +363,11 @@ export default {
     },
 
     formatBuilding(building) {
-      return `${building.buildingArea?.collegeBranch?.college_branch_name || ""} - ${
-        building.buildingArea?.area_name || ""
-      } - ${building.building_name || ""}`;
+      return `${
+        building.buildingArea?.collegeBranch?.college_branch_name || ""
+      } - ${building.buildingArea?.area_name || ""} - ${
+        building.building_name || ""
+      }`;
     },
 
     async submitData() {
@@ -380,14 +408,14 @@ export default {
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
               `/rooms/update-room/${this.roomData.room_id}`,
-            payload
+            payload,
           );
 
           toast.success("Room updated successfully!");
         } else {
           await axios.post(
             process.env.VUE_APP_API_BASE_URL + "/rooms/add-rooms",
-            payload
+            payload,
           );
 
           toast.success("Room added successfully!");
@@ -399,7 +427,9 @@ export default {
         this.$emit("refresh");
         this.$emit("close");
       } catch (error) {
-        toast.error(this.isEditMode ? "Failed to update room" : "Failed to add room");
+        toast.error(
+          this.isEditMode ? "Failed to update room" : "Failed to add room",
+        );
       }
     },
   },
@@ -438,6 +468,7 @@ export default {
     transform: translateY(40px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;

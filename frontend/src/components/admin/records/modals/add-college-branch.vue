@@ -1,55 +1,69 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
       <form
         @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
+        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg"
         ref="branchForm"
       >
         <!-- HEADER -->
-       <div class="modal-header">
+        <!-- <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon name="add-account1.1" />
-           <h1 class="header1">
+            <h1 class="header1">
               {{ isEditMode ? "Edit College Branch" : "Add College Branch" }}
             </h1>
           </div>
 
+          <icon name="circle-close3" @click="$emit('close')" class="cursor-pointer" />
+        </div> -->
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit College Branch" : "Add College Branch" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update college branch details
+              </p>
+            </div>
+          </div>
+
           <icon
-            name="circle-close3"
+            :name="'circle-close3'"
             @click="$emit('close')"
-            class="cursor-pointer"
+            class="close-button-header"
           />
         </div>
 
         <!-- FORM -->
         <div class="p-5 w-[28vw] space-y-4">
           <!-- BRANCH NAME -->
-          <div>
-            <label class="font-bold">College Branch Name:</label>
+          <div class="w-full space-y-2">
+            <label class="input-label">College Branch Name:</label>
             <input
               v-model="form.college_branch_name"
               type="text"
               required
-              class="w-full border px-3 py-3 border-gray-600 rounded-md"
+              class="input-text"
               placeholder="Enter college branch name"
             />
           </div>
 
           <!-- BUTTONS -->
           <div class="tracking-wide flex justify-end gap-2 pt-3">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="btn-cancel"
-            >
+            <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
 
-            <button
-              type="submit"
-              class="btn-save"
-            >
+            <button type="submit" class="btn-save">
               {{ isEditMode ? "Save Changes" : "Submit" }}
             </button>
           </div>

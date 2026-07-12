@@ -81,14 +81,11 @@
                   <td class="px-4 py-2 text-left">{{ schedule.time_slot }}</td>
                   <td class="px-4 py-2 text-left">
                     <div class="flex gap-2">
-                      <button
-                       class="btn-edit"
-                        @click="toggleEdit(schedule)"
-                      >
+                      <button class="btn-edit" @click="toggleEdit(schedule)">
                         <icon name="edit" /> Edit
                       </button>
                       <button
-                       class="btn-delete"
+                        class="btn-delete"
                         @click="toggleDelete(schedule)"
                       >
                         <icon name="delete" /> Delete
@@ -148,10 +145,7 @@
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div
-    v-if="showDeleteModal"
-    class="modal-overlay"
-  >
+  <div v-if="showDeleteModal" class="modal-overlay">
     <div
       class="rounded-xl shadow-lg w-[300px] md:w-[400px] bg-white py-6 px-4 flex flex-col items-center"
     >

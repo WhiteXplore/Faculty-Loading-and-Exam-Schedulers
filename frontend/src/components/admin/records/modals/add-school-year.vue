@@ -3,14 +3,31 @@
     <div class="modal-wrapper">
       <form @submit.prevent="submitData" class="modal-container">
         <!-- Header -->
+
         <div class="modal-header">
-          <div class="flex gap-1 items-center">
-            <icon :name="'add-students'" />
-           <h1 class="header1">
-              {{ isEdit ? "Edit" : "Add" }} School Year
-            </h1>
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit School Year" : "Add School Year" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update school year details
+              </p>
+            </div>
           </div>
-          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
+
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <!-- Body -->
@@ -145,13 +162,13 @@ export default {
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
               `/school-year/update-school-year/${this.schoolYearData.school_year_id}`,
-            payload
+            payload,
           );
           toast.success("School Year updated successfully!");
         } else {
           await axios.post(
             process.env.VUE_APP_API_BASE_URL + "/school-year/add-school-year",
-            payload
+            payload,
           );
           toast.success("School Year added successfully!");
         }
@@ -174,7 +191,9 @@ export default {
         this.$emit("close");
       } catch (err) {
         toast.error(
-          this.isEdit ? "Failed to update school year." : "Failed to add school year."
+          this.isEdit
+            ? "Failed to update school year."
+            : "Failed to add school year.",
         );
       }
     },

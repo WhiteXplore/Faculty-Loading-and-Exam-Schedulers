@@ -41,6 +41,9 @@
           >
             <div class="flex flex-col">
               <span class="text-lg font-bold">{{ instructor }}</span>
+              <span class="text-sm text-green-100">
+                {{ records[0]?.display_program_code }}
+              </span>
 
               <div v-if="facultyTotalUnits[instructor]">
                 <p class="font-normal">
@@ -61,9 +64,11 @@
           <!-- Table wrapper -->
           <div class="overflow-x-auto overflow-y-auto flex-1">
             <table class="w-full text-left border-collapse text-[11px]">
-              <thead class="sticky top-0 bg-gray-100 z-10">
+              <thead class="bg-gray-200 sticky top-0 z-50">
                 <tr class="text-gray-700 bg-gray-200 border">
-                  <th class="py-3 w-2 text-center text-gray-700 bg-gray-100">Time</th>
+                  <th class="py-3 w-2 text-center text-gray-700 bg-gray-100">
+                    Time
+                  </th>
                   <th
                     v-for="day in days"
                     :key="day"
@@ -81,7 +86,9 @@
                   :style="{ height: timeSlotHeight + 'px' }"
                 >
                   <!-- Time Column -->
-                  <td class="py-4 border text-center whitespace-nowrap text-gray-700">
+                  <td
+                    class="py-4 border text-center whitespace-nowrap text-gray-700"
+                  >
                     {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
                   </td>
 
@@ -94,20 +101,27 @@
                       'bg-green-100':
                         isJoined &&
                         draggedRecord &&
-                        getJoinableSchedules(draggedRecord).some((j) => j.day === day),
+                        getJoinableSchedules(draggedRecord).some(
+                          (j) => j.day === day,
+                        ),
                       'bg-red-100':
                         draggedRecord &&
-                        getConflictsForDrag(draggedRecord, instructor, day, slot.start)
-                          .length,
+                        getConflictsForDrag(
+                          draggedRecord,
+                          instructor,
+                          day,
+                          slot.start,
+                        ).length,
                     }"
                     @dragover.prevent
-                    @drop="showCompareView && onDrop($event, instructor, day, slot.start)"
+                    @drop="
+                      showCompareView &&
+                        onDrop($event, instructor, day, slot.start)
+                    "
                   >
                     <template
                       v-for="item in getScheduleForCell(slot, day, instructor)"
-                      :key="
-                        item.id || item.course_code + item.start_hour + item.room_name
-                      "
+                      :key="item.id"
                     >
                       <div
                         v-if="isStartingSlot(item, slot)"
@@ -116,14 +130,18 @@
                           canEditSchedule(item) &&
                           !(isJoined && Number(item.class_size) >= 30)
                         "
-                        @dblclick.stop="handleUnjoin(item)"
+                        @dblclick.stop="handleDoubleClick(item)"
                         @dragstart="onDragStart($event, item)"
-                        @mouseenter="!isDragging && scheduleHoverStart($event, item)"
+                        @mouseenter="
+                          !isDragging && scheduleHoverStart($event, item)
+                        "
                         @dragend="isDragging = false"
                         @mouseleave="scheduleHoverEnd"
                         :class="[
                           'absolute inset-x-1 border rounded-md text-[11px] p-1 shadow-sm overflow-hidden transition-all duration-200 whitespace-nowrap',
-
+                          isGroupSelected(item)
+                            ? 'border-indigo-600 bg-indigo-100 ring-2 ring-indigo-400'
+                            : '',
                           // temp schedule
                           item.id?.toString().startsWith('temp-')
                             ? 'bg-purple-200 border-purple-400 text-purple-900'
@@ -155,7 +173,9 @@
                           canEditSchedule(item)
                             ? 'cursor-pointer hover:bg-yellow-100'
                             : '',
-                          draggedRecord?.id === item.id ? 'schedule-dragging' : '',
+                          draggedRecord?.id === item.id
+                            ? 'schedule-dragging'
+                            : '',
                         ]"
                         :style="{
                           top: getBlockTop(item, slot.start) + 'px',
@@ -184,26 +204,123 @@
                           J
                         </span>
 
-                        <!-- Course Info -->
-                        <div class="truncate font-semibold">
-                          {{ item.course_code }}
-                        </div>
-                        <div class="truncate">{{ item.room_name }}</div>
-                        <div class="truncate">
-                          <template v-if="item.is_joined && item.join_group_id">
-                            {{
-                              finalSchedules
-                                .filter((s) => s.join_group_id === item.join_group_id)
-                                .map((s) => `${s.display_program_code}-${s.set_name}`)
-                                .join(" + ")
-                            }}
-                          </template>
+                        <!-- ===========================
+     Temporary Group Card
+=========================== -->
+                        <template v-if="isTemporaryGrouped(item)">
+                          <div
+                            :class="[
+                              'relative h-full rounded-lg border-2 shadow-md overflow-hidden transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5',
 
-                          <template v-else>
-                            {{ item.display_program_code }}-{{ item.set_name }}
-                          </template>
-                        </div>
+                              item.id?.toString().startsWith('temp-')
+                                ? 'bg-purple-50 border-purple-400'
+                                : !canEditSchedule(item)
+                                ? 'bg-gray-100 border-gray-300'
+                                : getTypeColor(item.type),
 
+                              hasRoomConflict(item) && !isJoined
+                                ? 'border-red-500 bg-red-100'
+                                : '',
+
+                              item.is_joined
+                                ? 'border-blue-400 bg-blue-50'
+                                : '',
+                            ]"
+                          >
+                            <!-- Group Badge -->
+                            <div
+                              class="absolute top-1 right-1 flex items-center gap-1 rounded-full bg-indigo-600 px-2 py-0.5 text-[9px] font-bold text-white"
+                            >
+                              {{ getTemporaryGroupCount(item) }}
+                            </div>
+
+                            <!-- Mode -->
+                            <span
+                              v-if="item.mode"
+                              :class="[
+                                'absolute bottom-1 right-1 px-1 h-4 rounded-full text-[9px] text-white font-bold',
+
+                                item.mode === 'face to face'
+                                  ? 'bg-orange-500'
+                                  : 'bg-purple-500',
+                              ]"
+                            >
+                              {{ item.mode === "face to face" ? "F2F" : "OL" }}
+                            </span>
+
+                            <!-- Join -->
+                            <span
+                              v-if="item.is_joined"
+                              class="absolute top-1 left-1 w-5 h-5 rounded-full bg-blue-600 text-white text-[9px] flex items-center justify-center"
+                            >
+                              J
+                            </span>
+
+                            <!-- Content -->
+                            <div
+                              class="h-full flex flex-col justify-center px-2"
+                            >
+                              <div class="font-bold truncate">
+                                {{ item.course_code }}
+                              </div>
+
+                              <div class="truncate text-[10px] text-gray-600">
+                                {{ item.display_program_code }}-{{
+                                  item.set_name
+                                }}
+                              </div>
+
+                              <div class="truncate text-[10px] text-gray-500">
+                                {{ item.room_name }}
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+
+                        <!-- ===========================
+     Normal Schedule
+=========================== -->
+                        <template v-else>
+                          <!-- Temporary Group Badge -->
+                          <span
+                            v-if="isTemporaryGrouped(item)"
+                            class="absolute top-1 left-1 flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-600 text-white text-[9px] font-bold shadow"
+                          >
+                            🗂 {{ getTemporaryGroupCount(item) }}
+                          </span>
+                          <div class="truncate font-semibold">
+                            {{ item.course_code }}
+                          </div>
+
+                          <div class="truncate">
+                            {{ item.room_name }}
+                          </div>
+
+                          <div class="truncate">
+                            <template
+                              v-if="item.is_joined && item.join_group_id"
+                            >
+                              {{
+                                finalSchedules
+                                  .filter(
+                                    (s) =>
+                                      s.join_group_id === item.join_group_id,
+                                  )
+                                  .map(
+                                    (s) =>
+                                      `${s.display_program_code}-${s.set_name}`,
+                                  )
+                                  .join(" + ")
+                              }}
+                            </template>
+
+                            <template v-else>
+                              {{ item.display_program_code }}-{{
+                                item.set_name
+                              }}
+                            </template>
+                          </div>
+                        </template>
                         <!-- Conflict Button -->
                         <!-- Conflict Icon -->
                         <button
@@ -236,7 +353,7 @@
               :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
             >
               <div
-                class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.18)]"
+                class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white"
               >
                 <!-- Header -->
                 <div
@@ -267,7 +384,9 @@
                       "
                     >
                       {{
-                        tooltipItem.mode === "face to face" ? "Face to Face" : "Online"
+                        tooltipItem.mode === "face to face"
+                          ? "Face to Face"
+                          : "Online"
                       }}
                     </span>
                   </div>
@@ -298,11 +417,14 @@
 
                       <div class="mt-1 space-y-1">
                         <template
-                          v-if="tooltipItem.is_joined && tooltipItem.join_group_id"
+                          v-if="
+                            tooltipItem.is_joined && tooltipItem.join_group_id
+                          "
                         >
                           <div
                             v-for="s in finalSchedules.filter(
-                              (s) => s.join_group_id === tooltipItem.join_group_id
+                              (s) =>
+                                s.join_group_id === tooltipItem.join_group_id,
                             )"
                             :key="s.class_id"
                             class="rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
@@ -346,7 +468,9 @@
                     <!-- Details Grid -->
                     <div class="grid grid-cols-2 gap-2">
                       <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                        <p class="text-[9px] font-semibold uppercase text-gray-400">
+                        <p
+                          class="text-[9px] font-semibold uppercase text-gray-400"
+                        >
                           Room
                         </p>
                         <p class="mt-0.5 font-semibold text-gray-800">
@@ -355,7 +479,9 @@
                       </div>
 
                       <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                        <p class="text-[9px] font-semibold uppercase text-gray-400">
+                        <p
+                          class="text-[9px] font-semibold uppercase text-gray-400"
+                        >
                           Day
                         </p>
                         <p class="mt-0.5 font-semibold text-gray-800">
@@ -364,21 +490,26 @@
                       </div>
 
                       <div class="rounded-lg bg-gray-50 px-2.5 py-2 col-span-2">
-                        <p class="text-[9px] font-semibold uppercase text-gray-400">
+                        <p
+                          class="text-[9px] font-semibold uppercase text-gray-400"
+                        >
                           Time
                         </p>
                         <p class="mt-0.5 font-semibold text-gray-800">
                           {{ formatTime(tooltipItem.start_hour) }} –
                           {{
                             formatTime(
-                              tooltipItem.start_hour + Number(tooltipItem.duration)
+                              tooltipItem.start_hour +
+                                Number(tooltipItem.duration),
                             )
                           }}
                         </p>
                       </div>
 
                       <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                        <p class="text-[9px] font-semibold uppercase text-gray-400">
+                        <p
+                          class="text-[9px] font-semibold uppercase text-gray-400"
+                        >
                           Type
                         </p>
                         <p class="mt-0.5 font-semibold text-gray-800">
@@ -387,11 +518,15 @@
                       </div>
 
                       <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                        <p class="text-[9px] font-semibold uppercase text-gray-400">
+                        <p
+                          class="text-[9px] font-semibold uppercase text-gray-400"
+                        >
                           Campus
                         </p>
                         <p class="mt-0.5 font-semibold text-gray-800 truncate">
-                          {{ getCollegeBranchName(tooltipItem.college_branch_id) }}
+                          {{
+                            getCollegeBranchName(tooltipItem.college_branch_id)
+                          }}
                         </p>
                       </div>
                     </div>
@@ -559,6 +694,11 @@ export default {
       activeSchoolYear: null,
       showCompareView: false,
       hoverTimer: null,
+      selectedDragGroup: [],
+      dragGroupMode: false,
+
+      dragRecords: [],
+      temporaryGroups: {},
     };
   },
 
@@ -576,9 +716,9 @@ export default {
               [s.course_code, s.room_name, s.set_name, s.day]
                 .join(" ")
                 .toLowerCase()
-                .includes(q)
-            )
-        )
+                .includes(q),
+            ),
+        ),
       );
     },
     collegeBranches() {
@@ -610,7 +750,9 @@ export default {
       return Object.fromEntries(entries.slice(start, end));
     },
     totalCardPages() {
-      return Math.ceil(Object.keys(this.filteredBySearch).length / this.cardsPerPage);
+      return Math.ceil(
+        Object.keys(this.filteredBySearch).length / this.cardsPerPage,
+      );
     },
     paginatedSource() {
       if (!this.searchQuery) return this.filteredGroupedSchedule;
@@ -618,12 +760,15 @@ export default {
       const q = this.searchQuery.toLowerCase();
       return Object.fromEntries(
         Object.entries(this.filteredGroupedSchedule).filter(([name]) =>
-          name.toLowerCase().includes(q)
-        )
+          name.toLowerCase().includes(q),
+        ),
       );
     },
     visibleFacultyCards() {
-      return Object.entries(this.filteredBySearch).slice(0, this.visibleCardCount);
+      return Object.entries(this.filteredBySearch).slice(
+        0,
+        this.visibleCardCount,
+      );
     },
 
     hasMoreCards() {
@@ -636,36 +781,38 @@ export default {
     facultyTotalUnits() {
       const result = {};
 
-      Object.entries(this.filteredGroupedSchedule).forEach(([faculty, schedules]) => {
-        let totalUnits = 0;
+      Object.entries(this.filteredGroupedSchedule).forEach(
+        ([faculty, schedules]) => {
+          let totalUnits = 0;
 
-        // prevent duplicate counting
-        const counted = new Set();
+          // prevent duplicate counting
+          const counted = new Set();
 
-        schedules.forEach((sched) => {
-          const key = `${sched.set_name}-${sched.course_code}`;
+          schedules.forEach((sched) => {
+            const key = `${sched.set_name}-${sched.course_code}`;
 
-          // skip if already counted
-          if (counted.has(key)) return;
+            // skip if already counted
+            if (counted.has(key)) return;
 
-          counted.add(key);
+            counted.add(key);
 
-          const course = this.coursesList.find(
-            (c) => c.course_code === sched.course_code
-          );
+            const course = this.coursesList.find(
+              (c) => c.course_code === sched.course_code,
+            );
 
-          if (!course) return;
+            if (!course) return;
 
-          const lec = Number(course.course_lec || 0);
-          const lab = Number(course.course_lab || 0);
+            const lec = Number(course.course_lec || 0);
+            const lab = Number(course.course_lab || 0);
 
-          totalUnits += lec + lab;
-        });
+            totalUnits += lec + lab;
+          });
 
-        result[faculty] = {
-          totalUnits: Number(totalUnits.toFixed(2)),
-        };
-      });
+          result[faculty] = {
+            totalUnits: Number(totalUnits.toFixed(2)),
+          };
+        },
+      );
 
       return result;
     },
@@ -673,14 +820,14 @@ export default {
     uniqueInstitutes() {
       const store = useFetchDataStore();
       const institutes = store.institutes || [];
-      return Array.from(new Set(this.finalSchedules.map((s) => s.institute_id))).map(
-        (id) => {
-          const inst = institutes.find((i) => i.institute_id === id);
-          return inst
-            ? { id, name: inst.institute_name }
-            : { id, name: `Institute ${id}` };
-        }
-      );
+      return Array.from(
+        new Set(this.finalSchedules.map((s) => s.institute_id)),
+      ).map((id) => {
+        const inst = institutes.find((i) => i.institute_id === id);
+        return inst
+          ? { id, name: inst.institute_name }
+          : { id, name: `Institute ${id}` };
+      });
     },
     // Map program IDs to their names (filtered by selectedInstituteId if any)
     filteredPrograms() {
@@ -693,15 +840,17 @@ export default {
             .filter((s) =>
               this.selectedInstituteId
                 ? String(s.institute_id) === String(this.selectedInstituteId)
-                : true
+                : true,
             )
-            .map((s) => s.program_id)
-        )
+            .map((s) => s.program_id),
+        ),
       );
 
       return programIds.map((id) => {
         const prog = programs.find((p) => String(p.program_id) === String(id));
-        return prog ? { id, name: prog.program_code } : { id, name: `Program ${id}` };
+        return prog
+          ? { id, name: prog.program_code }
+          : { id, name: `Program ${id}` };
       });
     },
     // Compute latest active school year dynamically
@@ -710,11 +859,15 @@ export default {
       const activeYears = this.schoolYears.filter((y) => y.is_active);
       if (!activeYears.length) return null;
       return activeYears.reduce((latest, current) =>
-        new Date(current.updated_at) > new Date(latest.updated_at) ? current : latest
+        new Date(current.updated_at) > new Date(latest.updated_at)
+          ? current
+          : latest,
       );
     },
     totalPages() {
-      return Math.ceil(Object.keys(this.filteredBySearch).length / this.itemsPerPage);
+      return Math.ceil(
+        Object.keys(this.filteredBySearch).length / this.itemsPerPage,
+      );
     },
     startIndex() {
       return (this.currentPage - 1) * this.itemsPerPage + 1;
@@ -722,7 +875,7 @@ export default {
     endIndex() {
       return Math.min(
         this.currentPage * this.itemsPerPage,
-        Object.keys(this.filteredGroupedSchedule).length
+        Object.keys(this.filteredGroupedSchedule).length,
       );
     },
     pageNumbers() {
@@ -754,8 +907,8 @@ export default {
       const query = this.searchQuery.toLowerCase();
       return Object.fromEntries(
         Object.entries(this.filteredGroupedSchedule).filter(([name]) =>
-          name.toLowerCase().includes(query)
-        )
+          name.toLowerCase().includes(query),
+        ),
       );
     },
     activeSchoolYearDisplay() {
@@ -790,6 +943,79 @@ export default {
   },
 
   methods: {
+    isTemporaryGrouped(item) {
+      const groupId = this.temporaryGroups[item.id];
+
+      if (!groupId) return false;
+
+      return (
+        Object.values(this.temporaryGroups).filter((id) => id === groupId)
+          .length > 1
+      );
+    },
+    getTemporaryGroupCount(item) {
+      const group = this.temporaryGroups[item.id];
+
+      if (!group) return 1;
+
+      return Object.values(this.temporaryGroups).filter((g) => g === group)
+        .length;
+    },
+    getScheduleGroups(slot, day, instructor) {
+      const schedules = this.filteredGroupedSchedule[instructor] || [];
+
+      const visible = schedules.filter((s) => {
+        if (s.day !== day) return false;
+
+        const start = Number(s.start_hour);
+        const end = start + Number(s.duration);
+
+        return end > slot.start && start < slot.end;
+      });
+
+      const groups = {};
+
+      visible.forEach((schedule) => {
+        const key = this.temporaryGroups[schedule.id] || schedule.id;
+
+        if (!groups[key]) {
+          groups[key] = [];
+        }
+
+        groups[key].push(schedule);
+      });
+
+      return Object.values(groups);
+    },
+    handleDoubleClick(item) {
+      // If already joined -> unjoin
+      if (item.is_joined) {
+        this.handleUnjoin(item);
+        return;
+      }
+
+      // Otherwise group Lecture/Lab
+      this.handleGroupSelection(item);
+    },
+    isGroupSelected(item) {
+      return this.selectedDragGroup.some((r) => r.id === item.id);
+    },
+    handleGroupSelection(record) {
+      // this.selectedDragGroup = this.finalSchedules.filter(
+      //   (s) =>
+      //     s.faculty_id === record.faculty_id &&
+      //     s.class_id === record.class_id &&
+      //     s.course_code === record.course_code,
+      // );
+      this.selectedDragGroup = this.finalSchedules
+        .filter(
+          (s) =>
+            s.faculty_id === record.faculty_id &&
+            s.class_id === record.class_id &&
+            s.course_code === record.course_code,
+        )
+        .sort((a, b) => Number(a.start_hour) - Number(b.start_hour));
+    },
     scheduleHoverStart(event, item) {
       clearTimeout(this.hoverTimer);
 
@@ -806,9 +1032,11 @@ export default {
       if (!this.showCompareView) return;
 
       this.filteredGroupedSchedule = {
-        [this.compareInstructorA]: this.groupedSchedule[this.compareInstructorA] || [],
+        [this.compareInstructorA]:
+          this.groupedSchedule[this.compareInstructorA] || [],
 
-        [this.compareInstructorB]: this.groupedSchedule[this.compareInstructorB] || [],
+        [this.compareInstructorB]:
+          this.groupedSchedule[this.compareInstructorB] || [],
       };
     },
     handleDrop(event, instructor, day, slotStart) {
@@ -824,8 +1052,9 @@ export default {
 
       return schedules.filter(
         (s) =>
-          Number(s.school_year_id) === Number(this.activeSchoolYear.school_year_id) &&
-          Number(s.semester) === Number(this.activeSchoolYear.semester)
+          Number(s.school_year_id) ===
+            Number(this.activeSchoolYear.school_year_id) &&
+          Number(s.semester) === Number(this.activeSchoolYear.semester),
       );
     },
     canEditSchedule(schedule) {
@@ -843,7 +1072,8 @@ export default {
           Number(schedule.class_program_id) === Number(this.user.program_id);
 
         const sameClassInstitute =
-          Number(schedule.class_institute_id) === Number(this.user.institute_id);
+          Number(schedule.class_institute_id) ===
+          Number(this.user.institute_id);
 
         return sameClassProgram && sameClassInstitute;
       }
@@ -854,18 +1084,22 @@ export default {
       // EXCEPT own exact institute + program
       // ==========================================
       if (this.user.role === "Department Chairperson") {
-        const sameClassProgram =
-          Number(schedule.class_program_id) === Number(this.user.program_id);
+        // Department Chair only sees their own faculty already
+        // so just check if the class belongs to their own program
 
-        const sameClassInstitute =
-          Number(schedule.class_institute_id) === Number(this.user.institute_id);
+        const ownsSection =
+          Number(schedule.class_program_id) === Number(this.user.program_id) &&
+          Number(schedule.class_institute_id) ===
+            Number(this.user.institute_id);
 
-        // ❌ lock ONLY own exact program
-        return !(sameClassProgram && sameClassInstitute);
+        // Own section = Program Chair responsibility
+        if (ownsSection) {
+          return false;
+        }
+
+        // Faculty teaching outside the department
+        return true;
       }
-
-      // ✅ Other roles
-      return true;
     },
     async fetchCollegeBranch() {
       const store = useFetchDataStore();
@@ -875,7 +1109,7 @@ export default {
     },
     getCollegeBranchName(branchId) {
       const branch = this.collegeBranches.find(
-        (b) => Number(b.college_branch_id) === Number(branchId)
+        (b) => Number(b.college_branch_id) === Number(branchId),
       );
 
       return branch ? branch.college_branch_name : `Branch ${branchId}`;
@@ -896,6 +1130,23 @@ export default {
     },
     rebuildAllIndexes() {
       this.groupedSchedule = this.groupByInstructor(this.finalSchedules);
+
+      // Department Chairperson: filter faculty cards only
+      if (this.user.role === "Department Chairperson") {
+        this.groupedSchedule = Object.fromEntries(
+          Object.entries(this.groupedSchedule).filter(([, schedules]) => {
+            const first = schedules[0];
+
+            return (
+              Number(first.faculty_program_id) ===
+                Number(this.user.program_id) &&
+              Number(first.faculty_institute_id) ===
+                Number(this.user.institute_id)
+            );
+          }),
+        );
+      }
+
       this.filteredGroupedSchedule = { ...this.groupedSchedule };
 
       this.buildScheduleIndex();
@@ -916,7 +1167,7 @@ export default {
 
       // Get all records in the same join group
       const groupRecords = this.finalSchedules.filter(
-        (r) => r.join_group_id === record.join_group_id
+        (r) => r.join_group_id === record.join_group_id,
       );
 
       try {
@@ -928,9 +1179,9 @@ export default {
                 is_joined: false,
                 join_group_id: null,
                 joined_with: [],
-              }
-            )
-          )
+              },
+            ),
+          ),
         );
 
         // Update local state
@@ -995,7 +1246,7 @@ export default {
 
       // 🔥 STEP 1: Filter only truly joinable targets
       const validTargets = this.pendingJoinTargets.filter((target) =>
-        canJoin(baseRecord, target)
+        canJoin(baseRecord, target),
       );
 
       if (!validTargets.length) {
@@ -1012,7 +1263,7 @@ export default {
       const joinedIds = allToJoin.map((s) => s.id);
       const totalStudents = allToJoin.reduce(
         (sum, s) => sum + Number(s.class_size || 0),
-        0
+        0,
       );
 
       allToJoin.forEach((s) => {
@@ -1055,12 +1306,14 @@ export default {
                 join_group_id: s.join_group_id,
                 is_joined: s.is_joined,
                 joined_with: s.joined_with,
-              }
-            )
-          )
+              },
+            ),
+          ),
         );
 
-        toast.success(`Classes successfully joined! Total students: ${totalStudents}`);
+        toast.success(
+          `Classes successfully joined! Total students: ${totalStudents}`,
+        );
         this.rebuildAllIndexes();
         await this.fetchFinalSchedules();
       } catch (error) {
@@ -1092,7 +1345,7 @@ export default {
             room_name: record.room_name,
             mode: record.mode,
             type: record.type,
-          }
+          },
         );
 
         // toast.success("Schedule moved successfully!");
@@ -1138,7 +1391,8 @@ export default {
         Number(recordA.class_size) < 30 && Number(recordB.class_size) < 30;
 
       // Must be the same mode to join
-      const sameMode = recordA.mode?.toLowerCase() === recordB.mode?.toLowerCase();
+      const sameMode =
+        recordA.mode?.toLowerCase() === recordB.mode?.toLowerCase();
 
       return (
         recordA.id !== recordB.id &&
@@ -1152,14 +1406,27 @@ export default {
       );
     },
     getConflictsForDrag(record, targetInstructor, targetDay, targetStartHour) {
-      const clonedRecord = {
-        ...record,
-        faculty_name: targetInstructor,
-        day: targetDay,
-        start_hour: Number(targetStartHour),
-      };
+      const dragRecords =
+        this.dragRecords.length > 0
+          ? this.dragRecords
+          : this.selectedDragGroup.length
+          ? this.selectedDragGroup
+          : [record];
 
-      return this.getConflictingRecords(clonedRecord);
+      let conflicts = [];
+
+      dragRecords.forEach((schedule) => {
+        const preview = {
+          ...schedule,
+          faculty_name: targetInstructor,
+          day: targetDay,
+          start_hour: Number(targetStartHour),
+        };
+
+        conflicts.push(...this.getConflictingRecords(preview));
+      });
+
+      return conflicts;
     },
     showScheduleTooltip(event, item) {
       const tooltipWidth = 260;
@@ -1227,7 +1494,8 @@ export default {
           const rStart = Number(r.start_hour);
           const rEnd = rStart + Number(r.duration);
 
-          const overlaps = Math.max(recordStart, rStart) < Math.min(recordEnd, rEnd);
+          const overlaps =
+            Math.max(recordStart, rStart) < Math.min(recordEnd, rEnd);
 
           if (!overlaps) return false;
 
@@ -1257,8 +1525,20 @@ export default {
         .map((r) => {
           const reasons = [];
 
-          if (Number(r.faculty_id) === Number(record.faculty_id)) {
-            reasons.push("Faculty conflict");
+          if (
+            (record.faculty_id &&
+              r.faculty_id &&
+              Number(record.faculty_id) === Number(r.faculty_id)) ||
+            record.faculty_name?.trim().toLowerCase() ===
+              r.faculty_name?.trim().toLowerCase()
+          ) {
+            reasons.push(
+              `Faculty "${
+                r.faculty_name
+              }" is already assigned from ${this.formatTime(
+                r.start_hour,
+              )} to ${this.formatTime(r.start_hour + Number(r.duration))}.`,
+            );
           }
 
           if (
@@ -1266,11 +1546,19 @@ export default {
             r.mode?.toLowerCase() === "face to face" &&
             Number(r.room_id) === Number(record.room_id)
           ) {
-            reasons.push("Room conflict");
+            reasons.push(
+              `Room "${r.room_name}" is already occupied by ${r.course_code} (${
+                r.program_code
+              }-${r.set_name}) from ${this.formatTime(
+                r.start_hour,
+              )} to ${this.formatTime(r.start_hour + Number(r.duration))}.`,
+            );
           }
 
           if (Number(r.class_id) === Number(record.class_id)) {
-            reasons.push("Class conflict");
+            reasons.push(
+              `Section ${r.program_code}-${r.set_name} already has a class (${r.course_code}) scheduled during this time.`,
+            );
           }
 
           if (
@@ -1280,12 +1568,23 @@ export default {
             Number(r.program_id) === Number(record.program_id) &&
             Number(r.college_branch_id) === Number(record.college_branch_id)
           ) {
-            reasons.push("Online section conflict");
+            reasons.push(
+              `This online section (${r.program_code}-${r.set_name}) already has another online class during this time.`,
+            );
+          }
+
+          // Multiple conflicts summary
+          if (reasons.length > 1) {
+            reasons.unshift(
+              `This schedule has ${reasons.length} conflict${
+                reasons.length > 1 ? "s" : ""
+              }:`,
+            );
           }
 
           return {
             ...r,
-            reason: reasons.join(", "),
+            reason: reasons.join("\n• "),
           };
         });
     },
@@ -1297,8 +1596,15 @@ export default {
           c.reason.includes("Faculty") ||
           c.reason.includes("Room") ||
           c.reason.includes("Class") ||
-          c.reason.includes("Online")
+          c.reason.includes("Online"),
       );
+    },
+    openConflictModal(schedule) {
+      this.selectedSchedule = schedule;
+
+      this.conflictRecords = this.getConflictingRecords(schedule);
+
+      this.conflictModalVisible = true;
     },
     closeConflictModal() {
       this.conflictModalVisible = false;
@@ -1321,8 +1627,10 @@ export default {
       if (!this.compareInstructorA || !this.compareInstructorB) return;
 
       this.filteredGroupedSchedule = {
-        [this.compareInstructorA]: this.groupedSchedule[this.compareInstructorA] || [],
-        [this.compareInstructorB]: this.groupedSchedule[this.compareInstructorB] || [],
+        [this.compareInstructorA]:
+          this.groupedSchedule[this.compareInstructorA] || [],
+        [this.compareInstructorB]:
+          this.groupedSchedule[this.compareInstructorB] || [],
       };
 
       this.showFacultyTable = false;
@@ -1333,9 +1641,11 @@ export default {
     },
     openEditInstructorModal(instructor) {
       // Send fresh copies of schedules to modal
-      this.editInstructorData = (this.groupedSchedule[instructor] || []).map((r) => ({
-        ...r,
-      }));
+      this.editInstructorData = (this.groupedSchedule[instructor] || []).map(
+        (r) => ({
+          ...r,
+        }),
+      );
       this.showEditModal = true;
     },
     handleModalSaved(updatedInstructorSchedules) {
@@ -1350,11 +1660,11 @@ export default {
 
       // Only update groupedSchedule for affected instructors
       const affectedInstructors = Array.from(
-        new Set(updatedInstructorSchedules.map((u) => u.faculty_name))
+        new Set(updatedInstructorSchedules.map((u) => u.faculty_name)),
       );
       affectedInstructors.forEach((inst) => {
         this.groupedSchedule[inst] = this.finalSchedules.filter(
-          (s) => s.faculty_name === inst
+          (s) => s.faculty_name === inst,
         );
       });
 
@@ -1366,7 +1676,9 @@ export default {
       }
     },
     handleDeletedSchedule(deletedId) {
-      this.finalSchedules = this.finalSchedules.filter((s) => s.id !== deletedId);
+      this.finalSchedules = this.finalSchedules.filter(
+        (s) => s.id !== deletedId,
+      );
       this.groupedSchedule = this.groupByInstructor(this.finalSchedules);
       this.filterSchedules();
     },
@@ -1383,33 +1695,74 @@ export default {
           this.draggedRecord,
           instructor,
           day,
-          slotStart
+          slotStart,
         );
       });
     },
     onDragStart(event, record) {
-      this.isDragging = true;
-      event.dataTransfer.effectAllowed = "move";
       if (!this.showCompareView) {
         event.preventDefault();
         toast.info("Drag and drop is only available in Compare Faculty mode.");
         return;
       }
-      // Block large classes if Join is active
+
       if (this.isJoined && Number(record.class_size) >= 30) {
-        toast.info("Cannot move classes with 30 or more students when Join is active.");
         event.preventDefault();
         return;
       }
 
-      this.draggedRecord = { ...record };
+      this.isDragging = true;
 
-      // ✅ Hide tooltip when dragging starts
+      // If grouped -> drag the whole group
+      if (this.selectedDragGroup.length > 0) {
+        // this.dragRecords = [...this.selectedDragGroup];
+        this.dragRecords =
+          this.selectedDragGroup.length > 0
+            ? [...this.selectedDragGroup]
+            : [record];
+      } else {
+        this.dragRecords = [record];
+      }
+
+      this.draggedRecord = record;
+
       this.scheduleTooltipVisible = false;
       this.tooltipItem = null;
 
       event.dataTransfer.effectAllowed = "move";
     },
+    // onDragStart(event, record) {
+    //   this.draggedRecord = record;
+
+    //   if (this.selectedDragGroup.length) {
+    //     this.dragRecords = [...this.selectedDragGroup];
+    //   } else {
+    //     this.dragRecords = [record];
+    //   }
+    //   this.isDragging = true;
+    //   event.dataTransfer.effectAllowed = "move";
+    //   if (!this.showCompareView) {
+    //     event.preventDefault();
+    //     toast.info("Drag and drop is only available in Compare Faculty mode.");
+    //     return;
+    //   }
+    //   // Block large classes if Join is active
+    //   if (this.isJoined && Number(record.class_size) >= 30) {
+    //     toast.info(
+    //       "Cannot move classes with 30 or more students when Join is active.",
+    //     );
+    //     event.preventDefault();
+    //     return;
+    //   }
+
+    //   this.draggedRecord = { ...record };
+
+    //   // ✅ Hide tooltip when dragging starts
+    //   this.scheduleTooltipVisible = false;
+    //   this.tooltipItem = null;
+
+    //   event.dataTransfer.effectAllowed = "move";
+    // },
 
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
       if (!this.showCompareView) {
@@ -1440,13 +1793,15 @@ export default {
       }
 
       // Determine records to move (single or joined)
-      const recordsToMove =
-        baseRecord.is_joined && baseRecord.join_group_id
-          ? this.finalSchedules.filter(
-              (r) => r.join_group_id === baseRecord.join_group_id
-            )
-          : [baseRecord];
-
+      // const recordsToMove =
+      //   baseRecord.is_joined && baseRecord.join_group_id
+      //     ? this.finalSchedules.filter(
+      //         (r) => r.join_group_id === baseRecord.join_group_id,
+      //       )
+      //     : [baseRecord];
+      const recordsToMove = this.dragRecords.length
+        ? this.dragRecords
+        : [baseRecord];
       // Preview records at new position
       const previewRecords = recordsToMove.map((r) => ({
         ...r,
@@ -1456,6 +1811,19 @@ export default {
       }));
 
       // 🔥 Check conflicts using preview position
+      // for (const preview of previewRecords) {
+      //   const conflicts = this.getConflictingRecords(preview);
+
+      //   if (conflicts.length) {
+      //     this.selectedSchedule = preview;
+      //     this.conflictRecords = conflicts;
+      //     this.conflictModalVisible = true;
+      //     this.draggedRecord = null;
+
+      //     toast.error("Schedule conflict detected.");
+      //     return;
+      //   }
+      // }
       for (const preview of previewRecords) {
         const conflicts = this.getConflictingRecords(preview);
 
@@ -1463,12 +1831,17 @@ export default {
           this.selectedSchedule = preview;
           this.conflictRecords = conflicts;
           this.conflictModalVisible = true;
+
           this.draggedRecord = null;
+          this.dragRecords = [];
 
           toast.error("Schedule conflict detected.");
           return;
         }
       }
+      const targetFaculty = this.finalSchedules.find(
+        (s) => s.faculty_name === targetInstructor,
+      );
 
       try {
         await Promise.all(
@@ -1476,7 +1849,7 @@ export default {
             axios.patch(
               `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${r.id}`,
               {
-                faculty_id: r.faculty_id,
+                faculty_id: targetFaculty.faculty_id,
                 faculty_name: targetInstructor,
                 day: targetDay,
                 start_hour: Number(targetStartHour),
@@ -1485,9 +1858,9 @@ export default {
                 room_name: r.room_name,
                 mode: r.mode,
                 type: r.type,
-              }
-            )
-          )
+              },
+            ),
+          ),
         );
 
         // update actual schedule in finalSchedules
@@ -1495,6 +1868,7 @@ export default {
           const realRecord = this.finalSchedules.find((s) => s.id === moved.id);
 
           if (realRecord) {
+            realRecord.faculty_id = targetFaculty.faculty_id;
             realRecord.faculty_name = targetInstructor;
             realRecord.day = targetDay;
             realRecord.start_hour = Number(targetStartHour);
@@ -1509,7 +1883,14 @@ export default {
         console.error(err);
         toast.error("Failed to move schedule.");
       }
+      this.selectedDragGroup = [];
+      this.dragRecords = [];
       this.draggedRecord = null;
+      const groupId = Date.now();
+
+      recordsToMove.forEach((record) => {
+        this.temporaryGroups[record.id] = groupId;
+      });
     },
 
     async loadFetchData() {
@@ -1563,17 +1944,20 @@ export default {
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
             schedules.some(
-              (s) => String(s.institute_id) === String(this.selectedInstituteId)
-            )
-          )
+              (s) =>
+                String(s.institute_id) === String(this.selectedInstituteId),
+            ),
+          ),
         );
       }
 
       if (this.selectedProgramId) {
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
-            schedules.some((s) => String(s.program_id) === String(this.selectedProgramId))
-          )
+            schedules.some(
+              (s) => String(s.program_id) === String(this.selectedProgramId),
+            ),
+          ),
         );
       }
 
@@ -1625,9 +2009,12 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || {};
       } catch {
         this.user = {};
@@ -1669,7 +2056,7 @@ export default {
     async fetchClassSections() {
       try {
         const { data } = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/class/get-classes"
+          process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
         );
 
         // classes under current user's institute/program
@@ -1699,7 +2086,7 @@ export default {
         const { data: schedulesData } = await axios.get(
           process.env.VUE_APP_API_BASE_URL +
             "/final-generated-class-schedule/get-all-final-schedules",
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         // ================================
@@ -1707,7 +2094,7 @@ export default {
         // ================================
         const { data: classSections } = await axios.get(
           process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         let schedules = schedulesData || [];
@@ -1717,7 +2104,7 @@ export default {
             (s) =>
               String(s.school_year).trim() ===
                 String(this.activeSchoolYear.school_year_name).trim() &&
-              Number(s.semester) === Number(this.activeSchoolYear.semester)
+              Number(s.semester) === Number(this.activeSchoolYear.semester),
           );
         }
 
@@ -1737,7 +2124,7 @@ export default {
         // ================================
         schedules = schedules.map((s) => {
           const cls = classSections.find(
-            (c) => Number(c.class_id) === Number(s.class_id)
+            (c) => Number(c.class_id) === Number(s.class_id),
           );
 
           return {
@@ -1763,14 +2150,17 @@ export default {
             program_id: s.program_id,
             institute_id: s.institute_id,
 
-            display_program_code: cls?.program?.program_code || "Unknown Program",
+            display_program_code:
+              cls?.program?.program_code || "Unknown Program",
 
-            display_program_name: cls?.program?.program_name || "Unknown Program",
+            display_program_name:
+              cls?.program?.program_name || "Unknown Program",
 
             display_institute_name:
               cls?.program?.institute?.institute_name || "Unknown Institute",
 
-            display_institute_code: cls?.program?.institute?.institute_code || "",
+            display_institute_code:
+              cls?.program?.institute?.institute_code || "",
 
             set_name: cls?.set_name || s.set_name,
 
@@ -1787,35 +2177,43 @@ export default {
               schedules
                 .filter(
                   (s) =>
-                    Number(s.faculty_program_id) === Number(this.user.program_id) &&
-                    Number(s.faculty_institute_id) === Number(this.user.institute_id)
+                    Number(s.faculty_program_id) ===
+                      Number(this.user.program_id) &&
+                    Number(s.faculty_institute_id) ===
+                      Number(this.user.institute_id),
                 )
-                .map((s) => s.faculty_id)
+                .map((s) => s.faculty_id),
             ),
           ];
 
-          schedules = schedules.filter((s) => ownedFacultyIds.includes(s.faculty_id));
+          schedules = schedules.filter((s) =>
+            ownedFacultyIds.includes(s.faculty_id),
+          );
         }
 
         // ================================
         // DEPARTMENT CHAIRPERSON
         // ================================
-        else if (this.user.role === "Department Chairperson") {
-          const ownedFacultyIds = [
-            ...new Set(
-              schedules
-                .filter(
-                  (s) =>
-                    Number(s.faculty_program_id) === Number(this.user.program_id) &&
-                    Number(s.faculty_institute_id) === Number(this.user.institute_id)
-                )
-                .map((s) => s.faculty_id)
-            ),
-          ];
+        // else if (this.user.role === "Department Chairperson") {
+        //   // Only faculty under my department
+        //   const ownedFacultyIds = [
+        //     ...new Set(
+        //       schedules
+        //         .filter(
+        //           (s) =>
+        //             Number(s.faculty_program_id) ===
+        //               Number(this.user.program_id) &&
+        //             Number(s.faculty_institute_id) ===
+        //               Number(this.user.institute_id),
+        //         )
+        //         .map((s) => s.faculty_id),
+        //     ),
+        //   ];
 
-          schedules = schedules.filter((s) => ownedFacultyIds.includes(s.faculty_id));
-        }
-
+        //   schedules = schedules.filter((s) =>
+        //     ownedFacultyIds.includes(s.faculty_id),
+        //   );
+        // }
         // ================================
         // SAVE
         // ================================
@@ -1845,7 +2243,7 @@ export default {
     async fetchSchoolYears() {
       try {
         const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years"
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
         );
         this.schoolYears = res.data.map((y) => ({ ...y }));
       } catch (err) {

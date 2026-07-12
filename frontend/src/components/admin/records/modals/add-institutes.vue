@@ -2,64 +2,54 @@
   <div class="modal-overlay">
     <div class="modal-wrapper">
       <form @submit.prevent="submitData" class="modal-container" ref="programsForm">
+
+
+        <!-- Header -->
         <div class="modal-header">
-          <div class="flex gap-1 items-center">
-            <icon :name="'add-students'" />
-           <h1 class="header1">
-              {{ isEdit ? "Edit" : "Add" }} Institute
-            </h1>
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white " />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">
+                {{ isEdit ? "Edit Institute" : "Add Institute" }}
+              </h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update institute details
+              </p>
+            </div>
           </div>
 
-          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="close-button-header" />
         </div>
 
         <div class="w-[25vw] modal-body">
           <div class="w-full space-y-2 text-left flex flex-col">
             <label for="institute_code" class="input-label">Institute Code:</label>
-            <input
-              v-model.trim="form.institute_code"
-              type="text"
-              id="institute_code"
-              required
-              class="input-text"
-              placeholder="Enter institute code"
-            />
+            <input v-model.trim="form.institute_code" type="text" id="institute_code" required class="input-text"
+              placeholder="Enter institute code" />
           </div>
 
           <div class="w-full space-y-2 text-left flex flex-col">
             <label for="institute_name" class="input-label">Institute Name:</label>
-            <input
-              v-model.trim="form.institute_name"
-              type="text"
-              id="institute_name"
-              required
-              class="input-text"
-              placeholder="Enter institute name"
-            />
+            <input v-model.trim="form.institute_name" type="text" id="institute_name" required class="input-text"
+              placeholder="Enter institute name" />
           </div>
 
           <div class="w-full space-y-2 text-left flex flex-col">
             <label for="program_code" class="input-label">Program Code:</label>
-            <input
-              v-model.trim="form.program_code"
-              type="text"
-              id="program_code"
-              required
-              class="input-text"
-              placeholder="Enter program code"
-            />
+            <input v-model.trim="form.program_code" type="text" id="program_code" required class="input-text"
+              placeholder="Enter program code" />
           </div>
 
           <div class="w-full space-y-2 text-left flex flex-col">
             <label for="program_name" class="input-label">Program Name:</label>
-            <input
-              v-model.trim="form.program_name"
-              type="text"
-              id="program_name"
-              required
-              class="input-text"
-              placeholder="Enter program name"
-            />
+            <input v-model.trim="form.program_name" type="text" id="program_name" required class="input-text"
+              placeholder="Enter program name" />
           </div>
 
           <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
@@ -192,7 +182,7 @@ export default {
         if (this.isEdit) {
           const instituteResponse = await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
-              `/institute/update-institute/${this.currentInstituteId}`,
+            `/institute/update-institute/${this.currentInstituteId}`,
             {
               institute_name: this.form.institute_name,
               institute_code: this.form.institute_code,
@@ -203,7 +193,7 @@ export default {
 
           await axios.patch(
             process.env.VUE_APP_API_BASE_URL +
-              `/programs/update-program/${this.currentProgramId}`,
+            `/programs/update-program/${this.currentProgramId}`,
             {
               program_name: this.form.program_name,
               program_code: this.form.program_code,

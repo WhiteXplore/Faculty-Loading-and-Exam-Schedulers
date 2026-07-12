@@ -1,22 +1,15 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg fixed top-20">
-      <form
-        @submit.prevent="submitData"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-        ref="schedulesForm"
-      >
+      <form @submit.prevent="submitData" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg "
+        ref="schedulesForm">
         <!-- Header -->
-       <div class="modal-header">
+        <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'add-students'" />
-           <h1 class="header1">Edit Class Schedule</h1>
+            <h1 class="header1">Edit Class Schedule</h1>
           </div>
-          <icon
-            :name="'circle-close3'"
-            @click="$emit('close')"
-            class="cursor-pointer"
-          />
+          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
         </div>
 
         <div class="p-5 w-[40vw] text-left">
@@ -25,18 +18,11 @@
             <!-- Instructor -->
             <div class="w-full space-y-2">
               <label for="instructor_id" class="font-bold">Instructor :</label>
-              <select
-                v-model="form.instructor_id"
-                id="instructor_id"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              >
+              <select v-model="form.instructor_id" id="instructor_id" required
+                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                 <option value="" disabled>Select Instructor:</option>
-                <option
-                  v-for="instructor in instructors"
-                  :key="instructor.instructor_id"
-                  :value="instructor.instructor_id"
-                >
+                <option v-for="instructor in instructors" :key="instructor.instructor_id"
+                  :value="instructor.instructor_id">
                   {{ instructor.instructor_lname }},
                   {{ instructor.instructor_fname }}
                 </option>
@@ -46,18 +32,10 @@
             <!-- Course -->
             <div class="w-full space-y-2">
               <label for="course_id" class="font-bold">Course :</label>
-              <select
-                v-model="form.course_id"
-                id="course_id"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              >
+              <select v-model="form.course_id" id="course_id" required
+                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                 <option value="" disabled>Select Course:</option>
-                <option
-                  v-for="course in courses"
-                  :key="course.course_id"
-                  :value="course.course_id"
-                >
+                <option v-for="course in courses" :key="course.course_id" :value="course.course_id">
                   {{ course.course_code }}
                 </option>
               </select>
@@ -66,18 +44,10 @@
             <!-- Room -->
             <div class="w-full space-y-2">
               <label for="room_id" class="font-bold">Room :</label>
-              <select
-                v-model="form.room_id"
-                id="room_id"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              >
+              <select v-model="form.room_id" id="room_id" required
+                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                 <option value="" disabled>Select Room:</option>
-                <option
-                  v-for="room in rooms"
-                  :key="room.room_id"
-                  :value="room.room_id"
-                >
+                <option v-for="room in rooms" :key="room.room_id" :value="room.room_id">
                   {{ room.room_name }}
                 </option>
               </select>
@@ -86,18 +56,10 @@
             <!-- Section -->
             <div class="w-full space-y-2">
               <label for="section_id" class="font-bold">Section:</label>
-              <select
-                v-model="form.section_id"
-                id="section_id"
-                required
-                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-              >
+              <select v-model="form.section_id" id="section_id" required
+                class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                 <option value="" disabled>Select Section:</option>
-                <option
-                  v-for="section in sections"
-                  :key="section.section_id"
-                  :value="section.section_id"
-                >
+                <option v-for="section in sections" :key="section.section_id" :value="section.section_id">
                   {{ section.section_set }}
                 </option>
               </select>
@@ -108,17 +70,12 @@
             <div class="w-full space-y-2 text-left">
               <label class="font-bold">Days:</label>
               <div class="flex flex-wrap gap-2">
-                <div
-                  v-for="day in schedule_days"
-                  :key="day"
-                  @click="toggleDay(day)"
-                  :class="[
-                    'cursor-pointer px-4 py-2 rounded-full border transition-all duration-200 text-sm',
-                    form.schedule_days.includes(day)
-                      ? ' bg-defaultGreen text-white border-green01 shadow-md'
-                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100',
-                  ]"
-                >
+                <div v-for="day in schedule_days" :key="day" @click="toggleDay(day)" :class="[
+                  'cursor-pointer px-4 py-2 rounded-full border transition-all duration-200 text-sm',
+                  form.schedule_days.includes(day)
+                    ? ' bg-defaultGreen text-white border-green01 shadow-md'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100',
+                ]">
                   {{ day }}
                 </div>
               </div>
@@ -128,34 +85,20 @@
             <div class="w-full text-left gap-3 flex mt-2">
               <div class="w-full space-y-2">
                 <label class="font-bold">Start Time:</label>
-                <select
-                  v-model="form.time_start"
-                  required
-                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="form.time_start" required
+                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                   <option value="" disabled>Select Time Start:</option>
-                  <option
-                    v-for="time in time"
-                    :key="time.time_id"
-                    :value="time.time"
-                  >
+                  <option v-for="time in time" :key="time.time_id" :value="time.time">
                     {{ formatTime12Hour(time.time) }}
                   </option>
                 </select>
               </div>
               <div class="w-full space-y-2">
                 <label class="font-bold">End Time:</label>
-                <select
-                  v-model="form.time_end"
-                  required
-                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800"
-                >
+                <select v-model="form.time_end" required
+                  class="w-full border px-2 py-3 border-gray-600 rounded-md text-md text-gray-800">
                   <option value="" disabled>Select Time End:</option>
-                  <option
-                    v-for="time in time"
-                    :key="time.time_id"
-                    :value="time.time"
-                  >
+                  <option v-for="time in time" :key="time.time_id" :value="time.time">
                     {{ formatTime12Hour(time.time) }}
                   </option>
                 </select>
@@ -169,14 +112,12 @@
           <div class="tracking-wide flex justify-end gap-2 mt-4">
             <button
               class="bg-red-600 p-2 px-3 rounded-md text-white hover:bg-white border hover:border-red-800 hover:text-red-800 hover:shadow-md"
-              @click="$emit('close')"
-            >
+              @click="$emit('close')">
               Cancel
             </button>
             <button
               class="bg-defaultGreen p-2 px-3 rounded-md text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md"
-              type="submit"
-            >
+              type="submit">
               Submit
             </button>
           </div>
@@ -185,16 +126,12 @@
     </div>
 
     <!-- Conflict Modal -->
-    <div
-      v-if="showConflictModal"
-      class="fixed inset-0 bg-gray-900 bg-opacity-40 flex justify-center items-center z-50"
-    >
+    <div v-if="showConflictModal" class="fixed inset-0 bg-gray-900 bg-opacity-40 flex justify-center items-center z-50">
       <div class="bg-white rounded-lg p-6 w-[90%] max-w-md shadow-xl">
         <h2 class="text-lg font-bold text-red-600 mb-4">Schedule Conflict</h2>
 
         <div
-          class="mb-4 text-sm text-gray-800 text-left w-full bg-red-200 px-3 py-3 gap-2 rounded-md flex items-center"
-        >
+          class="mb-4 text-sm text-gray-800 text-left w-full bg-red-200 px-3 py-3 gap-2 rounded-md flex items-center">
           <icon name="exclamationmark" class="text-red-600 w-5 h-5" />
           <p>This schedule conflicts with an existing one:</p>
         </div>
@@ -236,8 +173,8 @@
               Array.isArray(conflictSchedule.schedule_days)
                 ? conflictSchedule.schedule_days.join(", ")
                 : typeof conflictSchedule.schedule_days === "string"
-                ? conflictSchedule.schedule_days
-                : "N/A"
+                  ? conflictSchedule.schedule_days
+                  : "N/A"
             }}
           </li>
           <li>
@@ -248,10 +185,8 @@
         </ul>
 
         <div class="flex justify-end gap-2 mt-6">
-          <button
-            @click="showConflictModal = false"
-            class="px-4 py-2 text-sm rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800"
-          >
+          <button @click="showConflictModal = false"
+            class="px-4 py-2 text-sm rounded-md bg-gray-300 hover:bg-gray-400 text-gray-800">
             Close
           </button>
         </div>
@@ -363,7 +298,7 @@ export default {
       try {
         await axios.patch(
           process.env.VUE_APP_API_BASE_URL +
-            `/class-schedules/update-class/${this.classScheduleData.schedule_id}`,
+          `/class-schedules/update-class/${this.classScheduleData.schedule_id}`,
           this.form
         );
         toast.success("Class Schedules updated successfully!");
@@ -386,8 +321,8 @@ export default {
       const days = Array.isArray(data.schedule_days)
         ? [...data.schedule_days]
         : typeof data.schedule_days === "string"
-        ? data.schedule_days.split(",").map((d) => d.trim())
-        : [];
+          ? data.schedule_days.split(",").map((d) => d.trim())
+          : [];
 
       this.form = {
         schedule_days: days,

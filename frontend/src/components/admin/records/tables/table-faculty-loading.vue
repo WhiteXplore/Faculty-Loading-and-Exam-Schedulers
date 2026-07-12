@@ -46,7 +46,9 @@
 
           <!-- Progress Dots -->
           <div class="mt-5 flex gap-2">
-            <span class="h-2 w-2 animate-bounce rounded-full bg-white/80"></span>
+            <span
+              class="h-2 w-2 animate-bounce rounded-full bg-white/80"
+            ></span>
             <span
               class="h-2 w-2 animate-bounce rounded-full bg-white/80"
               style="animation-delay: 0.15s"
@@ -75,16 +77,22 @@
             name="exclamation-circle"
             class="w-7 h-7 p-1 rounded-full bg-green-200 text-green-900 flex items-center justify-center"
           />
-          <h3 class="text-lg font-semibold text-gray-800 leading-none">Confirm Save</h3>
+          <h3 class="text-lg font-semibold text-gray-800 leading-none">
+            Confirm Save
+          </h3>
         </div>
       </div>
 
       <!-- TODO  Message -->
-      <p class="text-gray-600 mb-6">Are you sure you want to save this schedule?</p>
+      <p class="text-gray-600 mb-6">
+        Are you sure you want to save this schedule?
+      </p>
 
       <!-- TODO  Buttons -->
       <div class="flex justify-center gap-2 text-sm">
-        <button @click="showConfirmSaved = false" class="btn-cancel">Cancel</button>
+        <button @click="showConfirmSaved = false" class="btn-cancel">
+          Cancel
+        </button>
         <button
           @click="saveScheduledConfirmed"
           :disabled="savingSchedule"
@@ -100,7 +108,11 @@
                 stroke-width="3"
                 opacity="0.25"
               />
-              <path d="M22 12a10 10 0 0 1-10 10" stroke="currentColor" stroke-width="3" />
+              <path
+                d="M22 12a10 10 0 0 1-10 10"
+                stroke="currentColor"
+                stroke-width="3"
+              />
             </svg>
             Saving...
           </span>
@@ -140,7 +152,11 @@
               stroke-width="2"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
         </div>
@@ -172,7 +188,11 @@
               stroke-width="2"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
         </div>
@@ -295,8 +315,14 @@
                       class="relative border border-gray-200 text-left align-top h-[60px] p-0"
                     >
                       <template
-                        v-for="item in getScheduleForCell(slot, day, instructor)"
-                        :key="item.course_name + item.start_hour + item.room_name"
+                        v-for="item in getScheduleForCell(
+                          slot,
+                          day,
+                          instructor,
+                        )"
+                        :key="
+                          item.course_name + item.start_hour + item.room_name
+                        "
                       >
                         <div
                           v-if="isStartingSlot(item, slot)"
@@ -328,10 +354,16 @@
                               item.schedule_type === 'face to face'
                                 ? 'bg-orange-500'
                                 : '',
-                              item.schedule_type === 'online' ? 'bg-purple-500' : '',
+                              item.schedule_type === 'online'
+                                ? 'bg-purple-500'
+                                : '',
                             ]"
                           >
-                            {{ item.schedule_type === "face to face" ? "F2F" : "OL" }}
+                            {{
+                              item.schedule_type === "face to face"
+                                ? "F2F"
+                                : "OL"
+                            }}
                           </span>
                           <div class="leading-snug truncate">
                             <p class="font-semibold truncate">
@@ -425,51 +457,73 @@
                       class="mt-1 rounded-lg border border-gray-100 bg-gray-50 px-2.5 py-1.5"
                     >
                       <p class="font-semibold text-gray-800">
-                        {{ tooltipItem.program_code }} - {{ tooltipItem.set_name }}
+                        {{ tooltipItem.program_code }} -
+                        {{ tooltipItem.set_name }}
                       </p>
                     </div>
                   </div>
 
                   <div class="grid grid-cols-2 gap-2">
                     <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                      <p class="text-[9px] font-semibold uppercase text-gray-400">Room</p>
+                      <p
+                        class="text-[9px] font-semibold uppercase text-gray-400"
+                      >
+                        Room
+                      </p>
                       <p class="mt-0.5 font-semibold text-gray-800">
                         {{ tooltipItem.room_name || "TBA" }}
                       </p>
                     </div>
 
                     <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                      <p class="text-[9px] font-semibold uppercase text-gray-400">Day</p>
+                      <p
+                        class="text-[9px] font-semibold uppercase text-gray-400"
+                      >
+                        Day
+                      </p>
                       <p class="mt-0.5 font-semibold text-gray-800">
                         {{ tooltipItem.day || "-" }}
                       </p>
                     </div>
 
                     <div class="rounded-lg bg-gray-50 px-2.5 py-2 col-span-2">
-                      <p class="text-[9px] font-semibold uppercase text-gray-400">Time</p>
+                      <p
+                        class="text-[9px] font-semibold uppercase text-gray-400"
+                      >
+                        Time
+                      </p>
                       <p class="mt-0.5 font-semibold text-gray-800">
                         {{ formatTime(tooltipItem.start_hour) }} –
                         {{
                           formatTime(
-                            tooltipItem.start_hour + Number(tooltipItem.duration)
+                            tooltipItem.start_hour +
+                              Number(tooltipItem.duration),
                           )
                         }}
                       </p>
                     </div>
 
                     <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                      <p class="text-[9px] font-semibold uppercase text-gray-400">Type</p>
+                      <p
+                        class="text-[9px] font-semibold uppercase text-gray-400"
+                      >
+                        Type
+                      </p>
                       <p class="mt-0.5 font-semibold text-gray-800">
                         {{ tooltipItem.type || "-" }}
                       </p>
                     </div>
 
                     <div class="rounded-lg bg-gray-50 px-2.5 py-2">
-                      <p class="text-[9px] font-semibold uppercase text-gray-400">
+                      <p
+                        class="text-[9px] font-semibold uppercase text-gray-400"
+                      >
                         Campus
                       </p>
                       <p class="mt-0.5 font-semibold text-gray-800 truncate">
-                        {{ getCollegeBranchName(tooltipItem.college_branch_id) }}
+                        {{
+                          getCollegeBranchName(tooltipItem.college_branch_id)
+                        }}
                       </p>
                     </div>
                   </div>
@@ -526,7 +580,9 @@
       <div class="w-[430px] rounded-2xl bg-white shadow-xl">
         <!-- Header -->
         <div class="flex items-center gap-3 px-6 py-5 border-b">
-          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100"
+          >
             <icon name="exclamation-circle" class="w-5 h-5 text-red-700" />
           </div>
 
@@ -557,14 +613,18 @@
           </div>
 
           <p class="mt-5 text-sm text-gray-600 italic">
-            Note: "Continuing will replace the existing generated schedule for this school
-            year and semester".
+            Note: "Continuing will replace the existing generated schedule for
+            this school year and semester".
           </p>
         </div>
 
         <!-- Footer -->
-        <div class="flex justify-end gap-2 px-6 py-4 border-t bg-gray-50 rounded-b-2xl">
-          <button @click="showOverrideModal = false" class="btn-cancel">Cancel</button>
+        <div
+          class="flex justify-end gap-2 px-6 py-4 border-t bg-gray-50 rounded-b-2xl"
+        >
+          <button @click="showOverrideModal = false" class="btn-cancel">
+            Cancel
+          </button>
 
           <button
             @click="overrideSchedule"
@@ -682,7 +742,9 @@ export default {
 
       if (this.searchQuery) {
         const q = this.searchQuery.toLowerCase();
-        entries = entries.filter(([faculty]) => faculty.toLowerCase().includes(q));
+        entries = entries.filter(([faculty]) =>
+          faculty.toLowerCase().includes(q),
+        );
       }
 
       const start = (this.cardPage - 1) * this.cardsPerPage;
@@ -695,7 +757,7 @@ export default {
 
       const filtered = this.searchQuery
         ? entries.filter(([faculty]) =>
-            faculty.toLowerCase().includes(this.searchQuery.toLowerCase())
+            faculty.toLowerCase().includes(this.searchQuery.toLowerCase()),
           )
         : entries;
 
@@ -714,36 +776,38 @@ export default {
     facultyTotalUnits() {
       const result = {};
 
-      Object.entries(this.filteredGroupedSchedule).forEach(([faculty, schedules]) => {
-        let totalUnits = 0;
+      Object.entries(this.filteredGroupedSchedule).forEach(
+        ([faculty, schedules]) => {
+          let totalUnits = 0;
 
-        // prevent duplicate counting
-        const counted = new Set();
+          // prevent duplicate counting
+          const counted = new Set();
 
-        schedules.forEach((sched) => {
-          const key = `${sched.set_name}-${sched.course_code}`;
+          schedules.forEach((sched) => {
+            const key = `${sched.set_name}-${sched.course_code}`;
 
-          // skip if already counted
-          if (counted.has(key)) return;
+            // skip if already counted
+            if (counted.has(key)) return;
 
-          counted.add(key);
+            counted.add(key);
 
-          const course = this.coursesList.find(
-            (c) => c.course_code === sched.course_code
-          );
+            const course = this.coursesList.find(
+              (c) => c.course_code === sched.course_code,
+            );
 
-          if (!course) return;
+            if (!course) return;
 
-          const lec = Number(course.course_lec || 0);
-          const lab = Number(course.course_lab || 0);
+            const lec = Number(course.course_lec || 0);
+            const lab = Number(course.course_lab || 0);
 
-          totalUnits += lec + lab;
-        });
+            totalUnits += lec + lab;
+          });
 
-        result[faculty] = {
-          totalUnits: Number(totalUnits.toFixed(2)),
-        };
-      });
+          result[faculty] = {
+            totalUnits: Number(totalUnits.toFixed(2)),
+          };
+        },
+      );
 
       return result;
     },
@@ -752,7 +816,9 @@ export default {
       const store = useFetchDataStore();
       const institutes = store.institutes || [];
 
-      const ids = [...new Set(this.schedule.map((s) => Number(s.institute_id)))];
+      const ids = [
+        ...new Set(this.schedule.map((s) => Number(s.institute_id))),
+      ];
 
       return ids.map((id) => {
         const inst = institutes.find((i) => Number(i.institute_id) === id);
@@ -777,8 +843,11 @@ export default {
         ids = [
           ...new Set(
             this.schedule
-              .filter((s) => Number(s.institute_id) === Number(this.selectedInstituteId))
-              .map((s) => Number(s.program_id))
+              .filter(
+                (s) =>
+                  Number(s.institute_id) === Number(this.selectedInstituteId),
+              )
+              .map((s) => Number(s.program_id)),
           ),
         ];
       }
@@ -799,7 +868,9 @@ export default {
       const activeYears = this.schoolYears.filter((y) => y.is_active);
       if (!activeYears.length) return null;
       return activeYears.reduce((latest, current) =>
-        new Date(current.updated_at) > new Date(latest.updated_at) ? current : latest
+        new Date(current.updated_at) > new Date(latest.updated_at)
+          ? current
+          : latest,
       );
     },
     startIndex() {
@@ -809,13 +880,13 @@ export default {
     endIndex() {
       return Math.min(
         this.currentPage * this.itemsPerPage,
-        Object.keys(this.filteredGroupedSchedule).length
+        Object.keys(this.filteredGroupedSchedule).length,
       );
     },
 
     totalPages() {
       return Math.ceil(
-        Object.keys(this.filteredGroupedSchedule).length / this.itemsPerPage
+        Object.keys(this.filteredGroupedSchedule).length / this.itemsPerPage,
       );
     },
 
@@ -839,7 +910,9 @@ export default {
 
       if (this.searchQuery) {
         const q = this.searchQuery.toLowerCase();
-        entries = entries.filter(([faculty]) => faculty.toLowerCase().includes(q));
+        entries = entries.filter(([faculty]) =>
+          faculty.toLowerCase().includes(q),
+        );
       }
 
       const start = (this.currentPage - 1) * this.itemsPerPage;
@@ -877,7 +950,7 @@ export default {
     },
     getCollegeBranchName(branchId) {
       const branch = this.collegeBranches.find(
-        (b) => Number(b.college_branch_id) === Number(branchId)
+        (b) => Number(b.college_branch_id) === Number(branchId),
       );
 
       return branch ? branch.college_branch_name : `Branch ${branchId}`;
@@ -958,7 +1031,8 @@ export default {
           const rStart = this.normalizeHour(r.start_hour);
           const rEnd = rStart + Number(r.duration);
 
-          if (Math.max(rStart, recordStart) >= Math.min(rEnd, recordEnd)) return null;
+          if (Math.max(rStart, recordStart) >= Math.min(rEnd, recordEnd))
+            return null;
 
           // Determine conflict reasons
           let reason = [];
@@ -996,7 +1070,7 @@ export default {
             r.college_branch_id === record.college_branch_id
           ) {
             reason.push(
-              "ONLINE conflict: Same program section cannot attend two online classes at the same time."
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
             );
           }
 
@@ -1096,15 +1170,15 @@ export default {
       if (this.selectedInstituteId)
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
-            schedules.some((s) => s.institute_id == this.selectedInstituteId)
-          )
+            schedules.some((s) => s.institute_id == this.selectedInstituteId),
+          ),
         );
 
       if (this.selectedProgramId)
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
-            schedules.some((s) => s.program_id == this.selectedProgramId)
-          )
+            schedules.some((s) => s.program_id == this.selectedProgramId),
+          ),
         );
 
       this.filteredGroupedSchedule = filtered;
@@ -1140,9 +1214,12 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || {};
       } catch {
         this.user = {};
@@ -1158,7 +1235,7 @@ export default {
 
       try {
         const res = await axios.get(
-          `${process.env.VUE_APP_API_BASE_URL}/generated-scheduled/load`
+          `${process.env.VUE_APP_API_BASE_URL}/generated-scheduled/load`,
         );
 
         const data = res.data.data || {};
@@ -1245,7 +1322,7 @@ export default {
     async fetchSchoolYears() {
       try {
         const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years"
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
         );
         this.schoolYears = res.data.map((y) => ({ ...y }));
       } catch (err) {
@@ -1282,7 +1359,7 @@ export default {
           start_hour: item.start_hour,
           duration: item.duration,
           time_slot: `${this.formatTime(item.start_hour)} - ${this.formatTime(
-            item.start_hour + Number(item.duration)
+            item.start_hour + Number(item.duration),
           )}`,
           room_id: item.room_id,
           room_name: item.room_name,
@@ -1300,7 +1377,7 @@ export default {
           const response = await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
             scheduledPayload,
-            { withCredentials: true }
+            { withCredentials: true },
           );
 
           if (response.data?.exists) {
@@ -1334,11 +1411,13 @@ export default {
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/unscheduled-meetings/add-unscheduled-meetings`,
             unscheduledPayload,
-            { withCredentials: true }
+            { withCredentials: true },
           );
         }
 
-        toast.success("✅ Schedule and unscheduled meetings saved successfully!");
+        toast.success(
+          "✅ Schedule and unscheduled meetings saved successfully!",
+        );
         this.showConfirmSaved = false;
       } catch (error) {
         console.error(error);
@@ -1351,7 +1430,7 @@ export default {
             `Schedule for School Year ${data.school_year} Semester ${data.semester} is already generated.`,
             {
               autoClose: 5000,
-            }
+            },
           );
           return;
         }
@@ -1381,7 +1460,7 @@ export default {
           start_hour: item.start_hour,
           duration: item.duration,
           time_slot: `${this.formatTime(item.start_hour)} - ${this.formatTime(
-            item.start_hour + Number(item.duration)
+            item.start_hour + Number(item.duration),
           )}`,
           room_id: item.room_id,
           room_name: item.room_name,
@@ -1401,7 +1480,7 @@ export default {
             schedules: scheduledPayload,
             override: true,
           },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         this.showOverrideModal = false;

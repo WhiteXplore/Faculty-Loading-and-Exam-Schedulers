@@ -2,7 +2,9 @@
   <div class="p-2">
     <!-- Header -->
     <div class="flex justify-between items-center">
-      <h1 class="font-semibold tracking-wide text-sm px-1">Generated Schedules</h1>
+      <h1 class="font-semibold tracking-wide text-sm px-1">
+        Generated Schedules
+      </h1>
     </div>
 
     <!-- Tabs -->
@@ -15,8 +17,8 @@
           :class="[
             'px-4 py-2 rounded-t-lg font-normal text-sm',
             activeTab === tab.value
-              ? ' bg-defaultGreen text-white border border-gray-300 border-b-white shadow-sm'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+              ? 'bg-defaultGreen text-white  font-semibold border border-gray-300 border-b-white shadow-sm  '
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 ',
           ]"
         >
           {{ tab.label }}

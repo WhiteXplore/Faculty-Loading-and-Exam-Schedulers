@@ -2,13 +2,41 @@
   <div class="modal-overlay">
     <div class="modal-wrapper">
       <form @submit.prevent="submitExpertise" class="modal-container">
-        <div class="modal-header">
+        <!-- <div class="modal-header">
           <div class="flex gap-1 items-center">
             <icon :name="'edit'" />
-           <h1 class="header1">Edit Expertises</h1>
+            <h1 class="header1">Edit Expertises</h1>
           </div>
 
-          <icon :name="'circle-close3'" @click="$emit('close')" class="cursor-pointer" />
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="cursor-pointer"
+          />
+        </div> -->
+
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">Edit Expertises</h2>
+
+              <p class="text-xs text-green-100">
+                View, add, and update expertise details
+              </p>
+            </div>
+          </div>
+
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <div class="w-[25vw] modal-body">
@@ -63,7 +91,10 @@
                   <span>
                     {{ course.course_code }} - {{ course.course_title }}
 
-                    <span v-if="course.curriculum" class="text-xs text-gray-500 ml-2">
+                    <span
+                      v-if="course.curriculum"
+                      class="text-xs text-gray-500 ml-2"
+                    >
                       ({{ course.curriculum.curriculum_start_year }} -
                       {{ course.curriculum.curriculum_end_year }})
                     </span>
@@ -80,7 +111,9 @@
                   :key="`${item.course_id}-primary-${i}`"
                   class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded gap-3"
                 >
-                  <span> {{ item.course_code }} - {{ item.course_title }} </span>
+                  <span>
+                    {{ item.course_code }} - {{ item.course_title }}
+                  </span>
 
                   <button type="button" @click="removeCourse(i)">❌</button>
                 </div>
@@ -132,9 +165,13 @@
                   :key="`${item.course_id}-other-${i}`"
                   class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded gap-3"
                 >
-                  <span> {{ item.course_code }} - {{ item.course_title }} </span>
+                  <span>
+                    {{ item.course_code }} - {{ item.course_title }}
+                  </span>
 
-                  <button type="button" @click="removeOtherCourse(i)">❌</button>
+                  <button type="button" @click="removeOtherCourse(i)">
+                    ❌
+                  </button>
                 </div>
               </div>
             </div>
@@ -189,7 +226,11 @@ export default {
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["courses", "programs", "curriculum_courses"]),
+    ...mapState(useFetchDataStore, [
+      "courses",
+      "programs",
+      "curriculum_courses",
+    ]),
 
     currentUserInstituteId() {
       return Number(this.userData?.institute?.institute_id || 0);
@@ -251,12 +292,14 @@ export default {
         (c.course_code || "").toLowerCase().includes(search) ||
         (c.course_title || "").toLowerCase().includes(search);
 
-      const sameProgramCourses = this.normalizedCurriculumCourses.filter((c) => {
-        return (
-          Number(c.institute_id) === this.currentUserInstituteId &&
-          Number(c.program_id) === this.currentUserProgramId
-        );
-      });
+      const sameProgramCourses = this.normalizedCurriculumCourses.filter(
+        (c) => {
+          return (
+            Number(c.institute_id) === this.currentUserInstituteId &&
+            Number(c.program_id) === this.currentUserProgramId
+          );
+        },
+      );
 
       const strictMatch = sameProgramCourses.filter((c) => {
         return (
@@ -269,11 +312,11 @@ export default {
 
       return source.filter((c) => {
         const notInPrimary = !this.currentSemesterData.expertise.some(
-          (e) => Number(e.course_id) === Number(c.course_id)
+          (e) => Number(e.course_id) === Number(c.course_id),
         );
 
         const notInOther = !this.currentSemesterData.other_expertise.some(
-          (e) => Number(e.course_id) === Number(c.course_id)
+          (e) => Number(e.course_id) === Number(c.course_id),
         );
 
         return matchSearch(c) && notInPrimary && notInOther;
@@ -288,14 +331,13 @@ export default {
         (c.course_code || "").toLowerCase().includes(search) ||
         (c.course_title || "").toLowerCase().includes(search);
 
-      const otherProgramCurriculumCourses = this.normalizedCurriculumCourses.filter(
-        (c) => {
+      const otherProgramCurriculumCourses =
+        this.normalizedCurriculumCourses.filter((c) => {
           return (
             Number(c.institute_id) === this.currentUserInstituteId &&
             Number(c.program_id) !== this.currentUserProgramId
           );
-        }
-      );
+        });
 
       const strictMatch = otherProgramCurriculumCourses.filter((c) => {
         return (
@@ -304,7 +346,9 @@ export default {
         );
       });
 
-      const source = strictMatch.length ? strictMatch : otherProgramCurriculumCourses;
+      const source = strictMatch.length
+        ? strictMatch
+        : otherProgramCurriculumCourses;
 
       const uniqueCourseIds = [
         ...new Set(source.map((c) => Number(c.course_id)).filter(Boolean)),
@@ -314,16 +358,18 @@ export default {
         .filter((c) => uniqueCourseIds.includes(Number(c.course_id)))
         .filter((c) => {
           const notInPrimary = !this.currentSemesterData.expertise.some(
-            (e) => Number(e.course_id) === Number(c.course_id)
+            (e) => Number(e.course_id) === Number(c.course_id),
           );
 
           const notInOther = !this.currentSemesterData.other_expertise.some(
-            (e) => Number(e.course_id) === Number(c.course_id)
+            (e) => Number(e.course_id) === Number(c.course_id),
           );
 
           return matchSearch(c) && notInPrimary && notInOther;
         })
-        .sort((a, b) => (a.course_code || "").localeCompare(b.course_code || ""));
+        .sort((a, b) =>
+          (a.course_code || "").localeCompare(b.course_code || ""),
+        );
     },
   },
 
@@ -358,8 +404,12 @@ export default {
       if (!id) return false;
 
       return (
-        this.currentSemesterData.expertise.some((c) => Number(c.course_id) === id) ||
-        this.currentSemesterData.other_expertise.some((c) => Number(c.course_id) === id)
+        this.currentSemesterData.expertise.some(
+          (c) => Number(c.course_id) === id,
+        ) ||
+        this.currentSemesterData.other_expertise.some(
+          (c) => Number(c.course_id) === id,
+        )
       );
     },
 
@@ -400,7 +450,8 @@ export default {
       ];
 
       const mapCourse = (id) =>
-        allMappedCourses.find((c) => Number(c.course_id) === Number(id)) || null;
+        allMappedCourses.find((c) => Number(c.course_id) === Number(id)) ||
+        null;
 
       const fallbackCourse = (ex) => ({
         course_id: Number(ex?.course?.course_id || ex?.course_id),
@@ -444,23 +495,25 @@ export default {
             status: "CROSS",
           }));
 
-        const assignPayload = Object.values(this.form.semesters).flatMap((s) => [
-          ...s.expertise.map((c) => ({
-            course_id: c.course_id,
-            status: "PRIMARY",
-          })),
-          ...s.other_expertise.map((c) => ({
-            course_id: c.course_id,
-            status: "OTHER",
-          })),
-        ]);
+        const assignPayload = Object.values(this.form.semesters).flatMap(
+          (s) => [
+            ...s.expertise.map((c) => ({
+              course_id: c.course_id,
+              status: "PRIMARY",
+            })),
+            ...s.other_expertise.map((c) => ({
+              course_id: c.course_id,
+              status: "OTHER",
+            })),
+          ],
+        );
 
         await axios.patch(
           `${process.env.VUE_APP_API_BASE_URL}/auth/update/${this.userData.id}`,
           {
             expertise: [...assignPayload, ...existingCross],
           },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         toast.success("Expertise updated successfully!");
@@ -468,7 +521,9 @@ export default {
         this.$emit("close");
       } catch (error) {
         console.error(error);
-        toast.error(error?.response?.data?.message || "Failed to update expertise");
+        toast.error(
+          error?.response?.data?.message || "Failed to update expertise",
+        );
       }
     },
   },

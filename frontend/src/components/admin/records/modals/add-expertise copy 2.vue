@@ -1,14 +1,9 @@
 <template>
-   <div class="modal-overlay">
+  <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg animate-slideUp">
-      <form
-        @submit.prevent="submitExpertise"
-        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg p-0.5"
-      >
+      <form @submit.prevent="submitExpertise" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg ">
         <!-- HEADER -->
-        <div
-          class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center"
-        >
+        <div class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center">
           <h1 class="font-bold text-lg">
             {{ mode === "cross" ? "Cross Assign Expertise" : "Assign Expertise" }}
           </h1>
@@ -24,10 +19,7 @@
             <!-- YEAR -->
             <div class="space-y-2">
               <label>Year Level:</label>
-              <select
-                v-model="selectedYearLevel"
-                class="w-full border px-3 py-2.5 rounded-md"
-              >
+              <select v-model="selectedYearLevel" class="w-full border px-3 py-2.5 rounded-md">
                 <option v-for="y in [1, 2, 3, 4]" :key="y" :value="y">
                   {{ getYearLevelName(y) }}
                 </option>
@@ -37,10 +29,7 @@
             <!-- SEM -->
             <div class="space-y-2">
               <label>Semester:</label>
-              <select
-                v-model="selectedSemester"
-                class="w-full border px-3 py-2.5 rounded-md"
-              >
+              <select v-model="selectedSemester" class="w-full border px-3 py-2.5 rounded-md">
                 <option v-for="s in [1, 2, 3]" :key="s" :value="s">
                   {{ getSemesterName(s) }}
                 </option>
@@ -51,46 +40,28 @@
             <div class="relative space-y-2">
               <label>Expertise</label>
 
-              <input
-                v-model="searchQuery"
-                @focus="dropdownOpen = true"
-                placeholder="Search courses..."
-                class="w-full border px-3 py-2.5 rounded-md"
-              />
+              <input v-model="searchQuery" @focus="dropdownOpen = true" placeholder="Search courses..."
+                class="w-full border px-3 py-2.5 rounded-md" />
 
-              <ul
-                v-if="dropdownOpen && filteredCourses.length"
-                @mouseleave="dropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
-              >
-                <li
-                  v-for="course in filteredCourses"
-                  :key="course.course_id"
+              <ul v-if="dropdownOpen && filteredCourses.length" @mouseleave="dropdownOpen = false"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto">
+                <li v-for="course in filteredCourses" :key="course.course_id"
                   @click="!isAlreadySelected(course) && addCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
-                  :class="
-                    isAlreadySelected(course)
+                  class="px-3 py-2 flex justify-between items-center cursor-pointer" :class="isAlreadySelected(course)
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       : 'hover:bg-green-100'
-                  "
-                >
+                    ">
                   <span> {{ course.course_code }} - {{ course.course_title }} </span>
 
-                  <span
-                    v-if="isAlreadySelected(course)"
-                    class="text-[10px] bg-green-200 px-2 rounded"
-                  >
+                  <span v-if="isAlreadySelected(course)" class="text-[10px] bg-green-200 px-2 rounded">
                     Selected
                   </span>
                 </li>
               </ul>
 
               <div class="mt-3 space-y-1">
-                <div
-                  v-for="(item, i) in currentSemesterData.expertise"
-                  :key="i"
-                  class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded"
-                >
+                <div v-for="(item, i) in currentSemesterData.expertise" :key="i"
+                  class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded">
                   <span>{{ item.course_code }} — {{ item.course_title }}</span>
                   <button @click="removeCourse(i)">✕</button>
                 </div>
@@ -101,53 +72,34 @@
             <div class="relative space-y-2">
               <label>Other Expertise</label>
 
-              <input
-                v-model="otherSearchQuery"
-                @focus="otherDropdownOpen = true"
-                placeholder="Search courses..."
-                class="w-full border px-3 py-2.5 rounded-md"
-              />
+              <input v-model="otherSearchQuery" @focus="otherDropdownOpen = true" placeholder="Search courses..."
+                class="w-full border px-3 py-2.5 rounded-md" />
 
-              <ul
-                v-if="otherDropdownOpen && filteredOtherCourses.length"
-                @mouseleave="otherDropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
-              >
-                <li
-                  v-for="course in filteredOtherCourses"
-                  :key="course.course_id"
+              <ul v-if="otherDropdownOpen && filteredOtherCourses.length" @mouseleave="otherDropdownOpen = false"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto">
+                <li v-for="course in filteredOtherCourses" :key="course.course_id"
                   @click="!isAlreadySelected(course) && addOtherCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
-                  :class="
-                    isAlreadySelected(course)
+                  class="px-3 py-2 flex justify-between items-center cursor-pointer" :class="isAlreadySelected(course)
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       : 'hover:bg-green-100'
-                  "
-                >
+                    ">
                   <span>
                     <span class="px-2 py-0.5 rounded-full bg-defaultGreen text-white">
-                      {{ course.curriculum?.program?.program_code }}</span
-                    >
+                      {{ course.curriculum?.program?.program_code }}</span>
 
                     {{ course.course_code }} -
                     {{ course.course_title }}
                   </span>
 
-                  <span
-                    v-if="isAlreadySelected(course)"
-                    class="text-[10px] bg-green-200 px-2 rounded"
-                  >
+                  <span v-if="isAlreadySelected(course)" class="text-[10px] bg-green-200 px-2 rounded">
                     Selected
                   </span>
                 </li>
               </ul>
 
               <div class="mt-3 space-y-1">
-                <div
-                  v-for="(item, i) in currentSemesterData.other_expertise"
-                  :key="i"
-                  class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded"
-                >
+                <div v-for="(item, i) in currentSemesterData.other_expertise" :key="i"
+                  class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded">
                   <span>{{ item.course_code }} — {{ item.course_title }}</span>
                   <button @click="removeOtherCourse(i)">✕</button>
                 </div>
@@ -162,10 +114,7 @@
           <div v-else class="space-y-4">
             <div class="space-y-2">
               <label>Program</label>
-              <select
-                v-model="selectedProgramId"
-                class="w-full border px-3 py-2.5 rounded-md"
-              >
+              <select v-model="selectedProgramId" class="w-full border px-3 py-2.5 rounded-md">
                 <option value="">All Programs</option>
                 <option v-for="p in programs" :key="p.program_id" :value="p.program_id">
                   {{ p.program_name }}
@@ -175,40 +124,24 @@
             <div class="relative space-y-2">
               <label>Cross Expertise</label>
 
-              <input
-                v-model="searchQuery"
-                @focus="dropdownOpen = true"
-                placeholder="Search all courses..."
-                class="w-full border px-3 py-2.5 rounded-md"
-              />
+              <input v-model="searchQuery" @focus="dropdownOpen = true" placeholder="Search all courses..."
+                class="w-full border px-3 py-2.5 rounded-md" />
 
-              <ul
-                v-if="dropdownOpen && filteredCourses.length"
-                @mouseleave="dropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto"
-              >
-                <li
-                  v-for="course in filteredCourses"
-                  :key="course.course_id"
+              <ul v-if="dropdownOpen && filteredCourses.length" @mouseleave="dropdownOpen = false"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto">
+                <li v-for="course in filteredCourses" :key="course.course_id"
                   @click="!isAlreadySelected(course) && addCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
-                  :class="
-                    isAlreadySelected(course)
+                  class="px-3 py-2 flex justify-between items-center cursor-pointer" :class="isAlreadySelected(course)
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                       : 'hover:bg-green-100'
-                  "
-                >
+                    ">
                   <span>
                     <span class="px-2 py-0.5 rounded-full bg-defaultGreen text-white">
-                      {{ course.curriculum?.program?.program_code }}</span
-                    >
+                      {{ course.curriculum?.program?.program_code }}</span>
                     {{ course.course_code }} - {{ course.course_title }}
                   </span>
 
-                  <span
-                    v-if="isAlreadySelected(course)"
-                    class="text-[10px] bg-green-200 px-2 rounded"
-                  >
+                  <span v-if="isAlreadySelected(course)" class="text-[10px] bg-green-200 px-2 rounded">
                     Selected
                   </span>
                 </li>
@@ -217,11 +150,8 @@
 
             <!-- SELECTED CROSS -->
             <div class="space-y-1">
-              <div
-                v-for="(item, i) in selectedCrossCourses"
-                :key="i"
-                class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded"
-              >
+              <div v-for="(item, i) in selectedCrossCourses" :key="i"
+                class="flex justify-between px-4 py-2 bg-defaultGreen text-white rounded">
                 <span>{{ item.course_code }} — {{ item.course_title }}</span>
                 <button @click="removeCourse(i)">✕</button>
               </div>
@@ -324,7 +254,7 @@ export default {
           c.course_semester === this.selectedSemester &&
           c.course_level === this.selectedYearLevel && // ✅ ADD THIS
           c.curriculum?.program?.institute_id ===
-            this.userData?.institute?.institute_id &&
+          this.userData?.institute?.institute_id &&
           c.curriculum?.program_id === this.userData?.program?.program_id &&
           !this.currentSemesterData.other_expertise.some(
             (e) => e.course_id === c.course_id
@@ -349,7 +279,7 @@ export default {
           c.course_semester === this.selectedSemester &&
           c.course_level === this.selectedYearLevel &&
           c.curriculum?.program?.institute_id ===
-            this.userData?.institute?.institute_id &&
+          this.userData?.institute?.institute_id &&
           !this.currentSemesterData.expertise.some((e) => e.course_id === c.course_id)
         );
       });
