@@ -796,11 +796,11 @@ export default {
             );
 
             if (!course) return;
-
             const lec = Number(course.course_lec || 0);
             const lab = Number(course.course_lab || 0);
-
-            totalUnits += lec + lab;
+            let compute = 0;
+            compute = lab * 2.25;
+            totalUnits += lec + compute;
           });
 
           result[faculty] = {

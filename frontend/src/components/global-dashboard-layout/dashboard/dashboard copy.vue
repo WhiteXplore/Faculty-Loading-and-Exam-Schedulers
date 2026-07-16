@@ -169,10 +169,7 @@
     </div>
 
     <!-- View/Edit Modal -->
-    <div
-      v-if="selectedEvent"
-      class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-    >
+    <div v-if="selectedEvent" class="modal-overlay">
       <div class="bg-white rounded-xl p-6 shadow-xl w-[350px]">
         <h3 class="text-lg font-semibold mb-2">Edit Event</h3>
         <p class="text-xs text-gray-500 mb-2">Date: {{ formattedEventDate }}</p>
@@ -266,9 +263,9 @@ export default {
           dayjs(
             `${this.currentMonth.format("YYYY-MM")}-${String(i).padStart(
               2,
-              "0"
-            )}`
-          )
+              "0",
+            )}`,
+          ),
         );
       }
 
@@ -283,7 +280,7 @@ export default {
     },
     todaysEvents() {
       return this.events.filter((e) =>
-        dayjs(e.startDate).isSame(dayjs(), "day")
+        dayjs(e.startDate).isSame(dayjs(), "day"),
       );
     },
     upcomingEvents() {
@@ -310,7 +307,7 @@ export default {
           : `${start.format("MMM D, YYYY")} - ${end.format("MMM D, YYYY")}`;
       }
       return `${start.format("MMM D, YYYY")} ${event.timeStart} - ${end.format(
-        "MMM D, YYYY"
+        "MMM D, YYYY",
       )} ${event.timeEnd}`;
     },
     prevMonth() {
@@ -328,7 +325,7 @@ export default {
     getEventsByDate(date) {
       const day = dayjs(date);
       return this.events.filter((e) =>
-        day.isBetween(dayjs(e.startDate), dayjs(e.endDate), "day", "[]")
+        day.isBetween(dayjs(e.startDate), dayjs(e.endDate), "day", "[]"),
       );
     },
     selectDate(date) {
@@ -339,7 +336,7 @@ export default {
       try {
         await axios.post(
           process.env.VUE_APP_API_BASE_URL + "/calendar/add-calendar-event",
-          event
+          event,
         );
         await this.fetchDataStore.fetchCalendarEvents();
         this.showEventModal = false;
@@ -362,7 +359,7 @@ export default {
         await axios.patch(
           process.env.VUE_APP_API_BASE_URL +
             `/calendar/update-calendar-event/${this.selectedEvent.id}`,
-          this.selectedEvent
+          this.selectedEvent,
         );
         await this.fetchDataStore.fetchCalendarEvents();
         this.closeEventModal();
@@ -375,7 +372,7 @@ export default {
       try {
         await axios.delete(
           process.env.VUE_APP_API_BASE_URL +
-            `/calendar/delete-calendar-event/${this.selectedEvent.id}`
+            `/calendar/delete-calendar-event/${this.selectedEvent.id}`,
         );
         await this.fetchDataStore.fetchCalendarEvents();
         this.closeEventModal();

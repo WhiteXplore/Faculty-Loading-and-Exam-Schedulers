@@ -42,7 +42,7 @@
             <div class="flex flex-col">
               <span class="text-lg font-bold">{{ instructor }}</span>
               <span class="text-sm text-green-100">
-                {{ records[0]?.display_program_code }}
+                {{ records[0]?.faculty_program_code }}
               </span>
 
               <div v-if="facultyTotalUnits[instructor]">
@@ -64,7 +64,7 @@
           <!-- Table wrapper -->
           <div class="overflow-x-auto overflow-y-auto flex-1">
             <table class="w-full text-left border-collapse text-[11px]">
-              <thead class="bg-gray-200 sticky top-0 z-50">
+              <thead class="bg-gray-200 sticky top-0 z-0">
                 <tr class="text-gray-700 bg-gray-200 border">
                   <th class="py-3 w-2 text-center text-gray-700 bg-gray-100">
                     Time
@@ -804,8 +804,9 @@ export default {
 
             const lec = Number(course.course_lec || 0);
             const lab = Number(course.course_lab || 0);
-
-            totalUnits += lec + lab;
+            let compute = 0;
+            compute = lab * 2.25;
+            totalUnits += lec + compute;
           });
 
           result[faculty] = {
@@ -1899,6 +1900,7 @@ export default {
       await store.fetchInstitutes();
       await store.fetchCourses();
       await store.fetchCollegeBranch();
+      await store.fetchRawUsers();
     },
 
     backToFacultyTable() {
@@ -2096,7 +2098,8 @@ export default {
           process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
           { withCredentials: true },
         );
-
+        const store = useFetchDataStore();
+        const rawUsers = store.rawusers || [];
         let schedules = schedulesData || [];
 
         if (this.activeSchoolYear) {
@@ -2126,29 +2129,17 @@ export default {
           const cls = classSections.find(
             (c) => Number(c.class_id) === Number(s.class_id),
           );
-
+          const faculty = rawUsers.find(
+            (u) => Number(u.id) === Number(s.faculty_id),
+          );
           return {
             ...s,
 
             classInfo: cls || null,
 
-            // ====================================
-            // FACULTY OWNER
-            // ====================================
-            faculty_program_id: s.program_id || null,
-            faculty_institute_id: s.institute_id || null,
-
-            // ====================================
-            // CLASS OWNER
-            // ====================================
+            // Class owner (KEEP THESE)
             class_program_id: cls?.program_id || null,
             class_institute_id: cls?.program?.institute_id || null,
-
-            // ====================================
-            // DISPLAY VALUES
-            // ====================================
-            program_id: s.program_id,
-            institute_id: s.institute_id,
 
             display_program_code:
               cls?.program?.program_code || "Unknown Program",
@@ -2162,6 +2153,23 @@ export default {
             display_institute_code:
               cls?.program?.institute?.institute_code || "",
 
+            // Faculty home program (NEW)
+            faculty_program_id: faculty?.program?.program_id || null,
+            // Faculty Home Program
+
+            faculty_program_code:
+              faculty?.program?.program_code || "Unknown Program",
+
+            faculty_program_name:
+              faculty?.program?.program_name || "Unknown Program",
+
+            faculty_institute_id: faculty?.institute?.institute_id || null,
+
+            faculty_institute_name:
+              faculty?.institute?.institute_name || "Unknown Institute",
+
+            faculty_institute_code: faculty?.institute?.institute_code || "",
+
             set_name: cls?.set_name || s.set_name,
 
             class_size: cls?.class_size || s.class_size,
@@ -2171,26 +2179,34 @@ export default {
         // ================================
         // PROGRAM CHAIRPERSON
         // ================================
+
         if (this.user.role === "Program Chairperson") {
-          const ownedFacultyIds = [
+          const visibleFacultyIds = [
             ...new Set(
               schedules
-                .filter(
-                  (s) =>
+                .filter((s) => {
+                  const teachesMyClass =
+                    Number(s.class_program_id) ===
+                      Number(this.user.program_id) &&
+                    Number(s.class_institute_id) ===
+                      Number(this.user.institute_id);
+
+                  const belongsToMyProgram =
                     Number(s.faculty_program_id) ===
                       Number(this.user.program_id) &&
                     Number(s.faculty_institute_id) ===
-                      Number(this.user.institute_id),
-                )
+                      Number(this.user.institute_id);
+
+                  return teachesMyClass || belongsToMyProgram;
+                })
                 .map((s) => s.faculty_id),
             ),
           ];
 
           schedules = schedules.filter((s) =>
-            ownedFacultyIds.includes(s.faculty_id),
+            visibleFacultyIds.includes(s.faculty_id),
           );
         }
-
         // ================================
         // DEPARTMENT CHAIRPERSON
         // ================================

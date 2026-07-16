@@ -36,16 +36,30 @@ export const useFetchDataStore = defineStore("fetchData", {
     school_years: [],
     year: null, // currently selected year
     activeYears: [],
+    all_school_years: [],
     activeYear: null, // latest active year for table filtering
     lastUpdatedAt: null,
     loading: false,
     error: null,
     activeYearInterval: null, // for polling
-    
   }),
 
   actions: {
-  async fetchCurriculumCourses() {
+    async fetchAllSchoolYears() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const { data } = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
+        );
+        this.all_school_years = data;
+      } catch (err) {
+        this.error = err.message || "Failed to fetch all_school_years";
+      } finally {
+        this.loading = false;
+      }
+    },
+    async fetchCurriculumCourses() {
       this.loading = true;
       this.error = null;
       try {
@@ -61,7 +75,6 @@ export const useFetchDataStore = defineStore("fetchData", {
       }
     },
 
-    
     async runScheduler() {
       await axios.get(
         process.env.VUE_APP_API_BASE_URL + "/generated-scheduled/load",

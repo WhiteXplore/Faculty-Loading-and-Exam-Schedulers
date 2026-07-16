@@ -25,10 +25,13 @@
         >
           <div class="text-center">
             <p v-if="!file" class="text-gray-600">
-              <span class="text-defaultGreen">Upload a file</span> or drag and drop<br />
+              <span class="text-defaultGreen">Upload a file</span> or drag and
+              drop<br />
               Excel / CSV (.xlsx, .xls, .csv) up to 10MB
             </p>
-            <p v-else class="text-defaultGreen">File uploaded: {{ file.name }}</p>
+            <p v-else class="text-defaultGreen">
+              File uploaded: {{ file.name }}
+            </p>
 
             <input
               type="file"
@@ -84,7 +87,11 @@
         <!-- Action Buttons -->
         <div class="tracking-wide flex justify-end gap-2 mt-4">
           <button class="btn-cancel" @click="$emit('close')">Cancel</button>
-          <button class="btn-save" @click="submitUpload" :disabled="!file || uploading">
+          <button
+            class="btn-save"
+            @click="submitUpload"
+            :disabled="!file || uploading"
+          >
             {{ uploading ? "Processing..." : "Upload" }}
           </button>
         </div>
@@ -143,7 +150,8 @@ export default {
           const instituteMap = {
             IC: "Institute of Computing",
             ITED: "Institute of Teacher Education",
-            ILEGG: "Institute of Leadership, Entrepreneurship and Good Governance",
+            ILEGG:
+              "Institute of Leadership, Entrepreneurship and Good Governance",
             IAAS: "Institute of Applied and Aquatic Sciences",
             IADS: "Institute of Advanced Studies",
           };
@@ -179,7 +187,8 @@ export default {
             MIT: "Master in Information Technology",
             MABE: "Master of Arts in Basic Education",
             MAEM: "Master of Arts in Educational Management",
-            MFMAQTECH: "Master in Fisheries Management Major in Aquaculture Technology",
+            MFMAQTECH:
+              "Master in Fisheries Management Major in Aquaculture Technology",
             MFMPROC: "Master in Fisheries Management Major in Fish Processing",
             MPA: "Master in Public Administration (USEP Consortium)",
             MSMB: "Master of Science in Marine Biodiversity",
@@ -200,7 +209,8 @@ export default {
               curriculum_start_year: start,
               curriculum_end_year: end,
               institute_code: String(row.Institute || "").trim(),
-              institute_name: instituteMap[String(row.Institute || "").trim()] || "",
+              institute_name:
+                instituteMap[String(row.Institute || "").trim()] || "",
               program_code: String(row.Program || "").trim(),
               program_name:
                 programMap[String(row.Program || "").trim()] ||
@@ -265,9 +275,9 @@ export default {
                 normalize(course.course_code),
                 normalize(course.course_level),
                 normalize(course.course_semester),
-              ].join("-")
+              ].join("-"),
             )
-            .filter(Boolean)
+            .filter(Boolean),
         );
         const seenUploadCodes = new Set();
         const uploadDuplicateCodes = new Set();
@@ -297,7 +307,7 @@ export default {
           ...new Map(
             this.parsedData
               .filter((row) => row.institute_code)
-              .map((row) => [row.institute_code, row])
+              .map((row) => [row.institute_code, row]),
           ).values(),
         ];
 
@@ -309,7 +319,7 @@ export default {
             {
               institute_code: inst.institute_code,
               institute_name: inst.institute_name,
-            }
+            },
           );
 
           instituteMap.set(inst.institute_code, res.data.institute_id);
@@ -326,12 +336,12 @@ export default {
                   row.institute_code &&
                   row.program_code &&
                   row.curriculum_start_year &&
-                  row.curriculum_end_year
+                  row.curriculum_end_year,
               )
               .map((row) => [
                 `${row.institute_code}-${row.program_code}-${row.curriculum_start_year}-${row.curriculum_end_year}`,
                 row,
-              ])
+              ]),
           ).values(),
         ];
 
@@ -345,14 +355,14 @@ export default {
               program_code: prog.program_code,
               program_name: prog.program_name,
               institute_id: instituteMap.get(prog.institute_code),
-            }
+            },
           );
 
           const program = programRes.data;
 
           programMap.set(
             `${prog.institute_code}-${prog.program_code}`,
-            program.program_id
+            program.program_id,
           );
 
           const curriculumKey = `${prog.institute_code}-${prog.program_code}-${prog.curriculum_start_year}-${prog.curriculum_end_year}`;
@@ -365,7 +375,7 @@ export default {
                 curriculum_end_year: prog.curriculum_end_year,
                 institute_id: instituteMap.get(prog.institute_code),
                 program_id: program.program_id,
-              }
+              },
             );
 
             curriculumMap.set(curriculumKey, curriculumRes.data.curriculum_id);
@@ -405,7 +415,7 @@ export default {
         if (newCourses.length) {
           await axios.post(
             process.env.VUE_APP_API_BASE_URL + "/courses/add-courses",
-            newCourses
+            newCourses,
           );
         }
 
@@ -478,7 +488,7 @@ export default {
             {
               links: curriculumCourseLinks,
               raw_payload: this.parsedData,
-            }
+            },
           );
         }
 
@@ -487,19 +497,19 @@ export default {
         // =========================
         if (!newCourses.length && this.duplicateCourseCodes.length) {
           toast.warning(
-            "All uploaded course codes already exist in the database. Institute, program, curriculum, and curriculum-course links were still processed."
+            "All uploaded course codes already exist in the database. Institute, program, curriculum, and curriculum-course links were still processed.",
           );
         } else if (this.duplicateCourseCodes.length) {
           toast.success(
-            `${newCourses.length} new courses uploaded successfully. Existing course codes were skipped, and curriculum-course links were saved.`
+            `${newCourses.length} new courses uploaded successfully. Existing course codes were skipped, and curriculum-course links were saved.`,
           );
         } else if (uploadDuplicateCodes.size) {
           toast.success(
-            `${newCourses.length} new courses uploaded successfully. Duplicate course codes in the file were skipped, and curriculum-course links were saved.`
+            `${newCourses.length} new courses uploaded successfully. Duplicate course codes in the file were skipped, and curriculum-course links were saved.`,
           );
         } else {
           toast.success(
-            `${newCourses.length} new courses uploaded successfully with curriculum-course links.`
+            `${newCourses.length} new courses uploaded successfully with curriculum-course links.`,
           );
         }
 

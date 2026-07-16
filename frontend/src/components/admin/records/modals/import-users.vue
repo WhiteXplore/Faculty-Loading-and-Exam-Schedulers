@@ -1,21 +1,43 @@
 <template>
   <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
-      <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg ">
+      <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg">
         <!-- Header -->
         <div class="modal-header">
           <div class="flex gap-1 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
             </svg>
             <h1 class="header1">Import Users</h1>
           </div>
-          <button @click="$emit('close')" class="text-white hover:text-gray-200 cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <button
+            @click="$emit('close')"
+            class="text-white hover:text-gray-200 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -28,19 +50,33 @@
             <ul class="text-blue-700 text-sm space-y-1">
               <li>• File must be in XLSX format (.xlsx)</li>
               <li>• Required columns: Last Name, First Name, Email, Role</li>
-              <li>• Optional column: Program (must match existing program name)</li>
+              <li>
+                • Optional column: Program (must match existing program name)
+              </li>
               <li>• Default password will be: Password123!</li>
             </ul>
           </div>
 
           <!-- Download Template Button -->
           <div class="flex justify-center">
-            <button type="button" @click="downloadTemplate"
-              class="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-700 hover:text-white transition duration-200">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <button
+              type="button"
+              @click="downloadTemplate"
+              class="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-700 hover:text-white transition duration-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
               Download Template
             </button>
@@ -49,33 +85,66 @@
           <!-- File Upload Area -->
           <div class="space-y-2">
             <label class="font-bold text-gray-800">Upload XLSX File:</label>
-            <div @dragover.prevent="dragOver = true" @dragleave.prevent="dragOver = false"
-              @drop.prevent="handleFileDrop" :class="[
+            <div
+              @dragover.prevent="dragOver = true"
+              @dragleave.prevent="dragOver = false"
+              @drop.prevent="handleFileDrop"
+              :class="[
                 'border-2 border-dashed rounded-lg p-6 text-center transition-all',
-                dragOver ? 'border-green-500 bg-green-50' : 'border-gray-300 bg-gray-50',
-              ]">
-              <input ref="fileInput" type="file" accept=".xlsx" @change="handleFileChange" class="hidden" />
+                dragOver
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-gray-300 bg-gray-50',
+              ]"
+            >
+              <input
+                ref="fileInput"
+                type="file"
+                accept=".xlsx"
+                @change="handleFileChange"
+                class="hidden"
+              />
 
               <div v-if="!selectedFile" class="space-y-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-12 w-12 mx-auto text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
                 </svg>
                 <p class="text-gray-600">
                   Drag & drop your XLSX file here, or
-                  <button type="button" @click="$refs.fileInput.click()"
-                    class="text-defaultGreen hover:text-green-700 font-semibold underline">
+                  <button
+                    type="button"
+                    @click="$refs.fileInput.click()"
+                    class="text-defaultGreen hover:text-green-700 font-semibold underline"
+                  >
                     browse
                   </button>
                 </p>
               </div>
 
               <div v-else class="space-y-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-defaultGreen" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-12 w-12 mx-auto text-defaultGreen"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
                 </svg>
                 <p class="text-gray-800 font-semibold">
                   {{ selectedFile.name }}
@@ -83,7 +152,11 @@
                 <p class="text-gray-500 text-sm">
                   {{ formatFileSize(selectedFile.size) }}
                 </p>
-                <button type="button" @click="clearFile" class="text-red-600 hover:text-red-700 text-sm font-semibold">
+                <button
+                  type="button"
+                  @click="clearFile"
+                  class="text-red-600 hover:text-red-700 text-sm font-semibold"
+                >
                   Remove file
                 </button>
               </div>
@@ -94,33 +167,48 @@
           <div v-if="uploading" class="space-y-2">
             <div class="flex justify-between text-sm">
               <span class="text-gray-600">Uploading and processing...</span>
-              <span class="text-gray-800 font-semibold">{{ uploadProgress }}%</span>
+              <span class="text-gray-800 font-semibold"
+                >{{ uploadProgress }}%</span
+              >
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2.5">
-              <div class="bg-green-600 h-2.5 rounded-full transition-all duration-300"
-                :style="{ width: uploadProgress + '%' }"></div>
+              <div
+                class="bg-green-600 h-2.5 rounded-full transition-all duration-300"
+                :style="{ width: uploadProgress + '%' }"
+              ></div>
             </div>
           </div>
 
           <!-- Import Results -->
           <div v-if="importResults" class="space-y-3">
-            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded" v-if="importResults.success > 0">
+            <div
+              class="bg-green-50 border-l-4 border-green-500 p-4 rounded"
+              v-if="importResults.success > 0"
+            >
               <p class="font-semibold text-green-800">
                 ✓ Successfully imported {{ importResults.success }} users
               </p>
             </div>
 
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded" v-if="importResults.failed > 0">
+            <div
+              class="bg-red-50 border-l-4 border-red-500 p-4 rounded"
+              v-if="importResults.failed > 0"
+            >
               <p class="font-semibold text-red-800 mb-2">
                 ✗ Failed to import {{ importResults.failed }} users
               </p>
               <div class="max-h-40 overflow-y-auto space-y-2">
-                <div v-for="(error, index) in importResults.errors" :key="index"
-                  class="text-sm text-red-700 bg-red-100 p-2 rounded">
+                <div
+                  v-for="(error, index) in importResults.errors"
+                  :key="index"
+                  class="text-sm text-red-700 bg-red-100 p-2 rounded"
+                >
                   <p>
                     <strong>Row {{ error.row }}:</strong> {{ error.error }}
                   </p>
-                  <p v-if="error.email" class="text-xs">Email: {{ error.email }}</p>
+                  <p v-if="error.email" class="text-xs">
+                    Email: {{ error.email }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -131,12 +219,17 @@
             <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
-            <button type="button" @click="handleImport" :disabled="!selectedFile || uploading" :class="[
-              'btn-save',
-              selectedFile && !uploading
-                ? ''
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed',
-            ]">
+            <button
+              type="button"
+              @click="handleImport"
+              :disabled="!selectedFile || uploading"
+              :class="[
+                'btn-save',
+                selectedFile && !uploading
+                  ? ''
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed',
+              ]"
+            >
               {{ uploading ? "Importing..." : "Import Users" }}
             </button>
           </div>
@@ -260,7 +353,7 @@ export default {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
 
         clearInterval(progressInterval);
@@ -273,19 +366,22 @@ export default {
         };
 
         if (response.data.success > 0) {
-          toast.success(`Successfully imported ${response.data.success} users!`);
+          toast.success(
+            `Successfully imported ${response.data.success} users!`,
+          );
           this.$emit("refresh");
         }
 
         if (response.data.failed > 0) {
           toast.warning(
-            `${response.data.failed} users failed to import. Check details below.`
+            `${response.data.failed} users failed to import. Check details below.`,
           );
         }
       } catch (error) {
         console.error("Import failed:", error);
         toast.error(
-          error.response?.data?.message || "Failed to import users. Please try again."
+          error.response?.data?.message ||
+            "Failed to import users. Please try again.",
         );
       } finally {
         this.uploading = false;

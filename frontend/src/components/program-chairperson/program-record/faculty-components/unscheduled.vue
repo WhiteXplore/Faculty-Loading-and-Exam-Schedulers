@@ -100,7 +100,7 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-between items-center mt-4 text-xs">
+      <div class="flex justify-between items-center mt-4 text-xs mx-2">
         <div class="text-gray-700">
           Showing {{ startIndex }} to {{ endIndex }} of
           {{ filteredData.length }} entries
@@ -110,7 +110,7 @@
           <button
             @click="changePage(currentPage - 1)"
             :disabled="currentPage === 1"
-            class="px-3 py-1 bg-gray-300 text-gray-700 rounded-l-md hover:bg-gray-400 disabled:opacity-50"
+            class="px-2 py-1 bg-gray-300 text-gray-700 rounded-l-md hover:bg-gray-400 disabled:opacity-50"
           >
             &lt;
           </button>
@@ -131,7 +131,7 @@
           <button
             @click="changePage(currentPage + 1)"
             :disabled="currentPage === totalPages"
-            class="px-3 py-1 bg-gray-300 text-gray-700 rounded-r-md hover:bg-gray-400 disabled:opacity-50"
+            class="px-2 py-1 bg-gray-300 text-gray-700 rounded-r-md hover:bg-gray-400 disabled:opacity-50"
           >
             &gt;
           </button>
@@ -526,9 +526,7 @@ export default {
           item.program_code?.toLowerCase().includes(query) ||
           item.school_year?.toLowerCase().includes(query) ||
           item.type?.toLowerCase().includes(query) ||
-          String(item.semester || "")
-            .toLowerCase()
-            .includes(query) ||
+          String(item.semester || "").includes(query) ||
           item.reason?.toLowerCase().includes(query);
 
         return isSameProgram && matchesQuery;

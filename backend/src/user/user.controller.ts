@@ -37,51 +37,55 @@ export class UserController {
   // IMPORT USERS
   // ===============================
   @Post('import-users')
-@UseInterceptors(FileInterceptor('file'))
-async importUsers(@UploadedFile() file: Express.Multer.File) {
-  if (!file) {
-    throw new BadRequestException('No file uploaded');
-  }
-
-  if (!file.originalname.endsWith('.xlsx')) {
-    throw new BadRequestException('Only .xlsx files are allowed');
-  }
-
-  try {
-    const workbook = XLSX.read(file.buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-
-    const rawData: any[] = XLSX.utils.sheet_to_json(worksheet, {
-      raw: false,
-      defval: '',
-    });
-
-    if (!rawData.length) {
-      throw new BadRequestException('Excel file is empty');
+  @UseInterceptors(FileInterceptor('file'))
+  async importUsers(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
     }
-const importData: ImportUserDto[] = rawData.map((row) => ({
-  first_name: String(row['First Name'] || row['first_name'] || '').trim(),
-  last_name: String(row['Last Name'] || row['last_name'] || '').trim(),
-  email: String(row['Email'] || row['email'] || '').trim(),
-  role: String(row['Role'] || row['role'] || '').trim(),
 
-  program: String(row['Program'] || row['program'] || '').trim(),
-  designation: String(row['Designation'] || row['designation'] || '').trim(),
-  unit_load: Number(row['Unit'] || row['unit_load'] || 0),
-  employment_type: String(row['Employment Type'] || row['employment_type'] || '').trim(),
-}));
+    if (!file.originalname.endsWith('.xlsx')) {
+      throw new BadRequestException('Only .xlsx files are allowed');
+    }
 
-    const results = await this.userService.importUsers(importData);
+    try {
+      const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
 
-    return {
-      message: 'Users imported successfully',
-      ...results,
-    };
-  } catch (error) {
-    throw new BadRequestException(`Failed to process file: ${error.message}`);
+      const rawData: any[] = XLSX.utils.sheet_to_json(worksheet, {
+        raw: false,
+        defval: '',
+      });
+
+      if (!rawData.length) {
+        throw new BadRequestException('Excel file is empty');
+      }
+      const importData: ImportUserDto[] = rawData.map((row) => ({
+        first_name: String(row['First Name'] || row['first_name'] || '').trim(),
+        last_name: String(row['Last Name'] || row['last_name'] || '').trim(),
+        email: String(row['Email'] || row['email'] || '').trim(),
+        role: String(row['Role'] || row['role'] || '').trim(),
+
+        program: String(row['Program'] || row['program'] || '').trim(),
+        designation: String(
+          row['Designation'] || row['designation'] || '',
+        ).trim(),
+        unit_load: Number(row['Unit'] || row['unit_load'] || 0),
+        employment_type: String(
+          row['Employment Type'] || row['employment_type'] || '',
+        ).trim(),
+      }));
+
+      const results = await this.userService.importUsers(importData);
+
+      return {
+        message: 'Users imported successfully',
+        ...results,
+      };
+    } catch (error) {
+      throw new BadRequestException(`Failed to process file: ${error.message}`);
+    }
   }
-}
 
   // ===============================
   // IMPORT USER EXPERTISE

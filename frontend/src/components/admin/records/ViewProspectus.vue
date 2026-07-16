@@ -1,21 +1,16 @@
 <template>
-  <div class="min-h-screen rounded-xl bg-[#F4F7F5] p-5 text-gray-800">
+  <div class="min-h-screen rounded-xl bg-[#F4F7F5] px-2 text-gray-800">
     <!-- TOP BAR -->
-    <div
-      class="mb-5 flex flex-col gap-4 rounded-2xl border border-white/80 bg-white/90 p-5 shadow-sm backdrop-blur md:flex-row md:items-center md:justify-between"
-    >
+    <div class="flex justify-between py-2">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-defaultGreen">
-          Curriculum Report
-        </p>
-        <h1 class="mt-1 text-2xl font-bold tracking-tight text-gray-900">
-          {{ currentInstituteName }}
-        </h1>
-        <p class="mt-1 text-sm text-gray-500">
-          View and generate curriculum checklist by program.
-        </p>
-      </div>
+        <div @click="goBack" class="btn-download">
+          <div class="btn-download-icon">
+            <icon name="circle-arrow-down" />
+          </div>
 
+          <span class="btn-add-text">Go back</span>
+        </div>
+      </div>
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <!-- Program Select -->
         <div class="relative w-full sm:w-[22rem]" ref="programDropdownRef">
@@ -30,7 +25,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6v6l4 2"
+                />
                 <circle cx="12" cy="12" r="9" />
               </svg>
             </div>
@@ -38,7 +37,7 @@
             <button
               type="button"
               @click="showProgramDropdown = !showProgramDropdown"
-              class="w-full rounded-xl bg-transparent py-2.5 pl-10 pr-10 text-left text-sm font-semibold text-gray-700 outline-none"
+              class="w-full rounded-xl bg-transparent py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700 outline-none"
             >
               <span v-if="selectedProgramData">
                 {{ selectedProgramData.program_code }} -
@@ -61,7 +60,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
           </div>
@@ -71,7 +74,9 @@
             class="absolute right-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
           >
             <div class="border-b border-gray-100 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              <p
+                class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+              >
                 Curriculum Prospectus
               </p>
             </div>
@@ -125,16 +130,14 @@
         </div>
 
         <!-- Generate Report Button -->
-        <button
-          type="button"
-          @click="downloadProspectusPdf"
-          class="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-defaultGreen px-5 text-sm font-semibold text-white shadow-md shadow-green-900/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-700 hover:shadow-lg"
-        >
-          <span class="flex h-6 w-6 items-center justify-center rounded-full bg-white/15">
-            <icon :name="'circle-add'" />
-          </span>
-          Download Prospectus
-        </button>
+
+        <div @click="downloadProspectusPdf" class="btn-download">
+          <div class="btn-download-icon">
+            <icon name="circle-arrow-down" />
+          </div>
+
+          <span class="btn-add-text"> Download Prospectus</span>
+        </div>
       </div>
     </div>
 
@@ -146,7 +149,9 @@
       <!-- REPORT HEADER -->
       <div class="mb-4 overflow-hidden">
         <div class="px-6 py-5 text-center">
-          <p class="text-xs font-semibold uppercase tracking-[0.25em] text-defaultGreen">
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.25em] text-defaultGreen"
+          >
             Curriculum Checklist
           </p>
           <h2 class="mt-1 text-xl font-bold text-gray-900">
@@ -194,15 +199,21 @@
           <div class="overflow-x-auto">
             <table class="min-w-full table-fixed text-sm">
               <thead>
-                <tr class="bg-white text-xs uppercase tracking-wide text-gray-500">
+                <tr
+                  class="bg-white text-xs uppercase tracking-wide text-gray-500"
+                >
                   <th class="w-[10%] px-5 py-3 text-left font-bold">Code</th>
-                  <th class="w-[30%] px-5 py-3 text-left font-bold">Description</th>
+                  <th class="w-[30%] px-5 py-3 text-left font-bold">
+                    Description
+                  </th>
                   <th class="w-[9%] px-5 py-3 text-center font-bold">Sem</th>
                   <th class="w-[9%] px-5 py-3 text-center font-bold">Level</th>
                   <th class="w-[9%] px-5 py-3 text-center font-bold">Lec</th>
                   <th class="w-[9%] px-5 py-3 text-center font-bold">Lab</th>
                   <th class="w-[10%] px-5 py-3 text-center font-bold">Units</th>
-                  <th class="w-[14%] px-5 py-3 text-left font-bold">Requisite</th>
+                  <th class="w-[14%] px-5 py-3 text-left font-bold">
+                    Requisite
+                  </th>
                 </tr>
               </thead>
 
@@ -257,12 +268,15 @@
 
                 <!-- TOTAL -->
                 <tr class="bg-gray-50 font-bold text-gray-800">
-                  <td colspan="6" class="px-5 py-4 text-right">Total Credit Units</td>
+                  <td colspan="6" class="px-5 py-4 text-right">
+                    Total Credit Units
+                  </td>
                   <td class="px-5 py-4 text-center text-defaultGreen">
                     {{
                       group.courses.reduce(
-                        (sum, course) => sum + course.course_lec + course.course_lab,
-                        0
+                        (sum, course) =>
+                          sum + course.course_lec + course.course_lab,
+                        0,
                       )
                     }}
                   </td>
@@ -343,7 +357,7 @@ export default {
 
     currentInstituteName() {
       const program = this.programs.find(
-        (p) => String(p.institute_id) === String(this.instituteId)
+        (p) => String(p.institute_id) === String(this.instituteId),
       );
 
       if (program?.institute?.institute_name) {
@@ -351,7 +365,7 @@ export default {
       }
 
       const report = this.detailedReportCurriculum.find(
-        (item) => String(item.institute_id) === String(this.instituteId)
+        (item) => String(item.institute_id) === String(this.instituteId),
       );
 
       return report?.institute_name || "No institute name found";
@@ -368,7 +382,8 @@ export default {
 
         if (!curriculum || !program) return;
 
-        if (String(curriculum.institute_id) !== String(this.instituteId)) return;
+        if (String(curriculum.institute_id) !== String(this.instituteId))
+          return;
 
         // IMPORTANT
         const key = String(curriculum.curriculum_id);
@@ -396,7 +411,7 @@ export default {
     },
     selectedProgramData() {
       return this.uniquePrograms.find(
-        (program) => String(program.value) === String(this.selectedProgram)
+        (program) => String(program.value) === String(this.selectedProgram),
       );
     },
 
@@ -406,9 +421,11 @@ export default {
       return (this.curriculum_courses || [])
         .filter((item) => {
           return (
-            String(item.curriculum?.institute_id) === String(this.instituteId) &&
+            String(item.curriculum?.institute_id) ===
+              String(this.instituteId) &&
             // ONLY FILTER BY CURRICULUM ID
-            String(item.curriculum?.curriculum_id) === String(this.selectedProgram)
+            String(item.curriculum?.curriculum_id) ===
+              String(this.selectedProgram)
           );
         })
         .map((item) => ({
@@ -471,6 +488,10 @@ export default {
   },
 
   methods: {
+    // To be fixed
+    // goBack:{
+
+    // },
     selectProgram(program) {
       this.selectedProgram = program.value;
       this.showProgramDropdown = false;
@@ -530,7 +551,7 @@ export default {
         body.push([
           {
             text: `${this.formatYearLevel(group.level)} - ${this.formatSemester(
-              group.semester
+              group.semester,
             )}`,
             colSpan: 8,
             bold: true,
@@ -557,7 +578,7 @@ export default {
             { text: String(course.course_lab || 0), alignment: "center" },
             {
               text: String(
-                Number(course.course_lec || 0) + Number(course.course_lab || 0)
+                Number(course.course_lec || 0) + Number(course.course_lab || 0),
               ),
               alignment: "center",
               bold: true,
@@ -568,18 +589,30 @@ export default {
 
         const totalUnits = group.courses.reduce(
           (sum, course) =>
-            sum + Number(course.course_lec || 0) + Number(course.course_lab || 0),
-          0
+            sum +
+            Number(course.course_lec || 0) +
+            Number(course.course_lab || 0),
+          0,
         );
 
         body.push([
-          { text: "Total Credit Units", colSpan: 6, alignment: "right", bold: true },
+          {
+            text: "Total Credit Units",
+            colSpan: 6,
+            alignment: "right",
+            bold: true,
+          },
           {},
           {},
           {},
           {},
           {},
-          { text: String(totalUnits), alignment: "center", bold: true, color: "#166534" },
+          {
+            text: String(totalUnits),
+            alignment: "center",
+            bold: true,
+            color: "#166534",
+          },
           "",
         ]);
       });
@@ -597,7 +630,8 @@ export default {
             fontSize: 13,
           },
           {
-            text: this.selectedProgramData?.program_name || "No program selected",
+            text:
+              this.selectedProgramData?.program_name || "No program selected",
             alignment: "center",
             fontSize: 11,
             margin: [0, 2, 0, 2],
@@ -605,8 +639,11 @@ export default {
           {
             text: this.filteredCourses.length
               ? `Curriculum Year ${
-                  this.filteredCourses[0].curriculum?.curriculum_start_year || ""
-                } - ${this.filteredCourses[0].curriculum?.curriculum_end_year || ""}`
+                  this.filteredCourses[0].curriculum?.curriculum_start_year ||
+                  ""
+                } - ${
+                  this.filteredCourses[0].curriculum?.curriculum_end_year || ""
+                }`
               : "",
             alignment: "center",
             fontSize: 10,
