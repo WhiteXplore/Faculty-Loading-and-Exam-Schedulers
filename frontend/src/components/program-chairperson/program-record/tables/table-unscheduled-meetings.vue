@@ -24,7 +24,11 @@
               stroke-width="2"
               viewBox="0 0 24 24"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
         </div>
@@ -58,18 +62,21 @@
     </div>
 
     <!-- Table -->
-    <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
+    <div
+      class="w-full mt-3 rounded-xl border bg-white overflow-y-auto max-h-[69vh]"
+    >
       <table class="min-w-full text-sm text-gray-700">
         <thead class="bg-defaultGreen text-white">
           <tr>
-            <th class="px-4 py-3 text-left">Campus</th>
+            <!-- <th class="px-4 py-3 text-left">Campus</th> -->
             <th class="px-4 py-3 text-left">Course</th>
             <th class="px-4 py-3 text-center">Program</th>
             <th class="px-4 py-3 text-center">Type</th>
             <th class="px-4 py-3 text-center">School Year</th>
             <th class="px-4 py-3 text-center">Semester</th>
+            <th class="px-4 py-3 text-center w-[14%]">Hours</th>
             <th class="px-4 py-3 text-center">Reason</th>
-            <th class="px-4 py-3 text-center">Created</th>
+            <!-- <th class="px-4 py-3 text-center">Created</th> -->
           </tr>
         </thead>
 
@@ -79,15 +86,15 @@
             :key="item.id"
             class="border-t hover:bg-green-50"
           >
-            <td class="px-4 py-3 font-semibold">
+            <!-- <td class="px-4 py-3 font-semibold">
               {{ item.inter_branch || "-" }}
-            </td>
+            </td> -->
             <td class="px-4 py-3 font-semibold">
               {{ item.course_code }}
             </td>
 
             <td class="px-4 py-3 text-center">
-              {{ item.program_name }}
+              {{ item.program_code }}
             </td>
 
             <td class="px-4 py-3 text-center">
@@ -101,14 +108,17 @@
             <td class="px-4 py-3 text-center">
               {{ semesterLabel(item.semester) }}
             </td>
+            <td class="px-4 py-3 text-left">
+              {{ item.hours }}
+            </td>
 
             <td class="px-4 py-3 text-xs text-red-600 max-w-xs">
               {{ item.reason }}
             </td>
 
-            <td class="px-4 py-3 text-center text-xs text-gray-500">
+            <!-- <td class="px-4 py-3 text-center text-xs text-gray-500">
               {{ formatDate(item.created_at) }}
-            </td>
+            </td> -->
           </tr>
 
           <tr v-if="paginatedData.length === 0">
@@ -123,7 +133,8 @@
     <!-- Pagination -->
     <div class="flex justify-between items-center mt-4">
       <div class="text-gray-700 text-sm">
-        Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+        Showing {{ startIndex }} to {{ endIndex }} of
+        {{ filteredData.length }} entries
       </div>
 
       <div class="flex items-center gap-1 text-sm">
@@ -237,7 +248,10 @@ export default {
     },
 
     endIndex() {
-      return Math.min(this.currentPage * this.itemsPerPage, this.filteredData.length);
+      return Math.min(
+        this.currentPage * this.itemsPerPage,
+        this.filteredData.length,
+      );
     },
   },
 
@@ -256,9 +270,12 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || {};
       } catch {
         this.user = {};

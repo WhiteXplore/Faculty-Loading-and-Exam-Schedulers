@@ -54,57 +54,22 @@
                   class="py-3 px-4 border-b bg-gray-100 flex items-center justify-between"
                 >
                   <div class="flex flex-col">
-                    <div class="flex items-center gap-2">
-                      <span class="text-md font-bold">{{ instructor }}</span>
+                    <span class="text-md font-bold">{{ instructor }}</span>
 
-                      <!-- Overload Badge -->
-                      <span
-                        v-if="
-                          facultyTotalUnits[instructor] &&
-                          Number(facultyTotalUnits[instructor].totalUnits) >
-                            Number(facultyTotalUnits[instructor].unitLoad)
-                        "
-                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-red-100 text-red-700 border border-red-200"
-                      >
-                        OVERLOAD
-                      </span>
-                    </div>
+                    <div v-if="facultyTotalUnits[instructor]" class="space-y-1">
+                      <p class="text-xs">
+                        <span class="text-gray-500">Total Units:</span>
+                        <span class="font-semibold">
+                          {{ facultyTotalUnits[instructor].totalUnits }}
+                        </span>
+                      </p>
 
-                    <div
-                      v-if="facultyTotalUnits[instructor]"
-                      class="mt-2 flex items-center gap-2 flex-wrap text-xs"
-                    >
-                      <!-- Unit Load -->
-                      <div
-                        class="px-3 py-1 rounded-full border border-blue-200 bg-white text-blue-600 font-medium"
-                      >
-                        Set Load: {{ facultyTotalUnits[instructor].unitLoad }}
-                      </div>
-                      <!-- Total Units -->
-                      <div
-                        class="px-3 py-1 rounded-full border font-medium"
-                        :class="
-                          Number(facultyTotalUnits[instructor].totalUnits) >
-                          Number(facultyTotalUnits[instructor].unitLoad)
-                            ? 'bg-white border-red-200 text-red-600'
-                            : 'bg-white border-green-200 text-green-600'
-                        "
-                      >
-                        Total Units:
-                        {{ facultyTotalUnits[instructor].totalUnits }} Units
-                      </div>
-
-                      <!-- Status -->
-                      <!-- <div
-                        v-if="
-                          Number(facultyTotalUnits[instructor].totalUnits) >
-                          Number(facultyTotalUnits[instructor].unitLoad)
-                        "
-                        class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-semibold"
-                      >
-                        <i class="mdi mdi-alert-circle mr-1"></i>
-                        OVERLOAD
-                      </div> -->
+                      <p class="text-xs">
+                        <span class="text-gray-500">Unit Load:</span>
+                        <span class="font-semibold text-blue-600">
+                          {{ facultyTotalUnits[instructor].unitLoad }}
+                        </span>
+                      </p>
                     </div>
                   </div>
                   <div class="flex gap-1 items-center">
@@ -572,7 +537,7 @@
         </div>
         <div
           v-if="showUnscheduledPanel"
-          class="relative z-[9999] w-[45vw] h-[50vh] overflow-hidden bg-white rounded-xl"
+          class="relative z-[9999] w-[45vw] h-[50vh] overflow-hidden bg-white"
         >
           <unscheduled
             :close-add-schedule-panel="closeAddSchedulePanel"
@@ -583,7 +548,7 @@
     </div>
     <div
       v-if="conflictModalVisible"
-      class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-[2px] px-4"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-[2px] px-4"
     >
       <!-- Modal -->
       <div
@@ -1336,11 +1301,8 @@ export default {
 
           if (!course) return;
 
-          const lec = Number(course.course_lec || 0);
-          const lab = Number(course.course_lab || 0);
-          let compute = 0;
-          compute = lab * 2.25;
-          totalUnits += lec + compute;
+          totalUnits +=
+            Number(course.course_lec || 0) + Number(course.course_lab || 0);
         });
 
         // Match faculty from raw users
@@ -1483,75 +1445,28 @@ export default {
         const addedSchedules = this.localData.filter((r) => r.isNew);
 
         if (addedSchedules.length) {
-          // Merge Lecture and Laboratory
-          const grouped = {};
+          // 1. Return them to unscheduled meetings
+          const payload = addedSchedules.map((r) => ({
+            class_id: r.class_id,
+            course_code: r.course_code,
+            program_id: r.program_id,
+            program_code: r.program_code,
+            type: r.type,
+            hours: String(r.duration ?? ""),
+            reason: "",
+            school_year: r.school_year,
+            semester: r.semester,
+          }));
 
-          addedSchedules.forEach((r) => {
-            const key = `${r.class_id}-${r.course_code}`;
-
-            if (!grouped[key]) {
-              grouped[key] = {
-                class_id: r.class_id,
-                course_code: r.course_code,
-                program_id: r.program_id,
-                program_code: r.program_code,
-                school_year: r.school_year,
-                semester: r.semester,
-                reason: "Faculty time conflict",
-                lecture: 0,
-                laboratory: 0,
-              };
-            }
-
-            if (r.type === "Lecture") {
-              grouped[key].lecture = Number(r.duration || 0);
-            }
-
-            if (r.type === "Laboratory") {
-              grouped[key].laboratory = Number(r.duration || 0);
-            }
-          });
-
-          const payload = Object.values(grouped).map((g) => {
-            let type = "";
-            let hours = "";
-
-            if (g.lecture && g.laboratory) {
-              type = "Lecture+Lab";
-              hours = `${g.lecture.toFixed(1)}h lec + ${g.laboratory.toFixed(
-                1,
-              )}h lab per week`;
-            } else if (g.lecture) {
-              type = "Lecture";
-              hours = `${g.lecture.toFixed(1)}h lec per week`;
-            } else {
-              type = "Laboratory";
-              hours = `${g.laboratory.toFixed(1)}h lab per week`;
-            }
-
-            return {
-              class_id: g.class_id,
-              course_code: g.course_code,
-              program_id: g.program_id,
-              program_code: g.program_code,
-              type,
-              hours,
-              reason: g.reason,
-              school_year: g.school_year,
-              semester: g.semester,
-            };
-          });
-
-          // Save merged records to unscheduled
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/unscheduled-meetings/add-unscheduled-meetings`,
             payload,
           );
 
-          // Delete added schedules from final schedule
+          // 2. Delete them from final schedule
           await Promise.all(
             addedSchedules
-              .filter((r) => r.id)
+              .filter((r) => r.id) // only if already saved
               .map((r) =>
                 axios.delete(
                   `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${r.id}`,
@@ -2692,6 +2607,7 @@ export default {
       this.hideScheduleTooltip();
 
       this.draggedRecord = record;
+
       this.dragConflictMap = {};
 
       Object.keys(this.groupedSchedule).forEach((faculty) => {
@@ -2699,17 +2615,9 @@ export default {
           this.timeSlots.forEach((slot) => {
             const key = `${faculty}-${day}-${slot.start}`;
 
-            // Simulate dropping the schedule here
-            const tempRecord = {
-              ...record,
-              faculty_name: faculty,
-              day,
-              start_hour: slot.start,
-            };
-
-            // Is this drop location invalid?
             this.dragConflictMap[key] =
-              this.getConflictingRecords(tempRecord).length > 0;
+              this.getConflictsForDrag(record, faculty, day, slot.start)
+                .length > 0;
           });
         });
       });

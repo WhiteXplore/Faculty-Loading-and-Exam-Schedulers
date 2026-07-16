@@ -419,16 +419,25 @@ export default {
         );
       }
 
-      if (this.classSearch) {
-        const query = this.classSearch.toLowerCase();
+      if (this.classSearch.trim()) {
+        const query = this.classSearch.toLowerCase().trim();
 
         result = result.filter((c) => {
-          return (
-            c.set_name?.toLowerCase().includes(query) ||
-            c.program?.program_name?.toLowerCase().includes(query) ||
-            c.schoolYear?.school_year_name?.toLowerCase().includes(query) ||
-            c.colleges?.college_branch_name?.toLowerCase().includes(query)
-          );
+          const searchable = [
+            c.set_name,
+            c.program?.program_name,
+            c.program?.program_code,
+            c.schoolYear?.school_year_name,
+            c.colleges?.college_branch_name,
+            c.class_size,
+            c.school_year,
+            c.semester,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+          return searchable.includes(query);
         });
       }
 

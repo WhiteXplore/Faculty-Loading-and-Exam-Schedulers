@@ -32,7 +32,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -47,7 +51,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -83,7 +91,9 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
                 <th class="px-4 py-3 text-left w-[3%] rounded-tl-lg">No.</th>
                 <th class="px-4 py-3 text-left w-[20%]">
@@ -157,7 +167,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredUsers.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredUsers.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -207,7 +218,12 @@ export default {
       currentPage: 1,
       user: null,
       activeTab: "Expertise",
-      tabs: ["Expertise", "Other Expertise", "Not Selected Expertise"],
+      tabs: [
+        "Expertise",
+        "Other Expertise",
+        "Cross Expertise",
+        "Not Selected Expertise",
+      ],
       allCourses: [],
     };
   },
@@ -221,22 +237,18 @@ export default {
 
       // ✅ Filter only Faculty & Program Chairperson
       users = users.filter(
-        (u) => u.role === "Faculty" || u.role === "Program Chairperson"
+        (u) => u.role === "Faculty" || u.role === "Program Chairperson",
       );
 
       // ✅ Safe filtering by logged-in user
+      // ✅ Filter according to the logged-in Program Chairperson
       if (this.user) {
         if (this.user.role === "Program Chairperson") {
           users = users.filter(
             (u) =>
-              u.institute?.institute_id &&
-              u.institute?.institute_id === this.user.institute_id
-          );
-        } else {
-          users = users.filter(
-            (u) =>
+              u.role === "Faculty" &&
               u.institute?.institute_id === this.user.institute_id &&
-              u.program?.program_id === this.user.program_id
+              u.program?.program_id === this.user.program_id,
           );
         }
       }
@@ -249,7 +261,8 @@ export default {
       if (this.activeTab === "Expertise") {
         users.forEach((u) => {
           (u.expertise || []).forEach((e) => {
-            if (!e?.course) return; // ✅ CRITICAL FIX
+            if (!e?.course) return;
+            if (e.status !== "PRIMARY") return;
 
             expanded.push({
               ...u,
@@ -261,18 +274,38 @@ export default {
           });
         });
       }
-
       // ===============================
       // 🔹 OTHER EXPERTISE TAB
       // ===============================
       if (this.activeTab === "Other Expertise") {
         users.forEach((u) => {
           (u.expertise || []).forEach((e) => {
-            if (!e?.course) return; // ✅ CRITICAL FIX
+            if (!e?.course) return;
+            if (e.status !== "OTHER") return;
 
             expanded.push({
               ...u,
               type: "Other Expertise",
+              course_id: e.course.course_id,
+              course_code: e.course.course_code,
+              course_title: e.course.course_title,
+            });
+          });
+        });
+      }
+
+      // ===============================
+      // 🔹 CROSS EXPERTISE TAB
+      // ===============================
+      if (this.activeTab === "Cross Expertise") {
+        users.forEach((u) => {
+          (u.expertise || []).forEach((e) => {
+            if (!e?.course) return;
+            if (e.status !== "CROSS") return;
+
+            expanded.push({
+              ...u,
+              type: "Cross Expertise",
               course_id: e.course.course_id,
               course_code: e.course.course_code,
               course_title: e.course.course_title,
@@ -289,25 +322,24 @@ export default {
 
         users.forEach((u) => {
           (u.expertise || []).forEach((e) => {
-            if (e?.course) selected.add(e.course.course_id);
-          });
+            if (!e?.course) return;
 
-          (u.other_expertise || []).forEach((e) => {
-            if (e?.course) selected.add(e.course.course_id);
+            if (e.status === "PRIMARY" || e.status === "OTHER") {
+              selected.add(e.course.course_id);
+            }
           });
         });
 
         expanded = (this.allCourses || [])
           .filter((c) => {
-            if (!c?.curriculum?.program) return false; // ✅ safety
+            if (!c?.curriculum?.program) return false;
 
             const programMatch =
-              this.user?.program_id &&
               c.curriculum.program.program_id === this.user.program_id;
 
             const instituteMatch =
-              this.user?.institute_id &&
-              c.curriculum.program.institute?.institute_id === this.user.institute_id;
+              c.curriculum.program.institute?.institute_id ===
+              this.user.institute_id;
 
             return !selected.has(c.course_id) && programMatch && instituteMatch;
           })
@@ -316,7 +348,6 @@ export default {
             type: "Not Selected Expertise",
           }));
       }
-
       // ===============================
       // 🔍 SEARCH FILTER
       // ===============================
@@ -384,9 +415,12 @@ export default {
   methods: {
     async fetchUser() {
       try {
-        const res = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data;
       } catch (err) {
         console.error("Failed to fetch user:", err);
@@ -401,7 +435,7 @@ export default {
     async fetchAllCourses() {
       try {
         const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/courses/get-courses"
+          process.env.VUE_APP_API_BASE_URL + "/courses/get-courses",
         );
         this.allCourses = res.data;
       } catch (err) {

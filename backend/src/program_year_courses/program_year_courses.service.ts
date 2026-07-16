@@ -22,12 +22,17 @@ export class ProgramYearCoursesService {
   }
 
   async syncProgramYearCoursesFromClasses(): Promise<void> {
-    const dbName = process.env.DATABASE_NAME;
-
     const sql = `
-INSERT INTO ${dbName}.program_year_courses
-    (program_id, course_id, year_level, school_year_id, created_at, updated_at)
-SELECT
+INSERT INTO dnsc_class_scheduler2.program_year_courses
+(
+    program_id,
+    course_id,
+    year_level,
+    school_year_id,
+    created_at,
+    updated_at
+)
+SELECT DISTINCT
     cl.program_id,
     cr.course_id,
     CASE
@@ -35,20 +40,20 @@ SELECT
         WHEN cl.set_name LIKE '2nd Year%' THEN 2
         WHEN cl.set_name LIKE '3rd Year%' THEN 3
         WHEN cl.set_name LIKE '4th Year%' THEN 4
-    END AS year_level,
+    END,
     cl.school_year_id,
-    NOW() AS created_at,
-    NOW() AS updated_at
-FROM ${dbName}.classes cl
-JOIN ${dbName}.curriculum_courses cc
+    NOW(),
+    NOW()
+FROM dnsc_class_scheduler2.classes cl
+JOIN dnsc_class_scheduler2.curriculum_courses cc
     ON cc.curriculum_id IN (
-        SELECT cu.curriculum_id
-        FROM ${dbName}.curricula cu
-        WHERE cu.program_id = cl.program_id
+        SELECT curriculum_id
+        FROM dnsc_class_scheduler2.curricula
+        WHERE program_id = cl.program_id
     )
-JOIN ${dbName}.courses cr
+JOIN dnsc_class_scheduler2.courses cr
     ON cr.course_id = cc.course_id
-    AND cr.course_level = CASE
+   AND cr.course_level = CASE
         WHEN cl.set_name LIKE '1st Year%' THEN 1
         WHEN cl.set_name LIKE '2nd Year%' THEN 2
         WHEN cl.set_name LIKE '3rd Year%' THEN 3
@@ -56,15 +61,15 @@ JOIN ${dbName}.courses cr
     END
 WHERE NOT EXISTS (
     SELECT 1
-    FROM ${dbName}.program_year_courses pyc
+    FROM dnsc_class_scheduler2.program_year_courses pyc
     WHERE pyc.program_id = cl.program_id
       AND pyc.course_id = cr.course_id
       AND pyc.year_level = CASE
-        WHEN cl.set_name LIKE '1st Year%' THEN 1
-        WHEN cl.set_name LIKE '2nd Year%' THEN 2
-        WHEN cl.set_name LIKE '3rd Year%' THEN 3
-        WHEN cl.set_name LIKE '4th Year%' THEN 4
-      END
+            WHEN cl.set_name LIKE '1st Year%' THEN 1
+            WHEN cl.set_name LIKE '2nd Year%' THEN 2
+            WHEN cl.set_name LIKE '3rd Year%' THEN 3
+            WHEN cl.set_name LIKE '4th Year%' THEN 4
+        END
       AND pyc.school_year_id = cl.school_year_id
 );
     `;
@@ -194,8 +199,7 @@ WHERE NOT EXISTS (
       school_year_id: 1,
     }));
 
-    const created =
-      this.programYearCourseRepository.create(programYearCourses);
+    const created = this.programYearCourseRepository.create(programYearCourses);
     return await this.programYearCourseRepository.save(created);
   }
 }

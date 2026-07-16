@@ -16,10 +16,10 @@
 
     <!-- Table Container -->
     <div class="table-container">
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
+        <div class="per-page-container">
+          <div class="select-wrapper">
             <select
               v-model="itemsPerPage"
               class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
@@ -39,7 +39,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -76,21 +80,33 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
-                <th class="px-4 py-3 text-left font-normal w-[15%]">Faculty Name</th>
+                <th class="px-4 py-3 text-left font-normal w-[15%]">
+                  Faculty Name
+                </th>
                 <!-- <th class="px-4 py-3 text-center font-normal w-[5%]">
                   Institute
                 </th>
                 <th class="px-4 py-3 text-left font-normal w-[30%]">Program</th> -->
-                <th class="px-4 py-3 text-center font-normal w-[15%]">Designation</th>
+                <th class="px-4 py-3 text-center font-normal w-[15%]">
+                  Designation
+                </th>
                 <th class="px-4 py-3 text-center font-normal w-[15%]">
                   Employment Status
                 </th>
 
-                <th class="px-4 py-3 text-center font-normal w-[20%]">Preferred Time</th>
-                <th class="px-4 py-3 text-center font-normal w-[16%]">Inter-branch</th>
-                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
+                <th class="px-4 py-3 text-center font-normal w-[20%]">
+                  Preferred Time
+                </th>
+                <th class="px-4 py-3 text-center font-normal w-[16%]">
+                  Inter-branch
+                </th>
+                <th
+                  class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]"
+                >
                   Actions
                 </th>
               </tr>
@@ -101,7 +117,9 @@
                 :key="user.id"
                 class="hover:bg-green-50 transition-all border-t"
               >
-                <td class="px-4 py-3">{{ user.first_name }} {{ user.last_name }}</td>
+                <td class="px-4 py-3">
+                  {{ user.first_name }} {{ user.last_name }}
+                </td>
                 <!-- <td class="px-4 py-3 text-center">
                   {{ user.institute?.institute_code || "-" }}
                 </td>
@@ -114,7 +132,8 @@
                 <td class="px-4 py-3 text-center">
                   <span
                     :class="{
-                      'bg-green-100 text-green-800': user.employment_type === 'Full Time',
+                      'bg-green-100 text-green-800':
+                        user.employment_type === 'Full Time',
                       'bg-orange-100 text-orange-800':
                         user.employment_type === 'Part Time',
                       'text-gray-400 ': !user.employment_type,
@@ -135,7 +154,9 @@
                     class="flex flex-wrap gap-1 justify-center"
                   >
                     <span
-                      v-for="(branchName, idx) in facultyBranchesByUser[user.id]"
+                      v-for="(branchName, idx) in facultyBranchesByUser[
+                        user.id
+                      ]"
                       :key="idx"
                       class="bg-gray-100 text-green-800 text-xs px-2 py-1 rounded-full"
                     >
@@ -171,7 +192,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} faculty
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} faculty
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -206,10 +228,7 @@
   </div>
 
   <!-- Add Modal -->
-  <div
-    v-if="showAddModal"
-    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-  >
+  <div v-if="showAddModal" class="modal-overlay">
     <div class="rounded-[16px] shadow-lg animate-slideUp">
       <form
         @submit.prevent="submitData"
@@ -219,9 +238,13 @@
         <div
           class="w-full px-4 py-3 bg-defaultGreen text-white rounded-t-[16px] flex justify-between items-center"
         >
-         <h1 class="header1">Update Faculty</h1>
+          <h1 class="header1">Update Faculty</h1>
 
-          <button type="button" @click="showAddModal = false" class="text-white text-lg">
+          <button
+            type="button"
+            @click="showAddModal = false"
+            class="text-white text-lg"
+          >
             ✕
           </button>
         </div>
@@ -305,7 +328,9 @@
 
             <!-- AFTERNOON -->
             <div class="rounded-lg space-y-3">
-              <h3 class="font-bold text-green-800 text-sm">Afternoon Schedule</h3>
+              <h3 class="font-bold text-green-800 text-sm">
+                Afternoon Schedule
+              </h3>
 
               <div class="flex gap-4">
                 <div class="flex-1">
@@ -336,7 +361,9 @@
             v-if="updateMode === 'interbranch' || updateMode === 'all'"
             class="space-y-3"
           >
-            <label class="font-normal block mb-1">Select Inter-branch Campus</label>
+            <label class="font-normal block mb-1"
+              >Select Inter-branch Campus</label
+            >
 
             <!-- Dropdown Trigger -->
             <div class="relative">
@@ -366,7 +393,9 @@
                   <input
                     type="checkbox"
                     :value="branch.college_branch_id"
-                    :checked="form.interbranchCampus.includes(branch.college_branch_id)"
+                    :checked="
+                      form.interbranchCampus.includes(branch.college_branch_id)
+                    "
                     @change="toggleBranch(branch.college_branch_id)"
                   />
                   {{ branch.college_branch_name }}
@@ -377,7 +406,10 @@
             <p class="text-gray-500">You can select multiple campuses.</p>
 
             <!-- Selected Tags -->
-            <div v-if="form.interbranchCampus.length" class="flex flex-wrap gap-2 mt-2">
+            <div
+              v-if="form.interbranchCampus.length"
+              class="flex flex-wrap gap-2 mt-2"
+            >
               <div
                 v-for="id in form.interbranchCampus"
                 :key="id"
@@ -401,7 +433,11 @@
 
           <!-- Buttons -->
           <div class="flex justify-end gap-2 pt-3">
-            <button type="button" @click="showAddModal = false" class="btn-cancel">
+            <button
+              type="button"
+              @click="showAddModal = false"
+              class="btn-cancel"
+            >
               Cancel
             </button>
 
@@ -413,10 +449,7 @@
   </div>
 
   <!-- View Modal -->
-  <div
-    v-if="showViewModal"
-    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-  >
+  <div v-if="showViewModal" class="modal-overlay">
     <div
       class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 relative animate-slideUp"
     >
@@ -477,11 +510,15 @@
             <h3 class="font-semibold text-gray-800 mb-2">Expertise</h3>
 
             <div
-              v-if="selectedFaculty.expertise && selectedFaculty.expertise.length"
+              v-if="
+                selectedFaculty.expertise && selectedFaculty.expertise.length
+              "
               class="space-y-3"
             >
               <div
-                v-for="(group, key) in groupByYearSemester(selectedFaculty.expertise)"
+                v-for="(group, key) in groupByYearSemester(
+                  selectedFaculty.expertise,
+                )"
                 :key="key"
               >
                 <!-- 🔥 Badge Header -->
@@ -510,13 +547,14 @@
 
             <div
               v-if="
-                selectedFaculty.other_expertise && selectedFaculty.other_expertise.length
+                selectedFaculty.other_expertise &&
+                selectedFaculty.other_expertise.length
               "
               class="space-y-3"
             >
               <div
                 v-for="(group, key) in groupByYearSemester(
-                  selectedFaculty.other_expertise
+                  selectedFaculty.other_expertise,
                 )"
                 :key="key"
               >
@@ -537,7 +575,9 @@
               </div>
             </div>
 
-            <p v-else class="text-gray-500 italic">None other expertise added</p>
+            <p v-else class="text-gray-500 italic">
+              None other expertise added
+            </p>
           </div>
         </div>
 
@@ -552,7 +592,9 @@
 
         <!-- Inter-branch Campuses -->
         <div class="pt-3 border-t text-sm">
-          <h3 class="font-semibold text-gray-800 mb-2">Inter-branch Campuses</h3>
+          <h3 class="font-semibold text-gray-800 mb-2">
+            Inter-branch Campuses
+          </h3>
           <div class="flex flex-wrap gap-2">
             <span
               v-for="(branchName, i) in selectedFaculty.faculty_branches || []"
@@ -630,7 +672,11 @@ export default {
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["rawusers", "college_branch", "faculty_branch"]),
+    ...mapState(useFetchDataStore, [
+      "rawusers",
+      "college_branch",
+      "faculty_branch",
+    ]),
     filteredSlots() {
       if (this.form.period === "morning") {
         return this.morningSlots;
@@ -673,16 +719,16 @@ export default {
       if (this.form.morningStart && this.form.morningEnd) {
         parts.push(
           `${this.formatTo12(this.form.morningStart)} - ${this.formatTo12(
-            this.form.morningEnd
-          )}`
+            this.form.morningEnd,
+          )}`,
         );
       }
 
       if (this.form.afternoonStart && this.form.afternoonEnd) {
         parts.push(
           `${this.formatTo12(this.form.afternoonStart)} - ${this.formatTo12(
-            this.form.afternoonEnd
-          )}`
+            this.form.afternoonEnd,
+          )}`,
         );
       }
 
@@ -699,7 +745,7 @@ export default {
       // Admin → All faculty and PC
       if (currentUser.role === "Admin") {
         list = this.rawusers.filter(
-          (u) => u.role === "Program Chairperson" || u.role === "Faculty"
+          (u) => u.role === "Program Chairperson" || u.role === "Faculty",
         );
       }
       // Program Chairperson → Faculty only in same institute + program
@@ -708,7 +754,7 @@ export default {
           (u) =>
             u.role === "Faculty" &&
             u.institute?.institute_id === currentUser.institute_id &&
-            u.program?.program_id === currentUser.program_id
+            u.program?.program_id === currentUser.program_id,
         );
       }
 
@@ -722,7 +768,7 @@ export default {
         ]
           .join(" ")
           .toLowerCase()
-          .includes(query)
+          .includes(query),
       );
     },
 
@@ -770,7 +816,13 @@ export default {
         if (!year) return "N/A Year";
 
         const suffix =
-          year == 1 ? "1st" : year == 2 ? "2nd" : year == 3 ? "3rd" : `${year}th`;
+          year == 1
+            ? "1st"
+            : year == 2
+            ? "2nd"
+            : year == 3
+            ? "3rd"
+            : `${year}th`;
 
         return `${suffix} Year`;
       };
@@ -824,7 +876,9 @@ export default {
       }
     },
     removeBranch(id) {
-      this.form.interbranchCampus = this.form.interbranchCampus.filter((b) => b !== id);
+      this.form.interbranchCampus = this.form.interbranchCampus.filter(
+        (b) => b !== id,
+      );
     },
 
     handleClickOutside(event) {
@@ -930,9 +984,12 @@ export default {
     },
     async fetchUser() {
       try {
-        const response = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
         if (response.data) {
           this.user = response.data;
         } else {
@@ -963,7 +1020,7 @@ export default {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/users/${userId}`,
             { preffered_time: this.formattedSlot },
-            { withCredentials: true }
+            { withCredentials: true },
           );
 
           toast.success("Preferred time updated successfully!");
@@ -980,13 +1037,13 @@ export default {
 
           // Delete existing faculty branch records for this user
           const existingBranches = (this.faculty_branch || []).filter(
-            (fb) => fb.user.id === userId
+            (fb) => fb.user.id === userId,
           );
 
           for (const fb of existingBranches) {
             await axios.delete(
               `${process.env.VUE_APP_API_BASE_URL}/faculty-branch/${fb.faculty_branch_id}`,
-              { withCredentials: true }
+              { withCredentials: true },
             );
           }
 
@@ -995,7 +1052,7 @@ export default {
             await axios.post(
               `${process.env.VUE_APP_API_BASE_URL}/faculty-branch`,
               { user_id: userId, college_branch_id: branchId },
-              { withCredentials: true }
+              { withCredentials: true },
             );
           }
 
@@ -1015,18 +1072,18 @@ export default {
           await axios.patch(
             `${process.env.VUE_APP_API_BASE_URL}/users/${userId}`,
             { preffered_time: this.formattedSlot },
-            { withCredentials: true }
+            { withCredentials: true },
           );
 
           // ✅ DELETE existing (FIXED)
           const existingBranches = (this.faculty_branch || []).filter(
-            (fb) => fb.user.id === userId
+            (fb) => fb.user.id === userId,
           );
 
           for (const fb of existingBranches) {
             await axios.delete(
               `${process.env.VUE_APP_API_BASE_URL}/faculty-branch/${fb.faculty_branch_id}`,
-              { withCredentials: true }
+              { withCredentials: true },
             );
           }
 
@@ -1035,11 +1092,13 @@ export default {
             await axios.post(
               `${process.env.VUE_APP_API_BASE_URL}/faculty-branch`,
               { user_id: userId, college_branch_id: branchId },
-              { withCredentials: true }
+              { withCredentials: true },
             );
           }
 
-          toast.success("Preferred time and Inter Branch updated successfully!");
+          toast.success(
+            "Preferred time and Inter Branch updated successfully!",
+          );
           this.showAddModal = false;
           await this.loadUsers();
         }

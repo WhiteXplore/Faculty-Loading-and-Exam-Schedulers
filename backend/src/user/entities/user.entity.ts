@@ -35,7 +35,12 @@ export class User_Accounts {
   @Column()
   employment_type: string;
 
-  @Column()
+  @Column({
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+    default: 0,
+  })
   unit_load: number;
 
   @Column()
@@ -44,15 +49,15 @@ export class User_Accounts {
   @Column({ nullable: true })
   preffered_time: string;
   @Column({ type: 'boolean', default: true })
-is_active: boolean;
+  is_active: boolean;
 
-@ManyToOne(() => Program, { nullable: true })
-@JoinColumn({ name: 'program_id' })
-program: Program | null;
+  @ManyToOne(() => Program, { nullable: true })
+  @JoinColumn({ name: 'program_id' })
+  program: Program | null;
 
-@ManyToOne(() => Institute, { nullable: true })
-@JoinColumn({ name: 'institute_id' })
-institute: Institute | null;
+  @ManyToOne(() => Institute, { nullable: true })
+  @JoinColumn({ name: 'institute_id' })
+  institute: Institute | null;
 
   // School Year Relationship ✅
   @ManyToOne(() => SchoolYear, {
