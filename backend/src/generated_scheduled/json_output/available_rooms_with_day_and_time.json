@@ -1,0 +1,7353 @@
+{
+  "metadata": {
+    "generated_at": "2026-07-13 14:07:36",
+    "total_rooms": 103,
+    "rooms_with_no_schedule_all_week": 27,
+    "days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "start_hour": 7,
+    "end_hour": 22,
+    "lunch_break": "12:00 PM - 1:00 PM"
+  },
+  "rooms": [
+    {
+      "room_id": 87,
+      "room_name": "Carmen Room1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 2,
+      "branch_name": "Carmen",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 115,
+      "room_name": "Lecture Room 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 2,
+      "branch_name": "Carmen",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 116,
+      "room_name": "Lecture Room 2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 2,
+      "branch_name": "Carmen",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 117,
+      "room_name": "Lecture Room 3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 2,
+      "branch_name": "Carmen",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 118,
+      "room_name": "Lecture Room 4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 2,
+      "branch_name": "Carmen",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 148,
+      "room_name": "SETBI R-1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 6,
+      "branch_name": "Dapecol",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 149,
+      "room_name": "SETBI R-2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 6,
+      "branch_name": "Dapecol",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 22,
+      "room_name": "AB 1-1 (tle)",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 7:00 AM",
+            "7:00 AM - 7:00 AM",
+            "7:00 AM - 7:00 AM",
+            "7:00 AM - 7:00 AM",
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 7:00 PM",
+            "7:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "9:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "9:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 23,
+      "room_name": "AB 1-2 (tle)",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 75,
+      "room_name": "AB 1-4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:30 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "10:30 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 76,
+      "room_name": "AB 1-5",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 77,
+      "room_name": "AB 1-6",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 102,
+      "room_name": "AB 2-1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 78,
+      "room_name": "AB 2-2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 79,
+      "room_name": "AB 2-3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 24,
+      "room_name": "AB 2-4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "9:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "11:30 AM - 12:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM",
+            "7:00 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 7:00 PM",
+            "8:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "11:30 AM - 12:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 25,
+      "room_name": "AB 2-5",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 7:00 PM"
+          ],
+          "available_slots": [
+            "7:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM",
+            "6:00 PM - 7:00 PM",
+            "7:00 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "8:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 26,
+      "room_name": "AB 2-6",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 7:00 PM"
+          ],
+          "available_slots": [
+            "10:30 AM - 12:00 PM",
+            "3:30 PM - 4:00 PM",
+            "7:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 7:00 PM"
+          ],
+          "available_slots": [
+            "10:30 AM - 12:00 PM",
+            "3:30 PM - 4:00 PM",
+            "7:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 7:00 PM",
+            "7:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "9:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 27,
+      "room_name": "AB 2-7",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 5:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM",
+            "5:30 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 5:30 PM",
+            "8:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 5:00 PM",
+            "9:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM",
+            "6:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "9:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 60,
+      "room_name": "AB 3-1",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "3:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "3:00 PM - 4:30 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "4:30 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 61,
+      "room_name": "AB 3-2",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 12:00 PM",
+            "1:00 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 62,
+      "room_name": "AB 3-3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 63,
+      "room_name": "AB 3-4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:30 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:30 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:30 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 10:00 AM",
+            "4:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 64,
+      "room_name": "AB 3-5",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 65,
+      "room_name": "AB 3-6",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:30 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "10:30 AM - 11:00 AM",
+            "9:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:30 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 8:30 AM",
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:30 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 8:30 AM",
+            "10:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 66,
+      "room_name": "AB 3-7",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 41,
+      "room_name": "AB 4-1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "8:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 42,
+      "room_name": "AB 4-2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "6:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 43,
+      "room_name": "AB 4-3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 10:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 7:00 PM"
+          ],
+          "available_slots": [
+            "3:30 PM - 4:00 PM",
+            "7:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 44,
+      "room_name": "AB 4-4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:30 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "4:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 45,
+      "room_name": "AB 4-5",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:30 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "2:30 PM - 3:00 PM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:30 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:30 PM",
+            "3:00 PM - 4:30 PM"
+          ],
+          "available_slots": [
+            "8:30 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "2:30 PM - 3:00 PM",
+            "4:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "8:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 46,
+      "room_name": "AB 4-6",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 47,
+      "room_name": "AB 4-7",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "4:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 10:00 AM",
+            "5:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 57,
+      "room_name": "AES Lab",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "3:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 11,
+      "room_name": "Biolab",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "1:00 PM - 4:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "3:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 6:00 PM",
+            "6:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 10:00 AM",
+            "1:00 PM - 4:00 PM",
+            "9:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "3:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 6:00 PM",
+            "6:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "1:00 PM - 4:00 PM",
+            "9:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 13,
+      "room_name": "Chem Lab",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "3:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "3:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 48,
+      "room_name": "Cottage 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 49,
+      "room_name": "Cottage 2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:30 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:30 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 50,
+      "room_name": "Cottage 3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 10:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "3:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 51,
+      "room_name": "Cottage 4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 52,
+      "room_name": "Cottage 5",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 67,
+      "room_name": "Cottage 6",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 86,
+      "room_name": "Covered Court",
+      "room_type": "Performance",
+      "room_capacity": 220,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 108,
+      "room_name": "Fishpond",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "10:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:30 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 109,
+      "room_name": "GYM",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 110,
+      "room_name": "IAdS Conference Room",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 55,
+      "room_name": "IC Comlab 1",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "7:00 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 7:00 PM",
+            "8:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 4:00 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "4:00 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "7:00 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 7:00 PM",
+            "8:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 56,
+      "room_name": "IC Comlab 2",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 4:00 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "4:00 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:30 AM",
+            "3:00 PM - 6:00 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:30 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:30 AM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 69,
+      "room_name": "IC GDA Lab",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 58,
+      "room_name": "IC MacLab",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "3:00 PM - 4:30 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "4:30 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:30 AM",
+            "2:00 PM - 3:30 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 59,
+      "room_name": "IC Networking",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 12:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM",
+            "6:00 PM - 7:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 6:00 PM",
+            "7:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:30 AM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:30 AM - 10:00 AM",
+            "11:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 84,
+      "room_name": "IFT 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 119,
+      "room_name": "MicroChem Lab",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:30 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 8:30 AM",
+            "10:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 28,
+      "room_name": "NTED 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:30 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 5:30 PM",
+            "8:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 29,
+      "room_name": "NTED 2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:30 AM - 11:30 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 8:30 AM",
+            "11:30 AM - 12:00 PM",
+            "4:00 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:30 PM",
+            "5:30 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "8:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "5:00 PM - 6:30 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 5:00 PM",
+            "6:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 5:00 PM",
+            "5:30 PM - 8:30 PM"
+          ],
+          "available_slots": [
+            "5:00 PM - 5:30 PM",
+            "8:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 30,
+      "room_name": "NTED 3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM"
+          ],
+          "available_slots": [
+            "3:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "11:30 AM - 12:00 PM",
+            "3:30 PM - 5:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "11:30 AM - 12:00 PM",
+            "3:30 PM - 5:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 7:00 PM"
+          ],
+          "available_slots": [
+            "3:30 PM - 4:00 PM",
+            "7:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 31,
+      "room_name": "NTED 4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:30 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "2:00 PM - 2:30 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 10:00 AM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:30 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "2:00 PM - 2:30 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "5:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 32,
+      "room_name": "NTED 5",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "3:30 PM - 4:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:30 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:30 PM - 4:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 10:00 AM",
+            "6:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 33,
+      "room_name": "NTED 6",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 5:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 5:00 PM",
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 34,
+      "room_name": "NTED 7",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "9:30 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:00 PM",
+            "5:00 PM - 6:00 PM"
+          ],
+          "available_slots": [
+            "6:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:30 AM - 11:30 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 8:30 AM",
+            "11:30 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM",
+            "4:00 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "5:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 85,
+      "room_name": "Navigation Room",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 124,
+      "room_name": "Review Center",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "2:00 PM - 3:00 PM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 126,
+      "room_name": "Room 11",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 127,
+      "room_name": "Room 12",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 128,
+      "room_name": "Room 13",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "2:00 PM - 3:00 PM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "1:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "9:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 129,
+      "room_name": "Room 14",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "2:30 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "2:00 PM - 2:30 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 11:00 AM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "9:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 131,
+      "room_name": "Room 201",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 2:30 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "2:30 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 11:00 AM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 132,
+      "room_name": "Room 202",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 11:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "1:00 PM - 2:30 PM",
+            "2:30 PM - 5:30 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "5:30 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 133,
+      "room_name": "Room 203",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 9:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "10:00 AM - 12:00 PM",
+            "9:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 2:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "2:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 134,
+      "room_name": "Room 204",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "10:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 135,
+      "room_name": "Room 205",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 136,
+      "room_name": "Room 206",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 137,
+      "room_name": "Room 207",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "10:00 AM - 12:00 PM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 141,
+      "room_name": "Room 8",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 144,
+      "room_name": "SB 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "9:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 145,
+      "room_name": "SB 2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 10:00 AM",
+            "2:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 146,
+      "room_name": "SB 3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 147,
+      "room_name": "SB 4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:00 AM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 114,
+      "room_name": "Sensory Lab",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:30 AM"
+          ],
+          "available_slots": [
+            "8:30 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:30 AM",
+            "9:00 AM - 10:30 AM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "8:30 AM - 9:00 AM",
+            "10:30 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:30 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:30 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM",
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 150,
+      "room_name": "Sports Complex",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 3:00 PM",
+            "3:00 PM - 5:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "5:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 12:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 152,
+      "room_name": "TED 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:30 AM",
+            "9:00 AM - 10:30 AM",
+            "2:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "8:30 AM - 9:00 AM",
+            "10:30 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 153,
+      "room_name": "TED 2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "3:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "2:00 PM - 3:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:30 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:30 AM",
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 154,
+      "room_name": "TED 3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "1:00 PM - 2:00 PM",
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 9:00 AM"
+          ],
+          "available_slots": [
+            "9:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "9:00 AM - 11:00 AM"
+          ],
+          "available_slots": [
+            "7:00 AM - 9:00 AM",
+            "11:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 10:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "10:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 155,
+      "room_name": "TED 4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 1,
+      "branch_name": "Main",
+      "no_schedule_all_week": false,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "2:00 PM - 4:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 2:00 PM",
+            "4:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "7:00 AM - 8:00 AM"
+          ],
+          "available_slots": [
+            "8:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 10:00 AM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "10:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": false,
+          "booked_slots": [
+            "8:00 AM - 9:00 AM",
+            "9:00 AM - 11:00 AM",
+            "1:00 PM - 3:00 PM"
+          ],
+          "available_slots": [
+            "7:00 AM - 8:00 AM",
+            "11:00 AM - 12:00 PM",
+            "3:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 111,
+      "room_name": "IT COMLAB 1",
+      "room_type": "Laboratory",
+      "room_capacity": 40,
+      "branch_id": 5,
+      "branch_name": "Samal",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 112,
+      "room_name": "IT Room 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 5,
+      "branch_name": "Samal",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 113,
+      "room_name": "IT Room 2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 5,
+      "branch_name": "Samal",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 142,
+      "room_name": "SAMAL R1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 5,
+      "branch_name": "Samal",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 143,
+      "room_name": "SAMAL R2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 5,
+      "branch_name": "Samal",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 103,
+      "room_name": "Bulwagan",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 104,
+      "room_name": "Bulwagan - Boiser Rm",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 105,
+      "room_name": "Bulwagan - RDR Hall",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 106,
+      "room_name": "Bulwagan-Amatong Rm",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 107,
+      "room_name": "Bulwagan-Dujali",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 120,
+      "room_name": "PAGRO Training Hall",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 121,
+      "room_name": "PDRRMO Conference Rm",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 123,
+      "room_name": "PTV 48 Broadcasting RM",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 122,
+      "room_name": "PresRoom",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 7,
+      "branch_name": "Tagum",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 125,
+      "room_name": "Room 1",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 4,
+      "branch_name": "Talaingod",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 130,
+      "room_name": "Room 2",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 4,
+      "branch_name": "Talaingod",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 138,
+      "room_name": "Room 3",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 4,
+      "branch_name": "Talaingod",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 139,
+      "room_name": "Room 4",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 4,
+      "branch_name": "Talaingod",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    },
+    {
+      "room_id": 140,
+      "room_name": "Room 5",
+      "room_type": "Lecture",
+      "room_capacity": 40,
+      "branch_id": 4,
+      "branch_name": "Talaingod",
+      "no_schedule_all_week": true,
+      "availability_by_day": {
+        "Monday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Tuesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Wednesday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Thursday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        },
+        "Friday": {
+          "no_schedule": true,
+          "booked_slots": [],
+          "available_slots": [
+            "7:00 AM - 12:00 PM",
+            "1:00 PM - 10:00 PM"
+          ]
+        }
+      }
+    }
+  ]
+}

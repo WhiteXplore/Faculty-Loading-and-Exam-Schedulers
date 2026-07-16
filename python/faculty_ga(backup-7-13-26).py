@@ -17,7 +17,7 @@ DB_USER = "root"
 DB_PASS = "root"
 DB_HOST = "127.0.0.1"
 DB_PORT = 3306
-DB_NAME = "dnsc_class_scheduler_ga_plus5_units"
+DB_NAME = "dnsc_class_scheduler_ga_qa"
 
 engine = create_engine(
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
@@ -2135,524 +2135,6 @@ def save_faculty_core_time_to_json(core_time_data, filename, complete_schedule=N
             print(f"  - {fname}: {', '.join(branch_names)}")
 
 
-# ============================================================
-# REPAIR PASS — deterministic second attempt for unscheduled classes
-# ============================================================
-# After the greedy first pass, some classes remain unscheduled even though a
-# qualified faculty member AND suitable rooms are actually free at some time.
-# They were blocked by SOFT constraints (preferred-time windows, AM/PM
-# balancing, back-to-back/consecutive slotting, daily-span caps, f2f ratio,
-# day-pattern fairness) — not by genuine resource conflicts. This pass re-drives
-# each failed class through the SAME hard validators (faculty/class/room/branch/
-# travel/capacity) while progressively relaxing ONLY the soft constraints.
-# Nothing that violates a hard rule is ever committed, so validate_schedule()
-# still reports zero conflicts afterward.
-
-
-@dataclass
-class _Relax:
-    """Which SOFT constraints are relaxed for a given repair tier."""
-    ignore_preferred: bool   # ignore faculty preferred-time windows
-    ignore_span: bool        # ignore MAX_DAILY_SPAN_HOURS
-    daily_hours_cap: float   # per-day workload cap (first pass hard-codes 8h)
-    include_fallback: bool   # allow single-day FALLBACK_DAY placement
-    allow_online: bool       # allow online fallback for lecture-only days
-    decouple: bool = False   # (Lecture+Lab only) schedule lecture and lab INDEPENDENTLY
-
-
-# Tier ladder — tried top to bottom; first tier that finds a valid slot wins.
-# NOTE: every tier already drops the consecutive/AM-PM-balance requirement,
-# because the repair loop scans ALL open slots via find_available_slots()
-# instead of only the back-to-back slots get_balanced_slots() returns. That
-# alone (gap-filling) recovers most "faculty is free but class unscheduled"
-# cases; later tiers relax progressively more.
-_REPAIR_TIERS = [
-    # Tier 0: keep preferred-time, span, and 8h cap — only gap-filling is new.
-    _Relax(ignore_preferred=False, ignore_span=False, daily_hours_cap=8,  include_fallback=False, allow_online=True),
-    # Tier 1: also ignore preferred-time windows.
-    _Relax(ignore_preferred=True,  ignore_span=False, daily_hours_cap=8,  include_fallback=False, allow_online=True),
-    # Tier 2: also ignore daily-span cap and allow single-day fallback.
-    _Relax(ignore_preferred=True,  ignore_span=True,  daily_hours_cap=8,  include_fallback=True,  allow_online=True),
-    # Tier 3: last resort — also raise the per-day workload cap.
-    _Relax(ignore_preferred=True,  ignore_span=True,  daily_hours_cap=12, include_fallback=True,  allow_online=True),
-    # Tier 4: DECOUPLE (Lecture+Lab only). Reached only when a lab class cannot be
-    # placed as one consecutive lecture-then-lab block on any pattern/slot. Schedules
-    # the lab component (needs a lab room) and the lecture component (may go online)
-    # INDEPENDENTLY — different days/times allowed. Last resort, so coupled placement
-    # is always preferred; this only rescues classes that would otherwise be unscheduled.
-    _Relax(ignore_preferred=True,  ignore_span=True,  daily_hours_cap=12, include_fallback=True,  allow_online=True, decouple=True),
-]
-
-
-def _repair_book_room(schedule_tracker, room_id, day, start_hour, duration, cls):
-    """Book one room slot — same shape the first pass writes."""
-    schedule_tracker.setdefault(room_id, {}).setdefault(day, []).append({
-        "start_hour": start_hour,
-        "duration": duration,
-        "class_id": cls["class_id"],
-        "course_code": cls["course_code"],
-    })
-
-
-def _repair_book_faculty(faculty_schedule_tracker, faculty_id, day, start_hour, duration,
-                         building_name, travel_time, cls):
-    """Reserve faculty time — online meetings reserve time too (no room)."""
-    faculty_schedule_tracker.setdefault(faculty_id, {}).setdefault(day, []).append({
-        "start_hour": start_hour,
-        "duration": duration,
-        "class_id": cls["class_id"],
-        "course_code": cls["course_code"],
-        "building_name": building_name,
-        "travel_time": travel_time or 0,
-    })
-
-
-def _repair_book_class(class_schedule_tracker, class_id, day, start_hour, duration, faculty_id, cls):
-    """Reserve the class-section time so it can't self-overlap."""
-    class_schedule_tracker.setdefault(class_id, {}).setdefault(day, []).append({
-        "start_hour": start_hour,
-        "duration": duration,
-        "faculty_id": faculty_id,
-        "course_code": cls["course_code"],
-    })
-
-
-def _repair_meeting_dict(cls, comp_type, day, start_hour, duration, room, class_size, schedule_type):
-    """Build a meeting entry identical in shape to the first pass' entries."""
-    meeting = {
-        "class_id": cls["class_id"],
-        "set_name": cls["set_name"],
-        "course_level": cls["course_level"],
-        "course_code": cls["course_code"],
-        "program_id": cls["program_id"],
-        "program_name": cls.get("program_name", "Unknown"),
-        "program_code": cls.get("program_code", "Unknown"),
-        "institute_id": cls.get("institute_id"),
-        "type": comp_type,
-        "day": day,
-        "start_hour": start_hour,
-        "duration": duration,
-        "time_slot": format_time_slot(start_hour, duration),
-        "class_size": class_size,
-        "schedule_type": schedule_type,
-    }
-    if room is not None:
-        meeting["room_id"] = room["room_id"]
-        meeting["room_name"] = room.get("room_name", "Unknown")
-        meeting["room_type"] = room.get("room_type", "Unknown")
-        meeting["room_capacity"] = room.get("room_capacity", 0)
-    else:
-        meeting["room_id"] = None
-        meeting["room_name"] = "Online"
-        meeting["room_type"] = "Online"
-        meeting["room_capacity"] = 0
-    return meeting
-
-
-def _repair_slot_free(cls, faculty_id, pattern_days, start_hour, duration,
-                      faculty_schedule_tracker, class_schedule_tracker,
-                      faculty_branch_tracker, far_branch_set, relax):
-    """
-    All HARD checks (faculty/class/branch time availability) plus the currently
-    active SOFT checks (daily-hours cap, daily span). Room/travel are checked
-    later, once a concrete room is chosen. Returns True if the slot is usable.
-    """
-    class_id = cls["class_id"]
-    branch_id = cls.get("branch_id")
-    for day in pattern_days:
-        if not is_faculty_available(faculty_id, day, start_hour, duration, faculty_schedule_tracker):
-            return False
-        if not is_class_available(class_id, day, start_hour, duration, class_schedule_tracker):
-            return False
-        if not is_branch_available(faculty_id, day, branch_id, faculty_branch_tracker, far_branch_set):
-            return False
-        if get_faculty_daily_hours(faculty_id, day, faculty_schedule_tracker) + duration > relax.daily_hours_cap:
-            return False
-        if not relax.ignore_span:
-            if not check_daily_span_ok(faculty_id, day, start_hour, duration, faculty_schedule_tracker):
-                return False
-    return True
-
-
-def _repair_place_lab(cls, rooms, faculty_id, pattern_days, start_hour, lec_hours, lab_hours,
-                      schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                      faculty_branch_tracker, far_branch_set, relax):
-    """Place a lecture+lab class (labs MUST be face-to-face) or return None."""
-    institute_id = cls.get("institute_id")
-    class_size = cls.get("class_size", 30)
-    class_branch_id = cls.get("branch_id")
-    class_id = cls["class_id"]
-    total_duration = lec_hours + lab_hours
-    lab_start = start_hour + lec_hours
-
-    if not _repair_slot_free(cls, faculty_id, pattern_days, start_hour, total_duration,
-                             faculty_schedule_tracker, class_schedule_tracker,
-                             faculty_branch_tracker, far_branch_set, relax):
-        return None
-
-    # Find lecture + lab rooms for every day (repair always allows per-day rooms).
-    day_lec, day_lab = {}, {}
-    for day in pattern_days:
-        lec_room = find_suitable_room(rooms, "Lecture", institute_id, class_size,
-                                      day, start_hour, lec_hours, schedule_tracker, class_branch_id)
-        if not lec_room:
-            return None
-        lab_room = find_suitable_room(rooms, "Laboratory", institute_id, class_size,
-                                      day, lab_start, lab_hours, schedule_tracker, class_branch_id)
-        if not lab_room:
-            return None
-        day_lec[day] = lec_room
-        day_lab[day] = lab_room
-
-    # Travel-time compatibility (hard) using each day's lecture room.
-    for day in pattern_days:
-        lec_room = day_lec[day]
-        if not check_travel_time_compatible(faculty_id, day, start_hour, total_duration,
-                                            lec_room.get("building_name"),
-                                            lec_room.get("time_travel", 0),
-                                            faculty_schedule_tracker):
-            return None
-
-    # All checks passed — commit every day.
-    meetings = []
-    for day in pattern_days:
-        lec_room, lab_room = day_lec[day], day_lab[day]
-        _repair_book_room(schedule_tracker, lec_room["room_id"], day, start_hour, lec_hours, cls)
-        _repair_book_room(schedule_tracker, lab_room["room_id"], day, lab_start, lab_hours, cls)
-        _repair_book_faculty(faculty_schedule_tracker, faculty_id, day, start_hour, total_duration,
-                             lec_room.get("building_name"), lec_room.get("time_travel", 0), cls)
-        _repair_book_class(class_schedule_tracker, class_id, day, start_hour, total_duration, faculty_id, cls)
-        meetings.append(_repair_meeting_dict(cls, "Lecture", day, start_hour, lec_hours,
-                                             lec_room, class_size, "face to face"))
-        meetings.append(_repair_meeting_dict(cls, "Laboratory", day, lab_start, lab_hours,
-                                             lab_room, class_size, "face to face"))
-    update_branch_tracker(faculty_id, pattern_days, class_branch_id, faculty_branch_tracker)
-    return meetings
-
-
-def _repair_place_single(cls, rooms, faculty_id, pattern_days, start_hour, duration,
-                         schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                         faculty_branch_tracker, far_branch_set, lecture_type_tracker,
-                         relax, comp_type):
-    """
-    Place a single-component class. comp_type is 'Lecture' or 'Laboratory'.
-    Lecture days may fall back to online (no room); Laboratory may not.
-    Returns the meeting list or None.
-    """
-    institute_id = cls.get("institute_id")
-    class_size = cls.get("class_size", 30)
-    class_branch_id = cls.get("branch_id")
-    class_id = cls["class_id"]
-    is_lab = (comp_type == "Laboratory")
-    room_type = "Laboratory" if is_lab else "Lecture"
-
-    if not _repair_slot_free(cls, faculty_id, pattern_days, start_hour, duration,
-                             faculty_schedule_tracker, class_schedule_tracker,
-                             faculty_branch_tracker, far_branch_set, relax):
-        return None
-
-    # Per-day: prefer a real room (f2f); a lecture day may fall back to online.
-    day_rooms, day_types = {}, {}
-    for day in pattern_days:
-        room = find_suitable_room(rooms, room_type, institute_id, class_size,
-                                  day, start_hour, duration, schedule_tracker, class_branch_id)
-        if room:
-            day_rooms[day] = room
-            day_types[day] = "face to face"
-        else:
-            if is_lab or not relax.allow_online:
-                return None  # lab needs a room; lecture w/o online-allowed fails
-            day_rooms[day] = None
-            day_types[day] = "online"
-
-    # Travel-time compatibility (hard). Online days use the branch travel marker
-    # exactly like the first pass, so inter-branch gaps stay enforced.
-    def _building_travel(room):
-        if room is not None:
-            return room.get("building_name"), room.get("time_travel", 0)
-        bt = get_branch_travel_time(rooms, class_branch_id)
-        return (f"__branch_{class_branch_id}" if bt > 0 else None), bt
-
-    for day in pattern_days:
-        building, travel = _building_travel(day_rooms[day])
-        if not check_travel_time_compatible(faculty_id, day, start_hour, duration,
-                                            building, travel, faculty_schedule_tracker):
-            return None
-
-    # Commit.
-    meetings = []
-    for day in pattern_days:
-        room = day_rooms[day]
-        stype = day_types[day]
-        building, travel = _building_travel(room)
-        if room is not None:
-            _repair_book_room(schedule_tracker, room["room_id"], day, start_hour, duration, cls)
-        _repair_book_faculty(faculty_schedule_tracker, faculty_id, day, start_hour, duration,
-                             building, travel, cls)
-        _repair_book_class(class_schedule_tracker, class_id, day, start_hour, duration, faculty_id, cls)
-        meetings.append(_repair_meeting_dict(cls, comp_type, day, start_hour, duration,
-                                             room, class_size, stype))
-        # Only pure lecture hours count toward the f2f ratio (labs never do).
-        if not is_lab:
-            if stype == "face to face":
-                lecture_type_tracker["face_to_face_hours"] += duration
-            else:
-                lecture_type_tracker["online_hours"] += duration
-            lecture_type_tracker["total_lecture_hours"] += duration
-    update_branch_tracker(faculty_id, pattern_days, class_branch_id, faculty_branch_tracker)
-    return meetings
-
-
-def _repair_candidate_patterns(weekly_hours, include_fallback):
-    """Valid day patterns for these weekly hours, plus the single-day fallback."""
-    pats = []
-    for name, days in DAY_PATTERNS.items():
-        if weekly_hours / len(days) >= 1.0:
-            # 2-hour weekly courses: only 2-day pairs (mirror get_balanced_patterns).
-            if weekly_hours == 2.0 and len(days) > 2:
-                continue
-            pats.append((name, list(days)))
-    if include_fallback:
-        pats.append(("FALLBACK", [FALLBACK_DAY]))
-    return pats
-
-
-def _repair_unbook(meetings, faculty_id, class_id,
-                   schedule_tracker, faculty_schedule_tracker, class_schedule_tracker):
-    """
-    Remove the tracker bookings created for `meetings` (used to roll back a partial
-    decoupled placement — e.g. lab committed but lecture then failed). Matches on
-    (day, start_hour, duration) and class_id so it never touches another class.
-    """
-    def _same(b, sh, dur):
-        return abs(b["start_hour"] - sh) < 1e-6 and abs(b["duration"] - dur) < 1e-6
-
-    for m in meetings:
-        day = m["day"]; sh = m["start_hour"]; dur = m["duration"]; rid = m.get("room_id")
-        if rid is not None and rid in schedule_tracker and day in schedule_tracker[rid]:
-            schedule_tracker[rid][day] = [
-                b for b in schedule_tracker[rid][day]
-                if not (_same(b, sh, dur) and b.get("class_id") == class_id)]
-        if faculty_id in faculty_schedule_tracker and day in faculty_schedule_tracker[faculty_id]:
-            faculty_schedule_tracker[faculty_id][day] = [
-                b for b in faculty_schedule_tracker[faculty_id][day]
-                if not (_same(b, sh, dur) and b.get("class_id") == class_id)]
-        if class_id in class_schedule_tracker and day in class_schedule_tracker[class_id]:
-            class_schedule_tracker[class_id][day] = [
-                b for b in class_schedule_tracker[class_id][day] if not _same(b, sh, dur)]
-
-
-def _repair_try_component(cls, rooms, faculty_id, employment_type, preferred_time,
-                          schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                          faculty_branch_tracker, far_branch_set, lecture_type_tracker,
-                          relax, comp_type, comp_week):
-    """
-    Place ONE component (comp_type 'Lecture' or 'Laboratory') of `comp_week` weekly
-    hours on its OWN pattern/time, independent of the other component. Iterates
-    patterns and slots like _repair_try_class but for a single component. Commits and
-    returns its meeting list on success, else None.
-    """
-    if comp_week <= 0:
-        return None
-    if employment_type.lower() == "part time":
-        s_start, s_end = PART_TIME_START_HOUR, PART_TIME_END_HOUR
-    else:
-        s_start, s_end = START_HOUR, END_HOUR
-    patterns = _repair_candidate_patterns(comp_week, relax.include_fallback)
-    random.shuffle(patterns)
-    for _name, days in patterns:
-        n = len(days)
-        pm = comp_week / n
-        if pm < 1.0:
-            continue
-        slots = find_available_slots(s_start, s_end, pm)
-        if not relax.ignore_preferred:
-            slots = filter_slots_by_preferred_time(slots, preferred_time, pm)
-        random.shuffle(slots)
-        for start_hour in slots:
-            res = _repair_place_single(
-                cls, rooms, faculty_id, days, start_hour, pm,
-                schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax, comp_type)
-            if res:
-                return res
-    return None
-
-
-def _repair_place_decoupled(cls, rooms, faculty_id, employment_type, preferred_time,
-                            schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                            faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax):
-    """
-    Last-resort placement for a Lecture+Lab class that cannot fit as one consecutive
-    block: schedule the lab and the lecture INDEPENDENTLY (possibly different days/
-    times; lecture may go online). Transactional — if the lecture can't be placed
-    after the lab, the lab booking is rolled back so no orphan bookings remain.
-    """
-    lecture_week = cls.get("course_lec", 0) * LECTURE_UNIT_TO_HOUR
-    lab_week = cls.get("course_lab", 0) * LAB_UNIT_TO_HOUR
-    class_id = cls["class_id"]
-
-    # Place the LAB first — it's the constraining component (needs a real lab room).
-    lab_meetings = _repair_try_component(
-        cls, rooms, faculty_id, employment_type, preferred_time,
-        schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-        faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax, "Laboratory", lab_week)
-    if not lab_meetings:
-        return None
-
-    # Then the LECTURE — flexible (f2f or online). Its slot check now sees the
-    # just-committed lab, so lecture and lab can never overlap for this faculty/section.
-    lec_meetings = _repair_try_component(
-        cls, rooms, faculty_id, employment_type, preferred_time,
-        schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-        faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax, "Lecture", lecture_week)
-    if not lec_meetings:
-        _repair_unbook(lab_meetings, faculty_id, class_id,
-                       schedule_tracker, faculty_schedule_tracker, class_schedule_tracker)
-        return None
-
-    return lab_meetings + lec_meetings
-
-
-def _repair_try_class(cls, rooms, faculty_id, employment_type, preferred_time,
-                      schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                      faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax):
-    """Try to place one class under a single relaxation tier. Returns meetings or None."""
-    lecture_week = cls.get("course_lec", 0) * LECTURE_UNIT_TO_HOUR
-    lab_week = cls.get("course_lab", 0) * LAB_UNIT_TO_HOUR
-    has_lab = lecture_week > 0 and lab_week > 0
-    lab_only = lab_week > 0 and lecture_week == 0
-    weekly = lecture_week + lab_week
-    if weekly <= 0:
-        return None
-
-    # Tier-4 decouple applies only to Lecture+Lab classes (last resort).
-    if relax.decouple:
-        if has_lab:
-            return _repair_place_decoupled(
-                cls, rooms, faculty_id, employment_type, preferred_time,
-                schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax)
-        return None
-
-    if employment_type.lower() == "part time":
-        s_start, s_end = PART_TIME_START_HOUR, PART_TIME_END_HOUR
-    else:
-        s_start, s_end = START_HOUR, END_HOUR
-
-    patterns = _repair_candidate_patterns(weekly, relax.include_fallback)
-    random.shuffle(patterns)
-    for _name, days in patterns:
-        n = len(days)
-        lec_pm = lecture_week / n
-        lab_pm = lab_week / n
-        # Keep each present component >= 1h per meeting (avoid tiny fragments).
-        if lecture_week > 0 and lec_pm < 1.0:
-            continue
-        if lab_week > 0 and lab_pm < 1.0:
-            continue
-        duration = lec_pm + lab_pm
-        slots = find_available_slots(s_start, s_end, duration)
-        if not relax.ignore_preferred:
-            slots = filter_slots_by_preferred_time(slots, preferred_time, duration)
-        random.shuffle(slots)
-        for start_hour in slots:
-            if has_lab:
-                res = _repair_place_lab(
-                    cls, rooms, faculty_id, days, start_hour, lec_pm, lab_pm,
-                    schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                    faculty_branch_tracker, far_branch_set, relax)
-            else:
-                comp = "Laboratory" if lab_only else "Lecture"
-                res = _repair_place_single(
-                    cls, rooms, faculty_id, days, start_hour, duration,
-                    schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                    faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax, comp)
-            if res:
-                return res
-    return None
-
-
-def repair_unscheduled(failed_placements, rooms,
-                       schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                       faculty_branch_tracker, far_branch_set, lecture_type_tracker,
-                       complete_schedule, unscheduled_meetings):
-    """
-    Deterministic second pass over classes the first pass could not place.
-    Reuses all hard validators; relaxes only soft constraints, in tiers.
-    Successes are appended to complete_schedule; genuinely-impossible classes
-    are appended to unscheduled_meetings. Returns the number repaired.
-
-    failed_placements: list of tuples
-        (cls, faculty_id, faculty_name, employment_type, preferred_time)
-    """
-    repaired = 0
-    # ITERATIVE SWEEPS: a single pass is order-dependent — a class tried early can
-    # miss a slot that only becomes reachable once the rest of the layout settles
-    # (and each sweep reshuffles patterns/slots, escaping ordering misses). We
-    # repeat the tier-based sweep over whatever is still unplaced until a full
-    # sweep recovers nothing new. Every placement still goes through the same hard
-    # validators, so extra sweeps can only ADD valid placements — never conflict.
-    MAX_SWEEPS = 12  # safety bound; the "no progress -> break" below is the real stop
-    pending = list(failed_placements)
-    sweep = 0
-    while pending and sweep < MAX_SWEEPS:
-        sweep += 1
-        progressed = False
-        still_pending = []
-        for cls, faculty_id, faculty_name, employment_type, preferred_time in pending:
-            placed = None
-            for relax in _REPAIR_TIERS:
-                placed = _repair_try_class(
-                    cls, rooms, faculty_id, employment_type, preferred_time,
-                    schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-                    faculty_branch_tracker, far_branch_set, lecture_type_tracker, relax)
-                if placed:
-                    break
-            if placed:
-                for meeting in placed:
-                    meeting["faculty_id"] = faculty_id
-                    meeting["faculty_name"] = faculty_name
-                    meeting["employment_type"] = employment_type
-                    meeting["college_branch_id"] = cls.get("branch_id")
-                    complete_schedule.append(meeting)
-                repaired += 1
-                progressed = True
-                print(f"  [REPAIRED] {cls.get('course_code', '?')} -> {faculty_name} (sweep {sweep})")
-            else:
-                still_pending.append(
-                    (cls, faculty_id, faculty_name, employment_type, preferred_time))
-        pending = still_pending
-        if not progressed:
-            break  # a full sweep placed nothing new — remaining are genuinely stuck
-
-    # Whatever survives all sweeps is genuinely unplaceable under every tier.
-    for cls, faculty_id, faculty_name, employment_type, preferred_time in pending:
-        lecture_week = cls.get("course_lec", 0) * LECTURE_UNIT_TO_HOUR
-        lab_week = cls.get("course_lab", 0) * LAB_UNIT_TO_HOUR
-        if lab_week > 0 and lecture_week > 0:
-            htype, hours_str = "Lecture+Lab", f"{lecture_week}h lec + {lab_week}h lab per week"
-        elif lab_week > 0:
-            htype, hours_str = "Laboratory", f"{lab_week}h per week"
-        else:
-            htype, hours_str = "Lecture", f"{lecture_week}h per week"
-        unscheduled_meetings.append({
-            "class_id": cls.get("class_id"),
-            "course_code": cls.get("course_code"),
-            "course_id": cls.get("course_id"),
-            "institute_id": cls.get("institute_id"),
-            "class_size": cls.get("class_size", 30),
-            "faculty_name": faculty_name,
-            "program_id": cls.get("program_id"),
-            "program_name": cls.get("program_name", "Unknown"),
-            "program_code": cls.get("program_code", "Unknown"),
-            "type": htype,
-            "hours": hours_str,
-            "reason": "Unresolved after repair pass (relaxed soft constraints)",
-        })
-    return repaired
-
-
 def create_schedule(faculty_loads, rooms, branch_map=None):
     """
     Create a complete schedule for all faculty loads.
@@ -2691,9 +2173,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
         print(f"[INFO] Far branches (full-day only): {', '.join(far_names)}")
     complete_schedule = []
     unscheduled_meetings = []
-    # Classes that fail the Phase 2 first pass, captured with full context so the
-    # repair pass can re-drive them under relaxed soft constraints.
-    failed_placements = []
 
     # ----------------------------------------------------------
     # DAPECOL scheduling: assign a 2-day pair per program
@@ -3053,8 +2532,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                     print("[OK] Scheduled")
                 else:
                     print("[FAILED]")
-                    failed_placements.append(
-                        (cls, faculty_id, faculty_name, employment_type, preferred_time))
 
             elif lecture_units > 0:
                 # Course has only lecture
@@ -3077,8 +2554,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                     print("[OK] Scheduled")
                 else:
                     print("[FAILED]")
-                    failed_placements.append(
-                        (cls, faculty_id, faculty_name, employment_type, preferred_time))
 
             elif lab_units > 0:
                 # Course has only lab (unusual, but handle it)
@@ -3104,32 +2579,6 @@ def create_schedule(faculty_loads, rooms, branch_map=None):
                     print("[OK] Scheduled")
                 else:
                     print("[FAILED]")
-                    failed_placements.append(
-                        (cls, faculty_id, faculty_name, employment_type, preferred_time))
-
-    # ----------------------------------------------------------
-    # REPAIR PASS: retry Phase 2 soft-constraint failures under relaxed rules.
-    # Runs before the summary/validation so recovered classes are counted and
-    # re-validated. Hard constraints are never relaxed, so no conflict can be
-    # introduced.
-    # ----------------------------------------------------------
-    if failed_placements:
-        failed_ids = {cls.get("class_id") for cls, *_ in failed_placements}
-        # Drop the first-pass unscheduled entries for exactly these classes; the
-        # repair pass re-adds only the ones that still cannot be placed. Entries
-        # from other sources (e.g. DAPECOL/unassigned) are left untouched.
-        unscheduled_meetings[:] = [
-            u for u in unscheduled_meetings if u.get("class_id") not in failed_ids]
-        print("\n" + "-"*80)
-        print(f"Repair pass: retrying {len(failed_placements)} unscheduled class(es) "
-              f"with relaxed soft constraints...")
-        repaired_count = repair_unscheduled(
-            failed_placements, rooms,
-            schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
-            faculty_branch_tracker, far_branch_set, lecture_type_tracker,
-            complete_schedule, unscheduled_meetings)
-        print(f"Repair pass complete: {repaired_count} recovered, "
-              f"{len(failed_placements) - repaired_count} still unscheduled")
 
     print("\n" + "="*80)
     print(f"Scheduling Complete: {len(complete_schedule)} meetings scheduled, "
@@ -4229,14 +3678,14 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
     def _key_sort(k):
         secs = remaining_sections.get(k)
         if not secs:
-            return (999.0, 999, str(k))
+            return (999.0, 999, k)
         s = secs[0]
         # Primary: ascending units_per_section (small courses first — prevents large-unit starvation)
         # Secondary: ascending qualified-faculty count (scarcest keys first — prevents sole-faculty
         #            keys from being processed after their only qualified faculty is already full)
         # Tertiary: key string (stable deterministic tiebreaker)
         n_qualified = len(expertise_to_fids.get(k, []))
-        return (compute_load(s["course_lec"], s["course_lab"]), n_qualified, str(k))
+        return (compute_load(s["course_lec"], s["course_lab"]), n_qualified, k)
 
     sorted_expertise_keys = sorted(
         [k for k in remaining_sections if expertise_to_fids.get(k)],
@@ -4325,44 +3774,6 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
                 faculty_loads[fid]["preps"].add(key)
                 sections.pop(0)
                 progressed = True
-
-    # ----------------------------------------------------------------
-    # CROSS-PROGRAM OVERFLOW PASS
-    # Sections still unplaced after native assignment + the exhaustion pass are
-    # offered to faculty registered for the SAME course_code under a DIFFERENT
-    # program_id — as long as they have spare load and prep room. This runs
-    # strictly AFTER all same-program assignment, so it can never displace a
-    # native placement (it only assigns sections that remain unassigned). It fixes
-    # the case where a course's native faculty are full or capped below the
-    # section's unit cost while a course-code-qualified expert from another program
-    # sits idle with free load (e.g. IS 111/BSIS sections stranded while a
-    # BSIT-registered IS 111 expert had 24 free units).
-    overflow_keys = sorted(
-        [k for k in remaining_sections if remaining_sections.get(k)], key=_key_sort)
-    for key in overflow_keys:
-        cc0 = key[0]
-        # course-code-qualified faculty from ANY program, least-loaded first
-        cross_fids = sorted(
-            (fid for fid in course_code_to_fids.get(cc0, []) if fid in faculty_loads),
-            key=lambda fid: (faculty_loads[fid]["total_units"], fid),
-        )
-        for fid in cross_fids:
-            while remaining_sections.get(key):
-                # PREP_LIMIT: a new prep is needed only the first time this key is
-                # assigned to this faculty.
-                if (key not in faculty_loads[fid]["preps"]
-                        and len(faculty_loads[fid]["preps"]) >= PREP_LIMIT):
-                    break
-                course = remaining_sections[key][0]
-                units = compute_load(course["course_lec"], course["course_lab"])
-                if faculty_loads[fid]["total_units"] + units > faculty_loads[fid]["load_unit"]:
-                    break  # respects the faculty's load cap — never overloads
-                faculty_loads[fid]["assigned_classes"].append(course)
-                faculty_loads[fid]["total_units"] += units
-                faculty_loads[fid]["total_lecture_hours"] += course["course_lec"]
-                faculty_loads[fid]["total_lab_hours"] += course["course_lab"]
-                faculty_loads[fid]["preps"].add(key)
-                remaining_sections[key].pop(0)
 
     # Any sections that couldn't be assigned after all tiers + exhaustion pass
     for expertise_key, courses in remaining_sections.items():
@@ -4669,30 +4080,6 @@ if __name__ == "__main__":
             "hours": f"{course.get('course_lec', 0)}h lec + {course.get('course_lab', 0)}h lab",
             "reason": reason
         })
-
-    # ------------------------------------------
-    # UNSCHEDULED SUMMARY (split by root cause)
-    # ------------------------------------------
-    # The unscheduled list mixes two unrelated problems. Separate them so the
-    # count is not misleading:
-    #   - no-faculty: section never got a qualified/available faculty (assignment
-    #     gap) — the scheduler/repair pass cannot place these, there is no one to
-    #     schedule.
-    #   - timetabling: a faculty WAS assigned but no valid room+time was found even
-    #     after the repair pass relaxed soft constraints (typically lab-room limits).
-    def _is_no_faculty(u):
-        reason = str(u.get("reason", ""))
-        return (u.get("faculty_name") == "Unassigned"
-                or "No faculty assignment" in reason
-                or "No qualified faculty" in reason)
-
-    _no_faculty = [u for u in unscheduled_meetings if _is_no_faculty(u)]
-    _timetabling = [u for u in unscheduled_meetings if not _is_no_faculty(u)]
-    print("\n" + "="*80)
-    print(f"Unscheduled summary: {len(unscheduled_meetings)} total = "
-          f"{len(_timetabling)} timetabling (resource-limited) + "
-          f"{len(_no_faculty)} no-faculty (assignment gap)")
-    print("="*80)
 
     # Attach each faculty's actual load_unit to their scheduled meetings so that
     # downstream validators can compare against the real DB-sourced limit rather
