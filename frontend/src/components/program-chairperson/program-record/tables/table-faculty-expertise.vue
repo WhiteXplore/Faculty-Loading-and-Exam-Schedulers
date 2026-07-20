@@ -104,6 +104,7 @@
                   }}
                 </th>
                 <th class="px-4 py-3 text-left w-[35%]">Course Description</th>
+                <th class="px-4 py-3 text-center w-[12%]">Course Semester</th>
                 <th class="px-4 py-3 text-center w-[12%]">Course Level</th>
                 <th class="px-4 py-3 text-center w-[12%]">Course Lecture</th>
                 <th class="px-4 py-3 text-center w-[12%]">Course Laboratory</th>
@@ -135,6 +136,9 @@
                     {{ user.course_code }} - {{ user.course_title }}
                   </td>
                   <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_semester }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
                     {{ user.course_level }}
                   </td>
                   <td class="px-4 py-3 truncate text-center">
@@ -164,6 +168,9 @@
                   </td>
                   <td class="px-4 py-3 truncate">
                     {{ user.course_title }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_semester }}
                   </td>
                   <td class="px-4 py-3 truncate text-center">
                     {{ user.course_level }}
@@ -385,6 +392,7 @@ import { mapState } from "pinia";
 import axios from "axios";
 import icon from "@/assets/icon.vue";
 import { toast } from "vue3-toastify";
+import { eventBus } from "@/bus/event-bus";
 export default {
   name: "FacultyExpertiseOverview",
   components: {
@@ -396,6 +404,9 @@ export default {
       itemsPerPage: 10,
       currentPage: 1,
       user: null,
+      activeSchoolYear: null,
+      stopEventBus: null,
+
       activeTab: "Expertise",
       tabs: [
         "Expertise",
@@ -482,6 +493,38 @@ export default {
 
       let expanded = [];
 
+      const activeSemester = Number(this.activeSchoolYear?.semester);
+
+      const curriculumCourses = (this.curriculum_courses || []).filter((cc) => {
+        if (!cc.curriculum || !cc.course) return false;
+
+        if (
+          Number(cc.curriculum.institute?.institute_id) !==
+          Number(this.user?.institute_id)
+        ) {
+          return false;
+        }
+
+        if (
+          Number(cc.curriculum.program?.program_id) !==
+          Number(this.user?.program_id)
+        ) {
+          return false;
+        }
+
+        if (
+          activeSemester &&
+          Number(cc.course.course_semester) !== activeSemester
+        ) {
+          return false;
+        }
+
+        return true;
+      });
+
+      const allowedCourseIds = new Set(
+        curriculumCourses.map((cc) => Number(cc.course.course_id)),
+      );
       // ===============================
       // PRIMARY
       // ===============================
@@ -489,7 +532,7 @@ export default {
         users.forEach((faculty) => {
           (faculty.expertise || []).forEach((e) => {
             if (!e.course || e.status !== "PRIMARY") return;
-
+            if (!allowedCourseIds.has(Number(e.course.course_id))) return;
             expanded.push({
               ...faculty,
               type: "PRIMARY",
@@ -521,6 +564,7 @@ export default {
               course_level: e.course.course_level,
               course_lec: e.course.course_lec,
               course_lab: e.course.course_lab,
+              course_semester: e.course.course_semester,
             });
           });
         });
@@ -533,6 +577,7 @@ export default {
         users.forEach((faculty) => {
           (faculty.expertise || []).forEach((e) => {
             if (!e.course || e.status !== "CROSS") return;
+
             expanded.push({
               ...faculty,
               type: "CROSS",
@@ -542,6 +587,7 @@ export default {
               course_level: e.course.course_level,
               course_lec: e.course.course_lec,
               course_lab: e.course.course_lab,
+              course_semester: e.course.course_semester,
             });
           });
         });
@@ -552,7 +598,7 @@ export default {
         expanded = [];
 
         const curriculumCourseIds = new Set(
-          (this.curriculum_courses || [])
+          curriculumCourses
             .filter(
               (cc) =>
                 Number(cc.curriculum?.program?.program_id) ===
@@ -590,6 +636,7 @@ export default {
               course_level: e.course.course_level,
               course_lec: e.course.course_lec,
               course_lab: e.course.course_lab,
+              course_semester: e.course.course_semester,
               type: "Cross Institute Faculty",
             });
           });
@@ -631,7 +678,7 @@ export default {
           });
 
         // Curriculum of the logged-in Program Chairperson only
-        const curriculumCourses = (this.curriculum_courses || [])
+        const availableCurriculumCourses = curriculumCourses
           .filter(
             (cc) =>
               Number(cc.curriculum?.program?.program_id) ===
@@ -648,7 +695,7 @@ export default {
               ),
           );
 
-        curriculumCourses.forEach((cc) => {
+        availableCurriculumCourses.forEach((cc) => {
           const courseId = Number(cc.course.course_id);
 
           // Already selected by current faculty
@@ -668,6 +715,7 @@ export default {
             curriculum: cc.curriculum,
             program: cc.curriculum.program,
             institute: cc.curriculum.institute,
+            course_semester: cc.course.course_semester,
             type: "Not Selected Expertise",
           });
         });
@@ -834,8 +882,25 @@ export default {
 
   async mounted() {
     await this.fetchUser();
+
+    // Get current active school year
+    this.activeSchoolYear = eventBus.data || null;
+
     await this.loadRawUsers();
     await this.loadCurriculumCourses();
+
+    // Listen for school year changes
+    this.stopEventBus = eventBus.on(async (newYear) => {
+      this.activeSchoolYear = { ...newYear };
+
+      await this.loadRawUsers();
+      await this.loadCurriculumCourses();
+    });
+  },
+  beforeUnmount() {
+    if (this.stopEventBus) {
+      this.stopEventBus();
+    }
   },
 };
 </script>
