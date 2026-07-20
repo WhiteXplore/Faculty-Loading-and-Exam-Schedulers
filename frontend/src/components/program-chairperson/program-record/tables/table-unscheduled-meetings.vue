@@ -34,29 +34,159 @@
         </div>
         <span class="text-sm">Per page</span>
       </div>
-
-      <!-- Search -->
-      <div class="search-wrapper">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Search course, program, SY..."
-          class="search-input"
-          @input="changePage(1)"
-        />
+      <div class="flex gap-2">
+        <!-- Admin Program Filter -->
         <div
-          class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
+          v-if="user.role === 'Admin'"
+          class="relative w-56"
+          ref="programDropdownRef"
         >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
+          <div
+            class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
           >
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
+            <!-- Icon -->
+            <div class="absolute left-3 text-defaultGreen">
+              <svg
+                class="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M4 7h16M4 12h16M4 17h16"
+                />
+              </svg>
+            </div>
+
+            <!-- Selected -->
+            <button
+              type="button"
+              @click="showProgramDropdown = !showProgramDropdown"
+              class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+            >
+              <span v-if="selectedProgram !== 'all'">
+                {{
+                  availablePrograms.find(
+                    (p) => Number(p.program_id) === Number(selectedProgram),
+                  )?.program_code
+                }}
+              </span>
+
+              <span v-else class="text-gray-600 font-light">
+                Select All Programs
+              </span>
+            </button>
+
+            <!-- Arrow -->
+            <button
+              type="button"
+              @click="showProgramDropdown = !showProgramDropdown"
+              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-defaultGreen"
+            >
+              <svg
+                class="h-4 w-4 transition-transform duration-200"
+                :class="{ 'rotate-180': showProgramDropdown }"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dropdown -->
+          <div
+            v-if="showProgramDropdown"
+            class="absolute z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+          >
+            <div class="border-b border-gray-100 px-4 py-3">
+              <p
+                class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+              >
+                Programs
+              </p>
+            </div>
+
+            <div class="max-h-[260px] overflow-y-auto p-1.5">
+              <!-- All -->
+              <button
+                @click="selectProgram('all')"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                :class="selectedProgram === 'all' ? 'bg-green-50' : ''"
+              >
+                <div>
+                  <p class="text-sm font-semibold text-gray-800">
+                    All Programs
+                  </p>
+                </div>
+              </button>
+
+              <!-- Programs -->
+              <button
+                v-for="program in availablePrograms"
+                :key="program.program_id"
+                @click="selectProgram(program.program_id)"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                :class="
+                  Number(selectedProgram) === Number(program.program_id)
+                    ? 'bg-green-50'
+                    : ''
+                "
+              >
+                <p class="text-sm font-semibold text-gray-800">
+                  {{ program.program_code }}
+                </p>
+
+                <svg
+                  v-if="Number(selectedProgram) === Number(program.program_id)"
+                  class="h-5 w-5 text-defaultGreen"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Search -->
+        <div class="search-wrapper">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search course, program, SY..."
+            class="search-input"
+            @input="changePage(1)"
+          />
+          <div
+            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </div>
         </div>
       </div>
     </div>
@@ -177,7 +307,7 @@
 <script>
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import axios from "axios";
-
+import { eventBus } from "@/bus/event-bus";
 export default {
   name: "UnscheduledMeetingTable",
 
@@ -187,6 +317,10 @@ export default {
       itemsPerPage: 10,
       searchQuery: "",
       user: {},
+      selectedProgram: "all",
+      stopEventBus: null,
+      activeSchoolYear: null,
+      showProgramDropdown: false,
     };
   },
 
@@ -194,19 +328,65 @@ export default {
     store() {
       return useFetchDataStore();
     },
+    availablePrograms() {
+      const programs = this.store.unscheduled_meetings
+        .map((item) => ({
+          program_id: item.program_id,
+          program_code: item.program_code,
+        }))
+        .filter(
+          (value, index, self) =>
+            index === self.findIndex((p) => p.program_id === value.program_id),
+        )
+        .sort((a, b) => a.program_code.localeCompare(b.program_code));
+
+      return programs;
+    },
 
     filteredData() {
-      const query = this.searchQuery.toLowerCase();
+      const query = this.searchQuery.trim().toLowerCase();
 
-      return this.store.unscheduled_meetings
-        .filter((item) => item.program_id === this.user.program_id)
-        .filter((item) => {
-          return (
-            item.course_code?.toLowerCase().includes(query) ||
-            item.program_name?.toLowerCase().includes(query) ||
-            item.school_year?.toLowerCase().includes(query)
-          );
-        });
+      return (
+        this.store.unscheduled_meetings
+          // Role Filter
+          .filter((item) => {
+            // Admin
+            if (this.user.role === "Admin") {
+              if (this.selectedProgram === "all") return true;
+
+              return Number(item.program_id) === Number(this.selectedProgram);
+            }
+
+            // Everyone else
+            return Number(item.program_id) === Number(this.user.program_id);
+          })
+
+          // Active School Year
+          .filter((item) => {
+            if (!this.activeSchoolYear) return true;
+
+            return (
+              String(item.school_year) ===
+                String(this.activeSchoolYear.school_year_name) &&
+              String(item.semester) === String(this.activeSchoolYear.semester)
+            );
+          })
+          // Search
+          .filter((item) => {
+            if (!query) return true;
+
+            return (
+              item.course_code?.toLowerCase().includes(query) ||
+              item.program_code?.toLowerCase().includes(query) ||
+              item.school_year?.toLowerCase().includes(query) ||
+              item.reason?.toLowerCase().includes(query) ||
+              item.type?.toLowerCase().includes(query)
+            );
+          })
+
+          // Sort newest first
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      );
     },
 
     paginatedData() {
@@ -256,6 +436,20 @@ export default {
   },
 
   methods: {
+    selectProgram(programId) {
+      this.selectedProgram = programId;
+      this.showProgramDropdown = false;
+      this.changePage(1);
+    },
+
+    handleClickOutside(event) {
+      if (
+        this.$refs.programDropdownRef &&
+        !this.$refs.programDropdownRef.contains(event.target)
+      ) {
+        this.showProgramDropdown = false;
+      }
+    },
     changePage(page) {
       this.currentPage = Math.max(1, Math.min(page, this.totalPages));
     },
@@ -286,6 +480,26 @@ export default {
   async mounted() {
     await this.fetchUser();
     await this.store.fetchUnscheduledMeetings();
+
+    // Get the current active school year immediately
+    this.activeSchoolYear = eventBus.data || null;
+
+    // Listen for changes
+    this.stopEventBus = eventBus.on((newYear) => {
+      if (!newYear) return;
+
+      console.log("NEW ACTIVE YEAR:", newYear);
+
+      this.activeSchoolYear = { ...newYear };
+      this.currentPage = 1;
+    });
+    document.addEventListener("click", this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside);
+    if (this.stopEventBus) {
+      this.stopEventBus();
+    }
   },
 };
 </script>

@@ -412,8 +412,9 @@ export default {
         "Expertise",
         "Other Expertise",
         "Cross Expertise",
-        "Not Selected Expertise",
+
         "Cross Institute Faculty",
+        "Not Selected Expertise",
       ],
       allCourses: [],
       assignDialog: false,
@@ -426,7 +427,11 @@ export default {
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["rawusers", "curriculum_courses"]),
+    ...mapState(useFetchDataStore, [
+      "rawusers",
+      "curriculum_courses",
+      "school_years",
+    ]),
     filteredInstructors() {
       let users = this.rawusers || [];
 
@@ -542,6 +547,7 @@ export default {
               course_level: e.course.course_level,
               course_lec: e.course.course_lec,
               course_lab: e.course.course_lab,
+              course_semester: e.course.course_semester,
             });
           });
         });
@@ -808,6 +814,20 @@ export default {
   },
 
   methods: {
+    async loadActiveSchoolYear() {
+      const store = useFetchDataStore();
+
+      await store.fetchSchoolYears();
+
+      // Get the latest active school year
+      const latestActive = store.school_years
+        .filter((sy) => sy.is_active)
+        .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+
+      this.activeSchoolYear = latestActive || null;
+
+      console.log("Resolved Active School Year:", this.activeSchoolYear);
+    },
     openAssignModal(course) {
       this.selectedCourse = course;
       this.assignDialog = true;
@@ -883,16 +903,21 @@ export default {
   async mounted() {
     await this.fetchUser();
 
-    // Get current active school year
-    this.activeSchoolYear = eventBus.data || null;
+    // Load the latest active school year from the database
+    await this.loadActiveSchoolYear();
 
+    // Initial load
     await this.loadRawUsers();
     await this.loadCurriculumCourses();
 
     // Listen for school year changes
     this.stopEventBus = eventBus.on(async (newYear) => {
-      this.activeSchoolYear = { ...newYear };
+      console.log("EventBus Data:", newYear);
 
+      // Always resolve the latest active school year from the database
+      await this.loadActiveSchoolYear();
+
+      // Refresh data
       await this.loadRawUsers();
       await this.loadCurriculumCourses();
     });
