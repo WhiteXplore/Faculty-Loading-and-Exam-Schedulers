@@ -103,8 +103,18 @@
                       : "Course Code"
                   }}
                 </th>
-                <th class="px-4 py-3 text-left w-[40%]">Course Description</th>
-                <th class="px-4 py-3 text-left w-[25%]">Program</th>
+                <th class="px-4 py-3 text-left w-[35%]">Course Description</th>
+                <th class="px-4 py-3 text-center w-[12%]">Course Semester</th>
+                <th class="px-4 py-3 text-center w-[12%]">Course Level</th>
+                <th class="px-4 py-3 text-center w-[12%]">Course Lecture</th>
+                <th class="px-4 py-3 text-center w-[12%]">Course Laboratory</th>
+                <th class="px-4 py-3 text-left w-[15%]">Program</th>
+                <th
+                  v-if="activeTab === 'Not Selected Expertise'"
+                  class="px-4 py-3 text-center w-[15%]"
+                >
+                  Assign
+                </th>
               </tr>
             </thead>
 
@@ -125,8 +135,20 @@
                   <td class="px-4 py-3 truncate">
                     {{ user.course_code }} - {{ user.course_title }}
                   </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_semester }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_level }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_lec }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_lab }}
+                  </td>
                   <td class="px-4 py-3 truncate">
-                    {{ user.program?.program_name || "-" }}
+                    {{ user.program?.program_code || "-" }}
                   </td>
                 </tr>
               </template>
@@ -147,8 +169,28 @@
                   <td class="px-4 py-3 truncate">
                     {{ user.course_title }}
                   </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_semester }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_level }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_lec }}
+                  </td>
+                  <td class="px-4 py-3 truncate text-center">
+                    {{ user.course_lab }}
+                  </td>
                   <td class="px-4 py-3 truncate">
                     {{ user.curriculum?.program?.program_code || "-" }}
+                  </td>
+                  <td class="px-4 py-3 flex justify-center">
+                    <button
+                      @click="openAssignModal(user)"
+                      class="px-3 py-1.5 bg-defaultGreen text-white rounded-lg hover:bg-green-700 transition text-xs font-medium"
+                    >
+                      Assign
+                    </button>
                   </td>
                 </tr>
               </template>
@@ -199,6 +241,147 @@
           </button>
         </div>
       </div>
+
+      <!-- Assign Instructor Modal -->
+      <div v-if="assignDialog" class="modal-overlay">
+        <div class="modal-wrapper">
+          <div class="modal-container">
+            <!-- Header -->
+            <div class="modal-header">
+              <div class="flex items-center gap-3">
+                <div class="glass-container">
+                  <icon name="circle-add2" class="text-white" />
+                </div>
+
+                <div>
+                  <h2 class="text-lg font-semibold text-white">
+                    Assign Instructor
+                  </h2>
+
+                  <p class="text-xs text-green-100">
+                    Assign an instructor to the selected course.
+                  </p>
+                </div>
+              </div>
+
+              <icon
+                name="circle-close3"
+                @click="closeAssignModal"
+                class="close-button-header"
+              />
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body w-[28vw]">
+              <!-- Selected Course -->
+              <div
+                class="rounded-xl border border-gray-100 p-4 bg-white shadow-sm mb-5"
+              >
+                <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">
+                  Selected Course
+                </div>
+
+                <div class="font-semibold text-defaultGreen text-base">
+                  {{ selectedCourse.course_code }}
+                </div>
+
+                <div class="text-sm text-gray-600 mt-1">
+                  {{ selectedCourse.course_title }}
+                </div>
+
+                <div class="text-xs text-gray-400 mt-2">
+                  {{ selectedCourse.program?.program_code }}
+                </div>
+              </div>
+
+              <!-- Assign -->
+              <div class="rounded-xl border border-gray-100 p-4 bg-white">
+                <div class="dropdown-container" ref="instructorDropdown">
+                  <label class="dropdown-label"> Instructor: </label>
+
+                  <div class="dropdown-wrapper">
+                    <input
+                      v-model="searchInstructorQuery"
+                      type="text"
+                      placeholder="Search instructor..."
+                      class="dropdown-input"
+                      @focus="showInstructorDropdown = true"
+                      @input="showInstructorDropdown = true"
+                    />
+
+                    <div
+                      v-if="showInstructorDropdown"
+                      class="dropdown-menu"
+                      @mouseleave="showInstructorDropdown = false"
+                    >
+                      <template v-if="filteredInstructors.length">
+                        <div
+                          v-for="instr in filteredInstructors"
+                          :key="instr.faculty_id"
+                          :class="[
+                            'dropdown-item border-b',
+                            instr.overloadPrep
+                              ? 'opacity-50 cursor-not-allowed bg-gray-100'
+                              : 'cursor-pointer hover:bg-green-50',
+                          ]"
+                          @mousedown.prevent="
+                            !instr.overloadPrep && selectInstructor(instr)
+                          "
+                        >
+                          <div class="flex justify-between items-center">
+                            <div class="font-medium">
+                              {{ instr.faculty_name }}
+                            </div>
+                            <span
+                              v-if="instr.overloadPrep"
+                              class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-semibold"
+                            >
+                              MAX PREP
+                            </span>
+
+                            <span
+                              v-else
+                              class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px]"
+                            >
+                              {{ instr.prepCount }}/4 Prep
+                            </span>
+                          </div>
+
+                          <div class="text-[11px] text-gray-500 mb-1">
+                            {{ instr.program?.program_code }}
+                          </div>
+
+                          <div
+                            v-for="course in instr.expertiseCourses"
+                            :key="course.course_code"
+                            class="text-[11px] text-gray-600 ml-2"
+                          >
+                            • {{ course.course_code }}
+                          </div>
+                        </div>
+                      </template>
+
+                      <div v-else class="dropdown-empty">
+                        No instructor found
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Footer -->
+              <div class="modal-footer mt-6">
+                <button @click="closeAssignModal" class="btn-cancel">
+                  Cancel
+                </button>
+
+                <button @click="confirmAssign" class="btn-save">
+                  Assign Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -207,165 +390,377 @@
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import { mapState } from "pinia";
 import axios from "axios";
-
+import icon from "@/assets/icon.vue";
+import { toast } from "vue3-toastify";
+import { eventBus } from "@/bus/event-bus";
 export default {
   name: "FacultyExpertiseOverview",
-
+  components: {
+    icon,
+  },
   data() {
     return {
       searchQuery: "",
       itemsPerPage: 10,
       currentPage: 1,
       user: null,
+      activeSchoolYear: null,
+      stopEventBus: null,
+
       activeTab: "Expertise",
       tabs: [
         "Expertise",
         "Other Expertise",
         "Cross Expertise",
         "Not Selected Expertise",
+        "Cross Institute Faculty",
       ],
       allCourses: [],
+      assignDialog: false,
+      selectedCourse: null,
+
+      searchInstructorQuery: "",
+      showInstructorDropdown: false,
+      selectedInstructor: null,
     };
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["rawusers"]),
+    ...mapState(useFetchDataStore, ["rawusers", "curriculum_courses"]),
+    filteredInstructors() {
+      let users = this.rawusers || [];
 
+      users = users.filter((u) => u.role === "Faculty");
+
+      if (this.user?.role === "Program Chairperson") {
+        users = users.filter(
+          (u) =>
+            Number(u.institute?.institute_id) ===
+              Number(this.user.institute_id) &&
+            Number(u.program?.program_id) === Number(this.user.program_id),
+        );
+      }
+
+      const keyword = this.searchInstructorQuery.toLowerCase();
+
+      return users
+        .filter((u) =>
+          `${u.first_name} ${u.last_name}`.toLowerCase().includes(keyword),
+        )
+        .map((u) => {
+          const expertiseCourses = (u.expertise || [])
+            .filter((e) => e.course)
+            .map((e) => ({
+              course_code: e.course.course_code,
+              course_title: e.course.course_title,
+              status: e.status,
+            }));
+
+          return {
+            ...u,
+            faculty_id: u.id,
+            faculty_name: `${u.first_name} ${u.last_name}`,
+
+            expertiseCourses,
+            prepCount: expertiseCourses.length,
+            overloadPrep: expertiseCourses.length >= 4,
+          };
+        });
+    },
     filteredUsers() {
       let users = this.rawusers || [];
-      const query = this.searchQuery.toLowerCase();
+      const query = this.searchQuery.trim().toLowerCase();
 
-      // ✅ Filter only Faculty & Program Chairperson
+      // ===============================
+      // Filter Faculty
+      // ===============================
       users = users.filter(
         (u) => u.role === "Faculty" || u.role === "Program Chairperson",
       );
 
-      // ✅ Safe filtering by logged-in user
-      // ✅ Filter according to the logged-in Program Chairperson
-      if (this.user) {
-        if (this.user.role === "Program Chairperson") {
-          users = users.filter(
-            (u) =>
-              u.role === "Faculty" &&
-              u.institute?.institute_id === this.user.institute_id &&
-              u.program?.program_id === this.user.program_id,
-          );
-        }
+      // ===============================
+      // Program Chairperson Filter
+      // ===============================
+      if (this.user?.role === "Program Chairperson") {
+        users = users.filter(
+          (u) =>
+            u.role === "Faculty" &&
+            Number(u.institute?.institute_id) ===
+              Number(this.user.institute_id) &&
+            Number(u.program?.program_id) === Number(this.user.program_id),
+        );
       }
 
       let expanded = [];
 
+      const activeSemester = Number(this.activeSchoolYear?.semester);
+
+      const curriculumCourses = (this.curriculum_courses || []).filter((cc) => {
+        if (!cc.curriculum || !cc.course) return false;
+
+        if (
+          Number(cc.curriculum.institute?.institute_id) !==
+          Number(this.user?.institute_id)
+        ) {
+          return false;
+        }
+
+        if (
+          Number(cc.curriculum.program?.program_id) !==
+          Number(this.user?.program_id)
+        ) {
+          return false;
+        }
+
+        if (
+          activeSemester &&
+          Number(cc.course.course_semester) !== activeSemester
+        ) {
+          return false;
+        }
+
+        return true;
+      });
+
+      const allowedCourseIds = new Set(
+        curriculumCourses.map((cc) => Number(cc.course.course_id)),
+      );
       // ===============================
-      // 🔹 EXPERTISE TAB
+      // PRIMARY
       // ===============================
       if (this.activeTab === "Expertise") {
-        users.forEach((u) => {
-          (u.expertise || []).forEach((e) => {
-            if (!e?.course) return;
-            if (e.status !== "PRIMARY") return;
-
+        users.forEach((faculty) => {
+          (faculty.expertise || []).forEach((e) => {
+            if (!e.course || e.status !== "PRIMARY") return;
+            if (!allowedCourseIds.has(Number(e.course.course_id))) return;
             expanded.push({
-              ...u,
-              type: "Expertise",
-              course_id: e.course.course_id,
+              ...faculty,
+              type: "PRIMARY",
+              course_id: Number(e.course.course_id),
               course_code: e.course.course_code,
               course_title: e.course.course_title,
+              course_level: e.course.course_level,
+              course_lec: e.course.course_lec,
+              course_lab: e.course.course_lab,
             });
           });
         });
       }
+
       // ===============================
-      // 🔹 OTHER EXPERTISE TAB
+      // OTHER
       // ===============================
       if (this.activeTab === "Other Expertise") {
-        users.forEach((u) => {
-          (u.expertise || []).forEach((e) => {
-            if (!e?.course) return;
-            if (e.status !== "OTHER") return;
+        users.forEach((faculty) => {
+          (faculty.expertise || []).forEach((e) => {
+            if (!e.course || e.status !== "OTHER") return;
 
             expanded.push({
-              ...u,
-              type: "Other Expertise",
-              course_id: e.course.course_id,
+              ...faculty,
+              type: "OTHER",
+              course_id: Number(e.course.course_id),
               course_code: e.course.course_code,
               course_title: e.course.course_title,
+              course_level: e.course.course_level,
+              course_lec: e.course.course_lec,
+              course_lab: e.course.course_lab,
+              course_semester: e.course.course_semester,
             });
           });
         });
       }
 
       // ===============================
-      // 🔹 CROSS EXPERTISE TAB
+      // CROSS
       // ===============================
       if (this.activeTab === "Cross Expertise") {
-        users.forEach((u) => {
-          (u.expertise || []).forEach((e) => {
-            if (!e?.course) return;
-            if (e.status !== "CROSS") return;
+        users.forEach((faculty) => {
+          (faculty.expertise || []).forEach((e) => {
+            if (!e.course || e.status !== "CROSS") return;
 
             expanded.push({
-              ...u,
-              type: "Cross Expertise",
-              course_id: e.course.course_id,
+              ...faculty,
+              type: "CROSS",
+              course_id: Number(e.course.course_id),
               course_code: e.course.course_code,
               course_title: e.course.course_title,
+              course_level: e.course.course_level,
+              course_lec: e.course.course_lec,
+              course_lab: e.course.course_lab,
+              course_semester: e.course.course_semester,
+            });
+          });
+        });
+      } // ===============================
+      // 🔹 Cross INSTITUTE FACULTY
+      // ===============================
+      if (this.activeTab === "Cross Institute Faculty") {
+        expanded = [];
+
+        const curriculumCourseIds = new Set(
+          curriculumCourses
+            .filter(
+              (cc) =>
+                Number(cc.curriculum?.program?.program_id) ===
+                  Number(this.user.program_id) &&
+                Number(cc.curriculum?.institute?.institute_id) ===
+                  Number(this.user.institute_id),
+            )
+            .map((cc) => Number(cc.course.course_id)),
+        );
+
+        const allFaculty = (this.rawusers || []).filter(
+          (u) => u.role === "Faculty",
+        );
+
+        allFaculty.forEach((faculty) => {
+          const isCurrentProgram =
+            Number(faculty.institute?.institute_id) ===
+              Number(this.user.institute_id) &&
+            Number(faculty.program?.program_id) ===
+              Number(this.user.program_id);
+
+          // Skip faculty from the current program
+          if (isCurrentProgram) return;
+
+          (faculty.expertise || []).forEach((e) => {
+            if (!e.course) return;
+
+            if (!curriculumCourseIds.has(Number(e.course.course_id))) return;
+
+            expanded.push({
+              ...faculty,
+              course_id: Number(e.course.course_id),
+              course_code: e.course.course_code,
+              course_title: e.course.course_title,
+              course_level: e.course.course_level,
+              course_lec: e.course.course_lec,
+              course_lab: e.course.course_lab,
+              course_semester: e.course.course_semester,
+              type: "Cross Institute Faculty",
             });
           });
         });
       }
-
       // ===============================
       // 🔹 NOT SELECTED EXPERTISE
       // ===============================
       if (this.activeTab === "Not Selected Expertise") {
-        const selected = new Set();
+        expanded = [];
 
-        users.forEach((u) => {
-          (u.expertise || []).forEach((e) => {
-            if (!e?.course) return;
+        // Courses selected by faculty in the CURRENT institute/program
+        const currentSelectedCourseIds = new Set();
 
-            if (e.status === "PRIMARY" || e.status === "OTHER") {
-              selected.add(e.course.course_id);
-            }
+        // Courses selected by faculty from OTHER institutes/programs
+        const otherInstituteCourseIds = new Set();
+
+        // Check every faculty
+        (this.rawusers || [])
+          .filter((u) => u.role === "Faculty")
+          .forEach((faculty) => {
+            const isCurrentProgram =
+              Number(faculty.institute?.institute_id) ===
+                Number(this.user.institute_id) &&
+              Number(faculty.program?.program_id) ===
+                Number(this.user.program_id);
+
+            (faculty.expertise || []).forEach((e) => {
+              if (!e.course?.course_id) return;
+
+              const courseId = Number(e.course.course_id);
+
+              if (isCurrentProgram) {
+                currentSelectedCourseIds.add(courseId);
+              } else {
+                otherInstituteCourseIds.add(courseId);
+              }
+            });
+          });
+
+        // Curriculum of the logged-in Program Chairperson only
+        const availableCurriculumCourses = curriculumCourses
+          .filter(
+            (cc) =>
+              Number(cc.curriculum?.program?.program_id) ===
+                Number(this.user.program_id) &&
+              Number(cc.curriculum?.institute?.institute_id) ===
+                Number(this.user.institute_id),
+          )
+          .filter(
+            (cc, index, self) =>
+              index ===
+              self.findIndex(
+                (x) =>
+                  Number(x.course.course_id) === Number(cc.course.course_id),
+              ),
+          );
+
+        availableCurriculumCourses.forEach((cc) => {
+          const courseId = Number(cc.course.course_id);
+
+          // Already selected by current faculty
+          if (currentSelectedCourseIds.has(courseId)) return;
+
+          // Selected by Cross institute/program
+          if (otherInstituteCourseIds.has(courseId)) return;
+
+          expanded.push({
+            curriculum_course_id: cc.curriculum_course_id,
+            course_id: courseId,
+            course_code: cc.course.course_code,
+            course_title: cc.course.course_title,
+            course_level: cc.course.course_level,
+            course_lec: cc.course.course_lec,
+            course_lab: cc.course.course_lab,
+            curriculum: cc.curriculum,
+            program: cc.curriculum.program,
+            institute: cc.curriculum.institute,
+            course_semester: cc.course.course_semester,
+            type: "Not Selected Expertise",
           });
         });
-
-        expanded = (this.allCourses || [])
-          .filter((c) => {
-            if (!c?.curriculum?.program) return false;
-
-            const programMatch =
-              c.curriculum.program.program_id === this.user.program_id;
-
-            const instituteMatch =
-              c.curriculum.program.institute?.institute_id ===
-              this.user.institute_id;
-
-            return !selected.has(c.course_id) && programMatch && instituteMatch;
-          })
-          .map((c) => ({
-            ...c,
-            type: "Not Selected Expertise",
-          }));
       }
       // ===============================
-      // 🔍 SEARCH FILTER
+      // GENERAL SEARCH
       // ===============================
       if (query) {
-        expanded = expanded.filter((u) => {
-          if (this.activeTab === "Not Selected Expertise") {
-            return (
-              u.course_code?.toLowerCase().includes(query) ||
-              u.course_title?.toLowerCase().includes(query)
-            );
-          } else {
-            return (
-              u.first_name?.toLowerCase().includes(query) ||
-              u.last_name?.toLowerCase().includes(query) ||
-              u.program?.program_name?.toLowerCase().includes(query) ||
-              u.course_code?.toLowerCase().includes(query)
-            );
-          }
+        expanded = expanded.filter((item) => {
+          const searchable = [
+            // Faculty
+            item.first_name,
+            item.last_name,
+            `${item.first_name || ""} ${item.last_name || ""}`,
+            item.email,
+            item.role,
+
+            // Course
+            item.course_code,
+            item.course_title,
+
+            // Program
+            item.program?.program_name,
+            item.program?.program_code,
+            item.curriculum?.program?.program_name,
+            item.curriculum?.program?.program_code,
+
+            // Institute
+            item.institute?.institute_name,
+            item.institute?.institute_code,
+            item.curriculum?.institute?.institute_name,
+            item.curriculum?.institute?.institute_code,
+
+            // Expertise Type
+            item.type,
+
+            // Curriculum
+            item.curriculum?.curriculum_name,
+            item.curriculum?.curriculum_code,
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+          return searchable.includes(query);
         });
       }
 
@@ -413,6 +808,53 @@ export default {
   },
 
   methods: {
+    openAssignModal(course) {
+      this.selectedCourse = course;
+      this.assignDialog = true;
+
+      this.searchInstructorQuery = "";
+      this.selectedInstructor = null;
+      this.showInstructorDropdown = false;
+    },
+
+    closeAssignModal() {
+      this.assignDialog = false;
+    },
+
+    selectInstructor(instructor) {
+      this.selectedInstructor = instructor;
+      this.searchInstructorQuery = instructor.faculty_name;
+      this.showInstructorDropdown = false;
+    },
+
+    async confirmAssign() {
+      if (!this.selectedInstructor) {
+        alert("Please select an instructor.");
+        return;
+      }
+
+      try {
+        await axios.post(
+          process.env.VUE_APP_API_BASE_URL + "/users/assign-expertise",
+          {
+            user_id: this.selectedInstructor.id,
+            course_id: this.selectedCourse.course_id,
+          },
+          {
+            withCredentials: true,
+          },
+        );
+
+        await this.loadRawUsers(); // Refresh the expertise list
+        toast.success("Assigning of expertise successfully!");
+        this.closeAssignModal();
+      } catch (err) {
+        alert(err.response?.data?.message || "Failed to assign expertise.");
+      }
+    },
+    changePage(page) {
+      this.currentPage = Math.max(1, Math.min(Number(page), this.totalPages));
+    },
     async fetchUser() {
       try {
         const res = await axios.get(
@@ -432,26 +874,33 @@ export default {
       await store.fetchRawUsers();
     },
 
-    async fetchAllCourses() {
-      try {
-        const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/courses/get-courses",
-        );
-        this.allCourses = res.data;
-      } catch (err) {
-        console.error("Error fetching courses:", err);
-      }
-    },
-
-    changePage(page) {
-      this.currentPage = Math.max(1, Math.min(page, this.totalPages));
+    async loadCurriculumCourses() {
+      const store = useFetchDataStore();
+      await store.fetchCurriculumCourses();
     },
   },
 
   async mounted() {
     await this.fetchUser();
+
+    // Get current active school year
+    this.activeSchoolYear = eventBus.data || null;
+
     await this.loadRawUsers();
-    await this.fetchAllCourses();
+    await this.loadCurriculumCourses();
+
+    // Listen for school year changes
+    this.stopEventBus = eventBus.on(async (newYear) => {
+      this.activeSchoolYear = { ...newYear };
+
+      await this.loadRawUsers();
+      await this.loadCurriculumCourses();
+    });
+  },
+  beforeUnmount() {
+    if (this.stopEventBus) {
+      this.stopEventBus();
+    }
   },
 };
 </script>

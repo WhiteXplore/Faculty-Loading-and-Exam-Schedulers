@@ -49,6 +49,48 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  async assignExpertise(body: any) {
+    const { user_id, course_id } = body;
+
+    const user = await this.userRepository.findOne({
+      where: { id: Number(user_id) },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const course = await this.courseRepository.findOne({
+      where: { course_id: Number(course_id) },
+    });
+
+    if (!course) {
+      throw new NotFoundException('Course not found');
+    }
+
+    const existing = await this.userExpertiseRepository.findOne({
+      where: {
+        user: { id: Number(user_id) },
+        course: { course_id: Number(course_id) },
+      },
+      relations: ['user', 'course'],
+    });
+
+    if (existing) {
+      throw new BadRequestException(
+        'This instructor is already assigned to this course.',
+      );
+    }
+
+    const expertise = this.userExpertiseRepository.create({
+      user,
+      course,
+      status: 'PRIMARY', // default
+    });
+
+    return await this.userExpertiseRepository.save(expertise);
+  }
+
   async findAll(): Promise<User_Accounts[]> {
     return await this.userRepository.find({
       relations: [

@@ -347,6 +347,17 @@ export default {
             ],
           },
           {
+            // title: "Documents",
+            title: "",
+            items: [
+              {
+                icon: "prospectus",
+                name: "Pre-Assessment",
+                route: "/pre-assessment",
+              },
+            ],
+          },
+          {
             // title: "Accounts",
             title: "",
 
