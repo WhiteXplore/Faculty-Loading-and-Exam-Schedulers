@@ -21,6 +21,10 @@ import * as XLSX from 'xlsx';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post('assign-expertise')
+  async assignExpertise(@Body() body: any) {
+    return this.userService.assignExpertise(body);
+  }
   // CREATE USER
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {

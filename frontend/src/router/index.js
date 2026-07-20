@@ -136,6 +136,12 @@ const routes = [
         meta: { requiresAuth: true, role: "Admin" },
       },
       {
+        path: "/pre-assessment",
+        name: "pre-assessment",
+        component: () => import("@/components/admin/records/PreAssessment.vue"),
+        meta: { requiresAuth: true, role: "Admin" },
+      },
+      {
         path: "/view-curriculum-offers/:institute_id",
         name: "view-curriculum-offers",
         component: () =>
@@ -165,7 +171,10 @@ const routes = [
           import(
             "../components/global-dashboard-layout/dashboard/dashboard.vue"
           ),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
       },
       {
         path: "/program-chair-courses",
@@ -178,14 +187,20 @@ const routes = [
         path: "/program-chair-faculty-list",
         name: "program-chair-faculty-list",
         component: () => import("@/components/admin/records/instructor.vue"),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
       },
       {
         path: "/program-chair-assigned-courses",
         name: "program-chair-assigned-courses",
         component: () =>
           import("@/components/admin/records/AssignedCourse.vue"),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
         children: [],
       },
       {
@@ -202,7 +217,10 @@ const routes = [
           import(
             "@/components/program-chairperson/program-record/YearSection.vue"
           ),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
         children: [],
       },
       {
@@ -212,7 +230,10 @@ const routes = [
           import(
             "@/components/program-chairperson/program-record/ClassAssignedCoursesOverview.vue"
           ),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
         children: [],
       },
 
@@ -220,7 +241,10 @@ const routes = [
         path: "/program-chair-faculty-loads",
         name: "program-chair-faculty-loads",
         component: () => import("@/components/admin/records/FacultyLoad.vue"),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
         children: [],
       },
       {
@@ -230,7 +254,10 @@ const routes = [
           import(
             "@/components/program-chairperson/program-record/FacultyLoads.vue"
           ),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
       },
       {
         path: "/faculty-expertise",
@@ -239,7 +266,10 @@ const routes = [
           import(
             "@/components/program-chairperson/program-record/FacultyExpertise.vue"
           ),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
       },
       {
         path: "/program-final-schedules",
@@ -248,7 +278,10 @@ const routes = [
           import(
             "@/components/program-chairperson/program-record/FinalSchedules.vue"
           ),
-        meta: { requiresAuth: true, roles: ["Program Chairperson", "Department Chairperson"] },
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
       },
     ],
   },
@@ -274,7 +307,7 @@ const routes = [
           import("../components/faculty/faculty-records/loading.vue"),
         meta: { requiresAuth: true, role: "Faculty" },
       },
-       {
+      {
         path: "/faculty-preference",
         name: "faculty-preference",
         component: () =>

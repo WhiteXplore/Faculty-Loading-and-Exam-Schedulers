@@ -1,15 +1,16 @@
 <template>
   <div class="modal-overlay">
     <div class="rounded-[16px] shadow-lg animate-slideUp">
-      <form @submit.prevent="submitExpertise" class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg ">
-
-
+      <form
+        @submit.prevent="submitExpertise"
+        class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg"
+      >
         <!-- Header -->
         <div class="modal-header">
           <div class="flex items-center gap-3">
             <!-- Icon -->
             <div class="glass-container">
-              <icon name="user-account3" class="text-white " />
+              <icon name="user-account3" class="text-white" />
             </div>
 
             <!-- Title -->
@@ -24,23 +25,39 @@
             </div>
           </div>
 
-          <icon :name="'circle-close3'" @click="$emit('close')" class="close-button-header" />
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
-        <div class="p-3 w-[34vw] space-y-4">
+        <div class="p-4 w-[34vw] space-y-4">
           <!-- TABS -->
           <div class="grid grid-cols-2 bg-gray-100 p-1 rounded-xl">
-            <button type="button" @click="switchTab('assign')" class="py-3 rounded-lg font-semibold transition" :class="activeTab === 'assign'
-              ? 'bg-defaultGreen text-white shadow'
-              : 'text-gray-600 hover:text-defaultGreen'
-              ">
+            <button
+              type="button"
+              @click="switchTab('assign')"
+              class="py-3 rounded-lg font-semibold transition"
+              :class="
+                activeTab === 'assign'
+                  ? 'bg-defaultGreen text-white shadow'
+                  : 'text-gray-600 hover:text-defaultGreen'
+              "
+            >
               Expertise Assignment
             </button>
 
-            <button type="button" @click="switchTab('cross')" class="py-3 rounded-lg font-semibold transition" :class="activeTab === 'cross'
-              ? 'bg-defaultGreen text-white shadow'
-              : 'text-gray-600 hover:text-defaultGreen'
-              ">
-              Cross Assign
+            <button
+              type="button"
+              @click="switchTab('cross')"
+              class="py-3 rounded-lg font-semibold transition"
+              :class="
+                activeTab === 'cross'
+                  ? 'bg-defaultGreen text-white shadow'
+                  : 'text-gray-600 hover:text-defaultGreen'
+              "
+            >
+              Cross Assignment
             </button>
           </div>
 
@@ -52,8 +69,10 @@
             <div class="grid grid-cols-2 gap-3">
               <div class="space-y-2">
                 <label class="font-semibold text-gray-700">Year Level</label>
-                <select v-model="selectedYearLevel"
-                  class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20">
+                <select
+                  v-model="selectedYearLevel"
+                  class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
+                >
                   <option v-for="y in [1, 2, 3, 4]" :key="y" :value="y">
                     {{ getYearLevelName(y) }}
                   </option>
@@ -62,8 +81,10 @@
 
               <div class="space-y-2">
                 <label class="font-semibold text-gray-700">Semester</label>
-                <select v-model="selectedSemester"
-                  class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20">
+                <select
+                  v-model="selectedSemester"
+                  class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
+                >
                   <option v-for="s in [1, 2, 3]" :key="s" :value="s">
                     {{ getSemesterName(s) }}
                   </option>
@@ -75,32 +96,53 @@
             <div class="relative space-y-2">
               <label class="font-semibold text-gray-700">Expertise</label>
 
-              <input v-model="searchQuery" @focus="dropdownOpen = true" placeholder="Search courses..."
-                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20" />
+              <input
+                v-model="searchQuery"
+                @focus="dropdownOpen = true"
+                placeholder="Search courses..."
+                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
+              />
 
               <p v-if="noStrictAssignCourses" class="text-xs text-orange-600">
-                No matching courses for this semester/year. Showing fallback data.
+                No matching courses for this semester/year. Showing fallback
+                data.
               </p>
 
-              <ul v-if="dropdownOpen && filteredCourses.length" @mouseleave="dropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg">
-                <li v-for="course in filteredCourses" :key="course.course_id"
+              <ul
+                v-if="dropdownOpen && filteredCourses.length"
+                @mouseleave="dropdownOpen = false"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg"
+              >
+                <li
+                  v-for="course in filteredCourses"
+                  :key="course.course_id"
                   @click="!isAlreadySelected(course) && addCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer" :class="isAlreadySelected(course)
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'hover:bg-green-100'
-                    ">
-                  <span>{{ course.course_code }} - {{ course.course_title }}</span>
+                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
+                  :class="
+                    isAlreadySelected(course)
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'hover:bg-green-100'
+                  "
+                >
+                  <span
+                    >{{ course.course_code }} - {{ course.course_title }}</span
+                  >
 
-                  <span v-if="isAlreadySelected(course)" class="text-[10px] bg-green-200 px-2 rounded">
+                  <span
+                    v-if="isAlreadySelected(course)"
+                    class="text-[10px] bg-green-200 px-2 rounded"
+                  >
                     Selected
                   </span>
                 </li>
               </ul>
 
               <div class="mt-3 space-y-1">
-                <div v-for="(item, i) in currentSemesterData.expertise" :key="`${item.course_id}-primary-${i}`"
-                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg">
+                <div
+                  v-for="(item, i) in currentSemesterData.expertise"
+                  :key="`${item.course_id}-primary-${i}`"
+                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg"
+                >
                   <span>{{ item.course_code }} — {{ item.course_title }}</span>
                   <button type="button" @click="removeCourse(i)">✕</button>
                 </div>
@@ -111,28 +153,48 @@
             <div class="relative space-y-2">
               <label class="font-semibold text-gray-700">Other Expertise</label>
 
-              <input v-model="otherSearchQuery" @focus="otherDropdownOpen = true" placeholder="Search courses..."
-                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20" />
+              <input
+                v-model="otherSearchQuery"
+                @focus="otherDropdownOpen = true"
+                placeholder="Search courses..."
+                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
+              />
 
-              <ul v-if="otherDropdownOpen && filteredOtherCourses.length" @mouseleave="otherDropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg">
-                <li v-for="course in filteredOtherCourses" :key="course.course_id"
+              <ul
+                v-if="otherDropdownOpen && filteredOtherCourses.length"
+                @mouseleave="otherDropdownOpen = false"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg"
+              >
+                <li
+                  v-for="course in filteredOtherCourses"
+                  :key="course.course_id"
                   @click="!isAlreadySelected(course) && addOtherCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer" :class="isAlreadySelected(course)
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'hover:bg-green-100'
-                    ">
-                  <span>{{ course.course_code }} - {{ course.course_title }}</span>
+                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
+                  :class="
+                    isAlreadySelected(course)
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'hover:bg-green-100'
+                  "
+                >
+                  <span
+                    >{{ course.course_code }} - {{ course.course_title }}</span
+                  >
 
-                  <span v-if="isAlreadySelected(course)" class="text-[10px] bg-green-200 px-2 rounded">
+                  <span
+                    v-if="isAlreadySelected(course)"
+                    class="text-[10px] bg-green-200 px-2 rounded"
+                  >
                     Selected
                   </span>
                 </li>
               </ul>
 
               <div class="mt-3 space-y-1">
-                <div v-for="(item, i) in currentSemesterData.other_expertise" :key="`${item.course_id}-other-${i}`"
-                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg">
+                <div
+                  v-for="(item, i) in currentSemesterData.other_expertise"
+                  :key="`${item.course_id}-other-${i}`"
+                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg"
+                >
                   <span>{{ item.course_code }} — {{ item.course_title }}</span>
                   <button type="button" @click="removeOtherCourse(i)">✕</button>
                 </div>
@@ -147,26 +209,43 @@
             <div class="relative space-y-2">
               <label class="font-semibold text-gray-700">Cross Expertise</label>
 
-              <input v-model="searchQuery" @focus="dropdownOpen = true" placeholder="Search all courses..."
-                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20" />
+              <input
+                v-model="searchQuery"
+                @focus="dropdownOpen = true"
+                placeholder="Search all courses..."
+                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
+              />
 
-              <ul v-if="dropdownOpen && filteredCourses.length" @mouseleave="dropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg">
-                <li v-for="course in filteredCourses" :key="course.course_id"
+              <ul
+                v-if="dropdownOpen && filteredCourses.length"
+                @mouseleave="dropdownOpen = false"
+                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg"
+              >
+                <li
+                  v-for="course in filteredCourses"
+                  :key="course.course_id"
                   @click="!isAlreadySelected(course) && addCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer" :class="isAlreadySelected(course)
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'hover:bg-green-100'
-                    ">
+                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
+                  :class="
+                    isAlreadySelected(course)
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'hover:bg-green-100'
+                  "
+                >
                   <span>
-                    <span v-if="course.program_code"
-                      class="px-2 py-0.5 mr-2 rounded-full bg-defaultGreen text-white text-[10px]">
+                    <span
+                      v-if="course.program_code"
+                      class="px-2 py-0.5 mr-2 rounded-full bg-defaultGreen text-white text-[10px]"
+                    >
                       {{ course.program_code }}
                     </span>
                     {{ course.course_code }} - {{ course.course_title }}
                   </span>
 
-                  <span v-if="isAlreadySelected(course)" class="text-[10px] bg-green-200 px-2 rounded">
+                  <span
+                    v-if="isAlreadySelected(course)"
+                    class="text-[10px] bg-green-200 px-2 rounded"
+                  >
                     Selected
                   </span>
                 </li>
@@ -174,11 +253,16 @@
             </div>
 
             <div class="space-y-1">
-              <div v-for="(item, i) in selectedCrossCourses" :key="`${item.course_id}-cross-${i}`"
-                class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg">
+              <div
+                v-for="(item, i) in selectedCrossCourses"
+                :key="`${item.course_id}-cross-${i}`"
+                class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg"
+              >
                 <span>
-                  <span v-if="item.program_code"
-                    class="px-2 py-0.5 mr-2 rounded-full bg-white text-defaultGreen text-[10px]">
+                  <span
+                    v-if="item.program_code"
+                    class="px-2 py-0.5 mr-2 rounded-full bg-white text-defaultGreen text-[10px]"
+                  >
                     {{ item.program_code }}
                   </span>
                   {{ item.course_code }} — {{ item.course_title }}
@@ -211,7 +295,7 @@ import { toast } from "vue3-toastify";
 import icon from "@/assets/icon.vue";
 export default {
   components: {
-    icon
+    icon,
   },
   props: {
     userData: Object,
@@ -251,7 +335,11 @@ export default {
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["courses", "programs", "curriculum_courses"]),
+    ...mapState(useFetchDataStore, [
+      "courses",
+      "programs",
+      "curriculum_courses",
+    ]),
     hasUnsavedAssignChanges() {
       return (
         this.originalAssignSnapshot &&
@@ -340,7 +428,7 @@ export default {
             Number(c.institute_id) === this.currentUserInstituteId &&
             Number(c.program_id) === this.currentUserProgramId &&
             Number(c.course_semester) === Number(this.selectedSemester) &&
-            Number(c.course_level) === Number(this.selectedYearLevel)
+            Number(c.course_level) === Number(this.selectedYearLevel),
         ).length === 0
       );
     },
@@ -360,19 +448,21 @@ export default {
             Number(c.program_id) === Number(this.selectedProgramId);
 
           const notSelected = !this.selectedCrossCourses.some(
-            (e) => Number(e.course_id) === Number(c.course_id)
+            (e) => Number(e.course_id) === Number(c.course_id),
           );
 
           return matchSearch(c) && sameProgram && notSelected;
         });
       }
 
-      const sameProgramCourses = this.normalizedCurriculumCourses.filter((c) => {
-        return (
-          Number(c.institute_id) === this.currentUserInstituteId &&
-          Number(c.program_id) === this.currentUserProgramId
-        );
-      });
+      const sameProgramCourses = this.normalizedCurriculumCourses.filter(
+        (c) => {
+          return (
+            Number(c.institute_id) === this.currentUserInstituteId &&
+            Number(c.program_id) === this.currentUserProgramId
+          );
+        },
+      );
 
       const strictMatch = sameProgramCourses.filter((c) => {
         return (
@@ -385,7 +475,7 @@ export default {
 
       return source.filter((c) => {
         const notInOther = !this.currentSemesterData.other_expertise.some(
-          (e) => Number(e.course_id) === Number(c.course_id)
+          (e) => Number(e.course_id) === Number(c.course_id),
         );
 
         return matchSearch(c) && notInOther;
@@ -402,14 +492,13 @@ export default {
         (c.course_code || "").toLowerCase().includes(search) ||
         (c.course_title || "").toLowerCase().includes(search);
 
-      const otherProgramCurriculumCourses = this.normalizedCurriculumCourses.filter(
-        (c) => {
+      const otherProgramCurriculumCourses =
+        this.normalizedCurriculumCourses.filter((c) => {
           return (
             Number(c.institute_id) === this.currentUserInstituteId &&
             Number(c.program_id) !== this.currentUserProgramId
           );
-        }
-      );
+        });
 
       const strictMatch = otherProgramCurriculumCourses.filter((c) => {
         return (
@@ -418,7 +507,9 @@ export default {
         );
       });
 
-      const source = strictMatch.length ? strictMatch : otherProgramCurriculumCourses;
+      const source = strictMatch.length
+        ? strictMatch
+        : otherProgramCurriculumCourses;
 
       const uniqueCourseIds = [
         ...new Set(source.map((c) => Number(c.course_id)).filter(Boolean)),
@@ -428,16 +519,18 @@ export default {
         .filter((c) => uniqueCourseIds.includes(Number(c.course_id)))
         .filter((c) => {
           const notInPrimary = !this.currentSemesterData.expertise.some(
-            (e) => Number(e.course_id) === Number(c.course_id)
+            (e) => Number(e.course_id) === Number(c.course_id),
           );
 
           const notInOther = !this.currentSemesterData.other_expertise.some(
-            (e) => Number(e.course_id) === Number(c.course_id)
+            (e) => Number(e.course_id) === Number(c.course_id),
           );
 
           return matchSearch(c) && notInPrimary && notInOther;
         })
-        .sort((a, b) => (a.course_code || "").localeCompare(b.course_code || ""));
+        .sort((a, b) =>
+          (a.course_code || "").localeCompare(b.course_code || ""),
+        );
     },
   },
 
@@ -471,7 +564,7 @@ export default {
         payload.sort((a, b) => {
           if (a.status !== b.status) return a.status.localeCompare(b.status);
           return a.course_id - b.course_id;
-        })
+        }),
       );
     },
 
@@ -484,14 +577,18 @@ export default {
         this.hasUnsavedAssignChanges
       ) {
         toast.warning(
-          "Please save your Expertise Assignment changes first before proceeding to Cross Assign."
+          "Please save your Expertise Assignment changes first before proceeding to Cross Assign.",
         );
         return;
       }
 
-      if (this.activeTab === "cross" && tab === "assign" && this.hasUnsavedCrossChanges) {
+      if (
+        this.activeTab === "cross" &&
+        tab === "assign" &&
+        this.hasUnsavedCrossChanges
+      ) {
         toast.warning(
-          "Please save your Cross Assign changes first before proceeding to Expertise Assignment."
+          "Please save your Cross Assign changes first before proceeding to Expertise Assignment.",
         );
         return;
       }
@@ -516,17 +613,18 @@ export default {
 
       if (this.activeTab === "cross") {
         return (
-          this.selectedCrossCourses.some((c) => Number(c.course_id) === Number(id)) ||
-          this.usedCourseIds.includes(id)
+          this.selectedCrossCourses.some(
+            (c) => Number(c.course_id) === Number(id),
+          ) || this.usedCourseIds.includes(id)
         );
       }
 
       return (
         this.currentSemesterData.expertise.some(
-          (c) => Number(c.course_id) === Number(id)
+          (c) => Number(c.course_id) === Number(id),
         ) ||
         this.currentSemesterData.other_expertise.some(
-          (c) => Number(c.course_id) === Number(id)
+          (c) => Number(c.course_id) === Number(id),
         )
       );
     },
@@ -569,16 +667,18 @@ export default {
       try {
         const existing = this.userData.expertise || [];
 
-        const assignPayload = Object.values(this.form.semesters).flatMap((s) => [
-          ...s.expertise.map((c) => ({
-            course_id: c.course_id,
-            status: "PRIMARY",
-          })),
-          ...s.other_expertise.map((c) => ({
-            course_id: c.course_id,
-            status: "OTHER",
-          })),
-        ]);
+        const assignPayload = Object.values(this.form.semesters).flatMap(
+          (s) => [
+            ...s.expertise.map((c) => ({
+              course_id: c.course_id,
+              status: "PRIMARY",
+            })),
+            ...s.other_expertise.map((c) => ({
+              course_id: c.course_id,
+              status: "OTHER",
+            })),
+          ],
+        );
 
         const crossPayload = this.selectedCrossCourses.map((c) => ({
           course_id: c.course_id,
@@ -608,13 +708,13 @@ export default {
           `${process.env.VUE_APP_API_BASE_URL}/auth/update/${this.userData.id}`,
           {
             expertise: finalPayload,
-          }
+          },
         );
 
         toast.success(
           this.activeTab === "cross"
             ? "Cross expertise updated successfully!"
-            : "Expertise updated successfully!"
+            : "Expertise updated successfully!",
         );
 
         this.$emit("updated");
@@ -647,18 +747,22 @@ export default {
       ];
 
       const mapCourse = (id) =>
-        allMappedCourses.find((c) => Number(c.course_id) === Number(id)) || null;
+        allMappedCourses.find((c) => Number(c.course_id) === Number(id)) ||
+        null;
 
       const normalizeFallbackCourse = (data) => ({
         course_id: data?.course?.course_id || data?.course_id,
         course_code: data?.course_code || data?.course?.course_code || "",
         course_title: data?.course_title || data?.course?.course_title || "",
         course_semester: Number(
-          data?.course_semester || data?.course?.course_semester || 1
+          data?.course_semester || data?.course?.course_semester || 1,
         ),
-        course_level: Number(data?.course_level || data?.course?.course_level || 1),
+        course_level: Number(
+          data?.course_level || data?.course?.course_level || 1,
+        ),
         program_id: data?.program_id || data?.course?.program_id || null,
-        program_code: data?.program_code || data?.course?.program?.program_code || "",
+        program_code:
+          data?.program_code || data?.course?.program?.program_code || "",
       });
 
       (this.userData.expertise || []).forEach((ex) => {
@@ -678,7 +782,7 @@ export default {
         if (status === "PRIMARY") {
           if (
             !this.form.semesters[sem].expertise.some(
-              (c) => Number(c.course_id) === Number(course.course_id)
+              (c) => Number(c.course_id) === Number(course.course_id),
             )
           ) {
             this.form.semesters[sem].expertise.push(course);
@@ -688,7 +792,7 @@ export default {
         if (status === "OTHER") {
           if (
             !this.form.semesters[sem].other_expertise.some(
-              (c) => Number(c.course_id) === Number(course.course_id)
+              (c) => Number(c.course_id) === Number(course.course_id),
             )
           ) {
             this.form.semesters[sem].other_expertise.push(course);
@@ -698,7 +802,7 @@ export default {
         if (status === "CROSS") {
           if (
             !this.selectedCrossCourses.some(
-              (c) => Number(c.course_id) === Number(course.course_id)
+              (c) => Number(c.course_id) === Number(course.course_id),
             )
           ) {
             this.selectedCrossCourses.push(course);
