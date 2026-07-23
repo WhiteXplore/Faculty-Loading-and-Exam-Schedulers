@@ -1,17 +1,17 @@
 <template>
   <div>
     <!-- Header -->
-    <div class="flex justify-between items-center mt-8">
+    <!-- <div class="flex justify-between items-center mt-8">
       <div class="text-[13px] text-gray-700">
         Pages / Faculty Expertise Overview
         <span class="text-gray-400 mx-1">/</span>
         <span class="font-semibold text-defaultGreen">{{ activeTab }}</span>
       </div>
-    </div>
+    </div> -->
 
     <!-- Main Content -->
     <!-- Tabs -->
-    <div class="flex gap-2 mt-6">
+    <div class="flex gap-2 mt-0">
       <button
         v-for="tab in tabs"
         :key="tab"

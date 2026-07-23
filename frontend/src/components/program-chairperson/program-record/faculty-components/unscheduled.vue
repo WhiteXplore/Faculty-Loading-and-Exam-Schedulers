@@ -75,7 +75,10 @@
 
               <td class="px-4 py-3">
                 <div class="flex items-center justify-center gap-2">
-                  <button @click="openDetailsModal(item)" class="btn-view">
+                  <button
+                    @click="openDetailsModal(item)"
+                    class="btn-see-details"
+                  >
                     See Details
                   </button>
 

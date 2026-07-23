@@ -1,16 +1,10 @@
 <template>
+  <!-- NOT USEDDD  -->
   <div class="space-y-2 text-[13px]">
     <!-- HEADER -->
-    <div class="text-sm flex justify-between px-1">
+    <!-- <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / Year & Section</div>
-
-      <button @click="openYearSectionModal" class="btn-add">
-        <div class="btn-add-icon">
-          <icon name="add-account1.1" />
-        </div>
-        <span class="font-medium">Add Year/Section</span>
-      </button>
-    </div>
+    </div> -->
 
     <!-- MAIN CONTENT -->
     <div v-if="user" class="space-y-6">
@@ -99,31 +93,38 @@
                     </svg>
                   </div>
                 </div>
+                <div class="flex gap-2">
+                  <!-- Search -->
+                  <div class="search-wrapper">
+                    <input
+                      v-model="searchQuery"
+                      type="text"
+                      placeholder="Search section ..."
+                      class="search-input"
+                      @input="changePage(1)"
+                    />
 
-                <!-- Search -->
-                <div class="search-wrapper">
-                  <input
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="Search section ..."
-                    class="search-input"
-                    @input="changePage(1)"
-                  />
-
-                  <div
-                    class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-                  >
-                    <svg
-                      class="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      viewBox="0 0 24 24"
+                    <div
+                      class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
                     >
-                      <circle cx="11" cy="11" r="8" />
-                      <path d="M21 21l-4.35-4.35" />
-                    </svg>
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="11" cy="11" r="8" />
+                        <path d="M21 21l-4.35-4.35" />
+                      </svg>
+                    </div>
                   </div>
+                  <button @click="openYearSectionModal" class="btn-add">
+                    <div class="btn-add-icon">
+                      <icon name="add-account1.1" />
+                    </div>
+                    <span class="font-medium">Add Year/Section</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -131,7 +132,7 @@
             <!-- Table -->
             <div class="w-full mt-2 rounded-xl border bg-white overflow-hidden">
               <div class="max-h-[70vh] overflow-y-auto">
-                <table class="min-w-full text-sm text-gray-700 border-collapse">
+                <table class="min-w-full text-sm border-collapse">
                   <thead
                     class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
                   >

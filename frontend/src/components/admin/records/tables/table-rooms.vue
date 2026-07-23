@@ -2,7 +2,9 @@
   <div v-if="isTable" class=" ">
     <div class="flex justify-between items-center px-1 text-sm">
       <!-- LEFT (Pages Title) -->
-      <div class="text-[13px] text-text font-regular">Pages / Rooms Availability</div>
+      <div class="text-[13px] text-text font-regular">
+        Pages / Rooms Availability
+      </div>
 
       <!-- RIGHT (Buttons) -->
       <div class="flex gap-2">
@@ -33,7 +35,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -49,7 +55,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -87,16 +97,30 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[65vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
-                <th class="px-4 py-3 text-left font-normal w-[4%]">Room Name</th>
-                <th class="px-4 py-3 text-center font-normal w-[4%]">Room Type</th>
-                <th class="px-4 py-3 text-center font-normal w-[4%]">Room Capacity</th>
-                <th class="px-4 py-3 text-center font-normal w-[4%]">Institute</th>
-                <th class="px-4 py-3 text-center font-normal w-[10%]">Building Name</th>
+                <th class="px-4 py-3 text-left font-normal w-[4%]">
+                  Room Name
+                </th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
+                  Room Type
+                </th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
+                  Room Capacity
+                </th>
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
+                  Institute
+                </th>
+                <th class="px-4 py-3 text-center font-normal w-[10%]">
+                  Building Name
+                </th>
                 <th class="px-4 py-3 text-center font-normal w-[4%]">Status</th>
 
-                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[1%]">
+                <th
+                  class="px-4 py-3 text-center rounded-tr-lg font-normal w-[1%]"
+                >
                   Actions
                 </th>
               </tr>
@@ -127,13 +151,13 @@
                 <td class="px-4 py-3 text-center">
                   <span
                     :class="{
-                      'border-green-600 text-green-600 bg-green-50':
-                        rooms_data.is_active === true,
+                      'border-emerald-200 bg-emerald-50 text-emerald-700':
+                        rooms_data.is_active,
 
-                      'border-red-600 text-red-600 bg-red-50':
-                        rooms_data.is_active === false,
+                      'border-slate-200 bg-slate-100 text-slate-600':
+                        !rooms_data.is_active,
                     }"
-                    class="font-semibold text-xs px-3 py-1 rounded-full border"
+                    class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold"
                   >
                     {{ rooms_data.is_active ? "Active" : "Inactive" }}
                   </span>
@@ -145,14 +169,19 @@
                       <icon name="edit" /> Edit
                     </button>
 
-                    <button class="btn-delete" @click="toggleDelete(rooms_data)">
+                    <button
+                      class="btn-delete"
+                      @click="toggleDelete(rooms_data)"
+                    >
                       <icon name="delete" /> Delete
                     </button>
                   </div>
                 </td>
               </tr>
               <tr v-if="paginatedData.length === 0">
-                <td colspan="6" class="text-left py-6 text-gray-400">No records found</td>
+                <td colspan="6" class="text-left py-6 text-gray-400">
+                  No records found
+                </td>
               </tr>
             </tbody>
           </table>
@@ -161,7 +190,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -202,7 +232,11 @@
     @close="closeModal"
     @refresh="loadRooms"
   />
-  <uploadRooms v-if="isUploadModal" @close="isUploadModal = false" @refresh="loadRooms" />
+  <uploadRooms
+    v-if="isUploadModal"
+    @close="isUploadModal = false"
+    @refresh="loadRooms"
+  />
 
   <!-- Delete Confirmation Modal -->
   <div v-if="showDeleteModal" class="delete-container">
@@ -221,8 +255,12 @@
       <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -276,7 +314,7 @@ export default {
         ]
           .join(" ")
           .toLowerCase()
-          .includes(query)
+          .includes(query),
       );
     },
 

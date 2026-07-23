@@ -168,7 +168,7 @@
 
                 <td class="px-4 py-3 items-center justify-center flex">
                   <div class="flex gap-2">
-                    <button class="btn-view" @click="toggleView(user)">
+                    <button class="btn-see-details" @click="toggleView(user)">
                       <icon name="eye" /> View
                     </button>
                     <button class="btn-edit" @click="openAddModal(user)">

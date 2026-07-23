@@ -1,14 +1,14 @@
 <template>
   <div>
     <!-- Header -->
-    <div class="flex justify-between items-center mt-6 mb-2">
+    <!-- <div class="flex justify-between items-center mt-6 mb-2">
       <div class="text-[13px] text-gray-700">
-        Pages / Class & Assigned Courses Overview
+        Pages / Year & Section Overview
       </div>
       <span class="text-sm bg-defaultGreen text-white px-3 py-1 rounded-full">
         {{ filteredClasses.length }} Classes
       </span>
-    </div>
+    </div> -->
 
     <!-- Classes with Courses Section -->
     <div class="table-container">
@@ -71,7 +71,7 @@
         <!-- Table -->
         <div class="w-full mt-1 rounded-xl border bg-white overflow-hidden">
           <div class="max-h-[69vh] overflow-y-auto">
-            <table class="min-w-full text-sm text-gray-700 border-collapse">
+            <table class="min-w-full text-sm border-collapse">
               <thead
                 class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
               >
@@ -88,7 +88,9 @@
                   <th class="px-4 py-3 text-center font-semibold w-[10%]">
                     School Year
                   </th>
-                  <th class="px-4 py-3 text-center w-[10%]">Campus</th>
+                  <th class="px-4 py-3 text-center font-semibold w-[10%]">
+                    Campus
+                  </th>
                   <th class="px-4 py-3 text-center font-semibold w-[6%]">
                     Assigned Courses
                   </th>
@@ -105,7 +107,7 @@
                   <!-- <td class="px-4 py-3 text-gray-600">
                     {{ classStartIndex + index }}
                   </td> -->
-                  <td class="px-4 py-3 text-gray-800 text-left">
+                  <td class="px-4 py-3 t text-left">
                     {{ cls.set_name }}
                   </td>
                   <td class="px-4 py-3">
@@ -129,13 +131,16 @@
                     </span>
                   </td>
                   <td class="flex justify-center items-center gap-2">
-                    <button @click="showClassCourses(cls)" class="btn-view">
+                    <button
+                      @click="showClassCourses(cls)"
+                      class="btn-see-details"
+                    >
                       See Details
                     </button>
 
                     <button
                       @click="showClassSchedules(cls)"
-                      class="text-[12px] py-2 px-3 rounded-xl bg-defaultGreen text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;"
+                      class="btn-see-details1"
                     >
                       See Schedules
                     </button>
@@ -366,7 +371,7 @@
 
       <!-- Body -->
       <div class="bg-slate-50 p-5 max-h-[75vh] overflow-y-auto">
-        <div class="rounded-xl border border-gray-200 bg-white overflow-hidden">
+        <div class="rounded-md border border-gray-200 bg-white overflow-hidden">
           <table
             v-if="selectedSchedules.length"
             class="min-w-full border-collapse text-sm"
@@ -447,26 +452,23 @@ export default {
     filteredClasses() {
       let result = [...this.classes];
 
-      // Filter by active school year
+      // Filter using the latest active school year
       if (this.activeSchoolYear) {
         const { school_year_name, semester } = this.activeSchoolYear;
 
-        // Special case:
-        // 2025-2026 Semester 1 -> show everything
-        if (school_year_name === "2025-2026" && Number(semester) === 1) {
-          // Do nothing (show all classes)
-        } else {
-          // Otherwise only show classes for the active school year and semester
-          result = result.filter(
-            (c) =>
-              c.schoolYear?.school_year_name === school_year_name &&
-              Number(c.schoolYear?.semester) === Number(semester),
+        result = result.filter((c) => {
+          return (
+            c.schoolYear &&
+            c.schoolYear.school_year_name === school_year_name &&
+            Number(c.schoolYear.semester) === Number(semester)
           );
-        }
+        });
       }
 
+      // Search
       if (this.classSearch) {
         const query = this.classSearch.toLowerCase();
+
         result = result.filter((c) => {
           return (
             c.set_name?.toLowerCase().includes(query) ||
@@ -477,22 +479,40 @@ export default {
         });
       }
 
+      // Program filter
       if (this.selectedProgram) {
         result = result.filter(
           (c) => c.program?.program_name === this.selectedProgram,
         );
       }
 
-      if (this.user?.role === "Program Chairperson" && this.user?.program_id) {
-        result = result.filter((c) => c.program_id === this.user.program_id);
+      // Role-based filtering
+      switch (this.user?.role) {
+        case "Admin":
+          // Admin can view all classes
+          break;
+
+        case "Program Chairperson":
+          if (this.user?.program_id) {
+            result = result.filter(
+              (c) => Number(c.program_id) === Number(this.user.program_id),
+            );
+          }
+          break;
+
+        default:
+          // Other roles can view all classes
+          break;
       }
 
-      // Sort
-      result = result.sort((a, b) => {
+      // Sort by year level then section
+      result.sort((a, b) => {
         const yearA = this.extractYearLevel(a.set_name) || 0;
         const yearB = this.extractYearLevel(b.set_name) || 0;
 
-        if (yearA !== yearB) return yearA - yearB;
+        if (yearA !== yearB) {
+          return yearA - yearB;
+        }
 
         const sectionA = a.set_name?.split("-").pop().trim() || "";
         const sectionB = b.set_name?.split("-").pop().trim() || "";
@@ -548,6 +568,20 @@ export default {
     },
   },
   methods: {
+    async loadActiveSchoolYear() {
+      const fetchDataStore = useFetchDataStore();
+
+      await fetchDataStore.fetchSchoolYears();
+
+      // Get the latest active school year
+      const latestActive = fetchDataStore.school_years
+        .filter((sy) => sy.is_active)
+        .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))[0];
+
+      this.activeSchoolYear = latestActive || null;
+
+      console.log("Resolved Active School Year:", this.activeSchoolYear);
+    },
     closeScheduleModal() {
       this.scheduleModal = false;
       this.selectedSchedules = [];
@@ -712,20 +746,29 @@ export default {
   },
   async mounted() {
     this.loading = true;
+
     await this.fetchUser();
+
+    // Always load the latest active school year from the database
+    await this.loadActiveSchoolYear();
+
     await this.loadClasses();
+
     this.loading = false;
 
-    this.activeSchoolYear = eventBus.data ? { ...eventBus.data } : null;
+    // Listen for changes
+    this.stopEventBus = eventBus.on(async () => {
+      // Always resolve the latest active school year
+      await this.loadActiveSchoolYear();
 
-    console.log("INITIAL ACTIVE YEAR:", this.activeSchoolYear);
-
-    // Listen for active year changes
-    this.stopEventBus = eventBus.on((newYear) => {
-      console.log("NEW ACTIVE YEAR:", newYear);
-
-      this.activeSchoolYear = { ...newYear };
+      // Optional: reload classes if needed
+      await this.loadClasses();
     });
+  },
+  beforeUnmount() {
+    if (this.stopEventBus) {
+      this.stopEventBus();
+    }
   },
 };
 </script>
