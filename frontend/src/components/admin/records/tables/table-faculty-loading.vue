@@ -1398,6 +1398,8 @@ export default {
         const unscheduledPayload = unscheduledMeetings.map((item) => ({
           class_id: item.class_id,
           course_code: item.course_code,
+          class_size: item.class_size,
+          faculty_name: item.faculty_name,
           program_id: item.program_id,
           program_code: item.program_code,
           type: item.type,

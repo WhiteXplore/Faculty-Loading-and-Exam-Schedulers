@@ -8,6 +8,12 @@ export class CreateUnscheduledMeetingDto {
   course_code: string;
 
   @IsNumber()
+  class_size: number;
+
+  @IsString()
+  faculty_name: string;
+
+  @IsNumber()
   program_id: number;
 
   @IsString()
@@ -22,7 +28,6 @@ export class CreateUnscheduledMeetingDto {
   @IsString()
   reason: string;
 
-  // ✅ ADD THESE
   @IsString()
   school_year: string;
 
