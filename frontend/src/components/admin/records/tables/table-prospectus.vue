@@ -1,7 +1,9 @@
 <template>
   <div v-if="isTable" class=" ">
     <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4 font-regular">Pages / Prospectus</div>
+      <div class="text-[13px] text-text mt-4 font-regular">
+        Pages / Prospectus
+      </div>
 
       <!-- <div @click="toggleAdd" class="btn-add">
         <div
@@ -23,7 +25,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -39,7 +45,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -76,10 +86,14 @@
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+          <thead
+            class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+          >
             <tr>
               <th class="px-4 py-3 text-left font-normal">Institute</th>
-              <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[8%]">
+              <th
+                class="px-4 py-3 text-center rounded-tr-lg font-normal w-[8%]"
+              >
                 Actions
               </th>
             </tr>
@@ -107,7 +121,7 @@
                           }
                         : {},
                     }"
-                    class="btn-view"
+                    class="btn-see-details"
                   >
                     See Details
                   </router-link>
@@ -115,7 +129,9 @@
               </td>
             </tr>
             <tr v-if="paginatedData.length === 0">
-              <td colspan="5" class="text-center py-8 text-gray-400">No records found</td>
+              <td colspan="5" class="text-center py-8 text-gray-400">
+                No records found
+              </td>
             </tr>
           </tbody>
         </table>
@@ -123,7 +139,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -175,7 +192,9 @@
       />
     </div>
 
-    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">Delete Confirmation</h1>
+    <h1 class="text-[14px] md:text-[16px] font-semibold mt-4">
+      Delete Confirmation
+    </h1>
     <p class="mt-2 text-[12px] md:text-[13px] text-center px-8">
       Are you sure you want to delete this record? This action cannot be undone.
     </p>
@@ -243,7 +262,7 @@ export default {
       const q = this.searchQuery.toLowerCase();
 
       return this.detailedReportCurriculum.filter((item) =>
-        item.institute_name?.toLowerCase().includes(q)
+        item.institute_name?.toLowerCase().includes(q),
       );
     },
 
@@ -266,7 +285,10 @@ export default {
     },
 
     endIndex() {
-      return Math.min(this.currentPage * this.itemsPerPage, this.filteredData.length);
+      return Math.min(
+        this.currentPage * this.itemsPerPage,
+        this.filteredData.length,
+      );
     },
 
     pageNumbers() {
@@ -339,7 +361,7 @@ export default {
       axios
         .delete(
           process.env.VUE_APP_API_BASE_URL +
-            `/programs/delete-id/${this.recordToDelete.program_id}`
+            `/programs/delete-id/${this.recordToDelete.program_id}`,
         )
         .then(() => {
           this.showDeleteModal = false;

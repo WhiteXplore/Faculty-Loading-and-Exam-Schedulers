@@ -10,17 +10,17 @@
     <!-- Main Content  -->
     <div class="mt-3">
       <!-- Table -->
-      <tableYearSection />
+      <tableClassAssignedCourses />
     </div>
   </div>
 </template>
 
 <script>
-import tableYearSection from "./tables/table-year-section.vue";
+import tableClassAssignedCourses from "@/components/program-chairperson/program-record/tables/table-class-assigned-courses.vue";
 export default {
   name: "ClassesPage",
   components: {
-    tableYearSection,
+    tableClassAssignedCourses,
   },
 };
 </script>

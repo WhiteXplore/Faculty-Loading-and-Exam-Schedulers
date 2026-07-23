@@ -19,7 +19,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -35,7 +39,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -74,14 +82,18 @@
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+          <thead
+            class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+          >
             <tr>
               <th class="px-4 py-3 text-left w-[10%]">School Year</th>
               <!-- <th class="px-4 py-3 text-center">Start Year</th>
               <th class="px-4 py-3 text-center">End Year</th> -->
               <th class="px-4 py-3 text-center">Semester</th>
               <th class="px-4 py-3 text-center">Status</th>
-              <th class="px-4 py-3 text-center rounded-tr-lg w-[10%]">Actions</th>
+              <th class="px-4 py-3 text-center rounded-tr-lg w-[10%]">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -100,10 +112,10 @@
                 <span
                   :class="
                     sy.is_active
-                      ? 'border-green-600 text-green-600 bg-green-50 '
-                      : 'border-red-600 text-red-600 bg-red-50'
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                      : 'border-slate-200 bg-slate-100 text-slate-600'
                   "
-                  class="font-semibold text-xs px-2 py-1 rounded-full border"
+                  class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold shadow-sm"
                 >
                   {{ sy.is_active ? "Active" : "Inactive" }}
                 </span>
@@ -120,7 +132,9 @@
               </td>
             </tr>
             <tr v-if="paginatedData.length === 0">
-              <td colspan="7" class="text-center py-8 text-gray-400">No records found</td>
+              <td colspan="7" class="text-center py-8 text-gray-400">
+                No records found
+              </td>
             </tr>
           </tbody>
         </table>
@@ -128,7 +142,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -163,7 +178,11 @@
   </div>
 
   <!-- Add / Edit Modals -->
-  <addSchoolYear v-if="isAddSchoolYear" @close="closeView" @refresh="loadSchoolYears" />
+  <addSchoolYear
+    v-if="isAddSchoolYear"
+    @close="closeView"
+    @refresh="loadSchoolYears"
+  />
   <addSchoolYear
     v-if="showEditModal && selectedSchoolYear"
     :schoolYearData="selectedSchoolYear"
@@ -193,8 +212,12 @@
       <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -233,7 +256,7 @@ export default {
           (sy) =>
             sy.school_year_name?.toLowerCase().includes(query) ||
             String(sy.start_year).includes(query) ||
-            String(sy.end_year).includes(query)
+            String(sy.end_year).includes(query),
         );
       }
 
@@ -280,7 +303,7 @@ export default {
     async loadSchoolYears() {
       try {
         const response = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years"
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
         );
         this.schoolYears = response.data;
       } catch (error) {
@@ -309,7 +332,7 @@ export default {
       axios
         .delete(
           process.env.VUE_APP_API_BASE_URL +
-            `/school-year/delete-id/${this.recordToDelete.school_year_id}`
+            `/school-year/delete-id/${this.recordToDelete.school_year_id}`,
         )
         .then(() => {
           this.showDeleteModal = false;

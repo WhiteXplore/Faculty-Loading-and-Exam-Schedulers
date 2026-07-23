@@ -1,28 +1,6 @@
 <template>
   <div v-if="isTable">
     <!-- Header -->
-    <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4">Pages / Courses</div>
-
-      <div class="per-page-container">
-        <!-- Upload -->
-        <div @click="isUploadModal = true" class="btn-gui">
-          <div class="btn-add-icon">
-            <icon name="uploads" />
-          </div>
-          <span class="btn-add-text">Upload Course</span>
-        </div>
-
-        <!-- Add -->
-        <div @click="toggleAdd" class="btn-add">
-          <div class="btn-add-icon">
-            <icon name="add-account1.1" />
-          </div>
-
-          <span class="btn-add-text">Add Course</span>
-        </div>
-      </div>
-    </div>
 
     <!-- Table -->
     <div class="table-container">
@@ -62,30 +40,53 @@
 
           <span class="text-sm font-medium text-gray-600"> Per page </span>
         </div>
+        <div class="flex gap-2">
+          <!-- Search -->
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              @input="currentPage = 1"
+              type="text"
+              placeholder="Search courses..."
+              class="search-input"
+            />
 
-        <!-- Search -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            @input="currentPage = 1"
-            type="text"
-            placeholder="Search courses..."
-            class="search-input"
-          />
-
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+            <div
+              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+          </div>
+          <div class="text-sm flex">
+            <!-- <div class="text-[13px] text-text mt-4">Pages / Courses</div> -->
+
+            <div class="per-page-container">
+              <!-- Upload -->
+              <div @click="isUploadModal = true" class="btn-gui">
+                <div class="btn-add-icon">
+                  <icon name="uploads" />
+                </div>
+                <span class="btn-add-text">Upload Course</span>
+              </div>
+
+              <!-- Add -->
+              <div @click="toggleAdd" class="btn-add">
+                <div class="btn-add-icon">
+                  <icon name="add-account1.1" />
+                </div>
+
+                <span class="btn-add-text">Add Course</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

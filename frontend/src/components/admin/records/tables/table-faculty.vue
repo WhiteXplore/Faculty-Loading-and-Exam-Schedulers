@@ -1,7 +1,7 @@
 <template>
-  <div v-if="isTable">
+  <div>
     <!-- Header -->
-    <div class="text-sm flex justify-between px-1">
+    <!-- <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4 font-regular">
         Pages /
         <span class="font-semibold text-green-900">
@@ -12,7 +12,7 @@
           }}
         </span>
       </div>
-    </div>
+    </div> -->
 
     <!-- Table Container -->
     <div class="table-container">
@@ -170,7 +170,10 @@
 
                 <td class="px-4 py-3 items-center justify-center flex relative">
                   <div class="per-page-container">
-                    <button class="btn-view" @click="toggleView(faculty)">
+                    <button
+                      class="btn-see-details"
+                      @click="toggleView(faculty)"
+                    >
                       See Details
                     </button>
 

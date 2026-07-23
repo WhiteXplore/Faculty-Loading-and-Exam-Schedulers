@@ -1,4 +1,5 @@
 <template>
+  <!-- NOT USED  -->
   <div>
     <!-- Header -->
 
@@ -79,18 +80,29 @@
         <!-- Table -->
         <div class="w-full mt-1 rounded-xl border bg-white overflow-hidden">
           <div class="max-h-[69vh] overflow-y-auto">
-            <table class="min-w-full text-sm text-gray-700 border-collapse">
+            <table class="min-w-full text-sm border-collapse">
               <thead
                 class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
               >
                 <tr>
-                  <!-- <th class="px-4 py-3 text-left    w-[2%]">ID</th> -->
-                  <th class="px-4 py-3 text-left w-[5%]">Year & Section</th>
-                  <th class="px-4 py-3 text-left w-[20%]">Program</th>
-                  <th class="px-4 py-3 text-center w-[10%]">Class Size</th>
-                  <th class="px-4 py-3 text-center w-[15%]">School Year</th>
-                  <th class="px-4 py-3 text-center w-[5%]">Campus</th>
-                  <th class="px-4 py-3 text-center w-[8%]">Action</th>
+                  <th class="px-4 py-3 text-left font-semibold w-[7%]">
+                    Year & Section
+                  </th>
+                  <th class="px-4 py-3 text-left font-semibold w-[15%]">
+                    Program
+                  </th>
+                  <th class="px-4 py-3 text-center font-semibold w-[10%]">
+                    Class Size
+                  </th>
+                  <th class="px-4 py-3 text-center font-semibold w-[10%]">
+                    School Year
+                  </th>
+                  <th class="px-4 py-3 text-center font-semibold w-[10%]">
+                    Campus
+                  </th>
+                  <th class="px-4 py-3 text-center font-semibold w-[6%]">
+                    Assigned Courses
+                  </th>
                 </tr>
               </thead>
 
@@ -131,13 +143,16 @@
                   <!-- ✅ Action Column -->
 
                   <td class="flex justify-center items-center gap-2">
-                    <button @click="showClassCourses(cls)" class="btn-view">
+                    <button
+                      @click="showClassCourses(cls)"
+                      class="btn-see-details"
+                    >
                       See Details
                     </button>
 
                     <button
                       @click="showClassSchedules(cls)"
-                      class="text-[12px] py-2 px-3 rounded-xl bg-defaultGreen text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;"
+                      class="btn-see-details1"
                     >
                       See Schedules
                     </button>

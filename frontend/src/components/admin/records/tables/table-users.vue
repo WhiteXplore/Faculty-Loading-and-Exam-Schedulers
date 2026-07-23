@@ -140,8 +140,12 @@
                 <th class="px-4 py-3 text-left font-normal w-[12%]">
                   Designation
                 </th>
-                <th class="px-4 py-3 text-left font-normal w-[7%]">Unit</th>
-
+                <th class="px-4 py-3 text-left font-normal w-[7%]">
+                  Faculty Load Unit
+                </th>
+                <th class="px-4 py-3 text-left font-normal w-[7%]">
+                  Admin Load Unit
+                </th>
                 <th class="px-4 py-3 text-left font-normal w-[10%]">
                   Institute
                 </th>
@@ -174,6 +178,9 @@
                 <td class="px-4 py-3 text-left">
                   {{ user.unit_load }}
                 </td>
+                <td class="px-4 py-3 text-left">
+                  {{ user.admin_unit_load || "-" }}
+                </td>
 
                 <td class="px-4 py-3 text-left">
                   {{ user.institute?.institute_code }}
@@ -185,13 +192,13 @@
                 <td class="px-4 py-3 text-left">
                   <span
                     :class="{
-                      'border-green-600 text-green-600 bg-green-50':
+                      'border-emerald-200 bg-emerald-50 text-emerald-700':
                         user.is_active === true || user.is_active === 1,
 
-                      'border-red-600 text-red-600 bg-red-50':
+                      'border-slate-200 bg-slate-100 text-slate-600':
                         user.is_active === false || user.is_active === 0,
                     }"
-                    class="font-semibold text-xs px-3 py-1 rounded-full border"
+                    class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold shadow-sm"
                   >
                     {{
                       user.is_active === true || user.is_active === 1
@@ -203,7 +210,10 @@
                 <td class="px-4 py-3 items-center justify-center flex relative">
                   <div class="per-page-container">
                     <!-- Always visible -->
-                    <button class="btn-view" @click="toggleViewExpertise(user)">
+                    <button
+                      class="btn-see-details"
+                      @click="toggleViewExpertise(user)"
+                    >
                       See Details
                     </button>
 

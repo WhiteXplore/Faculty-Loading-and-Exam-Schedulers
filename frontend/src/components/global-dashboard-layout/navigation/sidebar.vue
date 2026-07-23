@@ -430,7 +430,7 @@ export default {
             title: "Documents",
             items: [
               {
-                name: "Faculty Expertise Overview",
+                name: "Faculty Expertise",
                 icon: "expertise",
                 route: "/faculty-expertise",
               },

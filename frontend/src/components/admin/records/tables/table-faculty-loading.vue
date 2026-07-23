@@ -305,7 +305,7 @@
                     class="odd:bg-white even:bg-gray-50"
                   >
                     <td
-                      class="px-3 border border-gray-200 font-medium text-center whitespace-nowrap"
+                      class="px-3 border border-gray-200 text-center text-gray-700 whitespace-nowrap"
                     >
                       {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
                     </td>

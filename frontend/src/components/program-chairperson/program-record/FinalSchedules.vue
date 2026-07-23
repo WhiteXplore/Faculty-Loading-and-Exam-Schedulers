@@ -18,7 +18,7 @@
             'px-4 py-2 rounded-t-lg font-normal text-sm',
             activeTab === tab.value
               ? 'bg-defaultGreen text-white  font-semibold border border-gray-300 border-b-white shadow-sm  '
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 ',
+              : 'bg-gray-200 text-gray-600 hover:bg-gray-300 ',
           ]"
         >
           {{ tab.label }}
@@ -34,7 +34,7 @@
     <!-- Content Card -->
     <div class="bg-white shadow-sm mt-2">
       <tableFinalGenerated v-if="activeTab === 'Scheduled'" />
-      <tableUnscheduledMeetings v-if="activeTab === 'Unscheduled'" />
+      <tableUnscheduledMeetings v-if="activeTab === 'Unscheduled Meetings'" />
       <tableScheduleByRoom v-if="activeTab === 'Scheduled by Rooms'" />
     </div>
   </div>
@@ -56,7 +56,7 @@ export default {
       activeTab: "Scheduled",
       tabs: [
         { label: "Scheduled", value: "Scheduled" },
-        { label: "Unscheduled", value: "Unscheduled" },
+        { label: "Unscheduled Meetings", value: "Unscheduled Meetings" },
         { label: "Scheduled by Rooms", value: "Scheduled by Rooms" },
       ],
     };
