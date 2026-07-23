@@ -37,6 +37,19 @@ export class GeneratedScheduledController {
   }
 
   /**
+   * ⭐ Run Pre-Assessment (feasibility check — no GA run)
+   */
+  @Get('pre-assessment')
+  async runPreAssessment() {
+    const data = await this.generatedScheduledService.runPythonFeasibility();
+
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  /**
    * ⭐ Read JSON output
    */
   @Get('generate')

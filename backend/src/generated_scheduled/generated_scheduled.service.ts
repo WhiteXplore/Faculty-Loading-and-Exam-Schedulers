@@ -90,6 +90,71 @@ export class GeneratedScheduledService {
   }
 
   /**
+   * ⭐ Run Python Pre-Assessment (feasibility check — no GA run)
+   */
+  runPythonFeasibility(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const scriptPath = path
+        .resolve(__dirname, '../../../python/feasibility_check.py')
+        .replace(/\\/g, '/');
+
+      console.log('Running feasibility check:', scriptPath);
+
+      const pythonProcess = spawn('C:\\Program Files\\Python313\\python.exe', [
+        scriptPath,
+      ]);
+
+      let stdoutData = '';
+      let stderrData = '';
+
+      pythonProcess.stdout.on('data', (data) => {
+        stdoutData += data.toString();
+      });
+      pythonProcess.stderr.on('data', (data) => {
+        stderrData += data.toString();
+      });
+
+      pythonProcess.on('close', (code) => {
+        if (code !== 0) {
+          console.error('Feasibility error:', stderrData);
+          return reject(
+            new InternalServerErrorException('Failed to run pre-assessment.'),
+          );
+        }
+
+        const startMarker = '===JSON_START===';
+        const endMarker = '===JSON_END===';
+        const startIndex = stdoutData.indexOf(startMarker);
+        const endIndex = stdoutData.indexOf(endMarker);
+
+        if (startIndex === -1 || endIndex === -1) {
+          return reject(
+            new InternalServerErrorException(
+              'No JSON markers in pre-assessment output.',
+            ),
+          );
+        }
+
+        try {
+          const report = JSON.parse(
+            stdoutData
+              .substring(startIndex + startMarker.length, endIndex)
+              .trim(),
+          );
+          resolve(report);
+        } catch (err) {
+          console.error('Feasibility JSON parse error:', err.message);
+          reject(
+            new InternalServerErrorException(
+              'Failed to parse pre-assessment JSON.',
+            ),
+          );
+        }
+      });
+    });
+  }
+
+  /**
    * ⭐ Read faculty loading JSON file
    */
   getFacultyLoadingFromFile() {
