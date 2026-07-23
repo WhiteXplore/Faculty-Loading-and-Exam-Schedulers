@@ -4010,276 +4010,6 @@ def fetch_table_data(table: Table) -> List[Dict]:
         return [dict(row._mapping) for row in rows]
 
 
-def save_no_faculty_report(unscheduled_meetings, classes_course,
-                           faculty_expertise_courses, filename):
-    """
-    Write a categorized 'no-faculty' Excel report explaining WHY each unscheduled
-    section has no assigned faculty. Each section is bucketed by root cause + owner
-    + recommended action so the coordinator can hand each list to the right desk:
-
-      - Course-code mismatch (Data)      : experts registered under a different
-                                           spelling of the code.
-      - Qualified but all at load cap    : experts exist but are full (overload/rebalance).
-      - GenEd - assignable to spare load : common course, no specialist needed.
-      - No expertise registered          : nobody registered (register expertise / hire).
-
-    Produces two sheets: per-section detail + a summary with the counts and actions.
-    """
-    # --- reference maps ---
-    exp_exact = set(f.get("course_code") for f in faculty_expertise_courses
-                    if f.get("course_code"))
-    exp_norm = {}   # normalized course_code -> set of faculty names
-    for f in faculty_expertise_courses:
-        cc = f.get("course_code")
-        if cc:
-            exp_norm.setdefault(normalize_course_code(cc), set()).add(f.get("faculty_name"))
-    code_programs = {}   # course_code -> set of program_ids (for GenEd detection)
-    for c in classes_course:
-        code_programs.setdefault(c.get("course_code"), set()).add(c.get("program_id"))
-    row_by = {(c.get("class_id"), c.get("course_code")): c for c in classes_course}
-
-    def is_no_faculty(u):
-        reason = str(u.get("reason", ""))
-        return (u.get("faculty_name") == "Unassigned"
-                or "No faculty" in reason or "No qualified" in reason)
-
-    def classify(u):
-        code = u.get("course_code")
-        pf = u.get("possible_faculty") or []
-        gened = len(code_programs.get(code, set())) >= 3
-        if pf:
-            return ("Qualified but all at load cap",
-                    "Qualified faculty exist but every one is at their load cap. "
-                    "Approve overload or rebalance.", "Staffing / Policy")
-        alt = exp_norm.get(normalize_course_code(code), set())
-        if code not in exp_exact and alt:
-            return ("Course-code mismatch (data)",
-                    f"Experts are registered under a different spelling of this code "
-                    f"({len(alt)} faculty). Fix the course_code, or rely on normalized matching.",
-                    "Data")
-        if gened:
-            return ("GenEd - assignable to spare load",
-                    "Common course (taught in 3+ programs), no specialist needed. "
-                    "Assign to any faculty with spare load.", "Policy")
-        return ("No expertise registered",
-                "No faculty registered to teach this course. Register expertise or hire.",
-                "Staffing")
-
-    nf = [u for u in unscheduled_meetings if is_no_faculty(u)]
-    order = {"Course-code mismatch (data)": 0, "Qualified but all at load cap": 1,
-             "GenEd - assignable to spare load": 2, "No expertise registered": 3}
-    rows = []
-    for u in nf:
-        cat, reason, owner = classify(u)
-        crow = row_by.get((u.get("class_id"), u.get("course_code")), {})
-        units = (compute_load(crow.get("course_lec", 0) or 0, crow.get("course_lab", 0) or 0)
-                 if crow else "")
-        pf = u.get("possible_faculty") or []
-        rows.append({
-            "code": u.get("course_code"), "prog": u.get("program_code", "?"),
-            "sec": u.get("set_name", "?"), "type": u.get("type", "?"),
-            "hours": u.get("hours", ""), "units": round(units, 2) if units != "" else "",
-            "inst": u.get("institute_id"), "cat": cat, "owner": owner, "reason": reason,
-            "faculty": ", ".join(pf) if pf else "-",
-        })
-    rows.sort(key=lambda r: (order.get(r["cat"], 9), str(r["code"]), str(r["sec"])))
-
-    # --- workbook ---
-    wb = Workbook()
-    ws = wb.active
-    ws.title = f"No-Faculty ({len(rows)})"
-    hf = PatternFill("solid", fgColor="1F4E79")
-    hfont = Font(bold=True, color="FFFFFF")
-    border = Border(bottom=Side(style="thin", color="D7DEE8"))
-    fills = {"Course-code mismatch (data)": "E6E1F4", "Qualified but all at load cap": "F3E7CF",
-             "GenEd - assignable to spare load": "DCEFEC", "No expertise registered": "F6E0DD"}
-    hdr = ["Course Code", "Program", "Section", "Type", "Hours", "Teacher Units",
-           "Institute", "Category", "Owner", "Reason", "Registered / Possible Faculty"]
-    ws.append(hdr)
-    for c in ws[1]:
-        c.fill = hf; c.font = hfont
-        c.alignment = Alignment(horizontal="left", vertical="center")
-    ws.row_dimensions[1].height = 24
-    for r in rows:
-        ws.append([r["code"], r["prog"], r["sec"], r["type"], r["hours"], r["units"],
-                   r["inst"], r["cat"], r["owner"], r["reason"], r["faculty"]])
-        rr = ws[ws.max_row]
-        for cell in rr:
-            cell.border = border
-            cell.alignment = Alignment(vertical="center", wrap_text=cell.column in (10, 11))
-        rr[7].fill = PatternFill("solid", fgColor=fills.get(r["cat"], "FFFFFF"))
-    for i, w in enumerate([15, 12, 15, 12, 22, 12, 9, 30, 16, 52, 42], 1):
-        ws.column_dimensions[get_column_letter(i)].width = w
-    ws.freeze_panes = "A2"
-    if rows:
-        ws.auto_filter.ref = f"A1:K{ws.max_row}"
-
-    # summary sheet
-    ws2 = wb.create_sheet("Summary")
-    cats = {}
-    for r in rows:
-        cats[(r["cat"], r["owner"])] = cats.get((r["cat"], r["owner"]), 0) + 1
-    actions = {
-        "Course-code mismatch (data)": "Fix course_code spelling (or normalized matching) - recovers instantly, no staffing cost.",
-        "Qualified but all at load cap": "Approve overload or rebalance load among qualified faculty.",
-        "GenEd - assignable to spare load": "Approve GenEd spare-load fallback - assign to any faculty with room.",
-        "No expertise registered": "Register expertise in faculty_expertise_courses, or hire.",
-    }
-    ws2.append(["Category", "Owner", "Sections", "What to do"])
-    for c in ws2[1]:
-        c.fill = hf; c.font = hfont
-    for (cat, owner), n in sorted(cats.items(), key=lambda x: order.get(x[0][0], 9)):
-        ws2.append([cat, owner, n, actions.get(cat, "")])
-    ws2.append(["TOTAL", "", len(rows), ""])
-    for i, w in enumerate([32, 16, 10, 66], 1):
-        ws2.column_dimensions[get_column_letter(i)].width = w
-    for row in ws2.iter_rows(min_row=2):
-        for cell in row:
-            cell.alignment = Alignment(vertical="center", wrap_text=cell.column == 4)
-
-    wb.save(filename)
-    print(f"[INFO] No-faculty report saved to: {filename}  ({len(rows)} sections)")
-
-
-def save_unscheduled_report(unscheduled_meetings, classes_course,
-                            faculty_expertise_courses, filename):
-    """
-    Write a full Excel report of ALL unscheduled sections (both timetabling and
-    no-faculty) with a category + owner + reason for each, so every failure is
-    traceable to who owns it. Buckets:
-
-      - Timetabling - no room/time      : faculty IS assigned, no valid room+time
-                                          (typically a lab-room limit).  [Facilities]
-      - Course-code mismatch (data)     : experts registered under a different spelling.
-      - Qualified but all at load cap   : experts exist but full (overload/rebalance).
-      - GenEd - assignable to spare load: common course, no specialist needed.
-      - No expertise registered         : nobody registered (register expertise / hire).
-
-    Two sheets: per-section detail + a summary with counts and actions.
-    """
-    exp_exact = set(f.get("course_code") for f in faculty_expertise_courses
-                    if f.get("course_code"))
-    exp_norm = {}
-    for f in faculty_expertise_courses:
-        cc = f.get("course_code")
-        if cc:
-            exp_norm.setdefault(normalize_course_code(cc), set()).add(f.get("faculty_name"))
-    code_programs = {}
-    for c in classes_course:
-        code_programs.setdefault(c.get("course_code"), set()).add(c.get("program_id"))
-    row_by = {(c.get("class_id"), c.get("course_code")): c for c in classes_course}
-
-    def is_no_faculty(u):
-        reason = str(u.get("reason", ""))
-        return (u.get("faculty_name") == "Unassigned"
-                or "No faculty" in reason or "No qualified" in reason)
-
-    def classify(u):
-        if not is_no_faculty(u):
-            return ("Timetabling - no room/time",
-                    "Faculty IS assigned, but no valid room+time slot was found even "
-                    "after the repair pass (typically a lab-room limit).",
-                    "Facilities / Scheduling")
-        code = u.get("course_code")
-        pf = u.get("possible_faculty") or []
-        if pf:
-            return ("Qualified but all at load cap",
-                    "Qualified faculty exist but every one is at their load cap. "
-                    "Approve overload or rebalance.", "Staffing / Policy")
-        alt = exp_norm.get(normalize_course_code(code), set())
-        if code not in exp_exact and alt:
-            return ("Course-code mismatch (data)",
-                    f"Experts are registered under a different spelling of this code "
-                    f"({len(alt)} faculty). Fix the course_code, or rely on normalized matching.",
-                    "Data")
-        if len(code_programs.get(code, set())) >= 3:
-            return ("GenEd - assignable to spare load",
-                    "Common course (taught in 3+ programs), no specialist needed. "
-                    "Assign to any faculty with spare load.", "Policy")
-        return ("No expertise registered",
-                "No faculty registered to teach this course. Register expertise or hire.",
-                "Staffing")
-
-    order = {"Timetabling - no room/time": 0, "Course-code mismatch (data)": 1,
-             "Qualified but all at load cap": 2, "GenEd - assignable to spare load": 3,
-             "No expertise registered": 4}
-    rows = []
-    for u in unscheduled_meetings:
-        cat, reason, owner = classify(u)
-        crow = row_by.get((u.get("class_id"), u.get("course_code")), {})
-        units = (compute_load(crow.get("course_lec", 0) or 0, crow.get("course_lab", 0) or 0)
-                 if crow else "")
-        pf = u.get("possible_faculty") or []
-        if not is_no_faculty(u):
-            fac = u.get("faculty_name", "-")            # timetabling: the assigned faculty
-        else:
-            fac = ", ".join(pf) if pf else "-"          # no-faculty: possible faculty
-        rows.append({
-            "code": u.get("course_code"), "prog": u.get("program_code", "?"),
-            "sec": u.get("set_name", "?"), "type": u.get("type", "?"),
-            "hours": u.get("hours", ""), "units": round(units, 2) if units != "" else "",
-            "inst": u.get("institute_id"), "cat": cat, "owner": owner, "reason": reason,
-            "faculty": fac,
-        })
-    rows.sort(key=lambda r: (order.get(r["cat"], 9), str(r["code"]), str(r["sec"])))
-
-    wb = Workbook()
-    ws = wb.active
-    ws.title = f"Unscheduled ({len(rows)})"
-    hf = PatternFill("solid", fgColor="7A1F1F")
-    hfont = Font(bold=True, color="FFFFFF")
-    border = Border(bottom=Side(style="thin", color="E0D2D2"))
-    fills = {"Timetabling - no room/time": "FBE3D6", "Course-code mismatch (data)": "E6E1F4",
-             "Qualified but all at load cap": "F3E7CF", "GenEd - assignable to spare load": "DCEFEC",
-             "No expertise registered": "F6E0DD"}
-    hdr = ["Course Code", "Program", "Section", "Type", "Hours", "Teacher Units",
-           "Institute", "Category", "Owner", "Reason", "Assigned / Possible Faculty"]
-    ws.append(hdr)
-    for c in ws[1]:
-        c.fill = hf; c.font = hfont
-        c.alignment = Alignment(horizontal="left", vertical="center")
-    ws.row_dimensions[1].height = 24
-    for r in rows:
-        ws.append([r["code"], r["prog"], r["sec"], r["type"], r["hours"], r["units"],
-                   r["inst"], r["cat"], r["owner"], r["reason"], r["faculty"]])
-        rr = ws[ws.max_row]
-        for cell in rr:
-            cell.border = border
-            cell.alignment = Alignment(vertical="center", wrap_text=cell.column in (10, 11))
-        rr[7].fill = PatternFill("solid", fgColor=fills.get(r["cat"], "FFFFFF"))
-    for i, w in enumerate([15, 12, 15, 12, 22, 12, 9, 28, 18, 52, 42], 1):
-        ws.column_dimensions[get_column_letter(i)].width = w
-    ws.freeze_panes = "A2"
-    if rows:
-        ws.auto_filter.ref = f"A1:K{ws.max_row}"
-
-    ws2 = wb.create_sheet("Summary")
-    cats = {}
-    for r in rows:
-        cats[(r["cat"], r["owner"])] = cats.get((r["cat"], r["owner"]), 0) + 1
-    actions = {
-        "Timetabling - no room/time": "Add/borrow lab rooms (esp. institutes with none), or decouple lecture+lab.",
-        "Course-code mismatch (data)": "Fix course_code spelling / normalized matching - instant, no staffing cost.",
-        "Qualified but all at load cap": "Approve overload or rebalance load among qualified faculty.",
-        "GenEd - assignable to spare load": "Approve GenEd spare-load fallback.",
-        "No expertise registered": "Register expertise in faculty_expertise_courses, or hire.",
-    }
-    ws2.append(["Category", "Owner", "Sections", "What to do"])
-    for c in ws2[1]:
-        c.fill = hf; c.font = hfont
-    for (cat, owner), n in sorted(cats.items(), key=lambda x: order.get(x[0][0], 9)):
-        ws2.append([cat, owner, n, actions.get(cat, "")])
-    ws2.append(["TOTAL", "", len(rows), ""])
-    for i, w in enumerate([32, 18, 10, 66], 1):
-        ws2.column_dimensions[get_column_letter(i)].width = w
-    for row in ws2.iter_rows(min_row=2):
-        for cell in row:
-            cell.alignment = Alignment(vertical="center", wrap_text=cell.column == 4)
-
-    wb.save(filename)
-    print(f"[INFO] Unscheduled report saved to: {filename}  ({len(rows)} sections)")
-
-
 # ============================================================
 # FACULTY LOAD CALCULATION FUNCTIONS
 # ============================================================
@@ -4304,28 +4034,13 @@ def compute_load(lec_units, lab_units):
     return teacher_lec_units + teacher_lab_units
 
 
-def normalize_course_code(code):
-    """
-    Normalize a course_code for expertise<->class matching: remove ALL whitespace
-    and uppercase. The `courses` catalog contains duplicate rows for the same real
-    course whose codes differ only in spelling (e.g. 'ENG 111' vs 'ENG111',
-    'GEELECT2' vs 'GEELECT 2', 'SS 113' vs 'SS113'). A class section and a faculty's
-    expertise can point to different duplicate rows, so an exact-string match fails
-    and the section is stranded with "no qualified faculty". Course codes are unique
-    identifiers, so whitespace/case carry no meaning — normalizing is safe.
-    """
-    if code is None:
-        return None
-    return "".join(str(code).split()).upper()
-
-
 def matches_expertise(course, faculty_course):
     """
     Check if faculty expertise matches a class.
-    Must match: course_code (normalized) AND program_id.
+    Must match: course_code AND program_id.
     """
     return (
-        normalize_course_code(faculty_course["course_code"]) == normalize_course_code(course["course_code"])
+        faculty_course["course_code"] == course["course_code"]
         and faculty_course["program_id"] == course["program_id"]
     )
 
@@ -4416,7 +4131,7 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
     for f in faculty_expertise_courses:
         if f.get("course_code") is None:
             continue
-        key = (normalize_course_code(f["course_code"]), f["program_id"])
+        key = (f["course_code"], f["program_id"])
         if key not in expertise_to_fids:
             expertise_to_fids[key] = []
         fid = f["faculty_id"]
@@ -4431,7 +4146,7 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
         if f.get("course_code") is None:
             continue
         fid = f["faculty_id"]
-        key = (normalize_course_code(f["course_code"]), f["program_id"])
+        key = (f["course_code"], f["program_id"])
         faculty_expertise_keys.setdefault(fid, set()).add(key)
 
     # Cross-program fallback for GE/PE/NSTP-type subjects (e.g. SS113, PE3 New).
@@ -4452,7 +4167,7 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
 
     _cross_logged: set = set()
     for course in classes_courses:
-        cc = normalize_course_code(course.get("course_code"))
+        cc = course.get("course_code")
         pid = course.get("program_id")
         key = (cc, pid)
         if cc and not expertise_to_fids.get(key) and course_code_to_fids.get(cc):
@@ -4466,7 +4181,7 @@ def assign_faculty(classes_courses, faculty_expertise_courses):
     # Group classes by expertise key; shuffle within each group for fairness
     classes_by_expertise = {}
     for course in classes_courses:
-        key = (normalize_course_code(course.get("course_code")), course.get("program_id"))
+        key = (course.get("course_code"), course.get("program_id"))
         if key not in classes_by_expertise:
             classes_by_expertise[key] = []
         classes_by_expertise[key].append(course)
@@ -4998,18 +4713,6 @@ if __name__ == "__main__":
         output_dir, f"scheduleeeessseee_{timestamp}.xlsx")
     save_schedule_to_excel(complete_schedule, unscheduled_meetings,
                            faculty_load_result, schedule_excel_filename)
-
-    # No-faculty diagnostic report (why each unscheduled section has no faculty)
-    no_faculty_report_filename = os.path.join(
-        output_dir, f"no_faculty_report_{timestamp}.xlsx")
-    save_no_faculty_report(unscheduled_meetings, classes_course,
-                           faculty_expertise_courses, no_faculty_report_filename)
-
-    # Full unscheduled report (both timetabling + no-faculty, each with a reason)
-    unscheduled_report_filename = os.path.join(
-        output_dir, f"unscheduled_report_{timestamp}.xlsx")
-    save_unscheduled_report(unscheduled_meetings, classes_course,
-                            faculty_expertise_courses, unscheduled_report_filename)
 
     # Save schedule to JSON file (always overwrites with same filename)
     json_output_dir = os.path.join("..", "backend", "src", "generated_scheduled", "json_output")
