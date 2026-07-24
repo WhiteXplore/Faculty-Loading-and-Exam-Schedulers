@@ -103,6 +103,12 @@
                       : "Course Code"
                   }}
                 </th>
+                <th
+                  class="px-4 py-3 text-left w-[35%]"
+                  v-if="activeTab === 'Not Selected Expertise'"
+                >
+                  Course ID
+                </th>
                 <th class="px-4 py-3 text-left w-[35%]">Course Description</th>
                 <th class="px-4 py-3 text-center w-[12%]">Course Semester</th>
                 <th class="px-4 py-3 text-center w-[12%]">Course Level</th>
@@ -135,6 +141,7 @@
                   <td class="px-4 py-3 truncate">
                     {{ user.course_code }} - {{ user.course_title }}
                   </td>
+
                   <td class="px-4 py-3 truncate text-center">
                     {{ user.course_semester }}
                   </td>
@@ -167,8 +174,12 @@
                     {{ user.course_code }}
                   </td>
                   <td class="px-4 py-3 truncate">
+                    {{ user.course_id }}
+                  </td>
+                  <td class="px-4 py-3 truncate">
                     {{ user.course_title }}
                   </td>
+
                   <td class="px-4 py-3 truncate text-center">
                     {{ user.course_semester }}
                   </td>

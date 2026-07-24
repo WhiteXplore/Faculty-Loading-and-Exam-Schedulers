@@ -17,6 +17,9 @@ export class UnscheduledMeeting {
   course_code: string;
 
   @Column()
+  course_id: number;
+
+  @Column()
   class_size: number;
 
   @Column()

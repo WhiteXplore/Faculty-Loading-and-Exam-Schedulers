@@ -30,10 +30,9 @@ export class GeneratedScheduledService {
 
       console.log('Running Python script:', scriptPath);
 
-      const pythonProcess = spawn(
-        'C:\\Program Files\\Python313\\python.exe',
-        [scriptPath],
-      );
+      const pythonProcess = spawn('C:\\Program Files\\Python314\\python.exe', [
+        scriptPath,
+      ]);
       let stdoutData = '';
       let stderrData = '';
 
@@ -100,7 +99,8 @@ export class GeneratedScheduledService {
 
       console.log('Running feasibility check:', scriptPath);
 
-      const pythonProcess = spawn('C:\\Program Files\\Python313\\python.exe', [
+      // Run the actual Python script
+      const pythonProcess = spawn('C:\\Program Files\\Python314\\python.exe', [
         scriptPath,
       ]);
 
@@ -110,24 +110,48 @@ export class GeneratedScheduledService {
       pythonProcess.stdout.on('data', (data) => {
         stdoutData += data.toString();
       });
+
       pythonProcess.stderr.on('data', (data) => {
         stderrData += data.toString();
       });
 
+      pythonProcess.on('error', (err) => {
+        console.error('Failed to start Python process:', err);
+        reject(
+          new InternalServerErrorException(
+            `Failed to start Python process: ${err.message}`,
+          ),
+        );
+      });
+
       pythonProcess.on('close', (code) => {
+        console.log('========== PYTHON STDOUT ==========');
+        console.log(stdoutData);
+
+        console.log('========== PYTHON STDERR ==========');
+        console.log(stderrData);
+
+        console.log('Exit code:', code);
+
         if (code !== 0) {
-          console.error('Feasibility error:', stderrData);
           return reject(
-            new InternalServerErrorException('Failed to run pre-assessment.'),
+            new InternalServerErrorException(
+              stderrData || stdoutData || `Python exited with code ${code}`,
+            ),
           );
         }
 
         const startMarker = '===JSON_START===';
         const endMarker = '===JSON_END===';
+
         const startIndex = stdoutData.indexOf(startMarker);
         const endIndex = stdoutData.indexOf(endMarker);
 
         if (startIndex === -1 || endIndex === -1) {
+          console.error('JSON markers not found.');
+          console.error('STDOUT:', stdoutData);
+          console.error('STDERR:', stderrData);
+
           return reject(
             new InternalServerErrorException(
               'No JSON markers in pre-assessment output.',
@@ -136,14 +160,15 @@ export class GeneratedScheduledService {
         }
 
         try {
-          const report = JSON.parse(
-            stdoutData
-              .substring(startIndex + startMarker.length, endIndex)
-              .trim(),
-          );
+          const jsonString = stdoutData
+            .substring(startIndex + startMarker.length, endIndex)
+            .trim();
+
+          const report = JSON.parse(jsonString);
+
           resolve(report);
         } catch (err) {
-          console.error('Feasibility JSON parse error:', err.message);
+          console.error('Feasibility JSON parse error:', err);
           reject(
             new InternalServerErrorException(
               'Failed to parse pre-assessment JSON.',
@@ -153,7 +178,6 @@ export class GeneratedScheduledService {
       });
     });
   }
-
   /**
    * ⭐ Read faculty loading JSON file
    */

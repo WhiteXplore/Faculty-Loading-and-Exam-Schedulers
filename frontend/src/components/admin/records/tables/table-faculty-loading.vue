@@ -270,11 +270,41 @@
               class="flex justify-between items-center bg-defaultGreen text-white px-4 py-3 font-semibold text-sm rounded-t-xl"
             >
               <span class="text-lg font-bold">{{ instructor }}</span>
-              <div v-if="facultyTotalUnits[instructor]">
-                <p class="font-normal">
+              <div
+                v-if="facultyTotalUnits[instructor]"
+                class="mt-2 flex items-center gap-2 flex-wrap text-xs"
+              >
+                <!-- Unit Load -->
+                <div
+                  class="px-3 py-1 rounded-full border border-blue-200 bg-white text-blue-600 font-medium"
+                >
+                  Set Load: {{ facultyTotalUnits[instructor].unitLoad }}
+                </div>
+                <!-- Total Units -->
+                <div
+                  class="px-3 py-1 rounded-full border font-medium"
+                  :class="
+                    Number(facultyTotalUnits[instructor].totalUnits) >
+                    Number(facultyTotalUnits[instructor].unitLoad)
+                      ? 'bg-white border-red-200 text-red-600'
+                      : 'bg-white border-green-200 text-defaultGreen'
+                  "
+                >
                   Total Units:
-                  {{ facultyTotalUnits[instructor].totalUnits }}
-                </p>
+                  {{ facultyTotalUnits[instructor].totalUnits }} Units
+                </div>
+
+                <!-- Status -->
+                <div
+                  v-if="
+                    Number(facultyTotalUnits[instructor].totalUnits) >
+                    Number(facultyTotalUnits[instructor].unitLoad)
+                  "
+                  class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-semibold"
+                >
+                  <i class="mdi mdi-alert-circle mr-1"></i>
+                  OVERLOAD
+                </div>
               </div>
             </div>
 
@@ -768,6 +798,11 @@ export default {
       const store = useFetchDataStore();
       return store.courses || [];
     },
+
+    rawusers() {
+      const store = useFetchDataStore();
+      return store.rawusers || [];
+    },
     collegeBranches() {
       const store = useFetchDataStore();
       return store.college_branch || [];
@@ -779,16 +814,12 @@ export default {
       Object.entries(this.filteredGroupedSchedule).forEach(
         ([faculty, schedules]) => {
           let totalUnits = 0;
-
-          // prevent duplicate counting
           const counted = new Set();
 
           schedules.forEach((sched) => {
             const key = `${sched.set_name}-${sched.course_code}`;
 
-            // skip if already counted
             if (counted.has(key)) return;
-
             counted.add(key);
 
             const course = this.coursesList.find(
@@ -796,15 +827,23 @@ export default {
             );
 
             if (!course) return;
+
             const lec = Number(course.course_lec || 0);
             const lab = Number(course.course_lab || 0);
-            let compute = 0;
-            compute = lab * 2.25;
-            totalUnits += lec + compute;
+
+            totalUnits += lec + lab * 2.25;
           });
+
+          // Find faculty in raw users
+          const user = this.rawusers.find(
+            (u) =>
+              `${u.first_name} ${u.last_name}`.trim().toLowerCase() ===
+              faculty.trim().toLowerCase(),
+          );
 
           result[faculty] = {
             totalUnits: Number(totalUnits.toFixed(2)),
+            unitLoad: Number(user?.unit_load || 0),
           };
         },
       );
@@ -1398,6 +1437,7 @@ export default {
         const unscheduledPayload = unscheduledMeetings.map((item) => ({
           class_id: item.class_id,
           course_code: item.course_code,
+          course_id: item.course_id,
           class_size: item.class_size,
           faculty_name: item.faculty_name,
           program_id: item.program_id,
@@ -1504,7 +1544,7 @@ export default {
     await store.fetchPrograms();
     await store.fetchCollegeBranch();
     await store.fetchCourses();
-
+    await store.fetchRawUsers();
     const data = await store.fetchGeneratedScheduled();
     if (!data) {
       this.schedule = [];

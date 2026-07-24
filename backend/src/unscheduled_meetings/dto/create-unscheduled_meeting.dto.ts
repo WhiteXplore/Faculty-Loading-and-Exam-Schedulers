@@ -8,6 +8,9 @@ export class CreateUnscheduledMeetingDto {
   course_code: string;
 
   @IsNumber()
+  course_id: number;
+
+  @IsNumber()
   class_size: number;
 
   @IsString()
