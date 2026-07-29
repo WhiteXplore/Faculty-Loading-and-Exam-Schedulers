@@ -1,25 +1,33 @@
 <template>
   <div class="modal-overlay">
-    <div class="rounded-[16px] shadow-lg justify-center animate-slideUp max-h-[90vh] overflow-y-auto">
-      <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg ">
+    <div class="modal-wrapper">
+      <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg">
         <!-- Header -->
-        <div class="flex items-center justify-between px-6 py-4 border-b">
-          <div class="flex items-center gap-2">
-            <div class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shadow-sm">
+
+        <div class="modal-header">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
               <icon name="users" class="text-white" />
             </div>
+
+            <!-- Title -->
             <div>
-              <h2 class="text-lg font-semibold text-gray-900">Account Information</h2>
-              <p class="text-xs text-gray-500">
+              <h2 class="text-lg font-semibold text-white">
+                Account Information
+              </h2>
+
+              <p class="text-xs text-green-100">
                 Account details and personal information overview
               </p>
             </div>
           </div>
-          <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
 
         <!-- Content -->
@@ -27,7 +35,7 @@
           <!-- Account Profile -->
           <div class="grid grid-cols-1 gap-4 text-sm">
             <div class="space-y-1">
-              <p class="text-gray-500">Faculty Name</p>
+              <p class="input-label">Faculty Name</p>
               <p class="font-medium text-gray-900">
                 {{ userData.first_name }}
                 {{ userData.last_name }}
@@ -35,35 +43,35 @@
             </div>
 
             <div class="space-y-1">
-              <p class="text-gray-500">Institute</p>
+              <p class="input-label">Institute</p>
               <p class="font-medium text-gray-900">
                 {{ userData.institute?.institute_name || "N/A" }}
               </p>
             </div>
 
             <div class="space-y-1">
-              <p class="text-gray-500">Program</p>
+              <p class="input-label">Program</p>
               <p class="font-medium text-gray-900">
                 {{ userData.program?.program_name || "N/A" }}
               </p>
             </div>
 
             <div class="space-y-1">
-              <p class="text-gray-500">Designation</p>
+              <p class="input-label">Designation</p>
               <p class="font-medium text-gray-900">
                 {{ userData.designation || "N/A" }}
               </p>
             </div>
 
             <div class="space-y-1">
-              <p class="text-gray-500">Employment Type</p>
+              <p class="input-label">Employment Type</p>
               <p class="font-medium text-gray-900">
                 {{ userData.employment_type || "N/A" }}
               </p>
             </div>
 
             <div class="space-y-1">
-              <p class="text-gray-500">Unit Load</p>
+              <p class="input-label">Unit Load</p>
               <p class="font-medium text-gray-900">
                 {{ userData.unit_load ?? "N/A" }}
               </p>

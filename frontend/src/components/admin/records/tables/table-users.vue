@@ -1,67 +1,5 @@
 <template>
   <div v-if="isTable">
-    <!-- Header -->
-    <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4 font-regular">
-        Pages / User Accounts
-      </div>
-
-      <div class="flex gap-2">
-        <!-- IMPORT DROPDOWN -->
-        <div class="relative">
-          <div @click="showImportSelector = true" class="btn-gui">
-            <div class="btn-add-icon">
-              <icon :name="'uploads'" class="w-4 h-4" />
-            </div>
-            <span class="btn-add-text">Import</span>
-          </div>
-
-          <!-- DROPDOWN MENU -->
-          <div
-            v-if="showImportMenu"
-            class="absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg overflow-hidden z-50"
-          >
-            <div
-              @click="openImportUsers"
-              class="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-2"
-            >
-              <icon name="uploads" class="w-4 h-4 text-blue-600" />
-              Import Users
-            </div>
-
-            <div
-              @click="openImportExpertise"
-              class="px-4 py-2 hover:bg-purple-50 cursor-pointer text-sm flex items-center gap-2"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-4 h-4 text-purple-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
-              </svg>
-              Import Expertise
-            </div>
-          </div>
-        </div>
-
-        <!-- ADD ACCOUNT -->
-        <div @click="toggleAdd" class="btn-add">
-          <div class="btn-add-icon">
-            <icon :name="'add-account1.1'" class="w-4 h-4" />
-          </div>
-          <span class="btn-add-text">Add Accounts</span>
-        </div>
-      </div>
-    </div>
-
     <!-- Table -->
     <div class="table-container">
       <!-- Top controls -->
@@ -99,30 +37,86 @@
           </div>
           <span class="text-sm font-medium">Per page</span>
         </div>
-
-        <!-- Search -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search..."
-            class="search-input"
-            @input="changePage(1)"
-          />
-          <!-- Search icon -->
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+        <div class="flex gap-2">
+          <!-- Search -->
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search..."
+              class="search-input"
+              @input="changePage(1)"
+            />
+            <!-- Search icon -->
+            <div
+              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <!-- IMPORT DROPDOWN -->
+            <div class="relative">
+              <div @click="showImportSelector = true" class="btn-download">
+                <div class="btn-add-icon">
+                  <icon :name="'uploads'" class="w-4 h-4" />
+                </div>
+                <span class="btn-add-text">Import</span>
+              </div>
+
+              <!-- DROPDOWN MENU -->
+              <div
+                v-if="showImportMenu"
+                class="absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg overflow-hidden z-50"
+              >
+                <div
+                  @click="openImportUsers"
+                  class="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm flex items-center gap-2"
+                >
+                  <icon name="uploads" class="w-4 h-4 text-blue-600" />
+                  Import Users
+                </div>
+
+                <div
+                  @click="openImportExpertise"
+                  class="px-4 py-2 hover:bg-purple-50 cursor-pointer text-sm flex items-center gap-2"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4 text-purple-600"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                  Import Expertise
+                </div>
+              </div>
+            </div>
+
+            <!-- ADD ACCOUNT -->
+            <div @click="toggleAdd" class="btn-add">
+              <div class="btn-add-icon">
+                <icon :name="'add-account1.1'" class="w-4 h-4" />
+              </div>
+              <span class="btn-add-text">Add Accounts</span>
+            </div>
           </div>
         </div>
       </div>

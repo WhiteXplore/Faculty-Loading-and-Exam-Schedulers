@@ -3,9 +3,9 @@
     <!-- TOP BAR -->
     <div class="flex justify-between py-2">
       <div>
-        <div @click="goBack" class="btn-download">
-          <div class="btn-download-icon">
-            <icon name="circle-arrow-down" />
+        <div @click="goBack" class="btn-goBack">
+          <div class="btn-goBack-icon">
+            <icon name="circle-arrow-left" />
           </div>
 
           <span class="btn-add-text">Go back</span>
@@ -308,12 +308,12 @@
     <!-- SELECT PROGRAM EMPTY STATE -->
     <div
       v-else
-      class="flex h-[70vh] flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white text-center shadow-sm"
+      class="flex h-[84vh] flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white text-center shadow-sm"
     >
       <div
         class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-defaultGreen"
       >
-        <icon :name="'book'" />
+        <icon name="book-open" />
       </div>
       <h2 class="text-lg font-bold text-gray-800">Select a program</h2>
       <p class="mt-1 text-sm text-gray-500">
@@ -488,10 +488,10 @@ export default {
   },
 
   methods: {
-    // To be fixed
-    // goBack:{
+    goBack() {
+      this.$router.push("/report-curriculum-offers");
+    },
 
-    // },
     selectProgram(program) {
       this.selectedProgram = program.value;
       this.showProgramDropdown = false;

@@ -6,7 +6,7 @@
     <div class="flex justify-center gap-2 w-full">
       <!-- MAIN MODAL WRAPPER -->
       <div
-        class="bg-white w-[60vw] h-[98vh] rounded-xl shadow-xl flex flex-col overflow-hidden"
+        class="bg-white w-full h-[98vh] rounded-xl shadow-xl flex flex-col overflow-hidden"
       >
         <!-- HEADER -->
 
@@ -156,11 +156,11 @@
                 </div>
 
                 <!-- TABLE -->
-                <div class="">
+                <div class="max-h-[73vh] overflow-y-auto border rounded-lg">
                   <table
                     class="w-full table-auto border-separate border-spacing-0 text-[11px]"
                   >
-                    <thead class="bg-gray-200 sticky top-0 z-10">
+                    <thead class="sticky top-0 z-20 bg-gray-200">
                       <tr>
                         <th class="px-3 py-3 border text-center w-24">Time</th>
                         <th
@@ -201,7 +201,9 @@
                               ],
                           }"
                           :style="{ height: timeSlotHeight + 'px' }"
-                          @dragover.prevent
+                          @dragover.prevent="
+                            onDragOver($event, instructor, day, slot.start)
+                          "
                           @drop="onDrop($event, instructor, day, slot.start)"
                         >
                           <template
@@ -227,7 +229,7 @@
                               @dblclick="attemptUnjoin(item)"
                               @click="highlightRow(item)"
                               :class="[
-                                'absolute inset-0 border rounded-lg text-[11px] p-1 shadow-sm truncate transition overflow-hidden',
+                                'absolute inset-x-1 border rounded text-[11px] p-1 shadow-sm truncate cursor-pointer',
 
                                 // temp schedule
                                 item.id?.toString().startsWith('temp-')
@@ -343,236 +345,376 @@
       <!-- RIGHT: SLIDING ADD PANEL -->
       <div
         v-if="showAddPanel || showUnscheduledPanel"
-        class="w-[45vw] h-[98vh] flex flex-col gap-2"
+        :class="[
+          'h-full flex gap-2',
+          showAddPanel && showUnscheduledPanel
+            ? 'w-[90vw]'
+            : showAddPanel
+            ? 'w-[30vw]'
+            : 'w-[45vw]',
+        ]"
       >
         <div
           v-if="showAddPanel"
           :class="[
             'w-[45vw] bg-white border shadow-xl transition-all duration-300 flex justify-start rounded-xl',
-            showUnscheduledPanel ? 'h-[50vh]' : 'h-full',
+            showUnscheduledPanel ? 'h-full ' : '',
           ]"
         >
-          <div class="p-0.5 flex flex-col">
-            <!-- Table Wrapper for Scroll -->
-            <div class="overflow-y-auto h-full border-t rounded-t-xl">
-              <table class="min-w-full divide-y divide-gray-200 text-xs">
-                <!-- Table Head -->
-                <thead class="bg-gray-100 sticky top-0 z-20">
-                  <tr>
-                    <th class="px-4 py-3 border w-[13%]">Section</th>
-                    <th class="px-4 py-3 border w-[10%]">Course</th>
-                    <th class="px-4 py-3 border w-[5%]">Campus</th>
-                    <th class="px-4 py-3 border w-[13%]">Room</th>
-                    <th class="px-4 py-3 border w-[13%]">Day</th>
-                    <th class="px-4 py-3 border w-[7%]">Start</th>
-                    <th class="px-4 py-3 border w-[7%]">Hours</th>
-                    <th class="px-4 py-3 border w-[5%]">Set-up</th>
+          <div class="flex flex-col w-full">
+            <div
+              v-if="expandedRecord"
+              class="bg-white rounded-xl border shadow-lg overflow-hidden"
+            >
+              <!-- Header -->
+              <div
+                class="flex items-center justify-between px-6 py-2 border-b bg-defaultGreen text-white"
+              >
+                <div>
+                  <h3 class="text-lg font-semibold">Update Schedule</h3>
+                  <p class="text-xs text-green-100">
+                    Update the selected schedule information
+                  </p>
+                </div>
 
-                    <th class="px-4 py-3 border text-center w-[2%]">Action</th>
-                  </tr>
-                </thead>
+                <button
+                  @click="cancelNewRow"
+                  class="w-8 h-8 rounded-full hover:bg-white/20 transition"
+                >
+                  ✕
+                </button>
+              </div>
 
-                <!-- Table Body -->
-                <tbody>
-                  <tr
-                    v-for="record in sortedLocalData"
-                    :key="record.id || record.tempId"
-                    :id="'row-' + (record.id || record.tempId)"
-                    :class="[
-                      'hover:bg-green-200 relative',
-                      highlightedRecordId === (record.id || record.tempId)
-                        ? 'bg-blue-100'
-                        : '',
-                      record.join_group_id
-                        ? 'border-l-4 ' + getJoinColor(record.join_group_id)
-                        : '',
-                    ]"
-                  >
-                    <!-- Section Input -->
-                    <td class="px-2 py-2 border relative">
-                      <input
-                        v-model="record.searchSectionQuery"
-                        :disabled="!canEditSchedule(record)"
-                        type="text"
-                        placeholder="Select section..."
-                        class="px-3 py-2 w-full rounded-md text-xs"
-                        @focus="record.showSectionDropdown = true"
-                        @input="record.class_id = null"
-                      />
-                      <div
-                        v-if="
-                          record.showSectionDropdown &&
-                          filteredSections(record).length
-                        "
-                        class="absolute z-10 w-[8vw] bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
-                        @mouseleave="record.showSectionDropdown = false"
-                      >
-                        <div
-                          v-for="section in filteredSections(record)"
-                          :key="section.class_id"
-                          class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                          @mousedown.prevent="selectSection(record, section)"
-                        >
-                          {{ section?.program?.program_code }} -
-                          {{ section.set_name }}
+              <div>
+                <div class="p-2">
+                  <div class="p-6 border-r">
+                    <div class="grid grid-cols-1 gap-5">
+                      <!-- ===================== SECTION ===================== -->
+                      <div class="dropdown-container relative">
+                        <label class="dropdown-label">Section :</label>
+
+                        <div class="dropdown-wrapper">
+                          <input
+                            v-model="expandedRecord.searchSectionQuery"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            type="text"
+                            placeholder="Search section..."
+                            class="dropdown-input"
+                            :class="
+                              !canEditSchedule(expandedRecord)
+                                ? 'bg-gray-100 cursor-not-allowed text-gray-500'
+                                : ''
+                            "
+                            @focus="expandedRecord.showSectionDropdown = true"
+                            @input="expandedRecord.class_id = null"
+                          />
+
+                          <div
+                            v-if="expandedRecord.showSectionDropdown"
+                            class="dropdown-menu"
+                            @mouseleave="
+                              expandedRecord.showSectionDropdown = false
+                            "
+                          >
+                            <div v-if="filteredSections(expandedRecord).length">
+                              <div
+                                v-for="section in filteredSections(
+                                  expandedRecord,
+                                )"
+                                :key="section.class_id"
+                                class="dropdown-item"
+                                @mousedown.prevent="
+                                  selectSection(expandedRecord, section)
+                                "
+                              >
+                                {{ section.program?.program_code }} -
+                                {{ section.set_name }}
+                              </div>
+                            </div>
+
+                            <div v-else class="dropdown-item text-gray-400">
+                              No section found
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </td>
 
-                    <!-- Course Input -->
-                    <td class="px-2 py-2 border relative">
-                      <input
-                        v-model="record.searchCourseQuery"
-                        :disabled="!canEditSchedule(record)"
-                        type="text"
-                        placeholder="Select course..."
-                        class="px-3 py-2 w-full rounded-md text-xs"
-                        @focus="record.showCourseDropdown = true"
-                        @input="record.course_id = null"
-                      />
-                      <div
-                        @mouseleave="record.showCourseDropdown = false"
-                        v-if="
-                          record.showCourseDropdown &&
-                          filteredCourses(record).length
-                        "
-                        class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
-                      >
-                        <div
-                          v-for="item in filteredCourses(record)"
-                          :key="item.curriculum_course_id"
-                          class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                          @mousedown="selectCourse(record, item)"
-                        >
-                          {{ item.course?.course_code }}
+                      <!-- ===================== COURSE ===================== -->
+
+                      <div class="dropdown-container relative">
+                        <label class="dropdown-label">Course :</label>
+
+                        <div class="dropdown-wrapper">
+                          <input
+                            v-model="expandedRecord.searchCourseQuery"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            type="text"
+                            placeholder="Search course..."
+                            class="dropdown-input"
+                            :class="
+                              !canEditSchedule(expandedRecord)
+                                ? 'bg-gray-100 cursor-not-allowed text-gray-500'
+                                : ''
+                            "
+                            @focus="expandedRecord.showCourseDropdown = true"
+                            @input="expandedRecord.course_id = null"
+                          />
+
+                          <div
+                            v-if="expandedRecord.showCourseDropdown"
+                            class="dropdown-menu"
+                            @mouseleave="
+                              expandedRecord.showCourseDropdown = false
+                            "
+                          >
+                            <div v-if="filteredCourses(expandedRecord).length">
+                              <div
+                                v-for="item in filteredCourses(expandedRecord)"
+                                :key="item.curriculum_course_id"
+                                class="dropdown-item"
+                                @mousedown.prevent="
+                                  selectCourse(expandedRecord, item)
+                                "
+                              >
+                                {{ item.course?.course_code }}
+                              </div>
+                            </div>
+
+                            <div v-else class="dropdown-item text-gray-400">
+                              No course found
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </td>
 
-                    <!-- Campus -->
-                    <td class="px-2 py-2 border relative">
-                      <select
-                        v-model.number="record.college_branch_id"
-                        :disabled="!canEditSchedule(record)"
-                        class="w-full rounded px-2 py-2 text-xs"
-                        @change="onCampusChange(record)"
-                      >
-                        <option :value="null" disabled>Select Campus</option>
+                      <!-- ===================== CAMPUS ===================== -->
+                      <div class="dropdown-container relative">
+                        <label class="dropdown-label">Campus :</label>
 
-                        <option
-                          v-for="campus in availableCampuses()"
-                          :key="campus.college_branch_id"
-                          :value="campus.college_branch_id"
-                        >
-                          {{ campus.college_branch_name }}
-                        </option>
-                      </select>
-                    </td>
+                        <div class="dropdown-wrapper">
+                          <input
+                            v-model="expandedRecord.searchCampusQuery"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            type="text"
+                            placeholder="Select campus..."
+                            class="dropdown-input"
+                            :class="
+                              !canEditSchedule(expandedRecord)
+                                ? 'bg-gray-100 cursor-not-allowed text-gray-500'
+                                : ''
+                            "
+                            @focus="expandedRecord.showCampusDropdown = true"
+                            @input="expandedRecord.college_branch_id = null"
+                          />
 
-                    <!-- Room Input -->
-                    <td class="px-2 py-2 border relative">
-                      <input
-                        v-model="record.searchRoomQuery"
-                        :disabled="!canEditSchedule(record)"
-                        type="text"
-                        placeholder="Select room..."
-                        class="px-3 py-2 w-full rounded-md text-xs"
-                        @focus="record.showRoomDropdown = true"
-                        @input="record.room_id = null"
-                      />
-                      <div
-                        @mouseleave="record.showRoomDropdown = false"
-                        v-if="
-                          record.showRoomDropdown &&
-                          filteredRooms(record).length
-                        "
-                        class="absolute z-10 w-full bg-white border rounded-md max-h-40 overflow-y-auto mt-1"
-                      >
-                        <div
-                          v-for="room in filteredRooms(record)"
-                          :key="room.room_id"
-                          class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                          @mousedown="selectRoom(record, room)"
-                        >
-                          {{ room.room_name }}
+                          <div
+                            v-if="expandedRecord.showCampusDropdown"
+                            class="dropdown-menu"
+                            @mouseleave="
+                              expandedRecord.showCampusDropdown = false
+                            "
+                          >
+                            <div
+                              v-if="
+                                availableCampuses().filter((campus) =>
+                                  campus.college_branch_name
+                                    .toLowerCase()
+                                    .includes(
+                                      (
+                                        expandedRecord.searchCampusQuery || ''
+                                      ).toLowerCase(),
+                                    ),
+                                ).length
+                              "
+                            >
+                              <div
+                                v-for="campus in availableCampuses().filter(
+                                  (campus) =>
+                                    campus.college_branch_name
+                                      .toLowerCase()
+                                      .includes(
+                                        (
+                                          expandedRecord.searchCampusQuery || ''
+                                        ).toLowerCase(),
+                                      ),
+                                )"
+                                :key="campus.college_branch_id"
+                                class="dropdown-item"
+                                @mousedown.prevent="
+                                  expandedRecord.college_branch_id =
+                                    campus.college_branch_id;
+                                  expandedRecord.searchCampusQuery =
+                                    campus.college_branch_name;
+                                  expandedRecord.showCampusDropdown = false;
+                                  onCampusChange(expandedRecord);
+                                "
+                              >
+                                {{ campus.college_branch_name }}
+                              </div>
+                            </div>
+
+                            <div v-else class="dropdown-item text-gray-400">
+                              No campus found
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </td>
 
-                    <!-- Day -->
-                    <td class="px-2 py-2 border">
-                      <input
-                        v-model="record.day"
-                        :disabled="!canEditSchedule(record)"
-                        class="w-full px-3 py-2 boder rounded-md text-center text-xs"
-                      />
-                    </td>
+                      <!-- ===================== ROOM ===================== -->
+                      <div class="dropdown-container relative">
+                        <label class="dropdown-label">Room :</label>
 
-                    <!-- Start Hour -->
-                    <td class="px-2 py-2 border text-center">
-                      <input
-                        v-model.number="record.start_hour"
-                        :disabled="!canEditSchedule(record)"
-                        type="number"
-                        step="0.5"
-                        min="8"
-                        max="20"
-                        class="w-full px-3 py-2 boder rounded-md text-center text-xs"
-                      />
-                    </td>
+                        <div class="dropdown-wrapper">
+                          <input
+                            v-model="expandedRecord.searchRoomQuery"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            type="text"
+                            placeholder="Select room..."
+                            class="dropdown-input"
+                            :class="
+                              !canEditSchedule(expandedRecord)
+                                ? 'bg-gray-100 cursor-not-allowed text-gray-500'
+                                : ''
+                            "
+                            @focus="expandedRecord.showRoomDropdown = true"
+                            @input="expandedRecord.room_id = null"
+                          />
 
-                    <!-- Duration -->
-                    <td class="px-2 py-2 border text-center">
-                      <input
-                        v-model.number="record.duration"
-                        :disabled="!canEditSchedule(record)"
-                        type="number"
-                        class="w-full px-3 py-2 boder rounded-md text-center text-xs"
-                      />
-                    </td>
+                          <div
+                            v-if="expandedRecord.showRoomDropdown"
+                            class="dropdown-menu"
+                            @mouseleave="
+                              expandedRecord.showRoomDropdown = false
+                            "
+                          >
+                            <div v-if="filteredRooms(expandedRecord).length">
+                              <div
+                                v-for="room in filteredRooms(expandedRecord)"
+                                :key="room.room_id"
+                                class="dropdown-item"
+                                @mousedown.prevent="
+                                  selectRoom(expandedRecord, room)
+                                "
+                              >
+                                {{ room.room_name }}
+                              </div>
+                            </div>
 
-                    <!-- Mode -->
-                    <td class="px-2 py-2 border">
-                      <select
-                        v-model="record.mode"
-                        :disabled="!canEditSchedule(record)"
-                        @change="onModeChange(record)"
-                        class="w-full rounded px-2 py-1 text-xs"
-                      >
-                        <option value="" disabled selected>Select mode</option>
-                        <option value="face to face">F2F</option>
-                        <option value="online">OL</option>
-                      </select>
-                    </td>
+                            <div v-else class="dropdown-item text-gray-400">
+                              No room found
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
-                    <!-- Action -->
-                    <td class="px-2 py-3 border text-center">
-                      <button
-                        @click="toggleDelete(record)"
-                        :disabled="!canEditSchedule(record)"
-                        class="hover:text-red-900"
-                      >
-                        <icon name="delete" />
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                      <!-- ===================== DAY ===================== -->
+                      <div class="space-y-2">
+                        <label class="dropdown-label">Day :</label>
 
-            <!-- Footer Buttons -->
-            <div class="flex justify-end gap-2 p-3 text-xs border-t">
-              <button @click="addNewRow" class="btn-save">
-                <!-- <icon name="circle-add1" /> -->
-                Add Row
-              </button>
-              <button @click="cancelNewRow" class="btn-cancel">Clear</button>
+                        <div class="flex flex-wrap gap-2">
+                          <button
+                            v-for="day in [
+                              'Monday',
+                              'Tuesday',
+                              'Wednesday',
+                              'Thursday',
+                              'Friday',
+                              'Saturday',
+                              'Sunday',
+                            ]"
+                            :key="day"
+                            type="button"
+                            @click="
+                              canEditSchedule(expandedRecord) &&
+                                (expandedRecord.day = day)
+                            "
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            :class="[
+                              'px-4 py-2 rounded-full border text-xs font-medium transition-all duration-200',
+                              !canEditSchedule(expandedRecord)
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                : expandedRecord.day === day
+                                ? 'bg-defaultGreen text-white border-defaultGreen shadow-md'
+                                : 'bg-white text-gray-700 border-gray-300 hover:border-defaultGreen hover:text-defaultGreen hover:bg-green-50',
+                            ]"
+                          >
+                            {{ day }}
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- ===================== MODE ===================== -->
+                      <div>
+                        <label class="dropdown-label">Mode :</label>
+
+                        <select
+                          v-model="expandedRecord.mode"
+                          :disabled="!canEditSchedule(expandedRecord)"
+                          class="dropdown-input"
+                        >
+                          <option value="face to face">Face to Face</option>
+                          <option value="online">Online</option>
+                        </select>
+                      </div>
+
+                      <div class="grid grid-cols-2 gap-2">
+                        <!-- ===================== START HOUR ===================== -->
+                        <div>
+                          <label class="dropdown-label">Start Hour :</label>
+
+                          <input
+                            type="number"
+                            step="0.5"
+                            v-model.number="expandedRecord.start_hour"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            class="dropdown-input"
+                          />
+                        </div>
+
+                        <!-- ===================== DURATION ===================== -->
+                        <div>
+                          <label class="dropdown-label">Duration :</label>
+
+                          <input
+                            type="number"
+                            step="0.5"
+                            v-model.number="expandedRecord.duration"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            class="dropdown-input"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Footer Buttons -->
+              <div class="flex justify-end gap-2 p-3 text-xs border-t">
+                <button
+                  @click="toggleDelete"
+                  class="btn-delete1"
+                  v-if="expandedRecord?.id"
+                >
+                  Remove
+                </button>
+                <!-- <button
+                  @click="addNewRow"
+                  class="btn-save"
+                  v-if="!expandedRecord?.id"
+                >
+               
+                  Add Schedule
+                </button> -->
+                <button @click="cancelNewRow" class="btn-cancel">Clear</button>
+              </div>
             </div>
           </div>
         </div>
+        <!-- Expanded Details -->
+
         <div
           v-if="showUnscheduledPanel"
-          class="relative z-[9999] w-[45vw] h-[50vh] overflow-hidden bg-white rounded-xl"
+          class="relative z-[9999] w-[45vw] max-h-[90vh] overflow-hidden bg-white rounded-xl"
         >
           <unscheduled
             :close-add-schedule-panel="closeAddSchedulePanel"
@@ -1215,10 +1357,17 @@ export default {
       conflictMapCache: {},
 
       panelMode: null,
+      expandedRecord: null,
+      collegeBranches: [],
     };
   },
   computed: {
-    ...mapState(useFetchDataStore, ["rooms", "curriculum_courses", "rawusers"]),
+    ...mapState(useFetchDataStore, [
+      "rooms",
+      "curriculum_courses",
+      "rawusers",
+      "  all_school_years",
+    ]),
 
     conflictMap() {
       const map = {};
@@ -1477,7 +1626,31 @@ export default {
       "fetchCurriculumCourses",
       "fetchClassSections",
       "fetchRawUsers",
+      "fetchAllSchoolYears",
     ]),
+    async getCurrentSchoolYear() {
+      const store = useFetchDataStore();
+
+      if (!store.all_school_years?.length) {
+        await this.fetchAllSchoolYears();
+      }
+
+      const active = [...(store.all_school_years || [])]
+        .filter((s) => s.is_active)
+        .sort(
+          (a, b) =>
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
+        );
+
+      if (!active.length) {
+        throw new Error("No active school year found.");
+      }
+
+      return {
+        school_year: active[0].school_year_name,
+        semester: active[0].semester,
+      };
+    },
     async cancelEdit() {
       try {
         const addedSchedules = this.localData.filter((r) => r.isNew);
@@ -1653,6 +1826,8 @@ export default {
           showCourseDropdown: false,
           searchSectionQuery: course.set_name || "",
           showSectionDropdown: false,
+          school_year: this.activeSchoolYear?.school_year,
+          semester: this.activeSchoolYear?.semester,
         };
 
         this.localData.push(newRecord);
@@ -1961,10 +2136,22 @@ export default {
     },
     highlightRow(item) {
       this.highlightedRecordId = item.id || item.tempId;
-      // optional: scroll to the row
+
+      // Automatically open the Add Panel
+      this.showAddPanel = true;
+      this.showUnscheduledPanel = false;
+      // Automatically display the selected schedule
+      this.expandedRecord = item;
+
       this.$nextTick(() => {
         const el = document.getElementById(`row-${this.highlightedRecordId}`);
-        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        if (el) {
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
       });
     },
     onModeChange(record) {
@@ -2130,19 +2317,33 @@ export default {
 
       this.draggedRecord = null;
     },
-    openAddSchedulePanel(instructor) {
+    async openAddSchedulePanel(instructor) {
       this.selectedInstructorName = instructor;
 
-      this.showAddPanel = true;
+      // Close the unscheduled panel
       this.showUnscheduledPanel = false;
-    },
 
+      // Open the add panel
+      this.showAddPanel = true;
+
+      // Clear any previous unscheduled selection
+      this.expandedRecord = null;
+
+      await this.$nextTick();
+
+      this.addNewRow();
+    },
     openUnscheduledPanel(instructor) {
       this.selectedInstructorName = instructor;
 
-      // Show BOTH panels
-      this.showAddPanel = true;
+      // Hide Add Schedule panel
+      this.showAddPanel = false;
+
+      // Show only Unscheduled panel
       this.showUnscheduledPanel = true;
+
+      // Optional: clear any selected schedule
+      this.expandedRecord = null;
     },
 
     closeAddSchedulePanel() {
@@ -2307,7 +2508,7 @@ export default {
       record.room_capacity = "";
       record.searchRoomQuery = "";
     },
-    selectCourse(record, curriculumCourse) {
+    async selectCourse(record, curriculumCourse) {
       const course = curriculumCourse.course;
       const curriculum = curriculumCourse.curriculum;
 
@@ -2315,8 +2516,10 @@ export default {
       record.course_code = course.course_code;
 
       // ✅ gikan sa PROP
-      record.school_year = this.activeSchoolYear?.school_year_name || "";
-      record.semester = String(this.activeSchoolYear?.semester || "");
+      const currentSchoolYear = await this.getCurrentSchoolYear();
+
+      record.school_year = currentSchoolYear.school_year;
+      record.semester = String(currentSchoolYear.semester);
 
       record.program_id = curriculum?.program_id || null;
       record.program_code = curriculum?.program?.program_code || "";
@@ -2327,9 +2530,10 @@ export default {
     },
     /* ------------------ 5. ROW MANAGEMENT ------------- */
 
-    addNewRow() {
+    async addNewRow() {
+      const currentSchoolYear = await this.getCurrentSchoolYear();
       this.closeAddSchedulePanel(); // closes both panels
-
+      this.expandedRecord = true;
       // Reopen only Add panel
       this.showAddPanel = true;
       console.log("activeSchoolYear", this.activeSchoolYear);
@@ -2394,12 +2598,8 @@ export default {
         type: "Lecture",
 
         // ✅ GET FROM PROP
-        school_year:
-          this.activeSchoolYear?.school_year_name ||
-          this.activeSchoolYear?.school_year ||
-          "",
-
-        semester: this.activeSchoolYear?.semester || "",
+        school_year: currentSchoolYear.school_year,
+        semester: currentSchoolYear.semester.toString(),
 
         program_id: this.user.program_id || null,
         institute_id: this.user.institute_id || null,
@@ -2417,19 +2617,22 @@ export default {
       console.log("Added row using activeSchoolYear:", this.activeSchoolYear);
     },
     cancelNewRow() {
-      // Remove the last temp row only
-      for (let i = this.localData.length - 1; i >= 0; i--) {
-        if (
-          this.localData[i].tempId &&
-          this.localData[i].tempId.startsWith("temp-")
-        ) {
-          this.localData.splice(i, 1);
-          break;
-        }
-      }
+      // Remove all newly added rows
+      this.localData = this.localData.filter((record) => !record.isNew);
+
+      // Clear selected record
+      this.expandedRecord = null;
+      this.highlightedRecordId = null;
+
+      // Close the right panel
+      this.showAddPanel = false;
+      this.showUnscheduledPanel = false;
+
+      // Reset instructor
+      this.selectedInstructorName = "";
     },
-    toggleDelete(record) {
-      this.deleteTarget = record;
+    toggleDelete() {
+      this.deleteTarget = this.expandedRecord;
       this.showConfirmDelete = true;
     },
 
@@ -2440,20 +2643,37 @@ export default {
     async confirmDelete() {
       if (!this.deleteTarget) return;
 
+      // New row - not yet saved
+      if (this.deleteTarget.isNew || !this.deleteTarget.id) {
+        this.localData = this.localData.filter(
+          (r) =>
+            (r.id || r.tempId) !==
+            (this.deleteTarget.id || this.deleteTarget.tempId),
+        );
+
+        this.expandedRecord = null;
+        this.highlightedRecordId = null;
+        this.showConfirmDelete = false;
+        this.deleteTarget = null;
+
+        toast.success("Schedule removed.");
+        return;
+      }
+
       try {
         this.deleting = true;
 
-        // 🔥 CALL API DELETE ENDPOINT
         await axios.delete(
           `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${this.deleteTarget.id}`,
         );
 
-        // After removing locally
         this.localData = this.localData.filter(
           (item) => item.id !== this.deleteTarget.id,
         );
 
-        this.$emit("deleted", this.deleteTarget.id);
+        this.expandedRecord = null;
+        this.highlightedRecordId = null;
+
         toast.success("Schedule deleted successfully.");
       } catch (error) {
         console.error(error);
@@ -2462,11 +2682,6 @@ export default {
         this.deleting = false;
         this.showConfirmDelete = false;
         this.deleteTarget = null;
-
-        // 🔄 OPTIONAL: refresh all schedules from Pinia store
-        if (this.fetchFacultyLoads) {
-          await this.fetchFacultyLoads();
-        }
       }
     },
     /* ------------------ 6. SCHEDULE GRID -------------- */
@@ -2490,22 +2705,20 @@ export default {
         return [];
       }
 
-      const recordStart = Number(record.start_hour);
+      const recordStart = this.normalizeHour(record.start_hour);
       const recordEnd = recordStart + Number(record.duration);
 
       const sourceSchedules = this.getAllSchedulesForConflict(record);
 
       return sourceSchedules
-        .filter((r) => {
-          if (!r) return false;
+        .map((r) => {
+          if (!r) return null;
+
+          const rId = r.id?.toString() || r.tempId;
+          const recId = record.id?.toString() || record.tempId;
 
           // Skip itself
-          if (
-            (record.id && r.id === record.id) ||
-            (record.tempId && r.tempId === record.tempId)
-          ) {
-            return false;
-          }
+          if (rId === recId) return null;
 
           // Ignore schedules in the same joined group
           if (
@@ -2513,62 +2726,45 @@ export default {
             r.join_group_id &&
             Number(record.join_group_id) === Number(r.join_group_id)
           ) {
-            return false;
+            return null;
           }
 
           // Same day only
-          if (r.day !== record.day) return false;
+          if (r.day !== record.day) return null;
 
-          const rStart = Number(r.start_hour);
+          const rStart = this.normalizeHour(r.start_hour);
           const rEnd = rStart + Number(r.duration);
 
           // Time overlap
           if (Math.max(recordStart, rStart) >= Math.min(recordEnd, rEnd)) {
-            return false;
+            return null;
           }
 
-          const sameFaculty =
-            (record.faculty_id &&
-              r.faculty_id &&
-              Number(record.faculty_id) === Number(r.faculty_id)) ||
-            (record.faculty_name &&
-              r.faculty_name &&
-              record.faculty_name.trim().toLowerCase() ===
-                r.faculty_name.trim().toLowerCase());
+          const reasons = [];
 
-          const sameRoom =
-            record.mode?.toLowerCase() === "face to face" &&
-            r.mode?.toLowerCase() === "face to face" &&
-            record.room_id &&
-            r.room_id &&
-            Number(record.room_id) === Number(r.room_id);
-
-          const sameClass =
+          // SAME CLASS SECTION
+          if (
             record.class_id &&
             r.class_id &&
-            Number(record.class_id) === Number(r.class_id);
+            Number(record.class_id) === Number(r.class_id)
+          ) {
+            reasons.push("Same class section in the same Day and Time");
+          }
 
-          const sameOnlineSection =
-            record.mode?.toLowerCase() === "online" &&
-            r.mode?.toLowerCase() === "online" &&
-            record.set_name === r.set_name &&
-            Number(record.program_id) === Number(r.program_id) &&
-            Number(record.college_branch_id) === Number(r.college_branch_id);
+          // SAME ROOM (Face to Face)
+          if (
+            (record.schedule_type || record.mode || "").toLowerCase() ===
+              "face to face" &&
+            (r.schedule_type || r.mode || "").toLowerCase() ===
+              "face to face" &&
+            record.room_id &&
+            r.room_id &&
+            Number(record.room_id) === Number(r.room_id)
+          ) {
+            reasons.push("Same Room");
+          }
 
-          const reasons = [];
-
-          if (sameFaculty) reasons.push("Faculty conflict");
-          if (sameRoom) reasons.push("Room conflict");
-          if (sameClass) reasons.push("Class conflict");
-          if (sameOnlineSection) reasons.push("Online section conflict");
-
-          if (!reasons.length) return false;
-
-          return true;
-        })
-        .map((r) => {
-          const reasons = [];
-
+          // SAME FACULTY + SAME SCHEDULE TYPE
           const sameFaculty =
             (record.faculty_id &&
               r.faculty_id &&
@@ -2578,30 +2774,35 @@ export default {
               record.faculty_name.trim().toLowerCase() ===
                 r.faculty_name.trim().toLowerCase());
 
-          const sameRoom =
-            record.mode?.toLowerCase() === "face to face" &&
-            r.mode?.toLowerCase() === "face to face" &&
-            Number(record.room_id) === Number(r.room_id);
+          const sameScheduleType =
+            (record.schedule_type || record.mode || "").toLowerCase() ===
+            (r.schedule_type || r.mode || "").toLowerCase();
 
-          const sameClass = Number(record.class_id) === Number(r.class_id);
+          if (sameFaculty && sameScheduleType) {
+            reasons.push("Same Faculty + Same schedule_type");
+          }
 
-          const sameOnlineSection =
-            record.mode?.toLowerCase() === "online" &&
-            r.mode?.toLowerCase() === "online" &&
+          // ONLINE CONFLICT
+          if (
+            (record.room_name || "").toLowerCase() === "online" &&
+            (r.room_name || "").toLowerCase() === "online" &&
             record.set_name === r.set_name &&
             Number(record.program_id) === Number(r.program_id) &&
-            Number(record.college_branch_id) === Number(r.college_branch_id);
+            Number(record.college_branch_id) === Number(r.college_branch_id)
+          ) {
+            reasons.push(
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
+            );
+          }
 
-          if (sameFaculty) reasons.push("Faculty conflict");
-          if (sameRoom) reasons.push("Room conflict");
-          if (sameClass) reasons.push("Class conflict");
-          if (sameOnlineSection) reasons.push("Online section conflict");
+          if (!reasons.length) return null;
 
           return {
             ...r,
             reason: reasons.join(", "),
           };
-        });
+        })
+        .filter(Boolean);
     },
     openConflictModal(record) {
       this.selectedSchedule = {
@@ -2667,17 +2868,23 @@ export default {
 
     /* ------------------ 8. DRAG & DROP ---------------- */
     getConflictsForDrag(record, targetInstructor, targetDay, targetStartHour) {
-      const clonedRecord = { ...record };
-      clonedRecord.faculty_name = targetInstructor;
-      clonedRecord.day = targetDay;
-      clonedRecord.start_hour = targetStartHour;
+      const clonedRecord = {
+        ...record,
+        faculty_name: targetInstructor,
+        day: targetDay,
+        start_hour: Number(targetStartHour),
+      };
 
       return this.getConflictingRecords(clonedRecord);
     },
     onDragOver(event, instructor, day, slotStart) {
+      event.preventDefault();
+
       if (!this.draggedRecord) return;
+
       this.previewX = event.clientX + 12;
       this.previewY = event.clientY + 12;
+
       this.conflictPreview = this.getConflictsForDrag(
         this.draggedRecord,
         instructor,
@@ -2686,12 +2893,16 @@ export default {
       );
     },
     onDragStart(event, record) {
+      if (!record) return;
+
       this.isDragging = true;
+
       event.dataTransfer.effectAllowed = "move";
 
       this.hideScheduleTooltip();
 
       this.draggedRecord = record;
+
       this.dragConflictMap = {};
 
       Object.keys(this.groupedSchedule).forEach((faculty) => {
@@ -2699,27 +2910,30 @@ export default {
           this.timeSlots.forEach((slot) => {
             const key = `${faculty}-${day}-${slot.start}`;
 
-            // Simulate dropping the schedule here
-            const tempRecord = {
-              ...record,
-              faculty_name: faculty,
+            const conflicts = this.getConflictsForDrag(
+              record,
+              faculty,
               day,
-              start_hour: slot.start,
-            };
+              slot.start,
+            );
 
-            // Is this drop location invalid?
-            this.dragConflictMap[key] =
-              this.getConflictingRecords(tempRecord).length > 0;
+            this.dragConflictMap[key] = conflicts.length > 0;
           });
         });
       });
     },
     onDragEnd() {
       this.isDragging = false;
+
       this.hideScheduleTooltip();
 
       this.draggedRecord = null;
+
       this.draggedGroup = [];
+
+      this.dragConflictMap = {};
+
+      this.conflictPreview = [];
     },
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
       if (!this.draggedRecord) return;
@@ -2830,6 +3044,8 @@ export default {
       this.saving = true;
 
       try {
+        const currentSchoolYear = await this.getCurrentSchoolYear();
+
         // -----------------------------
         // 1️⃣ Remove duplicates locally
         // -----------------------------
@@ -2857,12 +3073,16 @@ export default {
 
           const payload = this.sanitizePayload({
             ...record,
+
+            // ALWAYS USE CURRENT ACTIVE SCHOOL YEAR
+            school_year: currentSchoolYear.school_year,
+            semester: String(currentSchoolYear.semester),
+
             mode:
               record.mode?.toLowerCase() === "online"
                 ? "online"
                 : "face to face",
           });
-
           const id =
             record.id || record.schedule_id || record.final_generated_id;
 
@@ -2932,6 +3152,7 @@ export default {
     await this.fetchCollegeBranch();
     await this.fetchRawUsers();
     await this.loadData();
+    await this.fetchAllSchoolYears();
   },
 };
 </script>

@@ -22,22 +22,20 @@ export class FinalGeneratedClassScheduleController {
   }
 
   // Bulk schedules
-@Post('bulk')
-createMany(@Body() body: any) {
-  return this.service.createMany(
-    body.schedules || body,
-    body.override || false,
-  );
-}
+  @Post('bulk')
+  createMany(@Body() body: any) {
+    return this.service.createMany(
+      body.schedules || body,
+      body.override || false,
+    );
+  }
 
-@Post('manual-bulk')
-createManualMany(@Body() body: any) {
-  console.log('MANUAL BULK:', body);
+  @Post('manual-bulk')
+  createManualMany(@Body() body: any) {
+    console.log('MANUAL BULK:', body);
 
-  return this.service.createManualMany(
-    body.schedules || body,
-  );
-}
+    return this.service.createManualMany(body.schedules || body);
+  }
   @Get('get-all-final-schedules')
   findAll() {
     return this.service.findAll();

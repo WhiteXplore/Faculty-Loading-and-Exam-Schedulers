@@ -132,6 +132,7 @@ export class UserController {
           row['Course'] ||
           row['Code'] ||
           '',
+        course_semester: row['Course Semester'] || row['course_semester'] || '',
       }));
 
       const results = await this.userService.importExpertise(importData);

@@ -40,25 +40,67 @@
             class="flex justify-between items-center bg-defaultGreen text-white px-4 py-3 font-semibold text-sm rounded-t-xl"
           >
             <div class="flex flex-col">
-              <span class="text-lg font-bold">{{ instructor }}</span>
+              <div class="flex gap-2">
+                <span class="text-lg font-bold">{{ instructor }}</span>
+                <!-- Status -->
+                <!-- <span
+                  v-if="
+                    Number(facultyTotalUnits[instructor].totalUnits) >
+                    Number(facultyTotalUnits[instructor].unitLoad)
+                  "
+                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-white/90 text-red-700 border border-red-200"
+                >
+                  Overload
+                </span> -->
+              </div>
               <span class="text-sm text-green-100">
                 {{ records[0]?.faculty_program_code }}
               </span>
+            </div>
+            <div class="flex flex-col items-end">
+              <button
+                @click="openEditInstructorModal(instructor)"
+                class="border border-white hover:bg-white hover:text-defaultGreen text-white px-3 py-1 rounded-full text-xs transition"
+              >
+                Edit
+              </button>
+              <div
+                v-if="facultyTotalUnits[instructor]"
+                class="flex items-center gap-2 mt-1"
+              >
+                <!-- Set Load -->
+                <div
+                  class="rounded-full bg-white/10 px-4 py-1.5 backdrop-blur-sm flex items-center gap-2"
+                >
+                  <p class="text-[10px] uppercase tracking-wider text-white">
+                    Set Load:
+                  </p>
+                  <p class="text-xs font-semibold">
+                    {{ facultyTotalUnits[instructor].unitLoad }}
+                    <span class="">Units</span>
+                  </p>
+                </div>
 
-              <div v-if="facultyTotalUnits[instructor]">
-                <p class="font-normal">
-                  Total Units:
-                  {{ facultyTotalUnits[instructor].totalUnits }}
-                </p>
+                <!-- Total Units -->
+                <div
+                  class="rounded-full px-4 py-1.5 backdrop-blur-sm flex items-center gap-2"
+                  :class="
+                    Number(facultyTotalUnits[instructor].totalUnits) >
+                    Number(facultyTotalUnits[instructor].unitLoad)
+                      ? 'bg-red-600/70 text-red-100 border border-red-300'
+                      : 'bg-white/10 text-white'
+                  "
+                >
+                  <p class="text-[10px] uppercase tracking-wider">
+                    Total Units
+                  </p>
+                  <p class="text-xs font-semibold">
+                    {{ facultyTotalUnits[instructor].totalUnits }}
+                    <span class="">Units</span>
+                  </p>
+                </div>
               </div>
             </div>
-
-            <button
-              @click="openEditInstructorModal(instructor)"
-              class="border border-white hover:bg-white hover:text-defaultGreen text-white px-3 py-1 rounded-full text-xs transition"
-            >
-              Edit
-            </button>
           </div>
 
           <!-- Table wrapper -->
@@ -699,10 +741,14 @@ export default {
 
       dragRecords: [],
       temporaryGroups: {},
+      currentConflictIndex: 0,
     };
   },
 
   computed: {
+    currentConflict() {
+      return this.conflicts[this.currentConflictIndex] || {};
+    },
     filteredBySearch() {
       if (!this.searchQuery) return this.filteredGroupedSchedule;
 
@@ -720,6 +766,10 @@ export default {
             ),
         ),
       );
+    },
+    rawusers() {
+      const store = useFetchDataStore();
+      return store.rawusers || [];
     },
     collegeBranches() {
       const store = useFetchDataStore();
@@ -809,8 +859,16 @@ export default {
             totalUnits += lec + compute;
           });
 
+          // Find faculty in raw users
+          const user = this.rawusers.find(
+            (u) =>
+              `${u.first_name} ${u.last_name}`.trim().toLowerCase() ===
+              faculty.trim().toLowerCase(),
+          );
+
           result[faculty] = {
             totalUnits: Number(totalUnits.toFixed(2)),
+            unitLoad: Number(user?.unit_load || 0),
           };
         },
       );
@@ -1993,9 +2051,9 @@ export default {
       if (!room_type) return "bg-green-100 border-green-400";
       const normalized = room_type.toLowerCase();
       if (normalized === "laboratory" || normalized === "lab") {
-        return "bg-blue-100 border-blue-300";
+        return "bg-blue-200 border-blue-400";
       }
-      return "bg-green-100 border-green-300";
+      return "bg-green-200 border-green-400";
     },
 
     viewFacultySchedule(instructor) {

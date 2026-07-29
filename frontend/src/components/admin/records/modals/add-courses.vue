@@ -369,24 +369,31 @@ export default {
       const q = String(this.searchRequisiteQuery || "")
         .toLowerCase()
         .trim();
-      const list = this.courses || [];
 
-      return list.filter((course) => {
-        const code = String(course.course_code || "").toLowerCase();
-        const title = String(course.course_title || "").toLowerCase();
+      return this.curriculumCourseList
+        .filter(
+          (item) =>
+            Number(item.curriculum_id) === Number(this.form.curriculum_id),
+        )
+        .map((item) => item.course)
+        .filter((course) => {
+          const code = String(course.course_code || "").toLowerCase();
+          const title = String(course.course_title || "").toLowerCase();
 
-        const isSelected = this.form.course_requisite.includes(
-          course.course_code,
-        );
+          const isSelected = this.form.course_requisite.includes(
+            course.course_code,
+          );
 
-        const isCurrentCourse =
-          this.isEdit &&
-          Number(course.course_id) === Number(this.courseData?.course_id);
+          const isCurrentCourse =
+            this.isEdit &&
+            Number(course.course_id) === Number(this.courseData?.course_id);
 
-        const matchSearch = !q || code.includes(q) || title.includes(q);
-
-        return !isSelected && !isCurrentCourse && matchSearch;
-      });
+          return (
+            !isSelected &&
+            !isCurrentCourse &&
+            (!q || code.includes(q) || title.includes(q))
+          );
+        });
     },
   },
 

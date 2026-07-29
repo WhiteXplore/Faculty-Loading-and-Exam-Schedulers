@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-[45vw] h-[47vh] bg-white border shadow-xl transition-all duration-300 flex flex-col justify-start rounded-xl overflow-hidden p-0.5"
+    class="w-[45vw] h-auto bg-white border shadow-xl transition-all duration-300 flex flex-col justify-start rounded-xl overflow-hidden p-0.5"
   >
     <!-- Header -->
     <div
@@ -19,32 +19,37 @@
 
     <!-- Body -->
     <div class="flex-1 overflow-y-auto">
-      <div class="w-full h-[35vh] border bg-white overflow-auto">
+      <div class="w-full max-h-[90vh] border bg-white overflow-auto">
         <table class="min-w-full text-xs text-gray-700">
           <thead class=" ">
             <tr>
               <th
-                class="px-4 py-3 text-left bg-gray-50 text-defaultGreen font-semibold"
+                class="px-4 py-3 text-left bg-gray-50 text-defaultGreen font-semibold w-[15%]"
               >
                 Set
               </th>
               <th
-                class="px-4 py-3 text-left bg-gray-50 text-defaultGreen font-semibold"
+                class="px-4 py-3 text-left bg-gray-50 text-defaultGreen font-semibold w-[10%]"
               >
                 Course
               </th>
               <th
-                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold"
+                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold w-[15%]"
               >
                 Type
               </th>
               <th
-                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold"
+                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold w-[12%]"
               >
                 Semester
               </th>
               <th
-                class="px-4 py-3 text-center w-[25%] bg-gray-50 text-defaultGreen font-semibold"
+                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold w-[20%]"
+              >
+                Possible Faculty
+              </th>
+              <th
+                class="px-4 py-3 text-center bg-gray-50 text-defaultGreen font-semibold w-[25%]"
               >
                 Action
               </th>
@@ -71,6 +76,12 @@
 
               <td class="px-4 py-3 text-center">
                 {{ semesterLabel(item.semester) }}
+              </td>
+
+              <td class="px-4 py-3 text-xs text-center text-red-600 max-w-xs">
+                {{
+                  item.faculty_name === "Unassigned" ? "-" : item.faculty_name
+                }}
               </td>
 
               <td class="px-4 py-3">
@@ -103,7 +114,7 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-between items-center mt-4 text-xs mx-2">
+      <div class="flex justify-between items-center mt-4 text-xs mx-2 my-2">
         <div class="text-gray-700">
           Showing {{ startIndex }} to {{ endIndex }} of
           {{ filteredData.length }} entries

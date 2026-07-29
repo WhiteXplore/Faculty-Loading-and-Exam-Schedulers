@@ -26,6 +26,12 @@ export class ClassController {
     return this.classService.findAll();
   }
 
+  // NEW ENDPOINT
+  @Get('get-classes-course')
+  getClassesCourse() {
+    return this.classService.getClassesCourseRaw();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.classService.findOne(+id);
@@ -45,4 +51,3 @@ export class ClassController {
     return this.classService.remove(numericId);
   }
 }
-

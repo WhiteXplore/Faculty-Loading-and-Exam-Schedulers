@@ -1,21 +1,12 @@
 <template>
   <div v-if="isTable">
     <!-- Header & Add Button -->
-    <div class="text-sm flex justify-between px-1">
-      <div class="text-[13px] text-text mt-4 font-regular">Pages / Institute</div>
-      <div
-        @click="toggleAdd"
-        class="btn-add"
-      >
-        <div
-          class="btn-add-icon"
-        >
-          <icon name="add-account1.1" />
-        </div>
-
-           <span class="btn-add-text">Add Institute</span>
+    <!-- <div class="text-sm flex justify-between px-1">
+      <div class="text-[13px] text-text mt-4 font-regular">
+        Pages / Institute
       </div>
-    </div>
+      
+    </div> -->
 
     <!-- Table -->
     <div class="table-container">
@@ -24,7 +15,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -38,35 +33,47 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
 
           <span class="per-page-label">Per page</span>
         </div>
+        <div class="flex gap-2">
+          <!-- Search -->
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search..."
+              class="search-input"
+              @input="changePage(1)"
+            />
 
-        <!-- Search -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search..."
-            class="search-input"
-            @input="changePage(1)"
-          />
+            <div class="search-icon">
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+          </div>
+          <div @click="toggleAdd" class="btn-add">
+            <div class="btn-add-icon">
+              <icon name="add-account1.1" />
+            </div>
 
-          <div class="search-icon">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+            <span class="btn-add-text">Add Institute</span>
           </div>
         </div>
       </div>
@@ -75,13 +82,17 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
                 <th class="px-4 py-3 text-left font-normal">Institute Code</th>
                 <th class="px-4 py-3 text-left font-normal">Institute Title</th>
                 <th class="px-4 py-3 text-left font-normal">Program Code</th>
                 <th class="px-4 py-3 text-left font-normal">Program Title</th>
-                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
+                <th
+                  class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]"
+                >
                   Actions
                 </th>
               </tr>
@@ -133,7 +144,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -197,8 +209,12 @@
       <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -237,7 +253,7 @@ export default {
       const filtered = this.programs.filter((item) =>
         `${item.institute?.institute_name} ${item.institute?.institute_code} ${item.program_code} ${item.program_name}`
           .toLowerCase()
-          .includes(query)
+          .includes(query),
       );
 
       // Step 2: Remove duplicates based on all 4 fields
@@ -322,7 +338,7 @@ export default {
       axios
         .delete(
           process.env.VUE_APP_API_BASE_URL +
-            `/programs/delete-id/${this.recordToDelete.program_id}`
+            `/programs/delete-id/${this.recordToDelete.program_id}`,
         )
         .then(() => {
           this.recordToDelete = null;

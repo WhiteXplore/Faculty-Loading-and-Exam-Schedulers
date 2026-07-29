@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class ImportExpertiseDto {
   @IsNotEmpty()
@@ -8,6 +9,9 @@ export class ImportExpertiseDto {
   @IsNotEmpty()
   @IsString()
   course_code: string;
+
+  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
+  course_semester: number;
 }
-
-

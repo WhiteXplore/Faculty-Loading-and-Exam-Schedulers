@@ -51,30 +51,162 @@
 
           <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
-
-        <!-- Search -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search faculty..."
-            class="search-input"
-            @input="changePage(1)"
-          />
-
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+        <div class="flex gap-2">
+          <div class="flex gap-2">
+            <!-- Admin Program Filter -->
+            <div
+              class="relative w-56"
+              ref="programDropdownRef"
+              v-if="user?.role === 'Admin'"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              <div
+                class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+              >
+                <!-- Icon -->
+                <div class="absolute left-3 text-defaultGreen">
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 7h16M4 12h16M4 17h16"
+                    />
+                  </svg>
+                </div>
+
+                <!-- Selected -->
+                <button
+                  type="button"
+                  @click="showProgramDropdown = !showProgramDropdown"
+                  class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+                >
+                  <span v-if="selectedProgram !== 'all'">
+                    {{
+                      availablePrograms.find(
+                        (p) => Number(p.program_id) === Number(selectedProgram),
+                      )?.program_code
+                    }}
+                  </span>
+
+                  <span v-else class="text-gray-600 font-light">
+                    Select All Programs
+                  </span>
+                </button>
+
+                <!-- Arrow -->
+                <button
+                  type="button"
+                  @click="showProgramDropdown = !showProgramDropdown"
+                  class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-defaultGreen"
+                >
+                  <svg
+                    class="h-4 w-4 transition-transform duration-200"
+                    :class="{ 'rotate-180': showProgramDropdown }"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Dropdown -->
+              <div
+                v-if="showProgramDropdown"
+                class="absolute z-[9999] mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+              >
+                <div class="border-b border-gray-100 px-4 py-3">
+                  <p
+                    class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+                  >
+                    Programs
+                  </p>
+                </div>
+
+                <div class="max-h-[260px] overflow-y-auto p-1.5">
+                  <!-- All -->
+                  <button
+                    @click="selectProgram('all')"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                    :class="selectedProgram === 'all' ? 'bg-green-50' : ''"
+                  >
+                    <div>
+                      <p class="text-sm text-gray-800">All Programs</p>
+                    </div>
+                  </button>
+
+                  <!-- Programs -->
+                  <button
+                    v-for="program in availablePrograms"
+                    :key="program.program_id"
+                    @click="selectProgram(program.program_id)"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                    :class="
+                      Number(selectedProgram) === Number(program.program_id)
+                        ? 'bg-green-50'
+                        : ''
+                    "
+                  >
+                    <p class="text-sm text-gray-800">
+                      {{ program.program_code }}
+                    </p>
+
+                    <svg
+                      v-if="
+                        Number(selectedProgram) === Number(program.program_id)
+                      "
+                      class="h-5 w-5 text-defaultGreen"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Search -->
+            <div class="search-wrapper">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search faculty..."
+                class="search-input"
+                @input="changePage(1)"
+              />
+
+              <div
+                class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -541,7 +673,7 @@
                 </div>
               </div>
 
-              <p class="text-gray-500">You can select multiple campuses.</p>
+              <p class="input-label">You can select multiple campuses.</p>
 
               <div
                 v-if="form.interbranchCampus.length"
@@ -624,7 +756,7 @@
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm rounded-xl bg-gray-50 p-4"
         >
           <div class="space-y-1">
-            <p class="text-gray-500">Faculty Name</p>
+            <p class="input-label">Faculty Name</p>
             <p class="font-medium text-gray-900">
               {{ selectedFaculty.first_name }}
               {{ selectedFaculty.last_name }}
@@ -632,35 +764,35 @@
           </div>
 
           <div class="space-y-1">
-            <p class="text-gray-500">Institute</p>
+            <p class="input-label">Institute</p>
             <p class="font-medium text-gray-900">
               {{ selectedFaculty.institute?.institute_name || "N/A" }}
             </p>
           </div>
 
           <div class="space-y-1">
-            <p class="text-gray-500">Program</p>
+            <p class="input-label">Program</p>
             <p class="font-medium text-gray-900">
               {{ selectedFaculty.program?.program_name || "N/A" }}
             </p>
           </div>
 
           <div class="space-y-1">
-            <p class="text-gray-500">Designation</p>
+            <p class="input-label">Designation</p>
             <p class="font-medium text-gray-900">
               {{ selectedFaculty.designation || "N/A" }}
             </p>
           </div>
 
           <div class="space-y-1">
-            <p class="text-gray-500">Employment Type</p>
+            <p class="input-label">Employment Type</p>
             <p class="font-medium text-gray-900">
               {{ selectedFaculty.employment_type || "N/A" }}
             </p>
           </div>
 
           <div class="space-y-1">
-            <p class="text-gray-500">Unit Load</p>
+            <p class="input-label">Unit Load</p>
             <p class="font-medium text-gray-900">
               {{ selectedFaculty.unit_load ?? "N/A" }}
             </p>
@@ -726,7 +858,7 @@
               </div>
             </div>
 
-            <p v-else class="text-sm text-gray-400 italic">
+            <p v-else class="text-xs font-light text-gray-400 italic">
               No expertise added
             </p>
           </div>
@@ -792,7 +924,7 @@
               </div>
             </div>
 
-            <p v-else class="text-sm text-gray-400 italic">
+            <p v-else class="text-xs font-light text-gray-400 italic">
               No other expertise added
             </p>
           </div>
@@ -856,7 +988,7 @@
               </div>
             </div>
 
-            <p v-else class="text-sm text-gray-400 italic">
+            <p v-else class="text-xs font-light text-gray-400 italic">
               No cross expertise assigned
             </p>
           </div>
@@ -899,7 +1031,7 @@
               {{ selectedFaculty.preffered_time }}
             </p>
 
-            <p v-else class="text-sm text-gray-400 italic">
+            <p v-else class="text-xs font-light text-gray-400 italic">
               No preferred time set
             </p>
           </div>
@@ -954,7 +1086,7 @@
               </span>
             </div>
 
-            <p v-else class="text-sm text-gray-400 italic">
+            <p v-else class="text-xs font-light text-gray-400 italic">
               No inter-branch campuses
             </p>
           </div>
@@ -1025,6 +1157,8 @@ export default {
       updateMode: "",
       showBranchDropdown: false,
       facultyBranches: [],
+      selectedProgram: "all",
+      showProgramDropdown: false,
     };
   },
 
@@ -1035,7 +1169,9 @@ export default {
       "faculty_branch",
       "programs",
     ]),
-
+    availablePrograms() {
+      return this.programs || [];
+    },
     filteredExpertise() {
       const list = this.selectedFaculty?.expertise || [];
 
@@ -1105,33 +1241,56 @@ export default {
     },
 
     filteredData() {
-      const query = this.searchQuery.toLowerCase();
+      const query = (this.searchQuery || "").toLowerCase();
       const currentUser = this.user;
 
       if (!this.rawusers || !currentUser) return [];
 
       let list = [];
 
+      // ==========================
+      // ADMIN
+      // ==========================
       if (currentUser.role === "Admin") {
         list = this.rawusers.filter(
-          (u) => u.role === "Program Chairperson" || u.role === "Faculty",
+          (u) => u.role === "Faculty" || u.role === "Program Chairperson",
         );
-      } else if (currentUser.role === "Program Chairperson") {
+
+        // Program filter
+        if (this.selectedProgram !== "all") {
+          list = list.filter(
+            (u) =>
+              Number(u.program?.program_id) === Number(this.selectedProgram),
+          );
+        }
+      }
+
+      // ==========================
+      // PROGRAM CHAIRPERSON
+      // ==========================
+      else if (currentUser.role === "Program Chairperson") {
+        const programId =
+          currentUser.program?.program_id ?? currentUser.program_id;
+
+        const instituteId =
+          currentUser.institute?.institute_id ?? currentUser.institute_id;
+
         list = this.rawusers.filter(
           (u) =>
             u.role === "Faculty" &&
-            u.institute?.institute_id === currentUser.institute_id &&
-            u.program?.program_id === currentUser.program_id,
+            Number(u.program?.program_id) === Number(programId) &&
+            Number(u.institute?.institute_id) === Number(instituteId),
         );
       }
 
       return list.filter((u) =>
         [
           `${u.first_name || ""} ${u.last_name || ""}`,
-          u.institute?.institute_name || "",
           u.program?.program_name || "",
-          u.role || "",
+          u.program?.program_code || "",
+          u.institute?.institute_name || "",
           u.designation || "",
+          u.role || "",
           u.employment_type || "",
         ]
           .join(" ")
@@ -1139,7 +1298,6 @@ export default {
           .includes(query),
       );
     },
-
     totalPages() {
       return Math.ceil(this.filteredData.length / this.itemsPerPage) || 1;
     },
@@ -1185,6 +1343,11 @@ export default {
   },
 
   methods: {
+    selectProgram(programId) {
+      this.selectedProgram = programId;
+      this.showProgramDropdown = false;
+      this.changePage(1);
+    },
     toggleActionMenu(userId) {
       this.openActionMenuId = this.openActionMenuId === userId ? null : userId;
     },
@@ -1289,6 +1452,7 @@ export default {
       const store = useFetchDataStore();
       await store.fetchRawUsers();
       await store.fetchFacultyBranch();
+      await store.fetchPrograms();
     },
 
     openAssignModal(user) {

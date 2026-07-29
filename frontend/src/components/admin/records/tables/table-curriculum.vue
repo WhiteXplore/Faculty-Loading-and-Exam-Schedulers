@@ -1,16 +1,10 @@
 <template>
   <div v-if="isTable" class=" ">
-    <div class="text-sm flex justify-between px-1">
+    <!-- <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4 font-regular">Pages / Curriculum Offers</div>
 
-      <div @click="toggleAdd" class="btn-add">
-        <div class="btn-add-icon">
-          <icon name="add-account1.1" />
-        </div>
-
-        <span class="btn-add-text">Add Curriculum</span>
-      </div>
-    </div>
+      
+    </div> -->
 
     <!-- Table -->
 
@@ -20,7 +14,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -36,36 +34,48 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
           <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
-
-        <!-- Search -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search..."
-            class="search-input"
-            @input="changePage(1)"
-          />
-          <!-- Search icon -->
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none transition-colors"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+        <div class="flex gap-2">
+          <!-- Search -->
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search..."
+              class="search-input"
+              @input="changePage(1)"
+            />
+            <!-- Search icon -->
+            <div
+              class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none transition-colors"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+          </div>
+          <div @click="toggleAdd" class="btn-add">
+            <div class="btn-add-icon">
+              <icon name="add-account1.1" />
+            </div>
+
+            <span class="btn-add-text">Add Curriculum</span>
           </div>
         </div>
       </div>
@@ -73,17 +83,25 @@
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <table class="min-w-full text-sm text-gray-700 border-collapse">
-          <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+          <thead
+            class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+          >
             <tr>
-              <th class="px-4 py-3 text-left font-normal w-[35%]">Program Title</th>
+              <th class="px-4 py-3 text-left font-normal w-[35%]">
+                Program Title
+              </th>
 
               <th class="px-4 py-3 font-normal text-center w-[33%]">
                 Effective Year From
               </th>
 
-              <th class="px-4 py-3 font-normal text-center w-[33%]">Effective Year To</th>
+              <th class="px-4 py-3 font-normal text-center w-[33%]">
+                Effective Year To
+              </th>
 
-              <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
+              <th
+                class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]"
+              >
                 Actions
               </th>
             </tr>
@@ -108,14 +126,19 @@
                   <button class="btn-edit" @click="toggleEdit(curriculum_data)">
                     <icon name="edit" /> Edit
                   </button>
-                  <button class="btn-delete" @click="toggleDelete(curriculum_data)">
+                  <button
+                    class="btn-delete"
+                    @click="toggleDelete(curriculum_data)"
+                  >
                     <icon name="delete" /> Delete
                   </button>
                 </div>
               </td>
             </tr>
             <tr v-if="paginatedData.length === 0">
-              <td colspan="8" class="text-center py-8 text-gray-400">No records found</td>
+              <td colspan="8" class="text-center py-8 text-gray-400">
+                No records found
+              </td>
             </tr>
           </tbody>
         </table>
@@ -123,7 +146,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
         <div class="flex items-center gap-1 text-sm">
           <button
@@ -157,7 +181,12 @@
     </div>
   </div>
 
-  <addCurriculum v-if="isAdd" mode="add" @close="closeView" @refresh="loadCurriculums" />
+  <addCurriculum
+    v-if="isAdd"
+    mode="add"
+    @close="closeView"
+    @refresh="loadCurriculums"
+  />
 
   <addCurriculum
     v-if="showEditModal && selectedCurriculum"
@@ -189,8 +218,12 @@
       <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -329,7 +362,8 @@ export default {
 
       axios
         .delete(
-          process.env.VUE_APP_API_BASE_URL + `/curriculums/delete-id/${curriculumId}`
+          process.env.VUE_APP_API_BASE_URL +
+            `/curriculums/delete-id/${curriculumId}`,
         )
         .then(() => {
           this.recordToDelete = null;

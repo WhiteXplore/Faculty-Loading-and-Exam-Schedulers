@@ -46,13 +46,22 @@ export class CreateUserDto {
   unit_load?: number;
 
   @IsOptional()
+  @IsString()
+  preferred_rest_day?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  sp_mas_unit?: number;
+
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
   institute_id?: number;
 
-    @IsOptional()
+  @IsOptional()
   @IsBoolean()
-is_active?: boolean;
+  is_active?: boolean;
 
   @IsOptional()
   @Type(() => Number)
@@ -128,9 +137,9 @@ export class UpdateUserDto {
   @IsString()
   preffered_time?: string;
 
-   @IsOptional()
+  @IsOptional()
   @IsBoolean()
-is_active?: boolean;
+  is_active?: boolean;
 
   @IsOptional()
   @Type(() => Number)

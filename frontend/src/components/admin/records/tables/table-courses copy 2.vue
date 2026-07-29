@@ -5,7 +5,7 @@
       <div class="text-[13px] text-text mt-4">Pages / Courses</div>
       <div class="per-page-container">
         <!-- Upload & Add -->
-        <div @click="isUploadModal = true" class="btn-gui">
+        <div @click="isUploadModal = true" class="btn-download">
           <div class="btn-add-icon">
             <icon name="uploads" />
           </div>
@@ -29,7 +29,11 @@
         <!-- Items per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option :value="10">10</option>
               <option :value="15">15</option>
               <option :value="20">20</option>
@@ -44,7 +48,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -216,7 +224,9 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
                 <th class="text-left w-[8%]">Course Code</th>
                 <th class="text-left">Course Title</th>
@@ -238,14 +248,20 @@
               >
                 <td>{{ c.course?.course_code || "-" }}</td>
                 <td>{{ c.course?.course_title || "-" }}</td>
-                <td class="text-center">{{ c.course?.course_semester || "-" }}</td>
+                <td class="text-center">
+                  {{ c.course?.course_semester || "-" }}
+                </td>
                 <td class="text-center">{{ c.course?.course_level || "-" }}</td>
                 <td class="text-center">{{ c.course?.course_lec ?? 0 }}</td>
                 <td class="text-center">{{ c.course?.course_lab ?? 0 }}</td>
                 <td class="text-center">
-                  {{ (c.course?.course_lec ?? 0) + (c.course?.course_lab ?? 0) }}
+                  {{
+                    (c.course?.course_lec ?? 0) + (c.course?.course_lab ?? 0)
+                  }}
                 </td>
-                <td class="text-center">{{ c.course?.course_requisite || "-" }}</td>
+                <td class="text-center">
+                  {{ c.course?.course_requisite || "-" }}
+                </td>
                 <td class="flex justify-center">
                   <div class="flex gap-2">
                     <button class="btn-edit" @click="toggleEdit(c)">
@@ -327,8 +343,12 @@
       </p>
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -473,9 +493,11 @@ export default {
       if (this.user?.role === "Program Chairperson") {
         result = result.filter((c) => {
           const instituteId =
-            c.curriculum?.program?.institute?.institute_id || c.curriculum?.institute_id;
+            c.curriculum?.program?.institute?.institute_id ||
+            c.curriculum?.institute_id;
 
-          const programId = c.curriculum?.program?.program_id || c.curriculum?.program_id;
+          const programId =
+            c.curriculum?.program?.program_id || c.curriculum?.program_id;
 
           return (
             String(instituteId) === String(this.user.institute_id) &&
@@ -488,19 +510,24 @@ export default {
       if (this.user?.role === "Admin") {
         if (this.selectedInstitute) {
           result = result.filter(
-            (c) => String(c.curriculum?.institute_id) === String(this.selectedInstitute)
+            (c) =>
+              String(c.curriculum?.institute_id) ===
+              String(this.selectedInstitute),
           );
         }
 
         if (this.selectedProgram) {
           result = result.filter(
-            (c) => String(c.curriculum?.program_id) === String(this.selectedProgram)
+            (c) =>
+              String(c.curriculum?.program_id) === String(this.selectedProgram),
           );
         }
 
         if (this.selectedCurriculum) {
           result = result.filter(
-            (c) => String(c.curriculum?.curriculum_id) === String(this.selectedCurriculum)
+            (c) =>
+              String(c.curriculum?.curriculum_id) ===
+              String(this.selectedCurriculum),
           );
         }
       }
@@ -571,16 +598,22 @@ export default {
     },
 
     endIndex() {
-      return Math.min(this.currentPage * this.itemsPerPage, this.filteredCourses.length);
+      return Math.min(
+        this.currentPage * this.itemsPerPage,
+        this.filteredCourses.length,
+      );
     },
   },
 
   methods: {
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || null;
       } catch (error) {
         console.error("Failed to fetch user:", error);
@@ -629,7 +662,7 @@ export default {
 
         await axios.delete(
           `${process.env.VUE_APP_API_BASE_URL}/courses/delete-id/${courseId}`,
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         await this.loadCourses();

@@ -17,6 +17,15 @@ export class UnscheduledMeeting {
   course_code: string;
 
   @Column()
+  course_id: number;
+
+  @Column()
+  class_size: number;
+
+  @Column()
+  faculty_name: string;
+
+  @Column()
   program_id: number;
 
   @Column()
@@ -25,19 +34,24 @@ export class UnscheduledMeeting {
   @Column()
   type: string;
 
-  @Column({ type: 'text' })
+  @Column({
+    type: 'text',
+  })
   hours: string;
 
-  @Column({ type: 'text' })
+  @Column({
+    type: 'text',
+  })
   reason: string;
 
-  // ✅ ADD THESE
   @Column()
   school_year: string;
 
   @Column()
   semester: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
   created_at: Date;
 }

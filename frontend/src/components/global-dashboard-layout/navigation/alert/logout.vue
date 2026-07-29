@@ -27,19 +27,9 @@
 
       <!-- Buttons -->
       <div class="w-full flex justify-center gap-2">
-        <button
-          class="bg-gray-100 py-2 px-4 text-[12px] md:text-[13px] rounded-md text-gray-600 hover:bg-white border hover:border-red-500 hover:text-red-500 hover:shadow-md transition"
-          @click="closeModal"
-        >
-          No, Cancel
-        </button>
+        <button class="btn-cancel" @click="closeModal">No, Cancel</button>
 
-        <button
-          class="bg-defaultGreen py-2 px-4 text-[12px] md:text-[13px] rounded-md text-white hover:bg-white border hover:border-defaultGreen hover:text-defaultGreen hover:shadow-md transition"
-          @click="toggleLogout"
-        >
-          Yes, Sign out
-        </button>
+        <button class="btn-save" @click="toggleLogout">Yes, Sign out</button>
       </div>
     </div>
   </div>

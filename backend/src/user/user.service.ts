@@ -357,10 +357,9 @@ export class UserService {
     });
 
     courses.forEach((c) => {
-      const key = c.course_code.replace(/\s+/g, '').toUpperCase();
+      const key = `${c.course_code.replace(/\s+/g, '').toUpperCase()}-${Number(c.course_semester)}`;
       courseMap.set(key, c);
     });
-
     existingExpertise.forEach((e) => {
       const key = `${e.user.id}-${e.course.course_id}`;
       existingMap.add(key);
@@ -430,13 +429,17 @@ export class UserService {
         .replace(/\s+/g, '')
         .toUpperCase();
 
-      const course = courseMap.get(courseCode);
+      const courseSemester = Number(row.course_semester);
+
+      const courseKey = `${courseCode}-${courseSemester}`;
+
+      const course = courseMap.get(courseKey);
 
       if (!course) {
         results.failed++;
         results.errors.push({
           row: i + 2,
-          error: `Course not found: ${courseCode}`,
+          error: `Course not found: ${courseCode} (Semester ${courseSemester})`,
         });
         continue;
       }

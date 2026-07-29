@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UnscheduledMeeting } from './entities/unscheduled_meeting.entity';
@@ -12,21 +12,70 @@ export class UnscheduledMeetingsService {
     private readonly repository: Repository<UnscheduledMeeting>,
   ) {}
 
-  async create(data: CreateUnscheduledMeetingDto[]) {
-    if (!data || !data.length) return [];
+  // Save a single meeting
+  async createOne(createDto: CreateUnscheduledMeetingDto) {
+    const meeting = this.repository.create(createDto);
+    return await this.repository.save(meeting);
+  }
 
-    const meetings = this.repository.create(data);
-    return await this.repository.save(meetings);
+  // Save multiple meetings
+  async create(createDtos: CreateUnscheduledMeetingDto[], override = false) {
+    if (!createDtos.length) {
+      return {
+        success: false,
+        message: 'No unscheduled meetings provided',
+      };
+    }
+
+    const { school_year, semester } = createDtos[0];
+
+    const existingCount = await this.repository.count({
+      where: {
+        school_year,
+        semester,
+      },
+    });
+
+    // Existing records found
+    if (existingCount > 0 && !override) {
+      return {
+        exists: true,
+        school_year,
+        semester,
+      };
+    }
+
+    // Override existing records
+    if (existingCount > 0 && override) {
+      await this.repository.delete({
+        school_year,
+        semester,
+      });
+    }
+
+    const meetings = this.repository.create(createDtos);
+
+    await this.repository.save(meetings);
+
+    return {
+      success: true,
+    };
   }
 
   async findAll() {
     return await this.repository.find({
-      order: { created_at: 'DESC' },
+      order: {
+        created_at: 'DESC',
+      },
     });
   }
 
   async findOne(id: number) {
-    return await this.repository.findOne({ where: { id } });
+    return await this.repository.findOne({
+      where: {
+        id,
+      },
+    });
   }
 
   async update(id: number, updateDto: UpdateUnscheduledMeetingDto) {
@@ -35,6 +84,14 @@ export class UnscheduledMeetingsService {
   }
 
   async remove(id: number) {
-    return await this.repository.delete(id);
+    const meeting = await this.findOne(id);
+
+    if (!meeting) {
+      throw new BadRequestException(
+        `Unscheduled meeting with ID ${id} not found`,
+      );
+    }
+
+    return this.repository.remove(meeting);
   }
 }

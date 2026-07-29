@@ -1,32 +1,12 @@
 <template>
   <div v-if="isTable" class=" ">
-    <div class="flex justify-between items-center px-1 text-sm">
-      <!-- LEFT (Pages Title) -->
+    <!-- <div class="flex justify-between items-center px-1 text-sm">
+  
       <div class="text-[13px] text-text font-regular">
         Pages / Rooms Availability
       </div>
 
-      <!-- RIGHT (Buttons) -->
-      <div class="flex gap-2">
-        <!-- Upload Room -->
-        <div @click="isUploadModal = true" class="btn-gui">
-          <div class="btn-add-icon">
-            <icon name="uploads" />
-          </div>
-
-          <span class="btn-add-text">Upload Room</span>
-        </div>
-
-        <!-- Add Room -->
-        <div @click="toggleAdd" class="btn-add">
-          <div class="btn-add-icon">
-            <icon name="add-account1.1" />
-          </div>
-
-          <span class="btn-add-text">Add Room</span>
-        </div>
-      </div>
-    </div>
+    </div> -->
 
     <!-- Table -->
     <div class="table-container">
@@ -65,30 +45,291 @@
           </div>
           <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
-
-        <!-- Search -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search..."
-            class="search-input"
-            @input="changePage(1)"
-          />
-          <!-- Search icon -->
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none transition-colors"
+        <div class="flex gap-2">
+          <!-- button for filters  -->
+          <button
+            @click="showFilters = !showFilters"
+            class="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 shadow-sm transition hover:border-defaultGreen hover:bg-green-50"
           >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+            <icon name="academic-cap" />
+            <span class="text-sm font-medium">Filter</span>
+          </button>
+          <div
+            class="relative w-56"
+            ref="instituteDropdownRef"
+            v-if="showFilters"
+          >
+            <div
+              class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              <!-- Icon -->
+              <div class="absolute left-3 text-defaultGreen">
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 21h18M5 21V7l7-4 7 4v14"
+                  />
+                </svg>
+              </div>
+
+              <!-- Selected -->
+              <button
+                type="button"
+                @click="showInstituteDropdown = !showInstituteDropdown"
+                class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+              >
+                <span v-if="selectedInstitute !== 'all'">
+                  {{
+                    availableInstitutes.find(
+                      (i) =>
+                        Number(i.institute_id) === Number(selectedInstitute),
+                    )?.institute_code
+                  }}
+                </span>
+
+                <span v-else class="text-gray-600 font-light">
+                  Select All Institutes
+                </span>
+              </button>
+
+              <button
+                type="button"
+                @click="showInstituteDropdown = !showInstituteDropdown"
+                class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-defaultGreen"
+              >
+                <svg
+                  class="h-4 w-4 transition-transform duration-200"
+                  :class="{ 'rotate-180': showInstituteDropdown }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div
+              v-if="showInstituteDropdown"
+              class="absolute z-[9999] mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+            >
+              <div class="border-b border-gray-100 px-4 py-3">
+                <p
+                  class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+                >
+                  Institutes
+                </p>
+              </div>
+
+              <div class="max-h-[260px] overflow-y-auto p-1.5">
+                <button
+                  @click="selectInstitute('all')"
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="selectedInstitute === 'all' ? 'bg-green-50' : ''"
+                >
+                  <p class="text-sm text-gray-800">All Institutes</p>
+                </button>
+
+                <button
+                  v-for="institute in availableInstitutes"
+                  :key="institute.institute_id"
+                  @click="selectInstitute(institute.institute_id)"
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="
+                    Number(selectedInstitute) === Number(institute.institute_id)
+                      ? 'bg-green-50'
+                      : ''
+                  "
+                >
+                  <p class="text-sm text-gray-800">
+                    {{ institute.institute_code }}
+                  </p>
+
+                  <svg
+                    v-if="
+                      Number(selectedInstitute) ===
+                      Number(institute.institute_id)
+                    "
+                    class="h-5 w-5 text-defaultGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            v-if="showFilters"
+            class="relative w-56"
+            ref="roomTypeDropdownRef"
+          >
+            <div
+              class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+            >
+              <div class="absolute left-3 text-defaultGreen">
+                <svg
+                  class="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </div>
+
+              <button
+                type="button"
+                @click="showRoomTypeDropdown = !showRoomTypeDropdown"
+                class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+              >
+                <span v-if="selectedRoomType !== 'all'">
+                  {{ selectedRoomType }}
+                </span>
+
+                <span v-else class="text-gray-600 font-light">
+                  Select Room Type
+                </span>
+              </button>
+
+              <button
+                type="button"
+                @click="showRoomTypeDropdown = !showRoomTypeDropdown"
+                class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-defaultGreen"
+              >
+                <svg
+                  class="h-4 w-4 transition-transform duration-200"
+                  :class="{ 'rotate-180': showRoomTypeDropdown }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div
+              v-if="showRoomTypeDropdown"
+              class="absolute z-[9999] mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+            >
+              <div class="border-b border-gray-100 px-4 py-3">
+                <p class="text-xs uppercase tracking-wide text-gray-400">
+                  Room Types
+                </p>
+              </div>
+
+              <div class="max-h-[260px] overflow-y-auto p-1.5">
+                <button
+                  @click="selectRoomType('all')"
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="selectedRoomType === 'all' ? 'bg-green-50' : ''"
+                >
+                  <p class="text-sm text-gray-800">All Room Types</p>
+                </button>
+
+                <button
+                  v-for="type in availableRoomTypes"
+                  :key="type"
+                  @click="selectRoomType(type)"
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="selectedRoomType === type ? 'bg-green-50' : ''"
+                >
+                  <p class="text-sm text-gray-800">
+                    {{ type }}
+                  </p>
+
+                  <svg
+                    v-if="selectedRoomType === type"
+                    class="h-5 w-5 text-defaultGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Search -->
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search..."
+              class="search-input"
+              @input="changePage(1)"
+            />
+            <!-- Search icon -->
+            <div
+              class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none transition-colors"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+          </div>
+          <!-- RIGHT (Buttons) -->
+          <div class="flex gap-2">
+            <!-- Upload Room -->
+            <div @click="isUploadModal = true" class="btn-download">
+              <div class="btn-add-icon">
+                <icon name="uploads" />
+              </div>
+
+              <span class="btn-add-text">Upload Room</span>
+            </div>
+
+            <!-- Add Room -->
+            <div @click="toggleAdd" class="btn-add">
+              <div class="btn-add-icon">
+                <icon name="add-account1.1" />
+              </div>
+
+              <span class="btn-add-text">Add Room</span>
+            </div>
           </div>
         </div>
       </div>
@@ -296,35 +537,72 @@ export default {
       selectedRoom: null,
       showEditModal: false,
       isUploadModal: false,
+      showFilters: false,
+      showRoomTypeDropdown: false,
+      selectedRoomType: "all",
+      showInstituteDropdown: false,
+      selectedInstitute: "all",
     };
   },
   computed: {
-    ...mapState(useFetchDataStore, ["rooms"]),
+    ...mapState(useFetchDataStore, ["rooms", "institutes"]),
+    availableInstitutes() {
+      return [
+        ...new Map(
+          this.rooms
+            .filter((room) => room.institute)
+            .map((room) => [room.institute.institute_id, room.institute]),
+        ).values(),
+      ].sort((a, b) => a.institute_name.localeCompare(b.institute_name));
+    },
+    availableRoomTypes() {
+      return [
+        ...new Set(
+          this.rooms
+            .map((room) => room.room_type)
+            .filter((type) => type && type.trim() !== ""),
+        ),
+      ].sort();
+    },
 
     filteredData() {
       const query = this.searchQuery.toLowerCase();
 
-      return this.rooms.filter((item) =>
-        [
+      return this.rooms.filter((item) => {
+        const matchesSearch = [
           item.room_name,
           item.room_type,
           item.room_capacity,
           item.institute?.institute_name,
+          item.building?.building_name,
           item.is_active ? "Active" : "Inactive",
         ]
           .join(" ")
           .toLowerCase()
-          .includes(query),
-      );
+          .includes(query);
+
+        const matchesInstitute =
+          this.selectedInstitute === "all" ||
+          Number(item.institute?.institute_id) ===
+            Number(this.selectedInstitute);
+
+        const matchesRoomType =
+          this.selectedRoomType === "all" ||
+          item.room_type === this.selectedRoomType;
+
+        return matchesSearch && matchesInstitute && matchesRoomType;
+      });
+    },
+
+    paginatedData() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      return this.filteredData.slice(start, start + this.itemsPerPage);
     },
 
     totalPages() {
       return Math.ceil(this.filteredData.length / this.itemsPerPage) || 1;
     },
-    paginatedData() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      return this.filteredData.slice(start, start + this.itemsPerPage);
-    },
+
     startIndex() {
       return this.filteredData.length === 0
         ? 0
@@ -354,6 +632,16 @@ export default {
     },
   },
   methods: {
+    selectInstitute(id) {
+      this.selectedInstitute = id;
+      this.showInstituteDropdown = false;
+      this.changePage(1);
+    },
+    selectRoomType(type) {
+      this.selectedRoomType = type;
+      this.showRoomTypeDropdown = false;
+      this.changePage(1);
+    },
     async loadRooms() {
       const store = useFetchDataStore();
       await store.fetchRooms();

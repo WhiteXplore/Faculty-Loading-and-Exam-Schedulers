@@ -68,7 +68,7 @@
             <!-- YEAR + SEMESTER -->
             <div class="grid grid-cols-2 gap-3">
               <div class="space-y-2">
-                <label class="font-semibold text-gray-700">Year Level</label>
+                <label class="input-label">Year Level</label>
                 <select
                   v-model="selectedYearLevel"
                   class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
@@ -80,7 +80,7 @@
               </div>
 
               <div class="space-y-2">
-                <label class="font-semibold text-gray-700">Semester</label>
+                <label class="input-label">Semester</label>
                 <select
                   v-model="selectedSemester"
                   class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
@@ -93,110 +93,151 @@
             </div>
 
             <!-- EXPERTISE -->
-            <div class="relative space-y-2">
-              <label class="font-semibold text-gray-700">Expertise</label>
+            <div class="dropdown-container">
+              <label class="dropdown-label">Expertise :</label>
 
-              <input
-                v-model="searchQuery"
-                @focus="dropdownOpen = true"
-                placeholder="Search courses..."
-                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
-              />
+              <div class="dropdown-wrapper">
+                <input
+                  v-model="searchQuery"
+                  @focus="dropdownOpen = true"
+                  placeholder="Search courses..."
+                  class="dropdown-input"
+                />
 
-              <p v-if="noStrictAssignCourses" class="text-xs text-orange-600">
-                No matching courses for this semester/year. Showing fallback
-                data.
-              </p>
-
-              <ul
-                v-if="dropdownOpen && filteredCourses.length"
-                @mouseleave="dropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg"
-              >
-                <li
-                  v-for="course in filteredCourses"
-                  :key="course.course_id"
-                  @click="!isAlreadySelected(course) && addCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
-                  :class="
-                    isAlreadySelected(course)
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'hover:bg-green-100'
-                  "
+                <p
+                  v-if="noStrictAssignCourses"
+                  class="mt-2 text-xs text-orange-600"
                 >
-                  <span
-                    >{{ course.course_code }} - {{ course.course_title }}</span
-                  >
+                  No matching courses for this semester/year. Showing fallback
+                  data.
+                </p>
 
-                  <span
-                    v-if="isAlreadySelected(course)"
-                    class="text-[10px] bg-green-200 px-2 rounded"
-                  >
-                    Selected
-                  </span>
-                </li>
-              </ul>
+                <div
+                  v-if="dropdownOpen"
+                  class="dropdown-menu"
+                  @mouseleave="dropdownOpen = false"
+                >
+                  <div v-if="filteredCourses.length">
+                    <div
+                      v-for="course in filteredCourses"
+                      :key="course.course_id"
+                      @mousedown.prevent="
+                        !isAlreadySelected(course) && addCourse(course)
+                      "
+                      class="dropdown-item flex items-center justify-between"
+                      :class="
+                        isAlreadySelected(course)
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : ''
+                      "
+                    >
+                      <span>
+                        {{ course.course_code }} - {{ course.course_title }}
+                      </span>
 
-              <div class="mt-3 space-y-1">
+                      <span
+                        v-if="isAlreadySelected(course)"
+                        class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-defaultGreen"
+                      >
+                        Selected
+                      </span>
+                    </div>
+                  </div>
+
+                  <div v-else class="dropdown-item text-gray-400">
+                    No courses found
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-3 space-y-2">
                 <div
                   v-for="(item, i) in currentSemesterData.expertise"
                   :key="`${item.course_id}-primary-${i}`"
-                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg"
+                  class="flex items-center justify-between rounded-xl bg-defaultGreen px-4 py-2 text-white shadow-sm"
                 >
-                  <span>{{ item.course_code }} — {{ item.course_title }}</span>
-                  <button type="button" @click="removeCourse(i)">✕</button>
+                  <span class="truncate">
+                    {{ item.course_code }} — {{ item.course_title }}
+                  </span>
+
+                  <button
+                    type="button"
+                    @click="removeCourse(i)"
+                    class="ml-3 flex h-6 w-6 items-center justify-center rounded-full hover:bg-white/20"
+                  >
+                    ✕
+                  </button>
                 </div>
               </div>
             </div>
 
             <!-- OTHER EXPERTISE -->
-            <div class="relative space-y-2">
-              <label class="font-semibold text-gray-700">Other Expertise</label>
+            <div class="dropdown-container">
+              <label class="dropdown-label">Other Expertise :</label>
 
-              <input
-                v-model="otherSearchQuery"
-                @focus="otherDropdownOpen = true"
-                placeholder="Search courses..."
-                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
-              />
+              <div class="dropdown-wrapper">
+                <input
+                  v-model="otherSearchQuery"
+                  @focus="otherDropdownOpen = true"
+                  placeholder="Search courses..."
+                  class="dropdown-input"
+                />
 
-              <ul
-                v-if="otherDropdownOpen && filteredOtherCourses.length"
-                @mouseleave="otherDropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg"
-              >
-                <li
-                  v-for="course in filteredOtherCourses"
-                  :key="course.course_id"
-                  @click="!isAlreadySelected(course) && addOtherCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
-                  :class="
-                    isAlreadySelected(course)
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'hover:bg-green-100'
-                  "
+                <div
+                  v-if="otherDropdownOpen"
+                  class="dropdown-menu"
+                  @mouseleave="otherDropdownOpen = false"
                 >
-                  <span
-                    >{{ course.course_code }} - {{ course.course_title }}</span
-                  >
+                  <div v-if="filteredOtherCourses.length">
+                    <div
+                      v-for="course in filteredOtherCourses"
+                      :key="course.course_id"
+                      @mousedown.prevent="
+                        !isAlreadySelected(course) && addOtherCourse(course)
+                      "
+                      class="dropdown-item flex items-center justify-between"
+                      :class="
+                        isAlreadySelected(course)
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : ''
+                      "
+                    >
+                      <span>
+                        {{ course.course_code }} - {{ course.course_title }}
+                      </span>
 
-                  <span
-                    v-if="isAlreadySelected(course)"
-                    class="text-[10px] bg-green-200 px-2 rounded"
-                  >
-                    Selected
-                  </span>
-                </li>
-              </ul>
+                      <span
+                        v-if="isAlreadySelected(course)"
+                        class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-defaultGreen"
+                      >
+                        Selected
+                      </span>
+                    </div>
+                  </div>
 
-              <div class="mt-3 space-y-1">
+                  <div v-else class="dropdown-item text-gray-400">
+                    No courses found
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-3 space-y-2">
                 <div
                   v-for="(item, i) in currentSemesterData.other_expertise"
                   :key="`${item.course_id}-other-${i}`"
-                  class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg"
+                  class="flex items-center justify-between rounded-xl bg-defaultGreen px-4 py-2 text-white shadow-sm"
                 >
-                  <span>{{ item.course_code }} — {{ item.course_title }}</span>
-                  <button type="button" @click="removeOtherCourse(i)">✕</button>
+                  <span class="truncate">
+                    {{ item.course_code }} — {{ item.course_title }}
+                  </span>
+
+                  <button
+                    type="button"
+                    @click="removeOtherCourse(i)"
+                    class="ml-3 flex h-6 w-6 items-center justify-center rounded-full hover:bg-white/20 transition"
+                  >
+                    ✕
+                  </button>
                 </div>
               </div>
             </div>
@@ -206,50 +247,88 @@
           <!-- TAB 2: CROSS ASSIGN -->
           <!-- ========================= -->
           <div v-else class="space-y-4">
-            <div class="relative space-y-2">
-              <label class="font-semibold text-gray-700">Cross Expertise</label>
-
-              <input
-                v-model="searchQuery"
-                @focus="dropdownOpen = true"
-                placeholder="Search all courses..."
-                class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
-              />
-
-              <ul
-                v-if="dropdownOpen && filteredCourses.length"
-                @mouseleave="dropdownOpen = false"
-                class="absolute z-50 w-full bg-white border rounded-md mt-1 max-h-40 overflow-auto shadow-lg"
-              >
-                <li
-                  v-for="course in filteredCourses"
-                  :key="course.course_id"
-                  @click="!isAlreadySelected(course) && addCourse(course)"
-                  class="px-3 py-2 flex justify-between items-center cursor-pointer"
-                  :class="
-                    isAlreadySelected(course)
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'hover:bg-green-100'
-                  "
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-2">
+                <label class="input-label">Year Level</label>
+                <select
+                  v-model="selectedYearLevel"
+                  class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
                 >
-                  <span>
-                    <span
-                      v-if="course.program_code"
-                      class="px-2 py-0.5 mr-2 rounded-full bg-defaultGreen text-white text-[10px]"
-                    >
-                      {{ course.program_code }}
-                    </span>
-                    {{ course.course_code }} - {{ course.course_title }}
-                  </span>
+                  <option v-for="y in [1, 2, 3, 4]" :key="y" :value="y">
+                    {{ getYearLevelName(y) }}
+                  </option>
+                </select>
+              </div>
 
-                  <span
-                    v-if="isAlreadySelected(course)"
-                    class="text-[10px] bg-green-200 px-2 rounded"
-                  >
-                    Selected
-                  </span>
-                </li>
-              </ul>
+              <div class="space-y-2">
+                <label class="input-label">Semester</label>
+                <select
+                  v-model="selectedSemester"
+                  class="w-full border px-3 py-2.5 rounded-md outline-none focus:ring-2 focus:ring-green-600/20"
+                >
+                  <option v-for="s in [1, 2, 3]" :key="s" :value="s">
+                    {{ getSemesterName(s) }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="dropdown-container">
+              <label class="dropdown-label">Cross Expertise :</label>
+
+              <div class="dropdown-wrapper">
+                <input
+                  v-model="searchQuery"
+                  @focus="dropdownOpen = true"
+                  placeholder="Search all courses..."
+                  class="dropdown-input"
+                />
+
+                <div
+                  v-if="dropdownOpen"
+                  class="dropdown-menu"
+                  @mouseleave="dropdownOpen = false"
+                >
+                  <div v-if="filteredCourses.length">
+                    <div
+                      v-for="course in filteredCourses"
+                      :key="course.course_id"
+                      @mousedown.prevent="
+                        !isAlreadySelected(course) && addCourse(course)
+                      "
+                      class="dropdown-item flex items-center justify-between"
+                      :class="
+                        isAlreadySelected(course)
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : ''
+                      "
+                    >
+                      <span class="flex items-center flex-wrap">
+                        <span
+                          v-if="course.program_code"
+                          class="mr-2 rounded-full bg-defaultGreen px-2 py-0.5 text-[10px] font-medium text-white"
+                        >
+                          {{ course.program_code }}
+                        </span>
+
+                        <span>
+                          {{ course.course_code }} - {{ course.course_title }}
+                        </span>
+                      </span>
+
+                      <span
+                        v-if="isAlreadySelected(course)"
+                        class="rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-defaultGreen"
+                      >
+                        Selected
+                      </span>
+                    </div>
+                  </div>
+
+                  <div v-else class="dropdown-item text-gray-400">
+                    No courses found
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="space-y-1">
@@ -447,11 +526,23 @@ export default {
             !this.selectedProgramId ||
             Number(c.program_id) === Number(this.selectedProgramId);
 
+          const sameSemester =
+            Number(c.course_semester) === Number(this.selectedSemester);
+
+          const sameYear =
+            Number(c.course_level) === Number(this.selectedYearLevel);
+
           const notSelected = !this.selectedCrossCourses.some(
             (e) => Number(e.course_id) === Number(c.course_id),
           );
 
-          return matchSearch(c) && sameProgram && notSelected;
+          return (
+            matchSearch(c) &&
+            sameProgram &&
+            sameSemester &&
+            sameYear &&
+            notSelected
+          );
         });
       }
 
