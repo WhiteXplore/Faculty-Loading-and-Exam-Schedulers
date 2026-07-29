@@ -71,7 +71,7 @@
 
             <div class="per-page-container">
               <!-- Upload -->
-              <div @click="isUploadModal = true" class="btn-gui">
+              <div @click="isUploadModal = true" class="btn-download">
                 <div class="btn-add-icon">
                   <icon name="uploads" />
                 </div>

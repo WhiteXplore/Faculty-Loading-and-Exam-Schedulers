@@ -1,41 +1,5 @@
 <template>
   <div v-if="isTable" class="">
-    <div class="flex justify-between items-center px-1 text-sm">
-      <!-- LEFT -->
-      <div class="text-[13px] text-text font-regular">Pages / Buildings</div>
-
-      <!-- RIGHT -->
-      <div class="flex gap-2">
-        <!-- Upload Building -->
-        <!-- <div
-          @click="isUploadModal = true"
-          class="btn-gui"
-        >
-          <div
-           class="btn-add-icon"
-          >
-            <icon name="uploads" />
-          </div>
-
-             <span class="btn-add-text">Upload Building</span>
-        </div> -->
-
-        <!-- Add Building -->
-        <div
-          @click="toggleAdd"
-          class="btn-add"
-        >
-          <div
-            class="btn-add-icon"
-          >
-            <icon name="add-account1.1" />
-          </div>
-
-             <span class="btn-add-text">Add Building</span>
-        </div>
-      </div>
-    </div>
-
     <!-- Table -->
     <div class="table-container">
       <!-- Controls -->
@@ -43,7 +7,11 @@
         <!-- Per page -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -58,34 +26,48 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
           <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
+        <div class="flex gap-2">
+          <!-- Search -->
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Search..."
+              class="search-input"
+              @input="changePage(1)"
+            />
 
-        <!-- Search -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Search..."
-            class="search-input"
-            @input="changePage(1)"
-          />
-
-          <div class="absolute inset-y-0 left-3 flex items-center text-defaultGreen">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+            <div
+              class="absolute inset-y-0 left-3 flex items-center text-defaultGreen"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+          </div>
+          <div @click="toggleAdd" class="btn-add">
+            <div class="btn-add-icon">
+              <icon name="add-account1.1" />
+            </div>
+
+            <span class="btn-add-text">Add Building</span>
           </div>
         </div>
       </div>
@@ -96,10 +78,16 @@
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead class="bg-defaultGreen text-white sticky top-0">
               <tr>
-                <th class="px-4 py-3 text-left font-normal w-[25%]">Building Name</th>
-                <th class="px-4 py-3 text-left font-normal w-[25%]">College Branch</th>
+                <th class="px-4 py-3 text-left font-normal w-[25%]">
+                  Building Name
+                </th>
+                <th class="px-4 py-3 text-left font-normal w-[25%]">
+                  College Branch
+                </th>
                 <th class="px-4 py-3 text-left font-normalw-[25%]">Area</th>
-                <th class="px-4 py-3 text-center font-normal w-[1%]">Actions</th>
+                <th class="px-4 py-3 text-center font-normal w-[1%]">
+                  Actions
+                </th>
               </tr>
             </thead>
 
@@ -114,7 +102,9 @@
                 </td>
 
                 <td class="px-4 py-3">
-                  {{ building.buildingArea?.collegeBranch?.college_branch_name }}
+                  {{
+                    building.buildingArea?.collegeBranch?.college_branch_name
+                  }}
                 </td>
 
                 <td class="px-4 py-3">
@@ -147,7 +137,8 @@
       <!-- Pagination -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
 
         <div class="flex items-center gap-1 text-sm">
@@ -165,7 +156,9 @@
             @click="changePage(page)"
             :class="[
               'px-3 py-1 rounded-md',
-              currentPage === page ? 'bg-defaultGreen text-white' : 'bg-gray-200',
+              currentPage === page
+                ? 'bg-defaultGreen text-white'
+                : 'bg-gray-200',
             ]"
           >
             {{ page }}
@@ -205,14 +198,19 @@
 
       <p class="delete-text">
         Are you sure you want to delete
-        <b>{{ recordToDelete?.building_name }}</b> ? This action cannot be undone.
+        <b>{{ recordToDelete?.building_name }}</b> ? This action cannot be
+        undone.
       </p>
 
       <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -265,13 +263,15 @@ export default {
         ]
           .join(" ")
           .toLowerCase()
-          .includes(query)
+          .includes(query),
       );
 
       // Sort by Area number (Area 1 → Area 7)
       return filtered.sort((a, b) => {
-        const areaA = parseInt(a.buildingArea?.area_name?.replace("Area ", "")) || 0;
-        const areaB = parseInt(b.buildingArea?.area_name?.replace("Area ", "")) || 0;
+        const areaA =
+          parseInt(a.buildingArea?.area_name?.replace("Area ", "")) || 0;
+        const areaB =
+          parseInt(b.buildingArea?.area_name?.replace("Area ", "")) || 0;
 
         return areaA - areaB;
       });
@@ -343,7 +343,7 @@ export default {
     async confirmDelete() {
       try {
         await axios.delete(
-          `${process.env.VUE_APP_API_BASE_URL}/buildings/${this.recordToDelete.building_id}`
+          `${process.env.VUE_APP_API_BASE_URL}/buildings/${this.recordToDelete.building_id}`,
         );
         toast.success("Building area deleted successfully");
 

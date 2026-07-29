@@ -1,40 +1,5 @@
 <template>
   <div v-if="isTable">
-    <!-- HEADER -->
-    <div class="flex justify-between items-center px-1 text-sm">
-      <div class="text-[13px] text-text font-regular">Pages / Buildings Areas</div>
-
-      <div class="flex gap-2">
-        <!-- Upload -->
-        <!-- <div
-          @click="isUploadModal = true"
-          class="btn-gui"
-        >
-          <div
-           class="btn-add-icon"
-          >
-            <icon name="uploads" />
-          </div>
-
-          <span class="font-medium text-sm"> Upload Building Areas </span>
-        </div> -->
-
-        <!-- Add -->
-        <div
-          @click="toggleAdd"
-          class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
-        >
-          <div
-            class="p-1 bg-defaultGreen bg-opacity-20 rounded-full flex items-center justify-center"
-          >
-            <icon name="add-account1.1" />
-          </div>
-
-          <span class="font-medium text-sm"> Add Building Areas </span>
-        </div>
-      </div>
-    </div>
-
     <!-- TABLE CONTAINER -->
     <div class="table-container">
       <!-- CONTROLS -->
@@ -42,7 +7,11 @@
         <!-- PER PAGE -->
         <div class="per-page-container">
           <div class="select-wrapper">
-            <select v-model="itemsPerPage" class="select-input" @change="changePage(1)">
+            <select
+              v-model="itemsPerPage"
+              class="select-input"
+              @change="changePage(1)"
+            >
               <option value="10">10</option>
               <option value="15">15</option>
               <option value="20">20</option>
@@ -57,34 +26,51 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
           <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
+        <div class="flex gap-2">
+          <!-- SEARCH -->
+          <div class="search-wrapper">
+            <input
+              v-model="searchQuery"
+              @input="changePage(1)"
+              type="text"
+              placeholder="Search..."
+              class="search-input"
+            />
 
-        <!-- SEARCH -->
-        <div class="search-wrapper">
-          <input
-            v-model="searchQuery"
-            @input="changePage(1)"
-            type="text"
-            placeholder="Search..."
-            class="search-input"
-          />
-
-          <div class="absolute inset-y-0 left-3 flex items-center text-defaultGreen">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+            <div
+              class="absolute inset-y-0 left-3 flex items-center text-defaultGreen"
             >
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+          </div>
+          <div
+            @click="toggleAdd"
+            class="flex items-center gap-2 px-3 py-2 border bg-defaultGreen text-white border-green-600 rounded-xl hover:bg-white hover:text-defaultGreen hover:shadow-lg cursor-pointer transition duration-200"
+          >
+            <div class="btn-add-icon">
+              <icon name="add-account1.1" />
+            </div>
+
+            <span class="font-medium text-sm"> Add Building Areas </span>
           </div>
         </div>
       </div>
@@ -95,12 +81,20 @@
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead class="bg-defaultGreen text-white sticky top-0">
               <tr>
-                <th class="px-4 py-3 text-left font-normal w-[40%]">College Branch</th>
-                <th class="px-4 py-3 text-left font-normal w-[40%]">Area Name</th>
+                <th class="px-4 py-3 text-left font-normal w-[40%]">
+                  College Branch
+                </th>
+                <th class="px-4 py-3 text-left font-normal w-[40%]">
+                  Area Name
+                </th>
 
-                <th class="px-4 py-3 text-left font-normal w-[30%]">Travel Time</th>
+                <th class="px-4 py-3 text-left font-normal w-[30%]">
+                  Travel Time
+                </th>
 
-                <th class="px-4 py-3 text-center font-normal w-[30%]">Actions</th>
+                <th class="px-4 py-3 text-center font-normal w-[30%]">
+                  Actions
+                </th>
               </tr>
             </thead>
 
@@ -149,7 +143,8 @@
       <!-- PAGINATION -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
 
         <div class="flex items-center gap-1 text-sm">
@@ -167,7 +162,9 @@
             @click="changePage(page)"
             :class="[
               'px-3 py-1 rounded-md',
-              currentPage === page ? 'bg-defaultGreen text-white' : 'bg-gray-200',
+              currentPage === page
+                ? 'bg-defaultGreen text-white'
+                : 'bg-gray-200',
             ]"
           >
             {{ page }}
@@ -212,8 +209,12 @@
       <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -260,7 +261,10 @@ export default {
       const query = (this.searchQuery || "").toLowerCase();
 
       return this.building_areas.filter((item) =>
-        [item.area_name, item.time_travel].join(" ").toLowerCase().includes(query)
+        [item.area_name, item.time_travel]
+          .join(" ")
+          .toLowerCase()
+          .includes(query),
       );
     },
 
@@ -332,7 +336,7 @@ export default {
       try {
         await axios.delete(
           process.env.VUE_APP_API_BASE_URL +
-            `/building-areas/${this.areaToDelete.building_area_id}`
+            `/building-areas/${this.areaToDelete.building_area_id}`,
         );
 
         toast.success("Building area deleted successfully");

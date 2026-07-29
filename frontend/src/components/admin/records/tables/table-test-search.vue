@@ -1,17 +1,38 @@
 <template>
-  <div class="p-4">
-    <!-- SEARCH -->
-    <div class="mb-4">
-      <input
-        v-model="search"
-        type="text"
-        placeholder="Search schedules..."
-        class="w-full md:w-[400px] border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-400"
-      />
-    </div>
+  <div class="table-container">
+    <!-- Top Controls -->
+    <div class="table-controls flex justify-end">
+      <!-- SEARCH -->
+      <div class="mb-4">
+        <div class="search-wrapper">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Search courses..."
+            class="search-input"
+          />
 
+          <div
+            class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- LOADING -->
-    <div v-if="loading" class="text-center py-14 text-gray-500">Loading schedules...</div>
+    <div v-if="loading" class="text-center py-14 text-gray-500">
+      Loading schedules...
+    </div>
 
     <!-- ERROR -->
     <div v-else-if="error" class="text-center py-14 text-red-500">
@@ -99,7 +120,7 @@ export default {
     return {
       loading: false,
       error: null,
-      search: "",
+      searchQuery: "",
 
       final_schedules: [],
       sections: [],
@@ -113,12 +134,12 @@ export default {
       return this.final_schedules.map((schedule) => {
         // FIND CLASS SECTION
         const section = this.sections.find(
-          (sec) => Number(sec.class_id) === Number(schedule.class_id)
+          (sec) => Number(sec.class_id) === Number(schedule.class_id),
         );
 
         // FIND FACULTY
         const faculty = this.users.find(
-          (user) => Number(user.id) === Number(schedule.faculty_id)
+          (user) => Number(user.id) === Number(schedule.faculty_id),
         );
 
         return {
@@ -126,7 +147,9 @@ export default {
 
           // PROGRAM CODE + SET NAME
           class_display: section
-            ? `${section.program?.program_code || ""} - ${section.set_name || ""}`
+            ? `${section.program?.program_code || ""} - ${
+                section.set_name || ""
+              }`
             : "N/A",
 
           // FACULTY NAME
@@ -139,7 +162,7 @@ export default {
 
     // SEARCH
     filteredSchedules() {
-      const keyword = this.search.toLowerCase();
+      const keyword = this.searchQuery.toLowerCase();
 
       return this.schedules.filter((item) => {
         return (
@@ -160,7 +183,7 @@ export default {
     async fetchFinalSchedules() {
       const { data } = await axios.get(
         process.env.VUE_APP_API_BASE_URL +
-          "/final-generated-class-schedule/get-all-final-schedules"
+          "/final-generated-class-schedule/get-all-final-schedules",
       );
 
       this.final_schedules = data;
@@ -169,7 +192,7 @@ export default {
     // FETCH CLASS SECTIONS
     async fetchClassSections() {
       const { data } = await axios.get(
-        process.env.VUE_APP_API_BASE_URL + "/class/get-classes"
+        process.env.VUE_APP_API_BASE_URL + "/class/get-classes",
       );
 
       this.sections = data;
@@ -178,7 +201,7 @@ export default {
     // FETCH USERS
     async fetchUsers() {
       const { data } = await axios.get(
-        process.env.VUE_APP_API_BASE_URL + "/users/get-users"
+        process.env.VUE_APP_API_BASE_URL + "/users/get-users",
       );
 
       this.users = data;
@@ -196,7 +219,8 @@ export default {
           this.fetchUsers(),
         ]);
       } catch (err) {
-        this.error = err.response?.data?.message || err.message || "Failed to load data";
+        this.error =
+          err.response?.data?.message || err.message || "Failed to load data";
       } finally {
         this.loading = false;
       }

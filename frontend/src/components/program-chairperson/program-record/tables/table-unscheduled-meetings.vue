@@ -206,6 +206,7 @@
             <th class="px-4 py-3 text-center">Semester</th>
             <th class="px-4 py-3 text-center w-[14%]">Hours</th>
             <th class="px-4 py-3 text-center">Reason</th>
+            <th class="px-4 py-3 text-center">Possible Faculty</th>
             <!-- <th class="px-4 py-3 text-center">Created</th> -->
           </tr>
         </thead>
@@ -244,6 +245,10 @@
 
             <td class="px-4 py-3 text-xs text-red-600 max-w-xs">
               {{ item.reason }}
+            </td>
+
+            <td class="px-4 py-3 text-xs text-center text-red-600 max-w-xs">
+              {{ item.faculty_name === "Unassigned" ? "-" : item.faculty_name }}
             </td>
 
             <!-- <td class="px-4 py-3 text-center text-xs text-gray-500">
@@ -380,7 +385,8 @@ export default {
               item.program_code?.toLowerCase().includes(query) ||
               item.school_year?.toLowerCase().includes(query) ||
               item.reason?.toLowerCase().includes(query) ||
-              item.type?.toLowerCase().includes(query)
+              item.type?.toLowerCase().includes(query) ||
+              item.faculty_name?.toLowerCase().includes(query)
             );
           })
 

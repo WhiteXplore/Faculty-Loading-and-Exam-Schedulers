@@ -44,6 +44,17 @@ export class User_Accounts {
   unit_load: number;
 
   @Column()
+  preferred_rest_day: string;
+
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    nullable: true,
+  })
+  sp_mas_unit: number | null;
+
+  @Column()
   designation: string;
 
   @Column({ nullable: true })

@@ -3,31 +3,21 @@
     <!-- Header -->
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / Courses</div>
- <div class="per-page-container">
+      <div class="per-page-container">
         <!-- Upload & Add -->
-        <div
-          @click="isUploadModal = true"
-          class="btn-gui"
-        >
-          <div
-           class="btn-add-icon"
-          >
+        <div @click="isUploadModal = true" class="btn-download">
+          <div class="btn-add-icon">
             <icon name="uploads" />
           </div>
-             <span class="btn-add-text">Upload Course</span>
+          <span class="btn-add-text">Upload Course</span>
         </div>
 
-        <div
-          @click="toggleAdd"
-          class="btn-add"
-        >
-          <div
-            class="btn-add-icon"
-          >
+        <div @click="toggleAdd" class="btn-add">
+          <div class="btn-add-icon">
             <icon name="add-account1.1" />
           </div>
 
-             <span class="btn-add-text">Add Course</span>
+          <span class="btn-add-text">Add Course</span>
         </div>
       </div>
     </div>
@@ -35,10 +25,10 @@
     <!-- Table -->
     <div class="table-container">
       <!-- Top Controls -->
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
+        <div class="per-page-container">
+          <div class="select-wrapper">
             <select
               v-model="itemsPerPage"
               class="appearance-none rounded-full border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md focus:shadow-md"
@@ -58,7 +48,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -73,7 +67,11 @@
               class="rounded-full border border-green-600 px-4 py-1.5 text-green-900 text-sm font-semibold shadow-sm cursor-pointer"
             >
               <option value="">All Curriculums</option>
-              <option v-for="curr in uniqueCurriculums" :key="curr" :value="curr">
+              <option
+                v-for="curr in uniqueCurriculums"
+                :key="curr"
+                :value="curr"
+              >
                 {{ curr }}
               </option>
             </select>
@@ -110,7 +108,9 @@
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
         <div class="max-h-[69vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
                 <th class="px-4 py-3 text-left font-normal">Course Code</th>
                 <th class="px-4 py-3 text-left font-normal">Course Title</th>
@@ -120,7 +120,9 @@
                 <th class="px-4 py-3 text-center font-normal">Lab</th>
                 <th class="px-4 py-3 text-center font-normal">Units</th>
                 <th class="px-4 py-3 text-center font-normal">Pre-requisite</th>
-                <th class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]">
+                <th
+                  class="px-4 py-3 text-center rounded-tr-lg font-normal w-[10%]"
+                >
                   Actions
                 </th>
               </tr>
@@ -222,8 +224,12 @@
       <!-- <div class="delete-divider"></div> -->
 
       <div class="delete-actions">
-        <button class="btn-cancel" @click="showDeleteModal = false">No, Cancel</button>
-        <button class="btn-cancel-confirm" @click="confirmDelete">Yes, Delete</button>
+        <button class="btn-cancel" @click="showDeleteModal = false">
+          No, Cancel
+        </button>
+        <button class="btn-cancel-confirm" @click="confirmDelete">
+          Yes, Delete
+        </button>
       </div>
     </div>
   </div>
@@ -293,7 +299,7 @@ export default {
           (c) =>
             String(c.curriculum?.program?.institute?.institute_id) ===
               String(this.user.institute_id) &&
-            String(c.curriculum?.program_id) === String(this.user.program_id)
+            String(c.curriculum?.program_id) === String(this.user.program_id),
         );
       }
 
@@ -304,13 +310,15 @@ export default {
               String(this.activeSchoolYear.start_year) &&
             String(c.curriculum?.curriculum_end_year) ===
               String(this.activeSchoolYear.end_year) &&
-            Number(c.course_semester) === Number(this.activeSchoolYear.semester)
+            Number(c.course_semester) ===
+              Number(this.activeSchoolYear.semester),
         );
       }
 
       if (this.selectedCurriculum) {
         result = result.filter(
-          (c) => c.curriculum?.program?.program_name === this.selectedCurriculum
+          (c) =>
+            c.curriculum?.program?.program_name === this.selectedCurriculum,
         );
       }
 
@@ -320,7 +328,7 @@ export default {
           (c) =>
             c.course_code?.toLowerCase().includes(q) ||
             c.course_title?.toLowerCase().includes(q) ||
-            c.curriculum?.curriculum_name?.toLowerCase().includes(q)
+            c.curriculum?.curriculum_name?.toLowerCase().includes(q),
         );
       }
 
@@ -353,16 +361,22 @@ export default {
     },
 
     endIndex() {
-      return Math.min(this.currentPage * this.itemsPerPage, this.filteredCourses.length);
+      return Math.min(
+        this.currentPage * this.itemsPerPage,
+        this.filteredCourses.length,
+      );
     },
   },
 
   methods: {
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || null;
       } catch {
         this.$router.push("/");
@@ -395,7 +409,7 @@ export default {
 
         await axios.delete(
           `${process.env.VUE_APP_API_BASE_URL}/courses/delete-id/${this.recordToDelete.course_id}`,
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         // refresh table

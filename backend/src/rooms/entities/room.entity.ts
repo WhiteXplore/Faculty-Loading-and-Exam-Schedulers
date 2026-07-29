@@ -23,8 +23,11 @@ export class Room {
   @Column({ type: 'varchar', length: 100 })
   room_type: string;
 
-@Column({ type: 'boolean', default: true })
-is_active: boolean;
+  @Column({ type: 'boolean', default: true })
+  is_active: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  is_sp_mas: boolean;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;

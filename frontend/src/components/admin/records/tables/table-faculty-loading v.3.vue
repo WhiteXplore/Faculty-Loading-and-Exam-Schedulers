@@ -40,7 +40,7 @@
       <!-- TODO  Header -->
       <div class="flex items-center justify-between border-b pb-3 mb-4">
         <!-- Left: Icon + Title -->
-   <div class="per-page-container">
+        <div class="per-page-container">
           <icon
             name="exclamation-circle"
             class="w-7 h-7 p-1 rounded-full bg-green-200 text-green-900 flex items-center justify-center"
@@ -66,16 +66,10 @@
 
       <!-- TODO  Buttons -->
       <div class="flex justify-center gap-2 text-sm">
-        <button
-          @click="showConfirmSaved = false"
-          class="btn-cancel"
-        >
+        <button @click="showConfirmSaved = false" class="btn-cancel">
           Cancel
         </button>
-        <button
-          @click="saveScheduledConfirmed"
-         class="btn-save"
-        >
+        <button @click="saveScheduledConfirmed" class="btn-save">
           Yes, Save
         </button>
       </div>
@@ -92,7 +86,7 @@
           v-if="appearSave"
         >
           <!-- TODO  Institute Filter -->
-           <div class="select-wrapper">
+          <div class="select-wrapper">
             <select
               v-model="selectedInstituteId"
               class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md w-[200px]"
@@ -128,7 +122,7 @@
           </div>
 
           <!-- TODO  Program Filter -->
-           <div class="select-wrapper">
+          <div class="select-wrapper">
             <select
               v-model="selectedProgramId"
               :disabled="!selectedInstituteId"
@@ -166,49 +160,33 @@
         </div>
         <!-- TODO  Toggle View Button -->
 
-        <div
-          @click="showFacultyTable = !showFacultyTable"
-          class="btn-gui"
-        >
-          <div
-           class="btn-add-icon"
-          >
+        <div @click="showFacultyTable = !showFacultyTable" class="btn-download">
+          <div class="btn-add-icon">
             <icon name="users" />
           </div>
-             <span class="btn-add-text">
+          <span class="btn-add-text">
             {{ showFacultyTable ? "View Cards" : "View Faculty" }}
           </span>
         </div>
 
         <!-- TODO  Auto Generation -->
 
-        <div
-          @click="generateSchedule"
-          class="btn-add"
-        >
-          <div
-            class="btn-add-icon"
-          >
+        <div @click="generateSchedule" class="btn-add">
+          <div class="btn-add-icon">
             <icon name="arrow-path" />
           </div>
 
-             <span class="btn-add-text">Generate</span>
+          <span class="btn-add-text">Generate</span>
         </div>
 
         <!-- TODO  Save Schedule -->
 
-        <div
-          v-if="appearSave"
-          @click="showConfirmSaved = true"
-          class="btn-add"
-        >
-          <div
-            class="btn-add-icon"
-          >
+        <div v-if="appearSave" @click="showConfirmSaved = true" class="btn-add">
+          <div class="btn-add-icon">
             <icon name="circle-check" />
           </div>
 
-             <span class="btn-add-text">Save this Schedule</span>
+          <span class="btn-add-text">Save this Schedule</span>
         </div>
       </div>
     </div>
@@ -223,7 +201,7 @@
         class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
       >
         <icon name="arrow-left" class="w-4 h-4" />
-           <span class="btn-add-text">Back to Table</span>
+        <span class="btn-add-text">Back to Table</span>
       </button>
     </div>
 
@@ -236,7 +214,7 @@
             class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
           >
             <!-- TODO  Items per page -->
-       <div class="per-page-container">
+            <div class="per-page-container">
               <div class="relative">
                 <select
                   v-schedule_typel="itemsPerPage"

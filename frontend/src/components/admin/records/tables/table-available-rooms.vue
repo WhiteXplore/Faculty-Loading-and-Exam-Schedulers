@@ -1,73 +1,5 @@
 <template>
   <div class="flex flex-col space-y-3 overflow-hidden">
-    <!-- SELECTOR -->
-    <div class="flex justify-between">
-      <div class="flex items-center gap-3">
-        <select v-model="activeView" class="border rounded-lg px-3 py-2 text-sm">
-          <option value="used">Used Rooms</option>
-          <option value="unused">Unused Rooms</option>
-        </select>
-      </div>
-
-      <!-- TYPE FILTER -->
-      <div
-        v-if="activeView === 'unused'"
-        class="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-gray-50 p-1 shadow-sm"
-      >
-        <button
-          type="button"
-          @click="
-            roomFilter = 'Lecture';
-            changePage(1);
-          "
-          :class="[
-            'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200',
-            roomFilter === 'Lecture'
-              ? 'bg-white text-defaultGreen shadow-sm ring-1 ring-green-100'
-              : 'text-gray-500 hover:bg-white hover:text-gray-700',
-          ]"
-        >
-          <span>Lecture</span>
-          <span
-            :class="[
-              'rounded-full px-2 py-0.5 text-[11px] font-bold',
-              roomFilter === 'Lecture'
-                ? 'bg-green-50 text-green-700'
-                : 'bg-gray-200 text-gray-600',
-            ]"
-          >
-            {{ lectureRooms.length }}
-          </span>
-        </button>
-
-        <button
-          type="button"
-          @click="
-            roomFilter = 'Laboratory';
-            changePage(1);
-          "
-          :class="[
-            'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200',
-            roomFilter === 'Laboratory'
-              ? 'bg-white text-blue-700 shadow-sm ring-1 ring-blue-100'
-              : 'text-gray-500 hover:bg-white hover:text-gray-700',
-          ]"
-        >
-          <span>Laboratory</span>
-          <span
-            :class="[
-              'rounded-full px-2 py-0.5 text-[11px] font-bold',
-              roomFilter === 'Laboratory'
-                ? 'bg-blue-50 text-blue-700'
-                : 'bg-gray-200 text-gray-600',
-            ]"
-          >
-            {{ laboratoryRooms.length }}
-          </span>
-        </button>
-      </div>
-    </div>
-
     <!-- Table -->
     <div class="table-container">
       <!-- Top Controls -->
@@ -94,119 +26,321 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
 
           <span class="text-sm font-medium text-gray-600">Per page</span>
         </div>
+        <div class="flex gap-2">
+          <!-- SELECTOR -->
+          <div class="flex justify-between gap-2">
+            <div class="flex items-center gap-3">
+              <div class="relative w-56" ref="activeViewDropdownRef">
+                <div
+                  class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+                >
+                  <!-- Icon -->
+                  <div class="absolute left-3 text-defaultGreen">
+                    <svg
+                      class="h-4 w-4"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                  </div>
 
-        <!-- SEARCH -->
-        <!-- PREMIUM SEARCH / ROOM DROPDOWN -->
-        <div class="relative w-[320px]" ref="roomDropdownRef">
-          <div
-            class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
-          >
-            <div class="absolute left-3 text-defaultGreen">
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.35-4.35" />
-              </svg>
-            </div>
+                  <!-- Selected Value -->
+                  <button
+                    type="button"
+                    @click="showActiveViewDropdown = !showActiveViewDropdown"
+                    class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+                  >
+                    <span v-if="activeView === 'used'"> Used Rooms </span>
 
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search or select room..."
-              class="w-full rounded-xl bg-transparent py-2.5 pl-10 pr-10 text-sm font-medium text-gray-700 outline-none placeholder:text-gray-400"
-              @focus="showRoomDropdown = true"
-              @input="
-                showRoomDropdown = true;
-                changePage(1);
-              "
-            />
+                    <span v-else-if="activeView === 'unused'">
+                      Unused Rooms
+                    </span>
 
-            <button
-              type="button"
-              @click="showRoomDropdown = !showRoomDropdown"
-              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
-            >
-              <svg
-                class="w-4 h-4 transition-transform duration-200"
-                :class="{ 'rotate-180': showRoomDropdown }"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-          </div>
+                    <span v-else class="text-gray-600 font-light">
+                      Select View
+                    </span>
+                  </button>
 
-          <div
-            v-if="showRoomDropdown"
-            class="absolute right-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
-          >
-            <div class="border-b border-gray-100 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                {{ activeView === "used" ? "Used Rooms" : "Unused Rooms" }}
-              </p>
-            </div>
-
-            <div class="max-h-[260px] overflow-y-auto p-1.5">
-              <button
-                v-for="room in filteredRoomOptions"
-                :key="room.room_name"
-                type="button"
-                @click="selectRoom(room.room_name)"
-                class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-green-50"
-                :class="searchQuery === room.room_name ? 'bg-green-50' : ''"
-              >
-                <div>
-                  <p class="text-sm font-semibold text-gray-800">
-                    {{ room.room_name }}
-                  </p>
-                  <p class="text-xs text-gray-500">
-                    {{ room.room_type || "Unknown" }}
-                  </p>
+                  <!-- Dropdown Arrow -->
+                  <button
+                    type="button"
+                    @click="showActiveViewDropdown = !showActiveViewDropdown"
+                    class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-defaultGreen"
+                  >
+                    <svg
+                      class="h-4 w-4 transition-transform duration-200"
+                      :class="{ 'rotate-180': showActiveViewDropdown }"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
                 </div>
 
-                <span
-                  class="rounded-full px-2.5 py-1 text-[11px] font-semibold"
-                  :class="
-                    room.room_type === 'Laboratory'
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'bg-green-50 text-green-700'
-                  "
+                <!-- Dropdown -->
+                <div
+                  v-if="showActiveViewDropdown"
+                  class="absolute z-[9999] mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
                 >
-                  {{ room.room_type || "Room" }}
-                </span>
-              </button>
+                  <div class="border-b border-gray-100 px-4 py-3">
+                    <p class="text-xs uppercase tracking-wide text-gray-400">
+                      Room View
+                    </p>
+                  </div>
 
-              <div
-                v-if="filteredRoomOptions.length === 0"
-                class="px-4 py-6 text-center text-sm text-gray-400"
-              >
-                No room found
+                  <div class="p-1.5">
+                    <button
+                      @click="
+                        activeView = 'used';
+                        showActiveViewDropdown = false;
+                      "
+                      class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                      :class="activeView === 'used' ? 'bg-green-50' : ''"
+                    >
+                      <p class="text-sm text-gray-800">Used Rooms</p>
+
+                      <svg
+                        v-if="activeView === 'used'"
+                        class="h-5 w-5 text-defaultGreen"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </button>
+
+                    <button
+                      @click="
+                        activeView = 'unused';
+                        showActiveViewDropdown = false;
+                      "
+                      class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                      :class="activeView === 'unused' ? 'bg-green-50' : ''"
+                    >
+                      <p class="text-sm text-gray-800">Unused Rooms</p>
+
+                      <svg
+                        v-if="activeView === 'unused'"
+                        class="h-5 w-5 text-defaultGreen"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div v-if="searchQuery" class="border-t border-gray-100 p-2">
+            <!-- TYPE FILTER -->
+            <div
+              v-if="activeView === 'unused'"
+              class="inline-flex items-center gap-1 rounded-xl border border-gray-200 bg-gray-50 shadow-sm"
+            >
               <button
                 type="button"
-                @click="clearRoomSearch"
-                class="w-full rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+                @click="
+                  roomFilter = 'Lecture';
+                  changePage(1);
+                "
+                :class="[
+                  'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200',
+                  roomFilter === 'Lecture'
+                    ? 'bg-white text-defaultGreen shadow-sm ring-1 ring-green-100'
+                    : 'text-gray-500 hover:bg-white hover:text-gray-700',
+                ]"
               >
-                Clear search
+                <span>Lecture</span>
+                <span
+                  :class="[
+                    'rounded-full px-2 py-0.5 text-[11px] font-bold',
+                    roomFilter === 'Lecture'
+                      ? 'bg-green-50 text-green-700'
+                      : 'bg-gray-200 text-gray-600',
+                  ]"
+                >
+                  {{ lectureRooms.length }}
+                </span>
               </button>
+
+              <button
+                type="button"
+                @click="
+                  roomFilter = 'Laboratory';
+                  changePage(1);
+                "
+                :class="[
+                  'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200',
+                  roomFilter === 'Laboratory'
+                    ? 'bg-white text-blue-700 shadow-sm ring-1 ring-blue-100'
+                    : 'text-gray-500 hover:bg-white hover:text-gray-700',
+                ]"
+              >
+                <span>Laboratory</span>
+                <span
+                  :class="[
+                    'rounded-full px-2 py-0.5 text-[11px] font-bold',
+                    roomFilter === 'Laboratory'
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'bg-gray-200 text-gray-600',
+                  ]"
+                >
+                  {{ laboratoryRooms.length }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- SEARCH -->
+
+          <div class="relative w-[320px]" ref="roomDropdownRef">
+            <div
+              class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+            >
+              <div class="absolute left-3 text-defaultGreen">
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+              </div>
+
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search or select room..."
+                class="w-full rounded-xl bg-transparent py-3 pl-10 pr-10 text-sm font-medium text-gray-700 outline-none placeholder:text-gray-400"
+                @focus="showRoomDropdown = true"
+                @input="
+                  showRoomDropdown = true;
+                  changePage(1);
+                "
+              />
+
+              <button
+                type="button"
+                @click="showRoomDropdown = !showRoomDropdown"
+                class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
+              >
+                <svg
+                  class="w-4 h-4 transition-transform duration-200"
+                  :class="{ 'rotate-180': showRoomDropdown }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div
+              v-if="showRoomDropdown"
+              class="absolute right-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+            >
+              <div class="border-b border-gray-100 px-4 py-3">
+                <p
+                  class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+                >
+                  {{ activeView === "used" ? "Used Rooms" : "Unused Rooms" }}
+                </p>
+              </div>
+
+              <div class="max-h-[260px] overflow-y-auto p-1.5">
+                <button
+                  v-for="room in filteredRoomOptions"
+                  :key="room.room_name"
+                  type="button"
+                  @click="selectRoom(room.room_name)"
+                  class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-green-50"
+                  :class="searchQuery === room.room_name ? 'bg-green-50' : ''"
+                >
+                  <div>
+                    <p class="text-sm font-semibold text-gray-800">
+                      {{ room.room_name }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                      {{ room.room_type || "Unknown" }}
+                    </p>
+                  </div>
+
+                  <span
+                    class="rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                    :class="
+                      room.room_type === 'Laboratory'
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'bg-green-50 text-green-700'
+                    "
+                  >
+                    {{ room.room_type || "Room" }}
+                  </span>
+                </button>
+
+                <div
+                  v-if="filteredRoomOptions.length === 0"
+                  class="px-4 py-6 text-center text-sm text-gray-400"
+                >
+                  No room found
+                </div>
+              </div>
+
+              <div v-if="searchQuery" class="border-t border-gray-100 p-2">
+                <button
+                  type="button"
+                  @click="clearRoomSearch"
+                  class="w-full rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
+                >
+                  Clear search
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -219,13 +353,17 @@
             <thead class="bg-defaultGreen text-white">
               <tr>
                 <th class="px-4 py-3 text-left">Room</th>
+                <th class="px-4 py-3 text-left">Campus</th>
                 <th class="px-4 py-3 text-center">Type</th>
 
                 <th v-if="activeView === 'used'" class="px-4 py-3 text-center">
                   Used Count
                 </th>
 
-                <th v-if="activeView === 'unused'" class="px-4 py-3 text-center">
+                <th
+                  v-if="activeView === 'unused'"
+                  class="px-4 py-3 text-center"
+                >
                   Capacity
                 </th>
               </tr>
@@ -239,6 +377,13 @@
               >
                 <td>
                   {{ room.room_name }}
+                </td>
+
+                <td>
+                  {{
+                    room?.building?.buildingArea?.collegeBranch
+                      ?.college_branch_name || "-"
+                  }}
                 </td>
 
                 <td class="text-center">
@@ -263,10 +408,14 @@
                     class="flex flex-col items-center justify-center text-center text-gray-500"
                   >
                     <div class="text-center text-gray-500">
-                      <p class="text-lg font-semibold mb-2">No schedule data available</p>
+                      <p class="text-lg font-semibold mb-2">
+                        No schedule data available
+                      </p>
                       <p class="text-sm text-gray-400">
                         Please click
-                        <span class="font-medium text-defaultGreen">"Generate"</span>
+                        <span class="font-medium text-defaultGreen"
+                          >"Generate"</span
+                        >
                         to generate schedule data.
                       </p>
                     </div>
@@ -281,7 +430,8 @@
       <!-- PAGINATION -->
       <div class="flex justify-between items-center mt-2">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
 
         <div class="flex items-center gap-1 text-sm">
@@ -334,6 +484,7 @@ export default {
       searchQuery: "",
       itemsPerPage: 15,
       currentPage: 1,
+      showActiveViewDropdown: false,
     };
   },
 
@@ -354,11 +505,16 @@ export default {
       Object.values(this.groupedSchedule).forEach((records) => {
         records.forEach((r) => {
           if (!roomCounts[r.room_name]) {
-            const room = this.roomsFromAPI.find((x) => x.room_name === r.room_name);
+            const room = this.roomsFromAPI.find(
+              (x) => x.room_name === r.room_name,
+            );
 
             roomCounts[r.room_name] = {
               room_name: r.room_name,
               room_type: room?.room_type || "-",
+              room_capacity: room?.room_capacity || 0,
+              building: room?.building || null,
+              institute: room?.institute || null,
               count: 0,
             };
           }
@@ -375,7 +531,9 @@ export default {
     },
 
     availableRooms() {
-      return this.roomsFromAPI.filter((r) => !this.usedRooms.includes(r.room_name));
+      return this.roomsFromAPI.filter(
+        (r) => !this.usedRooms.includes(r.room_name),
+      );
     },
 
     lectureRooms() {
@@ -393,7 +551,9 @@ export default {
     },
 
     tableData() {
-      return this.activeView === "used" ? this.usedRoomList : this.filteredAvailableRooms;
+      return this.activeView === "used"
+        ? this.usedRoomList
+        : this.filteredAvailableRooms;
     },
 
     filteredData() {
@@ -402,7 +562,7 @@ export default {
       const q = this.searchQuery.toLowerCase();
 
       return this.tableData.filter((row) =>
-        Object.values(row).some((v) => String(v).toLowerCase().includes(q))
+        Object.values(row).some((v) => String(v).toLowerCase().includes(q)),
       );
     },
 
@@ -436,7 +596,10 @@ export default {
     },
 
     endIndex() {
-      return Math.min(this.currentPage * this.itemsPerPage, this.filteredData.length);
+      return Math.min(
+        this.currentPage * this.itemsPerPage,
+        this.filteredData.length,
+      );
     },
   },
 

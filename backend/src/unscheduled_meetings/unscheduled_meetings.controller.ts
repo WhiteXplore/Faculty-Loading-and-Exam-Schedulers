@@ -13,38 +13,40 @@ import { UpdateUnscheduledMeetingDto } from './dto/update-unscheduled_meeting.dt
 
 @Controller('unscheduled-meetings')
 export class UnscheduledMeetingsController {
-  constructor(
-    private readonly unscheduledMeetingsService: UnscheduledMeetingsService,
-  ) {}
+  constructor(private readonly service: UnscheduledMeetingsService) {}
 
+  // Single meeting
+  @Post()
+  create(@Body() createDto: CreateUnscheduledMeetingDto) {
+    return this.service.createOne(createDto);
+  }
+
+  // Bulk meetings
   @Post('add-unscheduled-meetings')
-  create(@Body() data: CreateUnscheduledMeetingDto[]) {
-    return this.unscheduledMeetingsService.create(data);
+  createMany(@Body() body: any) {
+    return this.service.create(body.meetings || body, body.override || false);
   }
 
   @Get('get-all-unscheduled-meetings')
   findAll() {
-    return this.unscheduledMeetingsService.findAll();
+    return this.service.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.unscheduledMeetingsService.findOne(+id);
+    return this.service.findOne(+id);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateUnscheduledMeetingDto: UpdateUnscheduledMeetingDto,
+    @Body() updateDto: UpdateUnscheduledMeetingDto,
   ) {
-    return this.unscheduledMeetingsService.update(
-      +id,
-      updateUnscheduledMeetingDto,
-    );
+    return this.service.update(+id, updateDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.unscheduledMeetingsService.remove(+id);
+    return this.service.remove(+id);
   }
 }

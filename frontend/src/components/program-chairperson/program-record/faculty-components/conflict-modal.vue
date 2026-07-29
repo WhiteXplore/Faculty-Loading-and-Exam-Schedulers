@@ -77,9 +77,7 @@
 
             <!-- Details -->
             <div class="grid grid-cols-2 gap-3">
-              <div
-                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
-              >
+              <div class="rounded-lg px-3 py-2.5">
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -91,9 +89,7 @@
                 </p>
               </div>
 
-              <div
-                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
-              >
+              <div class="rounded-lg px-3 py-2.5">
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -107,9 +103,7 @@
                 </p>
               </div>
 
-              <div
-                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
-              >
+              <div class="rounded-lg px-3 py-2.5">
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -121,9 +115,7 @@
                 </p>
               </div>
 
-              <div
-                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
-              >
+              <div class="rounded-lg px-3 py-2.5">
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -135,9 +127,7 @@
                 </p>
               </div>
 
-              <div
-                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
-              >
+              <div class="rounded-lg px-3 py-2.5">
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >
@@ -149,9 +139,7 @@
                 </p>
               </div>
 
-              <div
-                class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"
-              >
+              <div class="rounded-lg px-3 py-2.5">
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wide text-slate-400"
                 >

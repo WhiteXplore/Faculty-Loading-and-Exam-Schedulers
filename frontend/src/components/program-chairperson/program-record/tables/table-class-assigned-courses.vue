@@ -42,28 +42,158 @@
             </div>
             <span class="text-sm font-medium">Per page</span>
           </div>
-          <div class="search-wrapper">
-            <input
-              v-model="classSearch"
-              type="text"
-              placeholder="Search..."
-              class="search-input"
-              @input="changePage(1)"
-            />
-            <!-- Search icon -->
+          <div class="flex gap-2">
             <div
-              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+              class="relative w-56"
+              ref="programDropdownRef"
+              v-if="user?.role === 'Admin'"
             >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
+              <div
+                class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
               >
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.35-4.35" />
-              </svg>
+                <!-- Icon -->
+                <div class="absolute left-3 text-defaultGreen">
+                  <svg
+                    class="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4 7h16M4 12h16M4 17h16"
+                    />
+                  </svg>
+                </div>
+
+                <!-- Selected -->
+                <button
+                  type="button"
+                  @click="showProgramDropdown = !showProgramDropdown"
+                  class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+                >
+                  <span v-if="selectedProgram !== 'all'">
+                    {{
+                      availablePrograms.find(
+                        (p) => Number(p.program_id) === Number(selectedProgram),
+                      )?.program_code
+                    }}
+                  </span>
+
+                  <span v-else class="text-gray-600 font-light">
+                    Select All Programs
+                  </span>
+                </button>
+
+                <!-- Arrow -->
+                <button
+                  type="button"
+                  @click="showProgramDropdown = !showProgramDropdown"
+                  class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-defaultGreen"
+                >
+                  <svg
+                    class="h-4 w-4 transition-transform duration-200"
+                    :class="{ 'rotate-180': showProgramDropdown }"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Dropdown -->
+              <div
+                v-if="showProgramDropdown"
+                class="absolute z-[9999] mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+              >
+                <div class="border-b border-gray-100 px-4 py-3">
+                  <p
+                    class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+                  >
+                    Programs
+                  </p>
+                </div>
+
+                <div class="max-h-[260px] overflow-y-auto p-1.5">
+                  <!-- All -->
+                  <button
+                    @click="selectProgram('all')"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                    :class="selectedProgram === 'all' ? 'bg-green-50' : ''"
+                  >
+                    <div>
+                      <p class="text-sm text-gray-800">All Programs</p>
+                    </div>
+                  </button>
+
+                  <!-- Programs -->
+                  <button
+                    v-for="program in availablePrograms"
+                    :key="program.program_id"
+                    @click="selectProgram(program.program_id)"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                    :class="
+                      Number(selectedProgram) === Number(program.program_id)
+                        ? 'bg-green-50'
+                        : ''
+                    "
+                  >
+                    <p class="text-sm text-gray-800">
+                      {{ program.program_code }}
+                    </p>
+
+                    <svg
+                      v-if="
+                        Number(selectedProgram) === Number(program.program_id)
+                      "
+                      class="h-5 w-5 text-defaultGreen"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="search-wrapper">
+              <input
+                v-model="classSearch"
+                type="text"
+                placeholder="Search..."
+                class="search-input"
+                @input="changePage(1)"
+              />
+              <!-- Search icon -->
+              <div
+                class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -142,7 +272,7 @@
                       @click="showClassSchedules(cls)"
                       class="btn-see-details1"
                     >
-                      See Schedules
+                      Schedules
                     </button>
                   </td>
                 </tr>
@@ -238,98 +368,80 @@
         </div>
 
         <!-- Body -->
+        <!-- Body -->
         <div class="bg-slate-50 p-5 max-h-[75vh] overflow-y-auto">
-          <div v-if="classCourses.length" class="space-y-3">
-            <div
-              v-for="(course, index) in classCourses"
-              :key="course.course_id"
-              class="bg-white border border-slate-200 rounded-xl shadow-sm hover:border-defaultGreen transition-all"
-            >
-              <!-- Header -->
-              <div class="flex items-center justify-between px-5 py-4">
-                <div class="flex items-center gap-4">
-                  <div
-                    class="w-10 h-10 rounded-lg bg-defaultGreen/10 text-defaultGreen font-semibold flex items-center justify-center"
-                  >
-                    {{ index + 1 }}
-                  </div>
-
-                  <div>
-                    <div class="flex items-center gap-2">
-                      <h3 class="text-base font-semibold text-slate-800">
-                        {{ course.course?.course_code }}
-                      </h3>
-
-                      <span
-                        class="px-2.5 py-1 rounded-md bg-green-50 text-defaultGreen text-xs font-medium"
-                      >
-                        {{ getYearLevelLabel(course.year_level) }}
-                      </span>
-                    </div>
-
-                    <p class="text-sm text-slate-500 mt-1">
-                      {{ course.course?.course_title }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Divider -->
-              <div class="border-t border-slate-100"></div>
-
-              <!-- Information -->
-              <div
-                class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-4 px-5 py-4 text-sm"
-              >
-                <div>
-                  <p class="text-slate-400">Lecture</p>
-                  <p class="font-semibold text-slate-800">
-                    {{ course.course?.course_lec ?? 0 }} hrs
-                  </p>
-                </div>
-
-                <div>
-                  <p class="text-slate-400">Laboratory</p>
-                  <p class="font-semibold text-slate-800">
-                    {{ course.course?.course_lab ?? 0 }} hrs
-                  </p>
-                </div>
-
-                <div>
-                  <p class="text-slate-400">Credit Units</p>
-                  <p class="font-semibold text-slate-800">
-                    {{ course.course?.course_credit ?? 0 }}
-                  </p>
-                </div>
-
-                <div>
-                  <p class="text-slate-400">Semester</p>
-                  <p class="font-semibold text-slate-800">
-                    {{ selectedClass?.schoolYear?.semester }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Empty State -->
           <div
-            v-else
-            class="bg-white rounded-2xl border border-dashed border-slate-300 py-20 text-center"
+            class="rounded-md border border-gray-200 bg-white overflow-hidden"
           >
-            <div
-              class="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-5"
+            <table
+              v-if="classCourses.length"
+              class="min-w-full border-collapse text-sm"
             >
-              <icon name="book-open" class="text-slate-400" />
+              <thead class="sticky top-0 bg-defaultGreen text-white z-10">
+                <tr>
+                  <th class="schedule-th text-center w-12">#</th>
+                  <th class="schedule-th">Course Code</th>
+                  <th class="schedule-th">Course Title</th>
+                  <th class="schedule-th text-center">Year Level</th>
+                  <th class="schedule-th text-center">Semester</th>
+                  <th class="schedule-th text-center">Lecture</th>
+                  <th class="schedule-th text-center">Laboratory</th>
+                  <th class="schedule-th text-center">Units</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr
+                  v-for="(course, index) in classCourses"
+                  :key="course.course_id"
+                  class="border-b hover:bg-green-50 transition"
+                >
+                  <td class="schedule-td text-center">
+                    {{ index + 1 }}
+                  </td>
+
+                  <td class="schedule-td font-semibold text-defaultGreen">
+                    {{ course.course_code }}
+                  </td>
+
+                  <td class="schedule-td">
+                    {{ course.course_title }}
+                  </td>
+
+                  <td class="schedule-td text-center">
+                    <span
+                      class="px-2 py-1 rounded-full bg-green-100 text-defaultGreen text-xs"
+                    >
+                      {{ getYearLevelLabel(course.course_level) }}
+                    </span>
+                  </td>
+
+                  <td class="schedule-td text-center">
+                    {{ course.course_semester }}
+                  </td>
+
+                  <td class="schedule-td text-center">
+                    {{ course.course_lec }}
+                  </td>
+
+                  <td class="schedule-td text-center">
+                    {{ course.course_lab }}
+                  </td>
+
+                  <td class="schedule-td text-center font-semibold">
+                    {{ Number(course.course_lec) + Number(course.course_lab) }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Empty State -->
+            <div
+              v-else
+              class="flex items-center justify-center h-40 text-gray-500"
+            >
+              No courses assigned to this class.
             </div>
-
-            <h3 class="text-lg font-semibold text-slate-700">
-              No Courses Available
-            </h3>
-
-            <p class="text-slate-500 mt-2">
-              There are currently no assigned courses for this class section.
-            </p>
           </div>
         </div>
       </div>
@@ -436,7 +548,6 @@ export default {
 
       // Filters
       classSearch: "",
-      selectedProgram: "",
 
       // Pagination
       classPage: 1,
@@ -446,9 +557,20 @@ export default {
       scheduleModal: false,
       activeSchoolYear: null,
       stopEventBus: null,
+      selectedProgram: "all",
+      showProgramDropdown: false,
     };
   },
   computed: {
+    availablePrograms() {
+      return [
+        ...new Map(
+          this.classes
+            .filter((c) => c.program)
+            .map((c) => [c.program.program_id, c.program]),
+        ).values(),
+      ].sort((a, b) => a.program_code.localeCompare(b.program_code));
+    },
     filteredClasses() {
       let result = [...this.classes];
 
@@ -480,9 +602,9 @@ export default {
       }
 
       // Program filter
-      if (this.selectedProgram) {
+      if (this.selectedProgram && this.selectedProgram !== "all") {
         result = result.filter(
-          (c) => c.program?.program_name === this.selectedProgram,
+          (c) => Number(c.program_id) === Number(this.selectedProgram),
         );
       }
 
@@ -568,6 +690,11 @@ export default {
     },
   },
   methods: {
+    selectProgram(programId) {
+      this.selectedProgram = programId;
+      this.showProgramDropdown = false;
+      this.changePage(1);
+    },
     async loadActiveSchoolYear() {
       const fetchDataStore = useFetchDataStore();
 
@@ -669,55 +796,18 @@ export default {
       this.showCoursesModal = true;
 
       try {
-        const fetchDataStore = useFetchDataStore();
-
-        // Load all courses
-        await fetchDataStore.fetchCourses();
-
-        // Load program year courses
         const { data } = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/program-year-courses/view-all",
+          process.env.VUE_APP_API_BASE_URL + "/class/get-classes-course",
         );
 
-        const yearLevel = this.extractYearLevel(cls.set_name);
+        this.classCourses = data
+          .filter((item) => Number(item.class_id) === Number(cls.class_id))
+          .sort((a, b) =>
+            (a.course_code || "").localeCompare(b.course_code || ""),
+          );
 
-        // Filter the matching program/year courses
-        const filteredCourses = data.filter(
-          (item) =>
-            Number(item.program_id) === Number(cls.program_id) &&
-            Number(item.school_year_id) === Number(cls.school_year_id) &&
-            Number(item.year_level) === Number(yearLevel),
-        );
-
-        // Merge course details
-        const mergedCourses = filteredCourses.map((item) => ({
-          ...item,
-          course: fetchDataStore.courses.find(
-            (c) => Number(c.course_id) === Number(item.course_id),
-          ),
-        }));
-
-        // Remove duplicates by course_id
-        const uniqueCourses = new Map();
-
-        mergedCourses.forEach((item) => {
-          if (!uniqueCourses.has(item.course_id)) {
-            uniqueCourses.set(item.course_id, item);
-          }
-        });
-
-        this.classCourses = Array.from(uniqueCourses.values());
-
-        // Optional: sort by course code
-        this.classCourses.sort((a, b) =>
-          (a.course?.course_code || "").localeCompare(
-            b.course?.course_code || "",
-          ),
-        );
-
-        console.log(this.classCourses);
-
-        console.log(this.classCourses);
+        console.log("Selected Class:", cls);
+        console.log("Courses:", this.classCourses);
       } catch (err) {
         console.error(err);
         this.classCourses = [];
@@ -740,8 +830,11 @@ export default {
     },
     extractYearLevel(setName) {
       if (!setName) return null;
-      const match = setName.match(/(\d+)(?:st|nd|rd|th)\s*year/i);
-      return match ? parseInt(match[1]) : null;
+
+      // Get the first number in the set name
+      const match = setName.trim().match(/^(\d+)/);
+
+      return match ? Number(match[1]) : null;
     },
   },
   async mounted() {

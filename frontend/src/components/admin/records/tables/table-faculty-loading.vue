@@ -128,78 +128,274 @@
       <div class="flex flex-wrap items-center gap-2">
         <!-- Institute -->
         <div class="relative">
-          <select
-            v-model="selectedInstituteId"
-            class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md"
-          >
-            <option value="">All Institutes</option>
-            <option
-              v-for="institute in uniqueInstitutes"
-              :key="institute.id"
-              :value="institute.id"
-            >
-              {{ institute.name }}
-            </option>
-          </select>
-
+          <!-- Select Box -->
           <div
-            class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
+            class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
           >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+            <!-- Icon -->
+            <div class="absolute left-3 text-defaultGreen">
+              <icon name="academic-cap" />
+            </div>
+
+            <!-- Selected -->
+            <button
+              type="button"
+              @click="showInstituteDropdown = !showInstituteDropdown"
+              class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+              <span v-if="selectedInstituteId">
+                {{
+                  uniqueInstitutes.find(
+                    (i) => Number(i.id) === Number(selectedInstituteId),
+                  )?.name
+                }}
+              </span>
+
+              <span v-else class="font-light text-gray-600">
+                All Institutes
+              </span>
+            </button>
+
+            <!-- Arrow -->
+            <button
+              type="button"
+              @click="showInstituteDropdown = !showInstituteDropdown"
+              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
+            >
+              <svg
+                class="h-4 w-4 transition-transform duration-200"
+                :class="{ 'rotate-180': showInstituteDropdown }"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dropdown -->
+          <div
+            v-if="showInstituteDropdown"
+            class="absolute z-50 mt-2 w-[12vw] overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+          >
+            <div class="border-b border-gray-100 px-4 py-3">
+              <p
+                class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+              >
+                Institutes
+              </p>
+            </div>
+
+            <div class="max-h-[260px] overflow-y-auto p-1.5">
+              <!-- All Institutes -->
+              <button
+                @click="
+                  selectedInstituteId = '';
+                  showInstituteDropdown = false;
+                "
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                :class="selectedInstituteId === '' ? 'bg-green-50' : ''"
+              >
+                <p class="text-sm text-gray-800">All Institutes</p>
+
+                <svg
+                  v-if="selectedInstituteId === ''"
+                  class="h-5 w-5 text-defaultGreen"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </button>
+
+              <!-- Institutes -->
+              <button
+                v-for="institute in uniqueInstitutes"
+                :key="institute.id"
+                @click="
+                  selectedInstituteId = institute.id;
+                  showInstituteDropdown = false;
+                "
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                :class="
+                  Number(selectedInstituteId) === Number(institute.id)
+                    ? 'bg-green-50'
+                    : ''
+                "
+              >
+                <p class="text-sm text-gray-800">
+                  {{ institute.name }}
+                </p>
+
+                <svg
+                  v-if="Number(selectedInstituteId) === Number(institute.id)"
+                  class="h-5 w-5 text-defaultGreen"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- Program -->
         <div class="relative">
-          <select
-            v-model="selectedProgramId"
-            :disabled="!selectedInstituteId"
-            class="appearance-none rounded-xl border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 hover:shadow-md disabled:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:cursor-not-allowed"
-          >
-            <option value="">All Programs</option>
-            <option
-              v-for="program in filteredPrograms"
-              :key="program.id"
-              :value="program.id"
-            >
-              {{ program.name }}
-            </option>
-          </select>
-
+          <!-- Select Box -->
           <div
-            class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-green-700"
+            class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+            :class="!selectedInstituteId ? 'opacity-60 cursor-not-allowed' : ''"
           >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
+            <!-- Icon -->
+            <div class="absolute left-3 text-defaultGreen">
+              <icon name="academic-cap" />
+            </div>
+
+            <!-- Selected -->
+            <button
+              type="button"
+              :disabled="!selectedInstituteId"
+              @click="showProgramDropdown = !showProgramDropdown"
+              class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700 disabled:cursor-not-allowed"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+              <span v-if="selectedProgramId">
+                {{
+                  filteredPrograms.find(
+                    (p) => Number(p.id) === Number(selectedProgramId),
+                  )?.name
+                }}
+              </span>
+
+              <span v-else class="font-light text-gray-600">
+                All Programs
+              </span>
+            </button>
+
+            <!-- Arrow -->
+            <button
+              type="button"
+              :disabled="!selectedInstituteId"
+              @click="showProgramDropdown = !showProgramDropdown"
+              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen disabled:pointer-events-none"
+            >
+              <svg
+                class="h-4 w-4 transition-transform duration-200"
+                :class="{ 'rotate-180': showProgramDropdown }"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dropdown -->
+          <div
+            v-if="showProgramDropdown && selectedInstituteId"
+            class="absolute z-50 mt-2 w-[12vw] overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+          >
+            <div class="border-b border-gray-100 px-4 py-3">
+              <p
+                class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+              >
+                Programs
+              </p>
+            </div>
+
+            <div class="max-h-[260px] overflow-y-auto p-1.5">
+              <!-- All Programs -->
+              <button
+                @click="
+                  selectedProgramId = '';
+                  showProgramDropdown = false;
+                "
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                :class="selectedProgramId === '' ? 'bg-green-50' : ''"
+              >
+                <p class="text-sm text-gray-800">All Programs</p>
+
+                <svg
+                  v-if="selectedProgramId === ''"
+                  class="h-5 w-5 text-defaultGreen"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </button>
+
+              <!-- Programs -->
+              <button
+                v-for="program in filteredPrograms"
+                :key="program.id"
+                @click="
+                  selectedProgramId = program.id;
+                  showProgramDropdown = false;
+                "
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                :class="
+                  Number(selectedProgramId) === Number(program.id)
+                    ? 'bg-green-50'
+                    : ''
+                "
+              >
+                <p class="text-sm text-gray-800">
+                  {{ program.name }}
+                </p>
+
+                <svg
+                  v-if="Number(selectedProgramId) === Number(program.id)"
+                  class="h-5 w-5 text-defaultGreen"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- RIGHT SIDE -->
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2 mt-1">
         <!-- Filters -->
 
         <!-- LEFT : Faculty Search -->
@@ -229,17 +425,23 @@
         <!-- Actions -->
         <div class="per-page-container">
           <!-- Generate -->
-          <button @click="generateSchedule" class="btn-gui">
-            <div class="btn-gui-icon">
+          <button @click="generateSchedule" class="btn-download">
+            <div class="btn-download-icon">
               <icon name="arrow-path" />
             </div>
-            <span class="btn-gui-text">Generate</span>
+            <span class="btn-download-text">Generate</span>
           </button>
 
           <!-- Save -->
-          <button @click="showConfirmSaved = true" class="btn-add">
+          <!-- <button @click="showConfirmSaved = true" class="btn-download">
             <div class="btn-add-icon">
               <icon name="circle-check" />
+            </div>
+            <span class="btn-add-text">Save Schedule</span>
+          </button> -->
+          <button @click="showConfirmSaved = true" class="btn-add">
+            <div class="btn-add-icon">
+              <icon name="arrow-path" />
             </div>
             <span class="btn-add-text">Save Schedule</span>
           </button>
@@ -267,44 +469,60 @@
           >
             <!-- TODO  Header -->
             <div
-              class="flex justify-between items-center bg-defaultGreen text-white px-4 py-3 font-semibold text-sm rounded-t-xl"
+              class="flex items-center justify-between rounded-t-xl bg-gradient-to-r from-defaultGreen to-[#0F6345] px-5 py-3 text-white"
             >
-              <span class="text-lg font-bold">{{ instructor }}</span>
+              <!-- Faculty Name -->
+              <h3 class="text-lg font-semibold tracking-wide">
+                {{ instructor }}
+              </h3>
+
+              <!-- Summary -->
               <div
                 v-if="facultyTotalUnits[instructor]"
-                class="mt-2 flex items-center gap-2 flex-wrap text-xs"
+                class="flex items-center gap-3"
               >
-                <!-- Unit Load -->
+                <!-- Set Load -->
                 <div
-                  class="px-3 py-1 rounded-full border border-blue-200 bg-white text-blue-600 font-medium"
+                  class="rounded-full bg-white/10 px-4 py-1.5 backdrop-blur-sm flex items-center gap-2"
                 >
-                  Set Load: {{ facultyTotalUnits[instructor].unitLoad }}
+                  <p class="text-[10px] uppercase tracking-wider text-white/70">
+                    Set Load:
+                  </p>
+                  <p class="text-xs font-semibold">
+                    {{ facultyTotalUnits[instructor].unitLoad }}
+                    <span class="text-white/70">Units</span>
+                  </p>
                 </div>
+
                 <!-- Total Units -->
                 <div
-                  class="px-3 py-1 rounded-full border font-medium"
+                  class="rounded-full px-4 py-1.5 backdrop-blur-sm flex items-center gap-2"
                   :class="
                     Number(facultyTotalUnits[instructor].totalUnits) >
                     Number(facultyTotalUnits[instructor].unitLoad)
-                      ? 'bg-white border-red-200 text-red-600'
-                      : 'bg-white border-green-200 text-defaultGreen'
+                      ? 'bg-red-500/15 text-red-100 border border-red-300/30'
+                      : 'bg-white/10 text-white'
                   "
                 >
-                  Total Units:
-                  {{ facultyTotalUnits[instructor].totalUnits }} Units
+                  <p class="text-[10px] uppercase tracking-wider opacity-70">
+                    Total Units
+                  </p>
+                  <p class="text-xs font-semibold">
+                    {{ facultyTotalUnits[instructor].totalUnits }}
+                    <span class="opacity-70">Units</span>
+                  </p>
                 </div>
 
-                <!-- Status -->
-                <div
+                <!-- Overload Badge -->
+                <span
                   v-if="
                     Number(facultyTotalUnits[instructor].totalUnits) >
                     Number(facultyTotalUnits[instructor].unitLoad)
                   "
-                  class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-semibold"
+                  class="rounded-full bg-red-500 px-3 py-1 text-xs font-semibold uppercase tracking-wide"
                 >
-                  <i class="mdi mdi-alert-circle mr-1"></i>
                   OVERLOAD
-                </div>
+                </span>
               </div>
             </div>
 
@@ -428,7 +646,7 @@
               :style="{ top: tooltipY + 'px', left: tooltipX + 'px' }"
             >
               <div
-                class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_2px_10px_rgba(15,23,42,0.08)]"
+                class="w-[280px] overflow-hidden rounded-xl border border-gray-200 bg-white"
               >
                 <div
                   class="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white px-4 py-3"
@@ -763,6 +981,8 @@ export default {
       overridingSchedule: false,
       stopEventBus: null,
       activeSchoolYear: null,
+      showInstituteDropdown: false,
+      showProgramDropdown: false,
     };
   },
 
@@ -1239,9 +1459,9 @@ export default {
       if (!room_type) return "bg-green-100 border-green-400";
       const normalized = room_type.toLowerCase();
       if (normalized === "laboratory" || normalized === "lab") {
-        return "bg-blue-100 border-blue-300";
+        return "bg-blue-200 border-blue-400";
       }
-      return "bg-green-100 border-green-300";
+      return "bg-green-200 border-green-400";
     },
 
     viewFacultySchedule(instructor) {
@@ -1484,11 +1704,15 @@ export default {
     },
     async overrideSchedule() {
       this.overridingSchedule = true;
+
       try {
         await this.fetchSchoolYears();
 
         const latestSchoolYear = this.latestActiveSchoolYear;
 
+        // ----------------------------------------
+        // Scheduled meetings payload
+        // ----------------------------------------
         const scheduledPayload = this.schedule.map((item) => ({
           class_id: item.class_id,
           set_name: item.set_name,
@@ -1516,6 +1740,29 @@ export default {
           mode: item.schedule_type,
         }));
 
+        // ----------------------------------------
+        // Unscheduled meetings payload
+        // ----------------------------------------
+        const unscheduledPayload = (this.unscheduledMeetings || []).map(
+          (item) => ({
+            class_id: item.class_id,
+            course_code: item.course_code,
+            course_id: item.course_id,
+            class_size: item.class_size,
+            faculty_name: item.faculty_name,
+            program_id: item.program_id,
+            program_code: item.program_code,
+            type: item.type,
+            hours: item.hours,
+            reason: item.reason,
+            school_year: latestSchoolYear.school_year_name,
+            semester: latestSchoolYear.semester,
+          }),
+        );
+
+        // ----------------------------------------
+        // Override final schedules
+        // ----------------------------------------
         await axios.post(
           `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/bulk`,
           {
@@ -1525,9 +1772,23 @@ export default {
           { withCredentials: true },
         );
 
+        // ----------------------------------------
+        // Override unscheduled meetings
+        // ----------------------------------------
+        await axios.post(
+          `${process.env.VUE_APP_API_BASE_URL}/unscheduled-meetings/add-unscheduled-meetings`,
+          {
+            meetings: unscheduledPayload,
+            override: true,
+          },
+          { withCredentials: true },
+        );
+
         this.showOverrideModal = false;
 
-        toast.success("Schedule overridden successfully!");
+        toast.success(
+          "Schedule and unscheduled meetings overridden successfully!",
+        );
       } catch (error) {
         console.error(error);
         toast.error("Failed to override schedule.");
