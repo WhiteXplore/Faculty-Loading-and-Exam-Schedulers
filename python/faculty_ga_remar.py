@@ -17,7 +17,7 @@ DB_USER = "root"
 DB_PASS = "root"
 DB_HOST = "127.0.0.1"
 DB_PORT = 3306
-DB_NAME = "dnsc_class_scheduler_ga_plus5_units"
+DB_NAME = "dnsc_class_scheduler_ga8"
 
 engine = create_engine(
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
