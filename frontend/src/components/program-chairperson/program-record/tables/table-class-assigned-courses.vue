@@ -339,7 +339,7 @@
       @click.self="closeCoursesModal"
     >
       <div
-        class="bg-white rounded-2xl shadow-2xl w-[950px] max-h-[90vh] overflow-hidden"
+        class="bg-white rounded-2xl shadow-2xl w-[70vw] max-h-[90vh] overflow-hidden"
       >
         <!-- Header -->
         <div class="modal-header">
