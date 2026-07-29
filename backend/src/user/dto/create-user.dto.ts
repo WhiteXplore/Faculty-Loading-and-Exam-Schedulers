@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   IsBoolean,
+  IsArray,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -46,8 +47,9 @@ export class CreateUserDto {
   unit_load?: number;
 
   @IsOptional()
-  @IsString()
-  preferred_rest_day?: string;
+  @IsArray()
+  @IsString({ each: true })
+  preferred_rest_day?: string[];
 
   @IsOptional()
   @Type(() => Number)

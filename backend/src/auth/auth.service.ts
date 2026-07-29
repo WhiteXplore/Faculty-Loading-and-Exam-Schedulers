@@ -110,105 +110,108 @@ export class AuthService {
   }
 
   // ✅ New Registration Method
-async register(body: any, res: Response) {
-  const {
-    email,
-    password,
-    first_name,
-    last_name,
-    role,
-    employment_type,
-    designation,
-    preffered_time,
-    unit_load,
-    institute_id,
-    program_id,
-  } = body;
+  async register(body: any) {
+    const {
+      email,
+      password,
+      first_name,
+      last_name,
+      role,
+      employment_type,
+      designation,
+      preffered_time,
+      preferred_rest_day,
+      sp_mas_unit,
+      unit_load,
+      institute_id,
+      program_id,
+    } = body;
 
-  const existingUser = await this.findUserByEmail(email);
-  if (existingUser) {
-    throw new BadRequestException('Email already in use');
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  let institute: Institute | null = null;
-  let program: Program | null = null;
-
-  if (role !== 'Admin') {
-    institute = await this.userRepository.manager.findOne(Institute, {
-      where: { institute_id: Number(institute_id) },
-    });
-
-    if (!institute) {
-      throw new BadRequestException(
-        `Institute with ID ${institute_id} not found`,
-      );
+    const existingUser = await this.findUserByEmail(email);
+    if (existingUser) {
+      throw new BadRequestException('Email already in use');
     }
 
-    program = await this.userRepository.manager.findOne(Program, {
-      where: { program_id: Number(program_id) },
-    });
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (!program) {
-      throw new BadRequestException(`Program with ID ${program_id} not found`);
+    let institute: Institute | null = null;
+    let program: Program | null = null;
+
+    if (role !== 'Admin') {
+      institute = await this.userRepository.manager.findOne(Institute, {
+        where: { institute_id: Number(institute_id) },
+      });
+
+      if (!institute) {
+        throw new BadRequestException(
+          `Institute with ID ${institute_id} not found`,
+        );
+      }
+
+      program = await this.userRepository.manager.findOne(Program, {
+        where: { program_id: Number(program_id) },
+      });
+
+      if (!program) {
+        throw new BadRequestException(
+          `Program with ID ${program_id} not found`,
+        );
+      }
     }
+
+    const newUser = this.userRepository.create({
+      email,
+      password: hashedPassword,
+      first_name,
+      last_name,
+      role,
+
+      employment_type: role === 'Admin' ? '' : employment_type || 'Full Time',
+      designation: role === 'Admin' ? '' : designation || '',
+      preffered_time: preffered_time || '',
+
+      unit_load: role === 'Admin' ? 0 : Number(unit_load || 0),
+
+      sp_mas_unit:
+        role === 'Admin'
+          ? null
+          : sp_mas_unit !== null && sp_mas_unit !== undefined
+            ? Number(sp_mas_unit)
+            : null,
+
+      preferred_rest_day:
+        role === 'Admin'
+          ? []
+          : Array.isArray(preferred_rest_day)
+            ? preferred_rest_day
+            : [],
+
+      institute: role === 'Admin' ? null : institute,
+      program: role === 'Admin' ? null : program,
+    });
+    const savedUser = await this.userRepository.save(newUser);
+
+    return {
+      message: 'Registration successful',
+      user: {
+        id: savedUser.id,
+        email: savedUser.email,
+        first_name: savedUser.first_name,
+        last_name: savedUser.last_name,
+        role: savedUser.role,
+        employment_type: savedUser.employment_type,
+        designation: savedUser.designation,
+        preffered_time: savedUser.preffered_time,
+        unit_load: savedUser.unit_load,
+
+        sp_mas_unit: savedUser.sp_mas_unit,
+        preferred_rest_day: savedUser.preferred_rest_day,
+
+        institute_id: savedUser.institute?.institute_id ?? null,
+        program_id: savedUser.program?.program_id ?? null,
+      },
+    };
   }
-
-  const newUser = this.userRepository.create({
-    email,
-    password: hashedPassword,
-    first_name,
-    last_name,
-    role,
-
-  employment_type: role === 'Admin' ? '' : employment_type || 'Full Time',
-designation: role === 'Admin' ? '' : designation || '',
-    preffered_time: preffered_time || '',
-    unit_load: role === 'Admin' ? 0 : Number(unit_load || 0),
-
-    institute: role === 'Admin' ? null : institute,
-    program: role === 'Admin' ? null : program,
-  });
-
-  const savedUser = await this.userRepository.save(newUser);
-
-  const payload = {
-    sub: savedUser.id,
-    email: savedUser.email,
-    role: savedUser.role,
-    first_name: savedUser.first_name,
-    last_name: savedUser.last_name,
-    institute_id: savedUser.institute?.institute_id ?? null,
-    program_id: savedUser.program?.program_id ?? null,
-  };
-
-  const token = this.jwtService.sign(payload, { expiresIn: '1h' });
-
-  res.cookie('jwt', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 3600000,
-  });
-
-  return res.status(201).json({
-    message: 'Registration successful',
-    user: {
-      id: savedUser.id,
-      email: savedUser.email,
-      first_name: savedUser.first_name,
-      last_name: savedUser.last_name,
-      role: savedUser.role,
-      employment_type: savedUser.employment_type,
-      designation: savedUser.designation,
-      preffered_time: savedUser.preffered_time,
-      unit_load: savedUser.unit_load,
-      institute_id: savedUser.institute?.institute_id ?? null,
-      program_id: savedUser.program?.program_id ?? null,
-    },
-  });
-}
 
   // Inside AuthService
   async getAllUsers(): Promise<any[]> {
@@ -236,118 +239,108 @@ designation: role === 'Admin' ? '' : designation || '',
     });
   }
 
-async updateUser(
-  id: number,
-  updates: UpdateUserDto,
-): Promise<Partial<User_Accounts>> {
-  const user = await this.userRepository.findOne({
-    where: { id },
-    relations: [
-      'institute',
-      'program',
-      'school_year',
-      'expertise',
-    ],
-  });
-
-  if (!user) {
-    throw new BadRequestException(`User with ID ${id} not found`);
-  }
-
-  // =========================
-  // PASSWORD UPDATE
-  // =========================
-  if (updates.password) {
-    updates.password = await bcrypt.hash(updates.password, 10);
-  }
-
-  // =========================
-  // INSTITUTE
-  // =========================
-  if (updates.institute_id) {
-    const institute = await this.userRepository.manager.findOne(Institute, {
-      where: { institute_id: updates.institute_id },
+  async updateUser(
+    id: number,
+    updates: UpdateUserDto,
+  ): Promise<Partial<User_Accounts>> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['institute', 'program', 'school_year', 'expertise'],
     });
 
-    if (!institute) {
-      throw new BadRequestException(
-        `Institute with ID ${updates.institute_id} not found`,
+    if (!user) {
+      throw new BadRequestException(`User with ID ${id} not found`);
+    }
+
+    // =========================
+    // PASSWORD UPDATE
+    // =========================
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
+    // =========================
+    // INSTITUTE
+    // =========================
+    if (updates.institute_id) {
+      const institute = await this.userRepository.manager.findOne(Institute, {
+        where: { institute_id: updates.institute_id },
+      });
+
+      if (!institute) {
+        throw new BadRequestException(
+          `Institute with ID ${updates.institute_id} not found`,
+        );
+      }
+
+      user.institute = institute;
+    }
+
+    // =========================
+    // PROGRAM
+    // =========================
+    if (updates.program_id) {
+      const program = await this.userRepository.manager.findOne(Program, {
+        where: { program_id: updates.program_id },
+      });
+
+      if (!program) {
+        throw new BadRequestException(
+          `Program with ID ${updates.program_id} not found`,
+        );
+      }
+
+      user.program = program;
+    }
+
+    // =========================
+    // SCHOOL YEAR
+    // =========================
+    if (updates.school_year_id) {
+      const schoolYear = await this.userRepository.manager.findOne(SchoolYear, {
+        where: { school_year_id: updates.school_year_id },
+      });
+
+      if (!schoolYear) {
+        throw new BadRequestException(
+          `School Year with ID ${updates.school_year_id} not found`,
+        );
+      }
+
+      user.school_year = schoolYear;
+    }
+
+    // =========================
+    // 🔥 UNIFIED EXPERTISE (FIXED)
+    // =========================
+    if (updates.expertise) {
+      await this.userRepository.manager.delete(UserExpertise, {
+        user: { id: user.id },
+      });
+
+      user.expertise = updates.expertise.map((item) =>
+        this.userRepository.manager.create(UserExpertise, {
+          user,
+          course: { course_id: item.course_id },
+          status: item.status,
+        }),
       );
     }
 
-    user.institute = institute;
+    // =========================
+    // ASSIGN REMAINING FIELDS
+    // =========================
+    const { institute_id, program_id, school_year_id, expertise, ...rest } =
+      updates;
+
+    Object.assign(user, rest);
+
+    const savedUser = await this.userRepository.save(user);
+
+    const { password, ...userWithoutPassword } = savedUser;
+
+    return userWithoutPassword;
   }
-
-  // =========================
-  // PROGRAM
-  // =========================
-  if (updates.program_id) {
-    const program = await this.userRepository.manager.findOne(Program, {
-      where: { program_id: updates.program_id },
-    });
-
-    if (!program) {
-      throw new BadRequestException(
-        `Program with ID ${updates.program_id} not found`,
-      );
-    }
-
-    user.program = program;
-  }
-
-  // =========================
-  // SCHOOL YEAR
-  // =========================
-  if (updates.school_year_id) {
-    const schoolYear = await this.userRepository.manager.findOne(SchoolYear, {
-      where: { school_year_id: updates.school_year_id },
-    });
-
-    if (!schoolYear) {
-      throw new BadRequestException(
-        `School Year with ID ${updates.school_year_id} not found`,
-      );
-    }
-
-    user.school_year = schoolYear;
-  }
-
-  // =========================
-  // 🔥 UNIFIED EXPERTISE (FIXED)
-  // =========================
- if (updates.expertise) {
-  await this.userRepository.manager.delete(UserExpertise, {
-    user: { id: user.id },
-  });
-
-  user.expertise = updates.expertise.map((item) =>
-    this.userRepository.manager.create(UserExpertise, {
-      user,
-      course: { course_id: item.course_id },
-      status: item.status,
-    }),
-  );
-}
-
-  // =========================
-  // ASSIGN REMAINING FIELDS
-  // =========================
-  const {
-    institute_id,
-    program_id,
-    school_year_id,
-    expertise,
-    ...rest
-  } = updates;
-
-  Object.assign(user, rest);
-
-  const savedUser = await this.userRepository.save(user);
-
-  const { password, ...userWithoutPassword } = savedUser;
-
-  return userWithoutPassword;
-}
 
   async removeUser(id: number): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({ where: { id } });

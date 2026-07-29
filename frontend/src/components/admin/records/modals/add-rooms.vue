@@ -205,6 +205,40 @@
             </div>
           </div>
 
+          <div class="w-full space-y-2 text-left flex flex-col">
+            <label class="input-label">Mas unit:</label>
+
+            <div
+              class="flex items-center justify-between rounded-xl border border-gray-200 px-4 py-3 bg-gray-50"
+            >
+              <div class="flex flex-col">
+                <span class="font-medium text-sm text-gray-700">
+                  {{ form.is_sp_mas ? "Active" : "Inactive" }}
+                </span>
+
+                <span class="text-xs text-gray-400">
+                  SP Mas can only be used when active
+                </span>
+              </div>
+
+              <button
+                type="button"
+                @click="form.is_sp_mas = !form.is_sp_mas"
+                :class="[
+                  'relative inline-flex h-6 w-11 items-center rounded-full transition',
+                  form.is_sp_mas ? 'bg-green-500' : 'bg-gray-300',
+                ]"
+              >
+                <span
+                  :class="[
+                    'inline-block h-4 w-4 transform rounded-full bg-white transition',
+                    form.is_sp_mas ? 'translate-x-6' : 'translate-x-1',
+                  ]"
+                />
+              </button>
+            </div>
+          </div>
+
           <!-- Divider -->
           <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
 
@@ -255,6 +289,7 @@ export default {
         room_type: "",
         room_capacity: "",
         is_active: true,
+        is_sp_mas: true,
       },
 
       searchInstituteQuery: "",
@@ -392,7 +427,7 @@ export default {
           room_capacity: Number(this.form.room_capacity),
 
           is_active: this.form.is_active,
-
+          is_sp_mas: this.form.is_sp_mas,
           institute_id:
             this.form.institute_id === "" || this.form.institute_id === null
               ? null
@@ -446,6 +481,7 @@ export default {
         room_type: this.roomData.room_type,
         room_capacity: this.roomData.room_capacity,
         is_active: this.roomData.is_active ?? true,
+        is_sp_mas: this.roomData.is_sp_mas ?? true,
       };
 
       this.searchInstituteQuery = this.roomData.institute?.institute_name || "";

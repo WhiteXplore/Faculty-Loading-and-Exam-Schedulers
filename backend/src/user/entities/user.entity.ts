@@ -43,8 +43,8 @@ export class User_Accounts {
   })
   unit_load: number;
 
-  @Column()
-  preferred_rest_day: string;
+  @Column('simple-array', { nullable: true })
+  preferred_rest_day: string[];
 
   @Column({
     type: 'decimal',

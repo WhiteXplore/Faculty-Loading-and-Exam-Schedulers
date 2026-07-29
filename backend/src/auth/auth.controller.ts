@@ -27,33 +27,9 @@ export class AuthController {
     return this.authService.login(email, password, res);
   }
 
-  // src/auth/auth.controller.ts
-
-@Post('register')
-async register(@Body() body: any, @Res() res: Response) {
-  const {
-    email,
-    password,
-    first_name,
-    last_name,
-    role,
-    employment_type,
-    designation,
-    preffered_time,
-    unit_load,
-    institute_id,
-    program_id,
-  } = body;
-  if (!email || !password || !first_name || !last_name || !role) {
-    throw new BadRequestException('Basic user fields are required');
-  }
-
-  if (role !== 'Admin' && (!institute_id || !program_id)) {
-    throw new BadRequestException('Institute and Program are required');
-  }
-
-  return this.authService.register(
-    {
+  @Post('register')
+  async register(@Body() body: any) {
+    const {
       email,
       password,
       first_name,
@@ -63,12 +39,36 @@ async register(@Body() body: any, @Res() res: Response) {
       designation,
       preffered_time,
       unit_load,
+      preferred_rest_day,
+      sp_mas_unit,
       institute_id,
       program_id,
-    },
-    res,
-  );
-}
+    } = body;
+
+    if (!email || !password || !first_name || !last_name || !role) {
+      throw new BadRequestException('Basic user fields are required');
+    }
+
+    if (role !== 'Admin' && (!institute_id || !program_id)) {
+      throw new BadRequestException('Institute and Program are required');
+    }
+
+    return this.authService.register({
+      email,
+      password,
+      first_name,
+      last_name,
+      role,
+      employment_type,
+      designation,
+      preffered_time,
+      unit_load,
+      preferred_rest_day,
+      sp_mas_unit,
+      institute_id,
+      program_id,
+    });
+  }
 
   @Post('logout')
   async logout(@Res() res: Response) {

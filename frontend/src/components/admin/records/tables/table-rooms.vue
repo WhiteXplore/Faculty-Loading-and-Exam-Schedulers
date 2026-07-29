@@ -359,6 +359,10 @@
                 </th>
                 <th class="px-4 py-3 text-center font-normal w-[4%]">Status</th>
 
+                <th class="px-4 py-3 text-center font-normal w-[4%]">
+                  SP Status
+                </th>
+
                 <th
                   class="px-4 py-3 text-center rounded-tr-lg font-normal w-[1%]"
                 >
@@ -401,6 +405,20 @@
                     class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold"
                   >
                     {{ rooms_data.is_active ? "Active" : "Inactive" }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <span
+                    :class="{
+                      'border-emerald-200 bg-emerald-50 text-emerald-700':
+                        rooms_data.is_sp_mas,
+
+                      'border-slate-200 bg-slate-100 text-slate-600':
+                        !rooms_data.is_sp_mas,
+                    }"
+                    class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold"
+                  >
+                    {{ rooms_data.is_sp_mas ? "Active" : "Inactive" }}
                   </span>
                 </td>
 

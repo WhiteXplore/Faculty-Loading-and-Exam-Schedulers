@@ -31,7 +31,7 @@
         </div>
 
         <!-- Content -->
-        <div class="p-6 w-[500px]">
+        <div class="p-6 w-[30vw]">
           <!-- Account Profile -->
           <div class="grid grid-cols-1 gap-4 text-sm">
             <div class="space-y-1">
@@ -75,6 +75,34 @@
               <p class="font-medium text-gray-900">
                 {{ userData.unit_load ?? "N/A" }}
               </p>
+            </div>
+            <div class="space-y-1">
+              <p class="input-label">SP Mas Unit</p>
+              <p class="font-medium text-gray-900">
+                {{ userData.sp_mas_unit ?? "N/A" }}
+              </p>
+            </div>
+
+            <div class="space-y-1">
+              <p class="input-label">Preferred Rest Day</p>
+
+              <div
+                v-if="
+                  userData.preferred_rest_day &&
+                  userData.preferred_rest_day.length
+                "
+                class="flex flex-wrap gap-2"
+              >
+                <span
+                  v-for="day in userData.preferred_rest_day"
+                  :key="day"
+                  class="inline-flex items-center rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-700 shadow-sm"
+                >
+                  {{ day }}
+                </span>
+              </div>
+
+              <p v-else class="text-sm text-gray-500">No preferred rest day</p>
             </div>
           </div>
         </div>

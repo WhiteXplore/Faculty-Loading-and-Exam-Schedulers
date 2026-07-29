@@ -16,7 +16,7 @@
             <!-- Title -->
             <div>
               <h2 class="text-lg font-semibold text-white">
-                {{ isEdit ? "Edit User" : "Add User" }}
+                {{ isEditMode ? "Edit User" : "Add User" }}
               </h2>
 
               <p class="text-xs text-green-100">
@@ -32,7 +32,7 @@
           />
         </div>
 
-        <div class="p-5 w-[32vw] space-y-6">
+        <div class="p-5 w-[37vw] space-y-6">
           <div class="w-full space-y-2 text-left flex flex-col">
             <label class="input-label">Account Status:</label>
 
@@ -131,7 +131,7 @@
               <div class="w-full space-y-2 text-left flex flex-col">
                 <label class="input-label">Employment Type:</label>
                 <select v-model="form.employment_type" class="input-text">
-                  <option value="">Select employment type</option>
+                  <option value="" disabled>Select employment type</option>
                   <option value="Permanent">Permanent</option>
                   <option value="Temporary">Temporary</option>
                   <option value="Contract of Service">
@@ -204,8 +204,54 @@
                   </div>
                 </div>
               </div>
-            </template>
 
+              <div class="w-full space-y-2 text-left flex flex-col">
+                <label class="input-label">SP/MAS Unit:</label>
+
+                <input
+                  v-model.number="form.sp_mas_unit"
+                  type="number"
+                  min="0"
+                  step="0.25"
+                  class="input-text"
+                  placeholder="Enter SP/MAS Unit"
+                />
+              </div>
+            </template>
+            <div class="col-span-2 w-full space-y-2 text-left">
+              <label class="input-label">
+                Preferred Rest Days (Choose up to 2)
+              </label>
+
+              <div class="flex flex-wrap gap-2">
+                <label
+                  v-for="day in restDays"
+                  :key="day"
+                  :class="[
+                    'px-4 py-2 rounded-full border text-xs font-medium transition-all duration-200 cursor-pointer select-none',
+                    form.preferred_rest_day.length >= 2 &&
+                    !form.preferred_rest_day.includes(day)
+                      ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                      : form.preferred_rest_day.includes(day)
+                      ? 'bg-defaultGreen text-white border-defaultGreen shadow-md'
+                      : 'bg-white text-gray-700 border-gray-300 hover:border-defaultGreen hover:text-defaultGreen hover:bg-green-50',
+                  ]"
+                >
+                  <input
+                    type="checkbox"
+                    :value="day"
+                    v-model="form.preferred_rest_day"
+                    :disabled="
+                      form.preferred_rest_day.length >= 2 &&
+                      !form.preferred_rest_day.includes(day)
+                    "
+                    class="hidden"
+                  />
+
+                  {{ day }}
+                </label>
+              </div>
+            </div>
             <div class="col-span-2 flex justify-end pt-2">
               <button class="btn-save" type="button" @click="goToStep2">
                 Next
@@ -288,6 +334,8 @@ export default {
         employment_type: "Full Time",
         designation: "",
         preffered_time: "",
+        preferred_rest_day: [],
+        sp_mas_unit: 0,
         unit_load: 0,
         is_active: true,
         institute_id: null,
@@ -299,6 +347,15 @@ export default {
 
       searchInstituteQuery: "",
       showInstituteDropdown: false,
+      restDays: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
     };
   },
 
@@ -408,6 +465,12 @@ export default {
       if (!this.isAdminRole) {
         payload.employment_type = this.form.employment_type || "Full Time";
         payload.designation = this.form.designation?.trim() || "";
+        payload.preferred_rest_day = this.form.preferred_rest_day;
+
+        payload.sp_mas_unit =
+          this.form.sp_mas_unit !== "" && this.form.sp_mas_unit !== null
+            ? Number(this.form.sp_mas_unit)
+            : null;
 
         payload.unit_load = Number(this.form.unit_load || 0);
         payload.institute_id = Number(this.form.institute_id);
@@ -506,7 +569,7 @@ export default {
         role: this.userData.role || "",
         employment_type: this.userData.employment_type || "Full Time",
         designation: this.userData.designation || "",
-        preffered_time: this.userData.preffered_time || "",
+        preferred_rest_day: this.userData.preferred_rest_day || [],
         unit_load: Number(this.userData.unit_load || 0),
         is_active: this.userData.is_active ?? true,
 
