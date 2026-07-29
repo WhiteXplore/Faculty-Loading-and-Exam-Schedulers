@@ -40,7 +40,19 @@
             class="flex justify-between items-center bg-defaultGreen text-white px-4 py-3 font-semibold text-sm rounded-t-xl"
           >
             <div class="flex flex-col">
-              <span class="text-lg font-bold">{{ instructor }}</span>
+              <div class="flex gap-2">
+                <span class="text-lg font-bold">{{ instructor }}</span>
+                <!-- Status -->
+                <!-- <span
+                  v-if="
+                    Number(facultyTotalUnits[instructor].totalUnits) >
+                    Number(facultyTotalUnits[instructor].unitLoad)
+                  "
+                  class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-white/90 text-red-700 border border-red-200"
+                >
+                  Overload
+                </span> -->
+              </div>
               <span class="text-sm text-green-100">
                 {{ records[0]?.faculty_program_code }}
               </span>
@@ -60,12 +72,12 @@
                 <div
                   class="rounded-full bg-white/10 px-4 py-1.5 backdrop-blur-sm flex items-center gap-2"
                 >
-                  <p class="text-[10px] uppercase tracking-wider text-white/70">
+                  <p class="text-[10px] uppercase tracking-wider text-white">
                     Set Load:
                   </p>
                   <p class="text-xs font-semibold">
                     {{ facultyTotalUnits[instructor].unitLoad }}
-                    <span class="text-white/70">Units</span>
+                    <span class="">Units</span>
                   </p>
                 </div>
 
@@ -75,29 +87,18 @@
                   :class="
                     Number(facultyTotalUnits[instructor].totalUnits) >
                     Number(facultyTotalUnits[instructor].unitLoad)
-                      ? 'bg-red-500/15 text-red-100 border border-red-300/30'
+                      ? 'bg-red-600/70 text-red-100 border border-red-300'
                       : 'bg-white/10 text-white'
                   "
                 >
-                  <p class="text-[10px] uppercase tracking-wider opacity-70">
+                  <p class="text-[10px] uppercase tracking-wider">
                     Total Units
                   </p>
                   <p class="text-xs font-semibold">
                     {{ facultyTotalUnits[instructor].totalUnits }}
-                    <span class="opacity-70">Units</span>
+                    <span class="">Units</span>
                   </p>
                 </div>
-
-                <!-- Status -->
-                <span
-                  v-if="
-                    Number(facultyTotalUnits[instructor].totalUnits) >
-                    Number(facultyTotalUnits[instructor].unitLoad)
-                  "
-                  class="rounded-full bg-red-600 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white"
-                >
-                  OVERLOAD
-                </span>
               </div>
             </div>
           </div>

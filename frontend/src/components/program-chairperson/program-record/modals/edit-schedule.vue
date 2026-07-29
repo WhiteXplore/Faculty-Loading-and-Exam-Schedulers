@@ -6,7 +6,7 @@
     <div class="flex justify-center gap-2 w-full">
       <!-- MAIN MODAL WRAPPER -->
       <div
-        class="bg-white w-[60vw] h-[98vh] rounded-xl shadow-xl flex flex-col overflow-hidden"
+        class="bg-white w-full h-[98vh] rounded-xl shadow-xl flex flex-col overflow-hidden"
       >
         <!-- HEADER -->
 
@@ -156,11 +156,11 @@
                 </div>
 
                 <!-- TABLE -->
-                <div class="">
+                <div class="max-h-[73vh] overflow-y-auto border rounded-lg">
                   <table
                     class="w-full table-auto border-separate border-spacing-0 text-[11px]"
                   >
-                    <thead class="bg-gray-200 sticky top-0 z-10">
+                    <thead class="sticky top-0 z-20 bg-gray-200">
                       <tr>
                         <th class="px-3 py-3 border text-center w-24">Time</th>
                         <th
@@ -345,13 +345,20 @@
       <!-- RIGHT: SLIDING ADD PANEL -->
       <div
         v-if="showAddPanel || showUnscheduledPanel"
-        class="w-[45vw] h-auto flex flex-col gap-2"
+        :class="[
+          'h-full flex gap-2',
+          showAddPanel && showUnscheduledPanel
+            ? 'w-[90vw]'
+            : showAddPanel
+            ? 'w-[30vw]'
+            : 'w-[45vw]',
+        ]"
       >
         <div
           v-if="showAddPanel"
           :class="[
             'w-[45vw] bg-white border shadow-xl transition-all duration-300 flex justify-start rounded-xl',
-            showUnscheduledPanel ? 'h-full' : '',
+            showUnscheduledPanel ? 'h-full ' : '',
           ]"
         >
           <div class="flex flex-col w-full">
@@ -371,7 +378,7 @@
                 </div>
 
                 <button
-                  @click="expandedRecord = null"
+                  @click="cancelNewRow"
                   class="w-8 h-8 rounded-full hover:bg-white/20 transition"
                 >
                   ✕
@@ -380,9 +387,8 @@
 
               <div>
                 <div class="p-2">
-                  <!-- ================= LEFT ================= -->
                   <div class="p-6 border-r">
-                    <div class="grid grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 gap-5">
                       <!-- ===================== SECTION ===================== -->
                       <div class="dropdown-container relative">
                         <label class="dropdown-label">Section :</label>
@@ -602,22 +608,39 @@
                       </div>
 
                       <!-- ===================== DAY ===================== -->
-                      <div>
+                      <div class="space-y-2">
                         <label class="dropdown-label">Day :</label>
 
-                        <select
-                          v-model="expandedRecord.day"
-                          :disabled="!canEditSchedule(expandedRecord)"
-                          class="dropdown-input"
-                        >
-                          <option>Monday</option>
-                          <option>Tuesday</option>
-                          <option>Wednesday</option>
-                          <option>Thursday</option>
-                          <option>Friday</option>
-                          <option>Saturday</option>
-                          <option>Sunday</option>
-                        </select>
+                        <div class="flex flex-wrap gap-2">
+                          <button
+                            v-for="day in [
+                              'Monday',
+                              'Tuesday',
+                              'Wednesday',
+                              'Thursday',
+                              'Friday',
+                              'Saturday',
+                              'Sunday',
+                            ]"
+                            :key="day"
+                            type="button"
+                            @click="
+                              canEditSchedule(expandedRecord) &&
+                                (expandedRecord.day = day)
+                            "
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            :class="[
+                              'px-4 py-2 rounded-full border text-xs font-medium transition-all duration-200',
+                              !canEditSchedule(expandedRecord)
+                                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                                : expandedRecord.day === day
+                                ? 'bg-defaultGreen text-white border-defaultGreen shadow-md'
+                                : 'bg-white text-gray-700 border-gray-300 hover:border-defaultGreen hover:text-defaultGreen hover:bg-green-50',
+                            ]"
+                          >
+                            {{ day }}
+                          </button>
+                        </div>
                       </div>
 
                       <!-- ===================== MODE ===================== -->
@@ -634,30 +657,32 @@
                         </select>
                       </div>
 
-                      <!-- ===================== START HOUR ===================== -->
-                      <div>
-                        <label class="dropdown-label">Start Hour :</label>
+                      <div class="grid grid-cols-2 gap-2">
+                        <!-- ===================== START HOUR ===================== -->
+                        <div>
+                          <label class="dropdown-label">Start Hour :</label>
 
-                        <input
-                          type="number"
-                          step="0.5"
-                          v-model.number="expandedRecord.start_hour"
-                          :disabled="!canEditSchedule(expandedRecord)"
-                          class="dropdown-input"
-                        />
-                      </div>
+                          <input
+                            type="number"
+                            step="0.5"
+                            v-model.number="expandedRecord.start_hour"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            class="dropdown-input"
+                          />
+                        </div>
 
-                      <!-- ===================== DURATION ===================== -->
-                      <div>
-                        <label class="dropdown-label">Duration :</label>
+                        <!-- ===================== DURATION ===================== -->
+                        <div>
+                          <label class="dropdown-label">Duration :</label>
 
-                        <input
-                          type="number"
-                          step="0.5"
-                          v-model.number="expandedRecord.duration"
-                          :disabled="!canEditSchedule(expandedRecord)"
-                          class="dropdown-input"
-                        />
+                          <input
+                            type="number"
+                            step="0.5"
+                            v-model.number="expandedRecord.duration"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            class="dropdown-input"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
