@@ -79,31 +79,307 @@
         </div>
       </div>
 
-      <!-- Tabs -->
-      <div class="flex gap-1 border-b border-gray-200 mt-4">
-        <button
-          v-for="t in tabs"
-          :key="t.key"
-          @click="activeTab = t.key"
-          class="px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
-          :class="
-            activeTab === t.key
-              ? 'border-indigo-600 text-indigo-700'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
-          "
-        >
-          {{ t.label }}
-          <span
-            class="ml-1 text-[10px] font-semibold rounded-full px-1.5 py-0.5"
-            :class="
-              activeTab === t.key
-                ? 'bg-indigo-100 text-indigo-700'
-                : 'bg-gray-100 text-gray-500'
-            "
-          >
-            {{ t.count }}
-          </span>
-        </button>
+      <div class="flex justify-between items-center">
+        <!-- Tabs -->
+        <div class="mt-4 flex items-center justify-between">
+          <div class="flex gap-1">
+            <button
+              v-for="t in tabs"
+              :key="t.key"
+              @click="activeTab = t.key"
+              :class="[
+                'px-4 py-2 rounded-t-lg text-sm border transition-all flex items-center gap-2',
+                activeTab === t.key
+                  ? 'bg-defaultGreen text-white border-gray-300 border-b-white shadow-sm'
+                  : 'bg-gray-100 text-gray-600 border-transparent hover:bg-gray-200',
+              ]"
+            >
+              <span>{{ t.label }}</span>
+
+              <span
+                class="text-[10px] font-semibold rounded-full px-1.5 py-0.5"
+                :class="
+                  activeTab === t.key
+                    ? 'bg-white/20 text-white'
+                    : 'bg-gray-200 text-gray-600'
+                "
+              >
+                {{ t.count }}
+              </span>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Institute -->
+          <div class="relative">
+            <!-- Select Box -->
+            <div
+              class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+            >
+              <!-- Icon -->
+              <div class="absolute left-3 text-defaultGreen">
+                <icon name="academic-cap" />
+              </div>
+
+              <!-- Selected -->
+              <button
+                type="button"
+                @click="showInstituteDropdown = !showInstituteDropdown"
+                class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+              >
+                <span v-if="selectedInstituteId">
+                  {{
+                    uniqueInstitutes.find(
+                      (i) => Number(i.id) === Number(selectedInstituteId),
+                    )?.name
+                  }}
+                </span>
+
+                <span v-else class="font-light text-gray-600">
+                  All Institutes
+                </span>
+              </button>
+
+              <!-- Arrow -->
+              <button
+                type="button"
+                @click="showInstituteDropdown = !showInstituteDropdown"
+                class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
+              >
+                <svg
+                  class="h-4 w-4 transition-transform duration-200"
+                  :class="{ 'rotate-180': showInstituteDropdown }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Dropdown -->
+            <div
+              v-if="showInstituteDropdown"
+              class="absolute z-50 mt-2 w-[12vw] overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+            >
+              <div class="border-b border-gray-100 px-4 py-3">
+                <p
+                  class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+                >
+                  Institutes
+                </p>
+              </div>
+
+              <div class="max-h-[260px] overflow-y-auto p-1.5">
+                <!-- All Institutes -->
+                <button
+                  @click="
+                    selectedInstituteId = '';
+                    showInstituteDropdown = false;
+                  "
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="selectedInstituteId === '' ? 'bg-green-50' : ''"
+                >
+                  <p class="text-sm text-gray-800">All Institutes</p>
+
+                  <svg
+                    v-if="selectedInstituteId === ''"
+                    class="h-5 w-5 text-defaultGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+
+                <!-- Institutes -->
+                <button
+                  v-for="institute in uniqueInstitutes"
+                  :key="institute.id"
+                  @click="
+                    selectedInstituteId = institute.id;
+                    selectedProgramId = '';
+                    showInstituteDropdown = false;
+                  "
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="
+                    Number(selectedInstituteId) === Number(institute.id)
+                      ? 'bg-green-50'
+                      : ''
+                  "
+                >
+                  <p class="text-sm text-gray-800">
+                    {{ institute.name }}
+                  </p>
+
+                  <svg
+                    v-if="Number(selectedInstituteId) === Number(institute.id)"
+                    class="h-5 w-5 text-defaultGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Program -->
+          <div class="relative">
+            <!-- Select Box -->
+            <div
+              class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+              :class="
+                !selectedInstituteId ? 'opacity-60 cursor-not-allowed' : ''
+              "
+            >
+              <!-- Icon -->
+              <div class="absolute left-3 text-defaultGreen">
+                <icon name="academic-cap" />
+              </div>
+
+              <!-- Selected -->
+              <button
+                type="button"
+                :disabled="!selectedInstituteId"
+                @click="showProgramDropdown = !showProgramDropdown"
+                class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700 disabled:cursor-not-allowed"
+              >
+                <span v-if="selectedProgramId">
+                  {{
+                    filteredPrograms.find(
+                      (p) => Number(p.id) === Number(selectedProgramId),
+                    )?.name
+                  }}
+                </span>
+
+                <span v-else class="font-light text-gray-600">
+                  All Programs
+                </span>
+              </button>
+
+              <!-- Arrow -->
+              <button
+                type="button"
+                :disabled="!selectedInstituteId"
+                @click="showProgramDropdown = !showProgramDropdown"
+                class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen disabled:pointer-events-none"
+              >
+                <svg
+                  class="h-4 w-4 transition-transform duration-200"
+                  :class="{ 'rotate-180': showProgramDropdown }"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Dropdown -->
+            <div
+              v-if="showProgramDropdown && selectedInstituteId"
+              class="absolute z-50 mt-2 w-[12vw] overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+            >
+              <div class="border-b border-gray-100 px-4 py-3">
+                <p
+                  class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+                >
+                  Programs
+                </p>
+              </div>
+
+              <div class="max-h-[260px] overflow-y-auto p-1.5">
+                <!-- All Programs -->
+                <button
+                  @click="
+                    selectedProgramId = '';
+                    showProgramDropdown = false;
+                  "
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="selectedProgramId === '' ? 'bg-green-50' : ''"
+                >
+                  <p class="text-sm text-gray-800">All Programs</p>
+
+                  <svg
+                    v-if="selectedProgramId === ''"
+                    class="h-5 w-5 text-defaultGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+
+                <!-- Programs -->
+                <button
+                  v-for="program in filteredPrograms"
+                  :key="program.id"
+                  @click="
+                    selectedProgramId = program.id;
+                    showProgramDropdown = false;
+                  "
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                  :class="
+                    Number(selectedProgramId) === Number(program.id)
+                      ? 'bg-green-50'
+                      : ''
+                  "
+                >
+                  <p class="text-sm text-gray-800">
+                    {{ program.name }}
+                  </p>
+
+                  <svg
+                    v-if="Number(selectedProgramId) === Number(program.id)"
+                    class="h-5 w-5 text-defaultGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- TAB: Feasibility gates -->
@@ -403,20 +679,64 @@
 
 <script>
 import axios from "axios";
+import icon from "@/assets/icon.vue";
 
+import { useFetchDataStore } from "@/store/fetch-data-store";
 export default {
   name: "TablePreAssessment",
+  components: { icon },
   data() {
     return {
       loading: false,
       error: "",
       report: null,
+
       activeTab: "gates",
       gateOpen: {},
       recOpen: {},
+
+      fetchDataStore: useFetchDataStore(),
+
+      selectedInstituteId: "",
+      selectedProgramId: "",
+
+      showInstituteDropdown: false,
+      showProgramDropdown: false,
     };
   },
   computed: {
+    programs() {
+      return this.fetchDataStore.programs;
+    },
+
+    uniqueInstitutes() {
+      const map = new Map();
+
+      this.programs.forEach((p) => {
+        if (p.institute) {
+          map.set(p.institute.institute_id, {
+            id: p.institute.institute_id,
+            name: p.institute.institute_code,
+            code: p.institute.institute_code,
+          });
+        }
+      });
+
+      return [...map.values()];
+    },
+
+    filteredPrograms() {
+      return this.programs
+        .filter(
+          (p) =>
+            !this.selectedInstituteId ||
+            Number(p.institute_id) === Number(this.selectedInstituteId),
+        )
+        .map((p) => ({
+          id: p.program_id,
+          name: p.program_code,
+        }));
+    },
     tabs() {
       return [
         {
@@ -512,6 +832,11 @@ export default {
         }[p] || "bg-gray-100 text-gray-600"
       );
     },
+  },
+  async mounted() {
+    if (!this.fetchDataStore.programs.length) {
+      await this.fetchDataStore.fetchPrograms();
+    }
   },
 };
 </script>

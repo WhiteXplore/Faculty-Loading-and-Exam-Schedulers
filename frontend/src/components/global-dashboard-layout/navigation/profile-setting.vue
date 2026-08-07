@@ -89,9 +89,12 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(process.env.VUE_APP_API_BASE_URL + "/auth/me", {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || {};
       } catch {
         this.$router.push("/");
