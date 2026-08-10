@@ -20,6 +20,7 @@ needs slots to align. So the result is a readiness score + binding constraints.
 """
 
 import os
+import re
 import json
 import importlib.util
 
@@ -59,15 +60,46 @@ def _load_units(c):
     return ga.compute_load(c.get("course_lec", 0) or 0, c.get("course_lab", 0) or 0)
 
 
+# utilization_pct is now supply/demand (>=100% = enough capacity, <100% = short).
+# WARN_FLOOR mirrors the old "demand > 85% of supply" tight zone, expressed the
+# same way in the flipped ratio: supply < demand/0.85.
+WARN_FLOOR = 100 / 0.85  # ~117.65
+
+
+def _ratio_pct(supply, demand):
+    """supply/demand as a percent; demand<=0 means trivially satisfied (100%)."""
+    if demand <= 0:
+        return 100
+    return round(100 * supply / demand)
+
+
+def _fmt_units(u):
+    """1 decimal place, dropping a trailing .0 (e.g. 12u, 8.5u)."""
+    u = round(u, 1)
+    return f"{u:.0f}" if u == int(u) else f"{u:.1f}"
+
+
+def _abbrev_name(name):
+    """"Gretchen B. Olivar" -> "GB Olivar" - initials for every name but the
+    last, to save table space. Single-word names pass through unchanged."""
+    if not name:
+        return name
+    parts = [p for p in re.split(r"\s+", str(name).strip()) if p]
+    if len(parts) <= 1:
+        return name
+    initials = "".join(p[0].upper() for p in parts[:-1] if p[0].isalpha())
+    return f"{initials} {parts[-1]}" if initials else parts[-1]
+
+
 def _status(util_pct, has_hard_fail=False):
-    if has_hard_fail or util_pct > 100:
+    if has_hard_fail or util_pct < 100:
         return "FAIL"
-    if util_pct > 85:
+    if util_pct < WARN_FLOOR:
         return "WARN"
     return "PASS"
 
 
-def evaluate():
+def evaluate(institute_id=None, program_id=None):
     cc = _fetch("classes_course")
     fec = _fetch("faculty_expertise_courses")
     rooms = _fetch("rooms_view")
@@ -76,20 +108,33 @@ def evaluate():
     for c in cc:
         c["program_code"] = prog_code.get(c.get("program_id"), "?")
 
-    # institute id -> readable name (for room offenders)
+    # institute id -> readable name (for room offenders + the filter banner)
     inst_name = {}
     for it in _fetch("institutes"):
         inst_name[it.get("institute_id")] = (
             it.get("institute_name") or it.get("name")
             or f"Institute {it.get('institute_id')}")
 
+    # -------- optional scope: restrict demand to one institute / program -----
+    if institute_id is not None:
+        cc = [c for c in cc if c.get("institute_id") == institute_id]
+    if program_id is not None:
+        cc = [c for c in cc if c.get("program_id") == program_id]
+
     total_sections = len(cc)
     at_risk = set()            # class-course rows (by index) at risk of not scheduling
+
+    # normalized course codes actually offered in-scope - faculty capacity is
+    # scoped down to experts who can teach at least one of these, so gates 2/3
+    # answer "can THIS institute/program be covered", not the whole school.
+    scoped_codes = {norm(c.get("course_code")) for c in cc if c.get("course_code")}
+    fec_scoped = fec if institute_id is None and program_id is None else [
+        f for f in fec if f.get("course_code") and norm(f.get("course_code")) in scoped_codes]
 
     # unique active faculty (one record per faculty_id) + their load caps + names
     fac = {}
     fac_name = {}
-    for f in fec:
+    for f in fec_scoped:
         fid = f.get("faculty_id")
         if fid is not None:
             fac_name.setdefault(fid, f.get("faculty_name"))
@@ -99,7 +144,7 @@ def evaluate():
 
     # normalized course_code -> set of qualified faculty_ids
     code_experts = {}
-    for f in fec:
+    for f in fec_scoped:
         code = f.get("course_code")
         if code:
             code_experts.setdefault(norm(code), set()).add(f.get("faculty_id"))
@@ -127,18 +172,29 @@ def evaluate():
             "programs": ", ".join(progs_aff)[:50],
         })
     uncovered_rows.sort(key=lambda r: -r["sections"])
+
+    # lacking faculty assignments per program, e.g. BACOMM - 6, BSIS - 12, BSIT - 3
+    by_program_counts = {}
+    for idxs in uncovered.values():
+        for i in idxs:
+            pcode = cc[i].get("program_code") or "?"
+            by_program_counts[pcode] = by_program_counts.get(pcode, 0) + 1
+    by_program = sorted(
+        [{"program": p, "count": n} for p, n in by_program_counts.items()],
+        key=lambda x: -x["count"])
+
     gates.append({
         "id": "expertise", "label": "Expertise coverage",
         "status": "FAIL" if uncovered else "PASS",
         "supply": len(offered_codes) - len(uncovered), "demand": len(offered_codes),
         "unit": "courses with a qualified teacher",
-        "utilization_pct": 100 if not uncovered else round(100 * len(offered_codes) /
-                            max(1, len(offered_codes) - len(uncovered))),
+        "utilization_pct": _ratio_pct(len(offered_codes) - len(uncovered), len(offered_codes)),
         "detail": (f"{len(uncovered)} course(s) covering {uncovered_sections} section(s) "
                    f"have NO registered faculty." if uncovered else
                    "Every offered course has at least one qualified faculty."),
         "prescription": (f"Register expertise (or hire) for {len(uncovered)} course(s)."
                          if uncovered else None),
+        "by_program": by_program,
         "offender_columns": [
             {"key": "course_code", "label": "Course"}, {"key": "title", "label": "Title"},
             {"key": "sections", "label": "Sections"}, {"key": "programs", "label": "Programs"}],
@@ -152,7 +208,7 @@ def evaluate():
     # -------- GATE 2: Faculty load capacity (teacher-units) -------------------
     demand_units = sum(_load_units(c) for c in cc)
     supply_units = sum(active_fac.values())
-    u2 = round(100 * demand_units / max(1, supply_units))
+    u2 = _ratio_pct(supply_units, demand_units)
     avg_cap = (supply_units / len(active_fac)) if active_fac else 1
     # secondary physical-hours check
     demand_hours = sum(_contact_hours(c) for c in cc)
@@ -167,9 +223,9 @@ def evaluate():
         "status": _status(u2),
         "supply": round(supply_units, 1), "demand": round(demand_units, 1),
         "unit": "teacher load-units / week", "utilization_pct": u2,
-        "detail": (f"{demand_units:.0f} of {supply_units:.0f} teacher-units used "
-                   f"({u2}%). Physical hours: {demand_hours:.0f} of {supply_hours:.0f} "
-                   f"({round(100 * demand_hours / max(1, supply_hours))}%). "
+        "detail": (f"{supply_units:.0f} teacher-units available for {demand_units:.0f} needed "
+                   f"({u2}% covered). Physical hours: {supply_hours:.0f} available for "
+                   f"{demand_hours:.0f} needed ({_ratio_pct(supply_hours, demand_hours)}% covered). "
                    f"{len(active_fac)} active faculty."),
         "prescription": presc2,
     })
@@ -188,7 +244,9 @@ def evaluate():
                 "course_code": rep.get("course_code"), "sections": len(idxs),
                 "demand_units": round(pool_demand, 1),
                 "their_total_cap": round(pool_supply, 1),
-                "faculty": ", ".join(sorted(str(fac_name.get(fid) or fid) for fid in experts))[:70],
+                "faculty": ", ".join(sorted(
+                    f"{_abbrev_name(fac_name.get(fid)) or fid} ({_fmt_units(fac.get(fid, 0))} units)"
+                    for fid in experts))[:140],
             })
             at_risk.update(idxs)
     short_pools.sort(key=lambda p: -(p["demand_units"] - p["their_total_cap"]))
@@ -198,8 +256,7 @@ def evaluate():
         "status": g3_status,
         "supply": len(offered_codes) - len(short_pools), "demand": len(offered_codes),
         "unit": "course pools within capacity",
-        "utilization_pct": round(100 * len(offered_codes) /
-                                 max(1, len(offered_codes) - len(short_pools))) if short_pools else 100,
+        "utilization_pct": _ratio_pct(len(offered_codes) - len(short_pools), len(offered_codes)),
         "detail": (f"{len(short_pools)} course pool(s) demand more load than their "
                    f"qualified faculty can hold (even if dedicated)." if short_pools else
                    "Every course pool has enough qualified-faculty capacity."),
@@ -207,8 +264,8 @@ def evaluate():
                          f"course pool(s), or reduce sections." if short_pools else None),
         "offender_columns": [
             {"key": "course_code", "label": "Course"}, {"key": "sections", "label": "Sections"},
-            {"key": "demand_units", "label": "Demand (u)"}, {"key": "their_total_cap", "label": "Faculty cap (u)"},
-            {"key": "faculty", "label": "Qualified faculty"}],
+            {"key": "demand_units", "label": "Demand (units)"}, {"key": "their_total_cap", "label": "Faculty Capacity (units)"},
+            {"key": "faculty", "label": "Qualified faculty (load units)"}],
         "offenders": short_pools[:40],
         "offenders_total": len(short_pools),
     })
@@ -252,7 +309,7 @@ def evaluate():
     lab_offenders.sort(key=lambda x: -(x["demand_hours"] - x["supply_hours"]))
     tot_lab_dem = sum(lab_demand_by_inst.values())
     tot_lab_sup = sum(lab_rooms_by_inst.get(i, 0) for i in lab_demand_by_inst) * ROOM_WEEK_HOURS
-    u4 = round(100 * tot_lab_dem / max(1, tot_lab_sup))
+    u4 = _ratio_pct(tot_lab_sup, tot_lab_dem)
     hard_lab = any(o["lab_rooms"] == 0 for o in lab_offenders)
     gates.append({
         "id": "rooms_lab", "label": "Lab rooms (per institute)",
@@ -280,20 +337,21 @@ def evaluate():
     tot_lec_dem = sum(lec_demand_by_branch.values())              # demand at the 70% f2f target
     lec_full = tot_lec_dem / F2F_FRACTION if F2F_FRACTION else tot_lec_dem   # if 100% f2f
     tot_lec_sup = sum(lec_rooms_by_branch.values()) * ROOM_WEEK_HOURS
-    u4b = round(100 * tot_lec_dem / max(1, tot_lec_sup))
+    u4b = _ratio_pct(tot_lec_sup, tot_lec_dem)
     # with every lecture room filled: max % of lecture hours that fit face-to-face
     max_f2f_pct = 100 if lec_full <= tot_lec_sup else round(100 * tot_lec_sup / max(1, lec_full))
     required_online_pct = max(0, 100 - max_f2f_pct)              # the rest MUST be online
     target_online_pct = round((1 - F2F_FRACTION) * 100)         # policy target (~30%)
     if required_online_pct > 0:
-        lec_detail = (f"{tot_lec_dem:.0f} of {tot_lec_sup:.0f} lecture room-hours used ({u4b}%). "
-                      f"With every lecture room filled, only {max_f2f_pct}% of lecture hours fit "
-                      f"face-to-face — at least {required_online_pct}% MUST be online "
-                      f"(policy online target: {target_online_pct}%).")
+        lec_detail = (f"{tot_lec_sup:.0f} lecture room-hours available for {tot_lec_dem:.0f} needed "
+                      f"({u4b}% covered). With every lecture room filled, only {max_f2f_pct}% of "
+                      f"lecture hours fit face-to-face — at least {required_online_pct}% MUST be "
+                      f"online (policy online target: {target_online_pct}%).")
     else:
-        lec_detail = (f"{tot_lec_dem:.0f} of {tot_lec_sup:.0f} lecture room-hours used ({u4b}%). "
-                      f"Rooms can seat up to 100% of lectures face-to-face — no room-forced online "
-                      f"(the {target_online_pct}% online target is a policy choice, not a room limit).")
+        lec_detail = (f"{tot_lec_sup:.0f} lecture room-hours available for {tot_lec_dem:.0f} needed "
+                      f"({u4b}% covered). Rooms can seat up to 100% of lectures face-to-face — no "
+                      f"room-forced online (the {target_online_pct}% online target is a policy "
+                      f"choice, not a room limit).")
     gates.append({
         "id": "rooms_lecture", "label": "Lecture rooms (overall)",
         "status": _status(u4b),
@@ -339,7 +397,7 @@ def evaluate():
         "status": "FAIL" if overpacked else ("WARN" if tight else "PASS"),
         "supply": SECTION_WEEK_HOURS, "demand": max([round(h) for h in sec_hours.values()] + [0]),
         "unit": "hours / week (65 max per section)",
-        "utilization_pct": round(100 * max([h for h in sec_hours.values()] + [0]) / SECTION_WEEK_HOURS),
+        "utilization_pct": _ratio_pct(SECTION_WEEK_HOURS, max([h for h in sec_hours.values()] + [0])),
         "detail": (f"{len(overpacked)} section(s) exceed the {SECTION_WEEK_HOURS}h week and "
                    f"cannot fit; {len(tight)} are tight (>85%)." if overpacked else
                    (f"{len(tight)} section(s) are tight (>85% of the week)." if tight else
@@ -392,7 +450,7 @@ def evaluate():
             "summary": "Need " + " and ".join(bits) + ".",
             "impact": f"Relieves the specialist squeeze on {len(short_pools)} course pool(s).",
             "items": [{"label": p["course_code"],
-                       "sub": f'need +{max(0, round(p["demand_units"] - p["their_total_cap"]))}u · '
+                       "sub": f'need +{max(0, round(p["demand_units"] - p["their_total_cap"]))} units · '
                               f'now: {p["faculty"]}'} for p in short_pools[:40]],
             "items_total": len(short_pools),
         })
@@ -433,6 +491,12 @@ def evaluate():
         "verdict": verdict,
         "schedulable_estimate_pct": schedulable_pct,
         "at_risk_sections": len(at_risk),
+        "filter": {
+            "institute_id": institute_id,
+            "institute_name": inst_name.get(institute_id) if institute_id is not None else None,
+            "program_id": program_id,
+            "program_code": prog_code.get(program_id) if program_id is not None else None,
+        },
         "totals": {
             "sections": total_sections,
             "active_faculty": len(active_fac),
@@ -474,8 +538,24 @@ def _print_console(rep):
     print("=" * 74)
 
 
+def _arg(name):
+    """Read `--name=value` or `--name value` from argv; None if absent/empty."""
+    import sys
+    prefix = f"--{name}="
+    for i, tok in enumerate(sys.argv[1:], start=1):
+        if tok.startswith(prefix):
+            val = tok[len(prefix):]
+            return int(val) if val.strip() else None
+        if tok == f"--{name}" and i < len(sys.argv) - 1:
+            val = sys.argv[i + 1]
+            return int(val) if val.strip() else None
+    return None
+
+
 def main():
-    rep = evaluate()
+    institute_id = _arg("institute_id")
+    program_id = _arg("program_id")
+    rep = evaluate(institute_id=institute_id, program_id=program_id)
     _print_console(rep)
     print("===JSON_START===")
     print(json.dumps(rep, indent=2, default=str))

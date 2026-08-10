@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 
 import { GeneratedScheduledService } from './generated_scheduled.service';
@@ -40,8 +41,14 @@ export class GeneratedScheduledController {
    * ⭐ Run Pre-Assessment (feasibility check — no GA run)
    */
   @Get('pre-assessment')
-  async runPreAssessment() {
-    const data = await this.generatedScheduledService.runPythonFeasibility();
+  async runPreAssessment(
+    @Query('institute_id') instituteId?: string,
+    @Query('program_id') programId?: string,
+  ) {
+    const data = await this.generatedScheduledService.runPythonFeasibility(
+      instituteId,
+      programId,
+    );
 
     return {
       success: true,

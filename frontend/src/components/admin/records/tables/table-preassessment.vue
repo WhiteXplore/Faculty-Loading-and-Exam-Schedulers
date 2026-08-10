@@ -58,6 +58,16 @@
           <div class="text-xl font-bold mt-0.5" :class="verdictBox.text">
             {{ verdictLabel }}
           </div>
+          <div
+            v-if="report.filter && (report.filter.institute_name || report.filter.program_code)"
+            class="text-[10px] text-gray-500 mt-0.5"
+          >
+            Scoped to
+            <span class="font-medium">{{ report.filter.institute_name }}</span>
+            <span v-if="report.filter.program_code">
+              · {{ report.filter.program_code }}</span
+            >
+          </div>
         </div>
         <div class="h-9 w-px bg-current opacity-20"></div>
         <div>
@@ -181,6 +191,7 @@
                 <button
                   @click="
                     selectedInstituteId = '';
+                    selectedProgramId = '';
                     showInstituteDropdown = false;
                   "
                   class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
@@ -392,7 +403,7 @@
                 Status
               </th>
               <th class="px-3 py-2 border border-gray-200 text-center w-32">
-                Utilization
+                Lacking
               </th>
               <th class="px-3 py-2 border border-gray-200 text-center w-20">
                 Supply
@@ -442,7 +453,7 @@
                     <span
                       class="font-mono tabular-nums"
                       :class="
-                        g.utilization_pct > 100
+                        g.utilization_pct < 100
                           ? 'text-red-600 font-bold'
                           : 'text-gray-500'
                       "
@@ -476,6 +487,18 @@
                     </span>
                   </div>
                   {{ g.detail }}
+                  <div
+                    v-if="g.by_program && g.by_program.length"
+                    class="mt-1.5 flex flex-wrap gap-1"
+                  >
+                    <span
+                      v-for="bp in g.by_program"
+                      :key="bp.program"
+                      class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-100"
+                    >
+                      {{ bp.program }} – {{ bp.count }}
+                    </span>
+                  </div>
                   <div
                     v-if="g.prescription"
                     class="mt-1 font-medium text-indigo-700"
@@ -690,6 +713,7 @@ export default {
       loading: false,
       error: "",
       report: null,
+      requestSeq: 0,
 
       activeTab: "gates",
       gateOpen: {},
@@ -769,23 +793,40 @@ export default {
       return { box: "bg-red-50 border-red-200", text: "text-red-700" };
     },
   },
+  watch: {
+    selectedInstituteId() {
+      this.runAssessment();
+    },
+    selectedProgramId() {
+      this.runAssessment();
+    },
+  },
   methods: {
     async runAssessment() {
+      const seq = ++this.requestSeq;
       this.loading = true;
       this.error = "";
       try {
         const res = await axios.get(
           `${process.env.VUE_APP_API_BASE_URL}/generated-scheduled/pre-assessment`,
+          {
+            params: {
+              institute_id: this.selectedInstituteId || undefined,
+              program_id: this.selectedProgramId || undefined,
+            },
+          },
         );
+        if (seq !== this.requestSeq) return; // a newer request superseded this one
         this.report = res.data.data || null;
         this.gateOpen = {};
         this.recOpen = {};
         this.activeTab = "gates";
         if (!this.report) this.error = "Assessment returned no data.";
       } catch (e) {
+        if (seq !== this.requestSeq) return;
         this.error = "Failed to run pre-assessment. Check the server / Python.";
       } finally {
-        this.loading = false;
+        if (seq === this.requestSeq) this.loading = false;
       }
     },
     toggleGate(id) {
@@ -795,7 +836,7 @@ export default {
       this.recOpen[key] = !this.recOpen[key];
     },
     statusText(s) {
-      return { PASS: "OK", WARN: "Warning", FAIL: "Shortfall" }[s] || s;
+      return { PASS: "OK", WARN: "Warning", FAIL: "Shortage" }[s] || s;
     },
     statusPill(s) {
       return (
@@ -835,8 +876,9 @@ export default {
   },
   async mounted() {
     if (!this.fetchDataStore.programs.length) {
-      await this.fetchDataStore.fetchPrograms();
+      this.fetchDataStore.fetchPrograms();
     }
+    this.runAssessment();
   },
 };
 </script>

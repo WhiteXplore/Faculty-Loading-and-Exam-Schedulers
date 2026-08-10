@@ -91,18 +91,29 @@ export class GeneratedScheduledService {
   /**
    * ⭐ Run Python Pre-Assessment (feasibility check — no GA run)
    */
-  runPythonFeasibility(): Promise<any> {
+  runPythonFeasibility(
+    instituteId?: string,
+    programId?: string,
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       const scriptPath = path
         .resolve(__dirname, '../../../python/feasibility_check.py')
         .replace(/\\/g, '/');
 
-      console.log('Running feasibility check:', scriptPath);
+      console.log('Running feasibility check:', scriptPath, {
+        instituteId,
+        programId,
+      });
+
+      const scriptArgs = [scriptPath];
+      if (instituteId) scriptArgs.push(`--institute_id=${instituteId}`);
+      if (programId) scriptArgs.push(`--program_id=${programId}`);
 
       // Run the actual Python script
-      const pythonProcess = spawn('C:\\Program Files\\Python313\\python.exe', [
-        scriptPath,
-      ]);
+      const pythonProcess = spawn(
+        'C:\\Program Files\\Python313\\python.exe',
+        scriptArgs,
+      );
 
       let stdoutData = '';
       let stderrData = '';
