@@ -30,7 +30,7 @@ export class GeneratedScheduledService {
 
       console.log('Running Python script:', scriptPath);
 
-      const pythonProcess = spawn('C:\\Program Files\\Python314\\python.exe', [
+      const pythonProcess = spawn('C:\\Program Files\\Python313\\python.exe', [
         scriptPath,
       ]);
       let stdoutData = '';
@@ -100,7 +100,7 @@ export class GeneratedScheduledService {
       console.log('Running feasibility check:', scriptPath);
 
       // Run the actual Python script
-      const pythonProcess = spawn('C:\\Program Files\\Python314\\python.exe', [
+      const pythonProcess = spawn('C:\\Program Files\\Python313\\python.exe', [
         scriptPath,
       ]);
 
