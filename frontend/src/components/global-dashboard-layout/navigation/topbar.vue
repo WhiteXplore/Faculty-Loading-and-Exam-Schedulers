@@ -310,7 +310,7 @@
   <div
     v-if="isOpenProfile"
     ref="profileDropdown"
-    class="absolute top-[84px] lg:top-[68px] right-2.5 lg:right-1 z-50"
+    class="absolute top-[84px] lg:top-[80px] right-2.5 lg:right-2.5 z-50"
   >
     <Profile />
   </div>

@@ -303,12 +303,12 @@
                       "
                     >
                       <span class="flex items-center flex-wrap">
-                        <!-- <span
+                        <span
                           v-if="course.program_code"
                           class="mr-2 rounded-full bg-defaultGreen px-2 py-0.5 text-[10px] font-medium text-white"
                         >
                           {{ course.program_code }}
-                        </span> -->
+                        </span>
 
                         <span>
                           {{ course.course_code }} - {{ course.course_title }}
@@ -338,12 +338,12 @@
                 class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg"
               >
                 <span>
-                  <!-- <span
+                  <span
                     v-if="item.program_code"
                     class="px-2 py-0.5 mr-2 rounded-full bg-white text-defaultGreen text-[10px]"
                   >
                     {{ item.program_code }}
-                  </span> -->
+                  </span>
                   {{ item.course_code }} — {{ item.course_title }}
                 </span>
 
@@ -807,7 +807,7 @@ export default {
             ? "Cross expertise updated successfully!"
             : "Expertise updated successfully!",
         );
-        this.$emit("close");
+
         this.$emit("updated");
 
         if (this.activeTab === "assign") {
