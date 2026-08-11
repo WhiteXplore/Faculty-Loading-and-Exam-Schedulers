@@ -283,6 +283,12 @@ const routes = [
           roles: ["Program Chairperson", "Department Chairperson"],
         },
       },
+      {
+        path: "/prog-pre-assessment",
+        name: "prog-pre-assessment",
+        component: () => import("@/components/admin/records/PreAssessment.vue"),
+        meta: { requiresAuth: true, role: "Program Chairperson" },
+      },
     ],
   },
   // Faculty View

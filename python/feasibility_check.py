@@ -323,7 +323,7 @@ def evaluate(institute_id=None, program_id=None):
                          if lab_offenders else None),
         "offender_columns": [
             {"key": "institute", "label": "Institute"}, {"key": "lab_rooms", "label": "Lab rooms"},
-            {"key": "demand_hours", "label": "Demand (h)"}, {"key": "supply_hours", "label": "Capacity (h)"},
+            {"key": "demand_hours", "label": "Demand (hours)"}, {"key": "supply_hours", "label": "Capacity (hours)"},
             {"key": "rooms_needed", "label": "Rooms needed"}],
         "offenders": lab_offenders[:20],
         "offenders_total": len(lab_offenders),

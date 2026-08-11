@@ -436,6 +436,17 @@ export default {
               },
             ],
           },
+          {
+            // title: "Documents",
+            title: "",
+            items: [
+              {
+                icon: "prospectus",
+                name: "Pre-Assessment",
+                route: "/prog-pre-assessment",
+              },
+            ],
+          },
         ],
 
         "Department Chairperson": [

@@ -333,21 +333,28 @@
 
             <div class="space-y-1">
               <div
-                v-for="(item, i) in selectedCrossCourses"
-                :key="`${item.course_id}-cross-${i}`"
+                v-for="item in filteredSelectedCrossCourses"
+                :key="`cross-${item.course_id}`"
                 class="flex justify-between items-center px-4 py-2 bg-defaultGreen text-white rounded-lg"
               >
-                <span>
-                  <!-- <span
-                    v-if="item.program_code"
-                    class="px-2 py-0.5 mr-2 rounded-full bg-white text-defaultGreen text-[10px]"
-                  >
-                    {{ item.program_code }}
-                  </span> -->
-                  {{ item.course_code }} — {{ item.course_title }}
-                </span>
+                <span> {{ item.course_code }} — {{ item.course_title }} </span>
 
-                <button type="button" @click="removeCourse(i)">✕</button>
+                <button
+                  type="button"
+                  @click="removeCrossCourse(item.course_id)"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div
+                v-if="!filteredSelectedCrossCourses.length"
+                class="text-xs text-gray-400 py-2"
+              >
+                No selected cross courses for
+                {{ getYearLevelName(selectedYearLevel) }}
+                -
+                {{ getSemesterName(selectedSemester) }}.
               </div>
             </div>
           </div>
@@ -452,7 +459,14 @@ export default {
     currentSemesterData() {
       return this.form.semesters[this.selectedSemester];
     },
-
+    filteredSelectedCrossCourses() {
+      return this.selectedCrossCourses.filter((course) => {
+        return (
+          Number(course.course_level) === Number(this.selectedYearLevel) &&
+          Number(course.course_semester) === Number(this.selectedSemester)
+        );
+      });
+    },
     normalizedCurriculumCourses() {
       if (!Array.isArray(this.curriculum_courses)) return [];
 
@@ -741,7 +755,15 @@ export default {
       this.otherDropdownOpen = false;
       this.otherSearchQuery = "";
     },
+    removeCrossCourse(courseId) {
+      const index = this.selectedCrossCourses.findIndex(
+        (course) => Number(course.course_id) === Number(courseId),
+      );
 
+      if (index !== -1) {
+        this.selectedCrossCourses.splice(index, 1);
+      }
+    },
     removeCourse(i) {
       if (this.activeTab === "cross") {
         this.selectedCrossCourses.splice(i, 1);

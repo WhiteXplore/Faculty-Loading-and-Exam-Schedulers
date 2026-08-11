@@ -44,48 +44,240 @@
     <!-- Report -->
     <div v-if="report" class="mt-4">
       <!-- Verdict banner -->
-      <div
-        class="rounded-xl border p-4 flex flex-wrap items-center gap-6"
-        :class="verdictBox.box"
-      >
-        <div>
-          <div
-            class="text-[11px] uppercase tracking-wider font-semibold"
-            :class="verdictBox.text"
-          >
-            Readiness verdict
-          </div>
-          <div class="text-xl font-bold mt-0.5" :class="verdictBox.text">
-            {{ verdictLabel }}
-          </div>
-          <div
-            v-if="report.filter && (report.filter.institute_name || report.filter.program_code)"
-            class="text-[10px] text-gray-500 mt-0.5"
-          >
-            Scoped to
-            <span class="font-medium">{{ report.filter.institute_name }}</span>
-            <span v-if="report.filter.program_code">
-              · {{ report.filter.program_code }}</span
+
+      <!-- Metrics + Readiness Verdict -->
+      <div class="mt-5 grid grid-cols-7 gap-3">
+        <!-- Readiness Verdict - 2 card widths -->
+        <div
+          class="col-span-2 rounded-xl border px-5 py-3 transition"
+          :class="verdictBox.box"
+        >
+          <div class="flex h-full items-center justify-between gap-5">
+            <!-- Left: Status -->
+            <div class="flex min-w-0 items-center gap-3">
+              <!-- Status Icon -->
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                :class="verdictBox.icon"
+              >
+                <!-- Ready -->
+                <svg
+                  v-if="verdictLabel === 'Ready'"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+
+                <!-- At Risk -->
+                <svg
+                  v-else-if="verdictLabel === 'At Risk'"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 9v3.75m0 3.75h.008M10.29 3.86l-7.82 13.5A1.75 1.75 0 003.98 20h16.04a1.75 1.75 0 001.51-2.64l-7.82-13.5a1.75 1.75 0 00-3.02 0z"
+                  />
+                </svg>
+
+                <!-- Pending -->
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+
+              <!-- Text -->
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="text-[10px] font-semibold uppercase tracking-[0.12em]"
+                    :class="verdictBox.text"
+                  >
+                    Readiness Verdict
+                  </span>
+
+                  <span
+                    class="h-1.5 w-1.5 rounded-full"
+                    :class="verdictBox.dot"
+                  ></span>
+                </div>
+
+                <div
+                  class="mt-0.5 text-lg font-bold tracking-tight"
+                  :class="verdictBox.text"
+                >
+                  {{ verdictLabel }}
+                </div>
+
+                <div
+                  v-if="
+                    report.filter &&
+                    (report.filter.institute_name || report.filter.program_code)
+                  "
+                  class="mt-0.5 truncate text-[10px] text-gray-500"
+                >
+                  Scoped to
+                  <span class="font-medium">
+                    {{ report.filter.institute_name }}
+                  </span>
+
+                  <span v-if="report.filter.program_code">
+                    · {{ report.filter.program_code }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Schedulable Estimate -->
+            <div
+              class="flex shrink-0 items-center gap-4 border-l pl-5"
+              :class="verdictBox.divider"
             >
+              <div class="text-right">
+                <div
+                  class="text-[10px] font-semibold uppercase tracking-wider text-gray-400"
+                >
+                  Estimated
+                </div>
+
+                <div
+                  class="mt-0.5 text-2xl font-bold leading-none tabular-nums"
+                  :class="verdictBox.text"
+                >
+                  {{ report.schedulable_estimate_pct }}%
+                </div>
+
+                <div class="mt-1 text-[10px] text-gray-400">schedulable</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="h-9 w-px bg-current opacity-20"></div>
-        <div>
-          <div class="text-2xl font-bold tabular-nums" :class="verdictBox.text">
-            {{ report.schedulable_estimate_pct }}%
+        <!-- Sections -->
+        <div
+          class="rounded-xl border border-gray-200 bg-gray-50/70 px-4 py-3 transition hover:border-gray-200 hover:bg-gray-50"
+        >
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+            >
+              Sections
+            </span>
+            <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
           </div>
-          <div class="text-[11px] text-gray-500">estimated schedulable</div>
+
+          <div class="mt-2 text-xl font-bold text-gray-800 tabular-nums">
+            {{ report.totals.sections }}
+          </div>
+
+          <div class="mt-0.5 text-[10px] text-gray-400">Total sections</div>
         </div>
-        <div class="text-[11px] text-gray-600 ml-auto text-right space-y-0.5">
-          <div>
-            <b>{{ report.totals.sections }}</b> sections ·
-            <b>{{ report.at_risk_sections }}</b> at-risk
+
+        <!-- At Risk -->
+        <div
+          class="rounded-xl border border-red-100 bg-red-50/50 px-4 py-3 transition hover:border-red-200 hover:bg-red-50"
+        >
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-semibold uppercase tracking-wide text-red-500"
+            >
+              At Risk
+            </span>
+            <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
           </div>
-          <div>
-            <b>{{ report.totals.active_faculty }}</b> faculty ·
-            <b>{{ report.totals.faculty_total_capacity_units }}</b> units ·
-            <b>{{ report.totals.rooms }}</b> rooms
+
+          <div class="mt-2 text-xl font-bold text-red-600 tabular-nums">
+            {{ report.at_risk_sections }}
           </div>
+
+          <div class="mt-0.5 text-[10px] text-red-400">
+            Sections requiring attention
+          </div>
+        </div>
+
+        <!-- Faculty -->
+        <div
+          class="rounded-xl border border-gray-100 bg-gray-50/70 px-4 py-3 transition hover:border-gray-200 hover:bg-gray-50"
+        >
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+            >
+              Faculty
+            </span>
+            <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+          </div>
+
+          <div class="mt-2 text-xl font-bold text-gray-800 tabular-nums">
+            {{ report.totals.active_faculty }}
+          </div>
+
+          <div class="mt-0.5 text-[10px] text-gray-400">Active faculty</div>
+        </div>
+
+        <!-- Capacity -->
+        <div
+          class="rounded-xl border border-gray-100 bg-gray-50/70 px-4 py-3 transition hover:border-gray-200 hover:bg-gray-50"
+        >
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+            >
+              Capacity
+            </span>
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+          </div>
+
+          <div class="mt-2 text-xl font-bold text-gray-800 tabular-nums">
+            {{ report.totals.faculty_total_capacity_units }}
+          </div>
+
+          <div class="mt-0.5 text-[10px] text-gray-400">Faculty units</div>
+        </div>
+
+        <!-- Rooms -->
+        <div
+          class="rounded-xl border border-gray-100 bg-gray-50/70 px-4 py-3 transition hover:border-gray-200 hover:bg-gray-50"
+        >
+          <div class="flex items-center justify-between">
+            <span
+              class="text-[10px] font-semibold uppercase tracking-wide text-gray-400"
+            >
+              Rooms
+            </span>
+            <span class="h-1.5 w-1.5 rounded-full bg-purple-500"></span>
+          </div>
+
+          <div class="mt-2 text-xl font-bold text-gray-800 tabular-nums">
+            {{ report.totals.rooms }}
+          </div>
+
+          <div class="mt-0.5 text-[10px] text-gray-400">Available rooms</div>
         </div>
       </div>
 
@@ -124,7 +316,7 @@
           <div class="relative">
             <!-- Select Box -->
             <div
-              class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+              class="mt-3 relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
             >
               <!-- Icon -->
               <div class="absolute left-3 text-defaultGreen">
@@ -134,8 +326,9 @@
               <!-- Selected -->
               <button
                 type="button"
+                :disabled="isProgramChairperson"
                 @click="showInstituteDropdown = !showInstituteDropdown"
-                class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+                class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700 disabled:cursor-not-allowed"
               >
                 <span v-if="selectedInstituteId">
                   {{
@@ -153,8 +346,9 @@
               <!-- Arrow -->
               <button
                 type="button"
+                :disabled="isProgramChairperson"
                 @click="showInstituteDropdown = !showInstituteDropdown"
-                class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
+                class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen disabled:pointer-events-none"
               >
                 <svg
                   class="h-4 w-4 transition-transform duration-200"
@@ -258,7 +452,7 @@
           <div class="relative">
             <!-- Select Box -->
             <div
-              class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+              class="mt-3 relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
               :class="
                 !selectedInstituteId ? 'opacity-60 cursor-not-allowed' : ''
               "
@@ -271,7 +465,7 @@
               <!-- Selected -->
               <button
                 type="button"
-                :disabled="!selectedInstituteId"
+                :disabled="!selectedInstituteId || isProgramChairperson"
                 @click="showProgramDropdown = !showProgramDropdown"
                 class="w-full rounded-xl py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700 disabled:cursor-not-allowed"
               >
@@ -291,7 +485,7 @@
               <!-- Arrow -->
               <button
                 type="button"
-                :disabled="!selectedInstituteId"
+                :disabled="!selectedInstituteId || isProgramChairperson"
                 @click="showProgramDropdown = !showProgramDropdown"
                 class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen disabled:pointer-events-none"
               >
@@ -710,6 +904,7 @@ export default {
   components: { icon },
   data() {
     return {
+      user: null,
       loading: false,
       error: "",
       report: null,
@@ -732,7 +927,17 @@ export default {
     programs() {
       return this.fetchDataStore.programs;
     },
+    isProgramChairperson() {
+      const role = String(
+        this.user?.role || this.user?.user_role || this.user?.role_name || "",
+      ).toUpperCase();
 
+      return (
+        role === "PROGRAM CHAIRPERSON" ||
+        role === "PROGRAM_CHAIRPERSON" ||
+        role === "PROGRAMCHAIRPERSON"
+      );
+    },
     uniqueInstitutes() {
       const map = new Map();
 
@@ -784,13 +989,37 @@ export default {
         }[this.report.verdict] || this.report.verdict
       );
     },
+
     verdictBox() {
       const v = this.report.verdict;
-      if (v === "READY")
-        return { box: "bg-green-50 border-green-200", text: "text-green-700" };
-      if (v === "READY_WITH_GAPS")
-        return { box: "bg-amber-50 border-amber-200", text: "text-amber-700" };
-      return { box: "bg-red-50 border-red-200", text: "text-red-700" };
+
+      if (v === "READY") {
+        return {
+          box: "bg-green-50 border-green-200",
+          text: "text-green-700",
+          icon: "bg-green-100 border-green-200 text-green-600",
+
+          divider: "border-green-200",
+        };
+      }
+
+      if (v === "READY_WITH_GAPS") {
+        return {
+          box: "bg-amber-50 border-amber-200",
+          text: "text-amber-700",
+          icon: "bg-amber-100 border-amber-200 text-amber-600",
+
+          divider: "border-amber-200",
+        };
+      }
+
+      return {
+        box: "bg-red-50 border-red-200",
+        text: "text-red-700",
+        icon: "bg-red-100 border-red-200 text-red-600",
+
+        divider: "border-red-200",
+      };
     },
   },
   watch: {
@@ -802,6 +1031,59 @@ export default {
     },
   },
   methods: {
+    async fetchUser() {
+      try {
+        const res = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
+
+        this.user = res.data;
+
+        console.log("Current logged-in user:", this.user);
+
+        /*
+         * ROLE-BASED AUTOMATIC FILTER
+         *
+         * ADMIN
+         * → All Institutes
+         * → All Programs
+         *
+         * PROGRAM CHAIRPERSON
+         * → Own Institute
+         * → Own Program
+         */
+
+        const role = String(
+          this.user?.role || this.user?.user_role || this.user?.role_name || "",
+        ).toUpperCase();
+
+        if (
+          role === "PROGRAM CHAIRPERSON" ||
+          role === "PROGRAM_CHAIRPERSON" ||
+          role === "PROGRAMCHAIRPERSON"
+        ) {
+          // Automatically scope to the logged-in Program Chairperson
+          this.selectedInstituteId = this.user?.institute_id || "";
+          this.selectedProgramId = this.user?.program_id || "";
+
+          console.log("Program Chairperson scope:", {
+            institute_id: this.selectedInstituteId,
+            program_id: this.selectedProgramId,
+          });
+        } else if (role === "ADMIN" || role === "ADMINISTRATOR") {
+          // Admin can see everything
+          this.selectedInstituteId = "";
+          this.selectedProgramId = "";
+
+          console.log("Admin scope: ALL");
+        }
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      }
+    },
     async runAssessment() {
       const seq = ++this.requestSeq;
       this.loading = true;
@@ -875,6 +1157,7 @@ export default {
     },
   },
   async mounted() {
+    await this.fetchUser();
     if (!this.fetchDataStore.programs.length) {
       this.fetchDataStore.fetchPrograms();
     }
