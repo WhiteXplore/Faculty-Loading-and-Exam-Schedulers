@@ -266,9 +266,17 @@
                   <span
                     :class="{
                       'border border-green-600 text-green-800':
-                        faculty.employment_type === 'Full Time',
+                        faculty.employment_type === 'Permanent',
+
+                      'border border-blue-600 text-blue-800':
+                        faculty.employment_type === 'Temporary',
+
+                      'border border-purple-600 text-purple-800':
+                        faculty.employment_type === 'Contract of Service',
+
                       'border border-orange-600 text-orange-800':
                         faculty.employment_type === 'Part Time',
+
                       'text-gray-400 border-gray-300': !faculty.employment_type,
                     }"
                     class="text-xs px-2 py-1 rounded-full"
@@ -533,8 +541,10 @@
                 v-model="form.employment_type"
                 class="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 cursor-pointer"
               >
-                <option disabled value="">-- Select Employment Type --</option>
-                <option value="Full Time">Full Time</option>
+                <option disabled value="">Select Employment Type</option>
+                <option value="Permanent">Permanent</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Contract of Service">Contract of Service</option>
                 <option value="Part Time">Part Time</option>
               </select>
             </div>
