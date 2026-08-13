@@ -135,7 +135,7 @@
                   <option value="Permanent">Permanent</option>
                   <option value="Temporary">Temporary</option>
                   <option value="Contract of Service">
-                    ontract of Service
+                    Contract of Service
                   </option>
                   <option value="Part Time">Part Time</option>
                 </select>
