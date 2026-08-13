@@ -1,7 +1,9 @@
 <template>
   <div class="flex justify-between items-center">
     <!-- LEFT: JOIN TOGGLE -->
-    <div class="flex items-center py-2 px-3 rounded-lg border w-max bg-white text-sm">
+    <div
+      class="flex items-center py-2 px-3 rounded-lg border w-max bg-white text-sm"
+    >
       <span class="font-medium text-gray-700">Join Scheduled:</span>
 
       <div class="per-page-container">
@@ -68,13 +70,16 @@
       </div>
 
       <!-- COMPARE SECTION -->
-      <div v-show="showCompareSelection" class="flex items-center gap-2 flex-wrap">
+      <div
+        v-show="showCompareSelection"
+        class="flex items-center gap-2 flex-wrap"
+      >
         <div class="flex gap-2 items-center">
           <!-- Instructor A -->
           <select
             :value="compareInstructorA"
             @change="$emit('update:compareInstructorA', $event.target.value)"
-            class="rounded-xl border border-defaultGreen px-2 py-2.5 text-sm text-defaultGreen shadow-sm"
+            class="rounded-xl border border-defaultGreen px-2 py-2.5 text-sm text-defaultGreen shadow-sm w-[15vw]"
           >
             <option value="">Select Instructor</option>
             <option
@@ -90,7 +95,7 @@
           <select
             :value="compareInstructorB"
             @change="$emit('update:compareInstructorB', $event.target.value)"
-            class="rounded-xl border border-defaultGreen px-2 py-2.5 text-sm text-defaultGreen shadow-sm"
+            class="rounded-xl border border-defaultGreen px-2 py-2.5 text-sm text-defaultGreen shadow-sm w-[15vw]"
           >
             <option value="">Select Instructor</option>
             <option

@@ -19,7 +19,11 @@ export class UnscheduledMeetingsService {
   }
 
   // Save multiple meetings
-  async create(createDtos: CreateUnscheduledMeetingDto[], override = false) {
+  async create(
+    createDtos: CreateUnscheduledMeetingDto[],
+    override = false,
+    restore = false,
+  ) {
     if (!createDtos.length) {
       return {
         success: false,
@@ -29,6 +33,39 @@ export class UnscheduledMeetingsService {
 
     const { school_year, semester } = createDtos[0];
 
+    // ==========================================
+    // RESTORE FROM CANCEL
+    // ==========================================
+    if (restore) {
+      const meetings: UnscheduledMeeting[] = [];
+
+      for (const dto of createDtos) {
+        const meetingData = {
+          ...dto,
+        };
+
+        // Do not restore the old database ID.
+        // Let @PrimaryGeneratedColumn() generate a new ID.
+        delete (meetingData as any).unscheduled_id;
+
+        const meeting = new UnscheduledMeeting();
+
+        Object.assign(meeting, meetingData);
+
+        meetings.push(meeting);
+      }
+
+      await this.repository.save(meetings);
+
+      return {
+        success: true,
+        restored: meetings.length,
+      };
+    }
+    // ==========================================
+    // NORMAL BULK SAVE
+    // ==========================================
+
     const existingCount = await this.repository.count({
       where: {
         school_year,
@@ -36,7 +73,6 @@ export class UnscheduledMeetingsService {
       },
     });
 
-    // Existing records found
     if (existingCount > 0 && !override) {
       return {
         exists: true,
@@ -45,7 +81,10 @@ export class UnscheduledMeetingsService {
       };
     }
 
-    // Override existing records
+    // ==========================================
+    // OVERRIDE
+    // ==========================================
+
     if (existingCount > 0 && override) {
       await this.repository.delete({
         school_year,

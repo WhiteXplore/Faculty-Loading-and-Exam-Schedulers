@@ -24,7 +24,11 @@ export class UnscheduledMeetingsController {
   // Bulk meetings
   @Post('add-unscheduled-meetings')
   createMany(@Body() body: any) {
-    return this.service.create(body.meetings || body, body.override || false);
+    return this.service.create(
+      body.meetings || body,
+      body.override || false,
+      body.restore || false,
+    );
   }
 
   @Get('get-all-unscheduled-meetings')

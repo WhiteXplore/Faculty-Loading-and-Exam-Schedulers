@@ -26,10 +26,10 @@
 
     <!-- Content Card -->
     <div class="bg-white border-t-0 mt-2">
-      <tableRooms v-if="activeTab === 'room'" />
-      <tableBuildings v-if="activeTab === 'building'" />
-      <tableBuildingAreas v-if="activeTab === 'setup'" />
       <tableCollegeBranch v-if="activeTab === 'branch'" />
+      <tableBuildingAreas v-if="activeTab === 'setup'" />
+      <tableBuildings v-if="activeTab === 'building'" />
+      <tableRooms v-if="activeTab === 'room'" />
     </div>
   </div>
 </template>
@@ -54,10 +54,10 @@ export default {
     return {
       activeTab: "room",
       tabs: [
-        { label: "Room", value: "room" },
-        { label: "Building", value: "building" },
-        { label: "Setup Time", value: "setup" },
         { label: "College Branch", value: "branch" },
+        { label: "Setup Time", value: "setup" },
+        { label: "Building", value: "building" },
+        { label: "Room", value: "room" },
       ],
     };
   },

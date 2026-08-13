@@ -358,6 +358,17 @@ export default {
             ],
           },
           {
+            // title: "Documents",
+            title: "",
+            items: [
+              {
+                icon: "prospectus",
+                name: "Post-Assessment",
+                route: "/post-assessment",
+              },
+            ],
+          },
+          {
             // title: "Accounts",
             title: "",
 

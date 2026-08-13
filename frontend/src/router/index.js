@@ -142,6 +142,13 @@ const routes = [
         meta: { requiresAuth: true, role: "Admin" },
       },
       {
+        path: "/post-assessment",
+        name: "post-assessment",
+        component: () =>
+          import("@/components/admin/records/PostAssessment.vue"),
+        meta: { requiresAuth: true, role: "Admin" },
+      },
+      {
         path: "/view-curriculum-offers/:institute_id",
         name: "view-curriculum-offers",
         component: () =>

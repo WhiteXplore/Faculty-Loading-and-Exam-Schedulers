@@ -575,12 +575,7 @@
                                 : ''
                             "
                             @focus="expandedRecord.showRoomDropdown = true"
-                            @input="
-                              expandedRecord.room_id = null;
-                              expandedRecord.room_name = null;
-                              expandedRecord.room_type = null;
-                              expandedRecord.room_capacity = null;
-                            "
+                            @input="expandedRecord.room_id = null"
                           />
 
                           <div
@@ -1300,7 +1295,6 @@ import editJoinValdiation from "../faculty-components/edit-join-valdiation.vue";
 import unscheduled from "../faculty-components/unscheduled.vue";
 import UnjoinModal from "../faculty-components/unjoin-validation-modal.vue";
 export default {
-  name: "EditScheduleModal",
   components: { icon, editJoinValdiation, unscheduled, UnjoinModal },
   props: {
     show: Boolean,
@@ -1345,9 +1339,7 @@ export default {
       showAddPanel: false,
       showUnscheduledPanel: false,
       deletedIds: new Set(),
-      highlightedRecordId: null, // Double Space detection
-      lastSpacePressTime: 0,
-      spaceDoubleTapDelay: 350,
+      highlightedRecordId: null,
       isJoined: false,
       joinValidationModalVisible: false,
       pendingJoinRecord: null,
@@ -1371,7 +1363,6 @@ export default {
       panelMode: null,
       expandedRecord: null,
       college_branch: [],
-      restoredUnscheduledMeetings: [],
     };
   },
   computed: {
@@ -1672,139 +1663,13 @@ export default {
     },
     async cancelEdit() {
       try {
-        // -----------------------------------------
-        // CANCEL SPLIT CHANGES
-        // -----------------------------------------
+        const addedSchedules = this.localData.filter((r) => r.isNew);
 
-        const splitRecords = this.localData.filter((r) => r.isSplitRecord);
-
-        if (splitRecords.length) {
-          splitRecords.forEach((splitRecord) => {
-            const parent = this.localData.find(
-              (r) => (r.id || r.tempId) === splitRecord.splitParentId,
-            );
-
-            if (parent?._splitOriginal) {
-              parent.duration = parent._splitOriginal.duration;
-
-              parent.start_hour = parent._splitOriginal.start_hour;
-
-              parent.time_slot = parent._splitOriginal.time_slot;
-
-              delete parent._splitOriginal;
-            }
-          });
-
-          this.localData = this.localData.filter((r) => !r.isSplitRecord);
-        }
-
-        // -----------------------------------------
-        // RESTORE UNSCHEDULED MEETINGS
-        // -----------------------------------------
-        if (this.restoredUnscheduledMeetings.length) {
-          // Group the original records back into their
-          // original unscheduled meeting.
+        if (addedSchedules.length) {
+          // Merge Lecture and Laboratory
           const grouped = {};
 
-          this.restoredUnscheduledMeetings.forEach((meeting) => {
-            const key =
-              meeting.unscheduled_id ||
-              `${meeting.class_id}-${meeting.course_code}`;
-
-            if (!grouped[key]) {
-              grouped[key] = {
-                ...JSON.parse(JSON.stringify(meeting)),
-                type: "",
-                lectureHours: 0,
-                laboratoryHours: 0,
-              };
-            }
-
-            const type = String(meeting.type || "").toLowerCase();
-
-            if (type === "lecture") {
-              grouped[key].lectureHours += Number(meeting.duration || 0);
-            }
-
-            if (type === "laboratory") {
-              grouped[key].laboratoryHours += Number(meeting.duration || 0);
-            }
-          });
-
-          const payload = Object.values(grouped).map((meeting) => {
-            let type = "";
-
-            if (meeting.lectureHours > 0 && meeting.laboratoryHours > 0) {
-              type = "Lecture+Lab";
-            } else if (meeting.lectureHours > 0) {
-              type = "Lecture";
-            } else if (meeting.laboratoryHours > 0) {
-              type = "Laboratory";
-            }
-
-            const restored = {
-              class_id: meeting.class_id,
-              course_code: meeting.course_code,
-              course_id: meeting.course_id,
-              class_size: meeting.class_size,
-              faculty_name: meeting.faculty_name,
-              program_id: meeting.program_id,
-              program_code: meeting.program_code,
-              type,
-              hours: meeting.hours,
-              reason: meeting.reason,
-              school_year: meeting.school_year,
-              semester: meeting.semester,
-            };
-
-            return restored;
-          });
-
-          console.log(
-            "[Cancel Edit] Restoring grouped unscheduled meetings:",
-            payload,
-          );
-
-          const response = await axios.post(
-            `${process.env.VUE_APP_API_BASE_URL}/unscheduled-meetings/add-unscheduled-meetings`,
-            {
-              meetings: payload,
-              restore: true,
-            },
-          );
-
-          console.log("[Cancel Edit] Restore response:", response.data);
-
-          // Remove the temporary schedules from calendar
-          this.localData = this.localData.filter(
-            (r) =>
-              !this.restoredUnscheduledMeetings.some(
-                (u) =>
-                  String(u.class_id) === String(r.class_id) &&
-                  String(u.course_code) === String(r.course_code) &&
-                  r.isNew,
-              ),
-          );
-        }
-
-        // -----------------------------------------
-        // HANDLE MANUALLY ADDED SCHEDULES
-        // -----------------------------------------
-
-        const manualAddedSchedules = this.localData.filter(
-          (r) =>
-            r.isNew &&
-            !this.restoredUnscheduledMeetings.some(
-              (u) =>
-                String(u.class_id) === String(r.class_id) &&
-                String(u.course_code) === String(r.course_code),
-            ),
-        );
-
-        if (manualAddedSchedules.length) {
-          const grouped = {};
-
-          manualAddedSchedules.forEach((r) => {
+          addedSchedules.forEach((r) => {
             const key = `${r.class_id}-${r.course_code}`;
 
             if (!grouped[key]) {
@@ -1836,17 +1701,14 @@ export default {
 
             if (g.lecture && g.laboratory) {
               type = "Lecture+Lab";
-
-              hours =
-                `${g.lecture.toFixed(1)}h lec + ` +
-                `${g.laboratory.toFixed(1)}h lab per week`;
+              hours = `${g.lecture.toFixed(1)}h lec + ${g.laboratory.toFixed(
+                1,
+              )}h lab per week`;
             } else if (g.lecture) {
               type = "Lecture";
-
               hours = `${g.lecture.toFixed(1)}h lec per week`;
             } else {
               type = "Laboratory";
-
               hours = `${g.laboratory.toFixed(1)}h lab per week`;
             }
 
@@ -1863,97 +1725,40 @@ export default {
             };
           });
 
+          // Save merged records to unscheduled
           await axios.post(
             `${process.env.VUE_APP_API_BASE_URL}/unscheduled-meetings/add-unscheduled-meetings`,
             payload,
           );
-        }
 
-        // -----------------------------------------
-        // DELETE TEMPORARY SAVED SCHEDULES
-        // -----------------------------------------
-
-        await Promise.all(
-          this.localData
-            .filter((r) => r.isNew && r.id)
-            .map((r) =>
-              axios.delete(
-                `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${r.id}`,
+          // Delete added schedules from final schedule
+          await Promise.all(
+            addedSchedules
+              .filter((r) => r.id)
+              .map((r) =>
+                axios.delete(
+                  `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/${r.id}`,
+                ),
               ),
-            ),
-        );
-
-        // -----------------------------------------
-        // RESET
-        // -----------------------------------------
-
-        this.restoredUnscheduledMeetings = [];
-
-        this.localData = this.localData.filter((r) => !r.isNew);
-
-        this.expandedRecord = null;
-        this.highlightedRecordId = null;
-
-        this.showAddPanel = false;
-        this.showUnscheduledPanel = false;
-
-        this.selectedInstructorName = "";
+          );
+        }
 
         this.$emit("close");
       } catch (err) {
-        console.error("[Cancel Edit] Failed:", err.response?.data || err);
-
+        console.error(err);
         toast.error("Failed to cancel changes.");
       }
     },
     getAllSchedulesForConflict(record) {
-      if (!record) return [];
-
-      const scheduleMap = new Map();
-
-      // -----------------------------------------
-      // 1. ADD ORIGINAL DATABASE SCHEDULES
-      // -----------------------------------------
-      (this.fullSchedules || []).forEach((schedule) => {
-        const key =
-          schedule.id != null
-            ? `id-${schedule.id}`
-            : schedule.tempId
-            ? `temp-${schedule.tempId}`
-            : null;
-
-        if (!key) return;
-
-        scheduleMap.set(key, schedule);
-      });
-
-      // -----------------------------------------
-      // 2. LOCAL DATA OVERRIDES ORIGINAL DATA
-      // -----------------------------------------
-      (this.localData || []).forEach((schedule) => {
-        const key =
-          schedule.id != null
-            ? `id-${schedule.id}`
-            : schedule.tempId
-            ? `temp-${schedule.tempId}`
-            : null;
-
-        if (!key) return;
-
-        // IMPORTANT:
-        // The edited local version replaces the
-        // original fullSchedules version.
-        scheduleMap.set(key, schedule);
-      });
-
-      // -----------------------------------------
-      // 3. FILTER SCHOOL YEAR + SEMESTER
-      // -----------------------------------------
-      return Array.from(scheduleMap.values()).filter(
-        (schedule) =>
-          String(schedule.school_year).trim() ===
-            String(record.school_year).trim() &&
-          Number(schedule.semester) === Number(record.semester),
+      return [
+        ...this.fullSchedules,
+        ...this.localData.filter(
+          (r) => !this.fullSchedules.some((f) => Number(f.id) === Number(r.id)),
+        ),
+      ].filter(
+        (s) =>
+          String(s.school_year).trim() === String(record.school_year).trim() &&
+          Number(s.semester) === Number(record.semester),
       );
     },
     async fetchCollegeBranch() {
@@ -2037,14 +1842,6 @@ export default {
       }
 
       courses.forEach((course) => {
-        /*
-         * KEEP THE ORIGINAL UNSCHEDULED RECORD.
-         * We will use this exact record when Cancel is clicked.
-         */
-        this.restoredUnscheduledMeetings.push(
-          JSON.parse(JSON.stringify(course)),
-        );
-
         const tempId = `temp-${Date.now()}-${Math.floor(
           Math.random() * 100000,
         )}`;
@@ -2064,6 +1861,10 @@ export default {
           tempId,
           isNew: true,
 
+          /*
+           * Assign to the instructor whose
+           * Unscheduled panel was opened.
+           */
           faculty_name: facultyName,
 
           faculty_id:
@@ -2085,11 +1886,27 @@ export default {
 
           showCampusDropdown: false,
 
+          /*
+           * Keep the current active school year
+           * and semester.
+           */
           school_year: this.activeSchoolYear?.school_year || course.school_year,
 
           semester: this.activeSchoolYear?.semester || course.semester,
         };
 
+        /*
+         * IMPORTANT:
+         *
+         * Do NOT check conflict here.
+         * Do NOT open conflict modal here.
+         *
+         * The record is only temporarily placed
+         * into the calendar.
+         *
+         * Conflict will be checked when the user
+         * drags this record to a new position.
+         */
         this.localData.push(newRecord);
       });
 
@@ -3010,121 +2827,66 @@ export default {
         return [];
       }
 
-      const recordStart = Number(record.start_hour);
+      const recordStart = this.normalizeHour(record.start_hour);
       const recordEnd = recordStart + Number(record.duration);
 
-      // -----------------------------------------
-      // USE EDIT SCHEDULE DATA
-      // -----------------------------------------
       const sourceSchedules = this.getAllSchedulesForConflict(record);
 
       return sourceSchedules
-        .filter((r) => {
-          if (!r) return false;
+        .map((r) => {
+          if (!r) return null;
 
-          // -----------------------------------------
-          // DON'T COMPARE THE RECORD WITH ITSELF
-          // -----------------------------------------
-          const sameId =
-            record.id != null &&
-            r.id != null &&
-            String(record.id) === String(r.id);
+          const rId = r.id?.toString() || r.tempId;
+          const recId = record.id?.toString() || record.tempId;
 
-          const sameTempId =
-            record.tempId != null &&
-            r.tempId != null &&
-            String(record.tempId) === String(r.tempId);
+          // Skip itself
+          if (rId === recId) return null;
 
-          if (sameId || sameTempId) {
-            return false;
-          }
-
-          // -----------------------------------------
-          // SAME JOIN GROUP = NOT A CONFLICT
-          // -----------------------------------------
+          // Ignore schedules in the same joined group
           if (
             record.join_group_id &&
             r.join_group_id &&
             Number(record.join_group_id) === Number(r.join_group_id)
           ) {
-            return false;
+            return null;
           }
 
-          // -----------------------------------------
-          // SAME DAY ONLY
-          // -----------------------------------------
-          if (r.day !== record.day) {
-            return false;
-          }
+          // Same day only
+          if (r.day !== record.day) return null;
 
-          // -----------------------------------------
-          // VALID TIME
-          // -----------------------------------------
-          if (r.start_hour == null || r.duration == null) {
-            return false;
-          }
-
-          const rStart = Number(r.start_hour);
+          const rStart = this.normalizeHour(r.start_hour);
           const rEnd = rStart + Number(r.duration);
 
-          // -----------------------------------------
-          // TIME OVERLAP
-          // -----------------------------------------
-          const overlaps =
-            Math.max(recordStart, rStart) < Math.min(recordEnd, rEnd);
-
-          if (!overlaps) {
-            return false;
+          // Time overlap
+          if (Math.max(recordStart, rStart) >= Math.min(recordEnd, rEnd)) {
+            return null;
           }
 
-          // -----------------------------------------
-          // SAME FACULTY
-          // -----------------------------------------
-          const sameFaculty =
-            (r.faculty_id &&
-              record.faculty_id &&
-              Number(r.faculty_id) === Number(record.faculty_id)) ||
-            (r.faculty_name &&
-              record.faculty_name &&
-              r.faculty_name.trim().toLowerCase() ===
-                record.faculty_name.trim().toLowerCase());
-
-          // -----------------------------------------
-          // SAME ROOM
-          // -----------------------------------------
-          const sameRoom =
-            (record.mode || "").toLowerCase() === "face to face" &&
-            (r.mode || "").toLowerCase() === "face to face" &&
-            r.room_id &&
-            record.room_id &&
-            Number(r.room_id) === Number(record.room_id);
-
-          // -----------------------------------------
-          // SAME CLASS
-          // -----------------------------------------
-          const sameClass =
-            record.class_id &&
-            r.class_id &&
-            Number(r.class_id) === Number(record.class_id);
-
-          // -----------------------------------------
-          // SAME ONLINE SECTION
-          // -----------------------------------------
-          const sameOnlineSection =
-            (record.mode || "").toLowerCase() === "online" &&
-            (r.mode || "").toLowerCase() === "online" &&
-            r.set_name === record.set_name &&
-            Number(r.program_id) === Number(record.program_id) &&
-            Number(r.college_branch_id) === Number(record.college_branch_id);
-
-          return sameFaculty || sameRoom || sameClass || sameOnlineSection;
-        })
-        .map((r) => {
           const reasons = [];
 
-          // -----------------------------------------
-          // FACULTY CONFLICT
-          // -----------------------------------------
+          // SAME CLASS SECTION
+          if (
+            record.class_id &&
+            r.class_id &&
+            Number(record.class_id) === Number(r.class_id)
+          ) {
+            reasons.push("Same class section in the same Day and Time");
+          }
+
+          // SAME ROOM (Face to Face)
+          if (
+            (record.schedule_type || record.mode || "").toLowerCase() ===
+              "face to face" &&
+            (r.schedule_type || r.mode || "").toLowerCase() ===
+              "face to face" &&
+            record.room_id &&
+            r.room_id &&
+            Number(record.room_id) === Number(r.room_id)
+          ) {
+            reasons.push("Same Room");
+          }
+
+          // SAME FACULTY + SAME SCHEDULE TYPE
           const sameFaculty =
             (record.faculty_id &&
               r.faculty_id &&
@@ -3134,77 +2896,35 @@ export default {
               record.faculty_name.trim().toLowerCase() ===
                 r.faculty_name.trim().toLowerCase());
 
-          if (sameFaculty) {
-            reasons.push(
-              `Faculty "${
-                r.faculty_name
-              }" is already assigned from ${this.formatTime(
-                r.start_hour,
-              )} to ${this.formatTime(r.start_hour + Number(r.duration))}.`,
-            );
+          const sameScheduleType =
+            (record.schedule_type || record.mode || "").toLowerCase() ===
+            (r.schedule_type || r.mode || "").toLowerCase();
+
+          if (sameFaculty && sameScheduleType) {
+            reasons.push("Same Faculty + Same schedule_type");
           }
 
-          // -----------------------------------------
-          // ROOM CONFLICT
-          // -----------------------------------------
-          const sameRoom =
-            (record.mode || "").toLowerCase() === "face to face" &&
-            (r.mode || "").toLowerCase() === "face to face" &&
-            r.room_id &&
-            record.room_id &&
-            Number(r.room_id) === Number(record.room_id);
-
-          if (sameRoom) {
-            reasons.push(
-              `Room "${r.room_name}" is already occupied by ${r.course_code} (${
-                r.program_code
-              }-${r.set_name}) from ${this.formatTime(
-                r.start_hour,
-              )} to ${this.formatTime(r.start_hour + Number(r.duration))}.`,
-            );
-          }
-
-          // -----------------------------------------
-          // CLASS CONFLICT
-          // -----------------------------------------
+          // ONLINE CONFLICT
           if (
-            record.class_id &&
-            r.class_id &&
-            Number(r.class_id) === Number(record.class_id)
+            (record.room_name || "").toLowerCase() === "online" &&
+            (r.room_name || "").toLowerCase() === "online" &&
+            record.set_name === r.set_name &&
+            Number(record.program_id) === Number(r.program_id) &&
+            Number(record.college_branch_id) === Number(r.college_branch_id)
           ) {
             reasons.push(
-              `Section ${r.program_code}-${r.set_name} already has a class (${r.course_code}) scheduled during this time.`,
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
             );
           }
 
-          // -----------------------------------------
-          // ONLINE CONFLICT
-          // -----------------------------------------
-          const sameOnlineSection =
-            (record.mode || "").toLowerCase() === "online" &&
-            (r.mode || "").toLowerCase() === "online" &&
-            r.set_name === record.set_name &&
-            Number(r.program_id) === Number(record.program_id) &&
-            Number(r.college_branch_id) === Number(record.college_branch_id);
-
-          if (sameOnlineSection) {
-            reasons.push(
-              `This online section (${r.program_code}-${r.set_name}) already has another online class during this time.`,
-            );
-          }
-
-          // -----------------------------------------
-          // MULTIPLE CONFLICT SUMMARY
-          // -----------------------------------------
-          if (reasons.length > 1) {
-            reasons.unshift(`This schedule has ${reasons.length} conflicts:`);
-          }
+          if (!reasons.length) return null;
 
           return {
             ...r,
-            reason: reasons.join("\n• "),
+            reason: reasons.join(", "),
           };
-        });
+        })
+        .filter(Boolean);
     },
     openConflictModal(record) {
       this.selectedSchedule = {
@@ -3542,153 +3262,6 @@ export default {
         this.saving = false;
       }
     },
-    handleScheduleKeyboard(event) {
-      // Only listen for the Space key
-      if (event.code !== "Space") return;
-
-      // Don't trigger while typing in an input
-      const target = event.target;
-
-      if (
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.tagName === "SELECT" ||
-        target?.isContentEditable
-      ) {
-        return;
-      }
-
-      // Prevent the browser from scrolling when Space is pressed
-      event.preventDefault();
-
-      const now = Date.now();
-
-      // First Space press
-      if (now - this.lastSpacePressTime > this.spaceDoubleTapDelay) {
-        this.lastSpacePressTime = now;
-        return;
-      }
-
-      // Second Space press
-      this.lastSpacePressTime = 0;
-
-      console.log("DOUBLE SPACE DETECTED");
-
-      // We will call the split function in the next step
-      this.splitSelectedLaboratory();
-    },
-    splitSelectedLaboratory() {
-      const record = this.expandedRecord;
-
-      // No schedule selected
-      if (!record) {
-        console.log("No schedule selected.");
-        return;
-      }
-
-      // Only Laboratory
-      if ((record.type || "").toLowerCase() !== "laboratory") {
-        toast.info("Only Laboratory schedules can be split.");
-        return;
-      }
-
-      const duration = Number(record.duration);
-
-      // Laboratory must be MORE than 3 hours
-      if (!Number.isFinite(duration) || duration <= 3) {
-        toast.info(
-          "Only Laboratory schedules longer than 3 hours can be split.",
-        );
-        return;
-      }
-
-      // Check edit permission
-      if (!this.canEditSchedule(record)) {
-        toast.warning("You cannot edit this schedule.");
-        return;
-      }
-
-      console.log("Splitting laboratory:", record);
-
-      // Split duration into two
-      const firstDuration = Number((duration / 2).toFixed(2));
-      const secondDuration = Number((duration - firstDuration).toFixed(2));
-
-      const originalStart = Number(record.start_hour);
-
-      // Second schedule starts after the first half
-      const secondStart = Number((originalStart + firstDuration).toFixed(2));
-
-      // ------------------------------------
-      // FIRST HALF
-      // ------------------------------------
-
-      // Remember the original value so Cancel can restore it
-      if (!record._splitOriginal) {
-        record._splitOriginal = {
-          duration: duration,
-          start_hour: originalStart,
-          time_slot: record.time_slot,
-        };
-      }
-
-      record.duration = firstDuration;
-
-      record.time_slot = this.generateTimeSlot(
-        record.start_hour,
-        record.duration,
-      );
-
-      // ------------------------------------
-      // SECOND HALF
-      // ------------------------------------
-
-      const secondRecord = {
-        ...structuredClone(record),
-
-        id: null,
-
-        tempId: `split-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-
-        start_hour: secondStart,
-        duration: secondDuration,
-
-        time_slot: this.generateTimeSlot(secondStart, secondDuration),
-
-        isNew: true,
-
-        // Mark this as a split-created record
-        isSplitRecord: true,
-
-        // Remember which schedule it came from
-        splitParentId: record.id || record.tempId,
-
-        split_from_id: record.id || record.tempId,
-      };
-
-      // Don't duplicate these IDs
-      delete secondRecord.schedule_id;
-      delete secondRecord.final_generated_id;
-
-      // Add second schedule to local data
-      this.localData.push(secondRecord);
-
-      // Select the newly created second schedule
-      this.expandedRecord = secondRecord;
-      this.highlightedRecordId = secondRecord.tempId;
-
-      // Hide tooltip
-      this.hideScheduleTooltip();
-
-      console.log("Laboratory successfully split:", {
-        original: record,
-        second: secondRecord,
-      });
-
-      toast.success(
-        `${record.course_code || "Laboratory"} split successfully.`,
-      );
-    },
   },
   async mounted() {
     await this.fetchUser();
@@ -3702,14 +3275,6 @@ export default {
     await this.fetchRawUsers();
     await this.loadData();
     await this.fetchAllSchoolYears();
-
-    // Listen for keyboard shortcuts
-    window.addEventListener("keydown", this.handleScheduleKeyboard);
-  },
-
-  beforeUnmount() {
-    // Remove keyboard listener when component is destroyed
-    window.removeEventListener("keydown", this.handleScheduleKeyboard);
   },
 };
 </script>
