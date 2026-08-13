@@ -30,7 +30,7 @@ export class GeneratedScheduledService {
 
       console.log('Running Python script:', scriptPath);
 
-      const pythonProcess = spawn('C:\\Program Files\\Python313\\python.exe', [
+      const pythonProcess = spawn('C:\\Program Files\\Python314\\python.exe', [
         scriptPath,
       ]);
       let stdoutData = '';
@@ -91,10 +91,7 @@ export class GeneratedScheduledService {
   /**
    * ⭐ Run Python Pre-Assessment (feasibility check — no GA run)
    */
-  runPythonFeasibility(
-    instituteId?: string,
-    programId?: string,
-  ): Promise<any> {
+  runPythonFeasibility(instituteId?: string, programId?: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const scriptPath = path
         .resolve(__dirname, '../../../python/feasibility_check.py')
@@ -111,7 +108,7 @@ export class GeneratedScheduledService {
 
       // Run the actual Python script
       const pythonProcess = spawn(
-        'C:\\Program Files\\Python313\\python.exe',
+        'C:\\Program Files\\Python314\\python.exe',
         scriptArgs,
       );
 

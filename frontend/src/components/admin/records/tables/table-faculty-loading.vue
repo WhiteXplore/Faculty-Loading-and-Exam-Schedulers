@@ -445,6 +445,20 @@
             </div>
             <span class="btn-add-text">Save Schedule</span>
           </button>
+
+          <!-- Download -->
+          <button
+            @click="downloadSchedule"
+            :disabled="downloadingSchedule"
+            class="btn-download disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <div class="btn-download-icon">
+              <icon name="download" />
+            </div>
+            <span class="btn-download-text">
+              {{ downloadingSchedule ? "Downloading..." : "Download Schedule" }}
+            </span>
+          </button>
         </div>
       </div>
     </div>
@@ -916,6 +930,7 @@
 
 <script>
 import axios from "axios";
+import * as XLSX from "xlsx";
 import icon from "@/assets/icon.vue";
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import ConflictModal from "@/components/program-chairperson/program-record/faculty-components/conflict-modal.vue";
@@ -979,6 +994,7 @@ export default {
       overrideInfo: null,
       savingSchedule: false,
       overridingSchedule: false,
+      downloadingSchedule: false,
       stopEventBus: null,
       activeSchoolYear: null,
       showInstituteDropdown: false,
@@ -1794,6 +1810,111 @@ export default {
         toast.error("Failed to override schedule.");
       } finally {
         this.overridingSchedule = false;
+      }
+    },
+
+    getCourseTitle(courseCode) {
+      const course = this.coursesList.find((c) => c.course_code === courseCode);
+      return course?.course_title || "";
+    },
+
+    // Excel sheet names: max 31 chars, no : \ / ? * [ ], and unique per workbook
+    sanitizeSheetName(name, used) {
+      let clean = String(name || "Unassigned")
+        .replace(/[:\\/?*[\]]/g, "-")
+        .slice(0, 31);
+      if (!clean) clean = "Sheet";
+
+      let finalName = clean;
+      let suffix = 1;
+      while (used.has(finalName)) {
+        const base = clean.slice(0, 31 - String(suffix).length - 1);
+        finalName = `${base}_${suffix}`;
+        suffix++;
+      }
+      return finalName;
+    },
+
+    async downloadSchedule() {
+      this.downloadingSchedule = true;
+
+      try {
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/final-generated-class-schedule/get-all-final-schedules`,
+        );
+
+        const records = res.data || [];
+
+        if (!records.length) {
+          toast.error(
+            "No saved schedule found. Save a schedule before downloading.",
+          );
+          return;
+        }
+
+        // Group rows by program so each program gets its own sheet
+        const byProgram = {};
+        records.forEach((r) => {
+          const program = r.program_code || "Unassigned";
+          if (!byProgram[program]) byProgram[program] = [];
+          byProgram[program].push(r);
+        });
+
+        const wb = XLSX.utils.book_new();
+        const usedSheetNames = new Set();
+
+        Object.keys(byProgram)
+          .sort()
+          .forEach((program) => {
+            const rows = byProgram[program]
+              .slice()
+              .sort((a, b) =>
+                (a.faculty_name || "").localeCompare(b.faculty_name || ""),
+              )
+              .map((r) => ({
+                "Faculty Name": r.faculty_name || "Unassigned",
+                "Course Code": r.course_code || "",
+                "Course Title": this.getCourseTitle(r.course_code),
+                Section: r.set_name || "",
+                Day: r.day || "",
+                Time:
+                  r.time_slot ||
+                  (r.start_hour != null
+                    ? `${this.formatTime(r.start_hour)} - ${this.formatTime(
+                        r.start_hour + Number(r.duration || 0),
+                      )}`
+                    : ""),
+                Room: r.room_name || "",
+                Mode: r.mode || "",
+              }));
+
+            const ws = XLSX.utils.json_to_sheet(rows);
+            ws["!cols"] = [
+              { wch: 28 },
+              { wch: 14 },
+              { wch: 32 },
+              { wch: 12 },
+              { wch: 12 },
+              { wch: 20 },
+              { wch: 16 },
+              { wch: 14 },
+            ];
+
+            const sheetName = this.sanitizeSheetName(program, usedSheetNames);
+            usedSheetNames.add(sheetName);
+
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+          });
+
+        const timestamp = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `Faculty_Schedule_${timestamp}.xlsx`);
+
+        toast.success("Schedule downloaded successfully!");
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to download schedule.");
+      } finally {
+        this.downloadingSchedule = false;
       }
     },
   },
