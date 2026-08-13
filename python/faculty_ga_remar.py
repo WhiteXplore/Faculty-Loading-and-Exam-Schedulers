@@ -14,10 +14,10 @@ from openpyxl.utils import get_column_letter
 # MySQL Connection (adjust creds/host/db as needed)
 # =========================
 DB_USER = "root"
-DB_PASS = "remar123.."
+DB_PASS = "root"
 DB_HOST = "127.0.0.2"
 DB_PORT = 3306
-DB_NAME = "dnsc_class_scheduler2"
+DB_NAME = "dnsc_class_scheduler_g8"
 
 engine = create_engine(
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
@@ -2573,6 +2573,54 @@ def _repair_try_class(cls, rooms, faculty_id, employment_type, preferred_time,
     return None
 
 
+def _diagnose_unresolved_reason(cls, rooms, faculty_id, faculty_schedule_tracker):
+    """
+    Best-effort explanation for why a class survived every repair tier.
+    Checked in priority order from "the resource doesn't exist at all"
+    (structural, most actionable) down to "everything exists but nothing
+    lines up" (scheduling scarcity, least actionable).
+    """
+    institute_id = cls.get("institute_id")
+    branch_id = cls.get("branch_id")
+    class_size = cls.get("class_size", 30)
+    lecture_week = cls.get("course_lec", 0) * LECTURE_UNIT_TO_HOUR
+    lab_week = cls.get("course_lab", 0) * LAB_UNIT_TO_HOUR
+
+    reasons = []
+
+    if lab_week > 0:
+        lab_rooms = filter_rooms_by_type_and_institute(rooms, "Laboratory", institute_id, branch_id)
+        if not lab_rooms:
+            reasons.append("no Laboratory room available for this institute/branch")
+        elif all(r.get("room_capacity", 0) < class_size - MAX_CAPACITY_EXCESS for r in lab_rooms):
+            reasons.append(f"no Laboratory room large enough for class size {class_size}")
+
+    if lecture_week > 0:
+        lec_rooms = filter_rooms_by_type_and_institute(rooms, "Lecture", institute_id, branch_id)
+        if not lec_rooms:
+            reasons.append("no Lecture room available for this branch")
+        elif all(r.get("room_capacity", 0) < class_size - MAX_CAPACITY_EXCESS for r in lec_rooms):
+            reasons.append(f"no Lecture room large enough for class size {class_size}")
+
+    if reasons:
+        return "Unresolved after repair pass — " + "; ".join(reasons)
+
+    if faculty_id is not None:
+        booked = sum(
+            b["duration"]
+            for day_bookings in faculty_schedule_tracker.get(faculty_id, {}).values()
+            for b in day_bookings
+        )
+        needed = lecture_week + lab_week
+        if booked + needed > FULL_TIME_WEEKLY_HOURS:
+            return (f"Unresolved after repair pass — faculty already booked {booked:.0f}h "
+                    f"this week, no room left for {needed:.0f}h more "
+                    f"(weekly cap {FULL_TIME_WEEKLY_HOURS}h)")
+
+    return ("Unresolved after repair pass — no overlapping free time slot "
+            "for faculty, room, and class section (relaxed soft constraints)")
+
+
 def repair_unscheduled(failed_placements, rooms,
                        schedule_tracker, faculty_schedule_tracker, class_schedule_tracker,
                        faculty_branch_tracker, far_branch_set, lecture_type_tracker,
@@ -2648,7 +2696,8 @@ def repair_unscheduled(failed_placements, rooms,
             "program_code": cls.get("program_code", "Unknown"),
             "type": htype,
             "hours": hours_str,
-            "reason": "Unresolved after repair pass (relaxed soft constraints)",
+            "reason": _diagnose_unresolved_reason(
+                cls, rooms, faculty_id, faculty_schedule_tracker),
         })
     return repaired
 
