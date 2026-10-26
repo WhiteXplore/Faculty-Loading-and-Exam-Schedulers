@@ -298,6 +298,7 @@ export default {
                 bottom: true,
                 children: [
                   // { name: "Instructors", route: "/instructors" },
+                  { name: "Departments", route: "/departments" },
                   { name: "Institutes", route: "/institutes" },
                   { name: "Curriculum", route: "/curriculum" },
                   { name: "Courses", route: "/courses" },
@@ -455,6 +456,18 @@ export default {
                 icon: "prospectus",
                 name: "Pre-Assessment",
                 route: "/prog-pre-assessment",
+              },
+            ],
+          },
+
+          {
+            // title: "Documents",
+            title: "",
+            items: [
+              {
+                icon: "prospectus",
+                name: "Prospectus",
+                route: "/prog-report-curriculum-offers",
               },
             ],
           },

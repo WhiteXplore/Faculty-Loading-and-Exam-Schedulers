@@ -12,55 +12,55 @@ export class CoursesService {
     private readonly courseRepository: Repository<Course>,
     private readonly dataSource: DataSource,
   ) {}
-async createSingleCourse(createCourseDto: any): Promise<Course> {
-  const queryRunner = this.dataSource.createQueryRunner();
+  async createSingleCourse(createCourseDto: any): Promise<Course> {
+    const queryRunner = this.dataSource.createQueryRunner();
 
-  await queryRunner.connect();
-  await queryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  try {
-    const {
-      curriculum_id,
-      course_code,
-      course_title,
-      course_semester,
-      course_level,
-      course_lec,
-      course_lab,
-      course_requisite,
-    } = createCourseDto;
+    try {
+      const {
+        curriculum_id,
+        course_code,
+        course_title,
+        course_semester,
+        course_level,
+        course_lec,
+        course_lab,
+        course_requisite,
+      } = createCourseDto;
 
-    const course = queryRunner.manager.create(Course, {
-      course_code,
-      course_title,
-      course_semester: Number(course_semester),
-      course_level: Number(course_level),
-      course_lec: Number(course_lec),
-      course_lab: Number(course_lab),
-      course_requisite,
-    });
-
-    const savedCourse = await queryRunner.manager.save(Course, course);
-
-    if (curriculum_id) {
-      const curriculumCourse = queryRunner.manager.create(CurriculumCourse, {
-        curriculum_id: Number(curriculum_id),
-        course_id: savedCourse.course_id,
+      const course = queryRunner.manager.create(Course, {
+        course_code,
+        course_title,
+        course_semester: Number(course_semester),
+        course_level: Number(course_level),
+        course_lec: Number(course_lec),
+        course_lab: Number(course_lab),
+        course_requisite,
       });
 
-      await queryRunner.manager.save(CurriculumCourse, curriculumCourse);
+      const savedCourse = await queryRunner.manager.save(Course, course);
+
+      if (curriculum_id) {
+        const curriculumCourse = queryRunner.manager.create(CurriculumCourse, {
+          curriculum_id: Number(curriculum_id),
+          course_id: savedCourse.course_id,
+        });
+
+        await queryRunner.manager.save(CurriculumCourse, curriculumCourse);
+      }
+
+      await queryRunner.commitTransaction();
+
+      return savedCourse;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    await queryRunner.commitTransaction();
-
-    return savedCourse;
-  } catch (error) {
-    await queryRunner.rollbackTransaction();
-    throw error;
-  } finally {
-    await queryRunner.release();
   }
-}
   // 🔹 BULK INSERT COURSES
   // async createMany(createCourseDtos: CreateCourseDto[]) {
   //   const queryRunner = this.dataSource.createQueryRunner();
@@ -83,111 +83,304 @@ async createSingleCourse(createCourseDto: any): Promise<Course> {
   //     await queryRunner.release();
   //   }
   // }
-// 🔹 BULK INSERT COURSES
-async createMany(createCourseDtos: CreateCourseDto[]): Promise<Course[]> {
-  const queryRunner = this.dataSource.createQueryRunner();
+  // 🔹 BULK INSERT COURSES
+  // async createMany(createCourseDtos: CreateCourseDto[]): Promise<Course[]> {
+  //   const queryRunner = this.dataSource.createQueryRunner();
 
-  await queryRunner.connect();
-  await queryRunner.startTransaction();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
 
-  try {
-    if (!createCourseDtos?.length) {
-      await queryRunner.commitTransaction();
-      return [];
-    }
+  //   try {
+  //     if (!createCourseDtos?.length) {
+  //       await queryRunner.commitTransaction();
+  //       return [];
+  //     }
 
-    const normalize = (val: string | number) =>
-      String(val || '')
-        .replace(/\s+/g, '')
-        .toUpperCase()
-        .trim();
+  //     const normalize = (val: string | number) =>
+  //       String(val || '')
+  //         .replace(/\s+/g, '')
+  //         .toUpperCase()
+  //         .trim();
 
-    // =====================================================
-    // REMOVE DUPLICATES INSIDE THE UPLOADED FILE
-    // SAME CODE + LEVEL + SEMESTER = DUPLICATE
-    // =====================================================
-    const uniqueDtos = Array.from(
-      new Map(
-        createCourseDtos.map((item) => {
-          const key = [
-            normalize(item.course_code),
-            normalize(item.course_level),
-            normalize(item.course_semester),
-          ].join('-');
+  //     // =====================================================
+  //     // REMOVE DUPLICATES INSIDE THE UPLOADED FILE
+  //     // SAME CODE + LEVEL + SEMESTER = DUPLICATE
+  //     // =====================================================
+  //     const uniqueDtos = Array.from(
+  //       new Map(
+  //         createCourseDtos.map((item) => {
+  //           const key = [
+  //             normalize(item.course_code),
+  //             normalize(item.course_level),
+  //             normalize(item.course_semester),
+  //           ].join('-');
 
-          return [key, item];
-        }),
-      ).values(),
-    );
+  //           return [key, item];
+  //         }),
+  //       ).values(),
+  //     );
 
-    // =====================================================
-    // FIND EXISTING COURSES
-    // =====================================================
-    const existingCourses = await queryRunner.manager.find(Course);
+  //     // =====================================================
+  //     // FIND EXISTING COURSES
+  //     // =====================================================
+  //     const existingCourses = await queryRunner.manager.find(Course);
 
-    // =====================================================
-    // EXISTING MAP
-    // =====================================================
-    const existingMap = new Map(
-      existingCourses.map((course) => {
-        const key = [
-          normalize(course.course_code),
-          normalize(course.course_level),
-          normalize(course.course_semester),
-        ].join('-');
+  //     // =====================================================
+  //     // EXISTING MAP
+  //     // =====================================================
+  //     const existingMap = new Map(
+  //       existingCourses.map((course) => {
+  //         const key = [
+  //           normalize(course.course_code),
+  //           normalize(course.course_level),
+  //           normalize(course.course_semester),
+  //         ].join('-');
 
-        return [key, course];
-      }),
-    );
+  //         return [key, course];
+  //       }),
+  //     );
 
-    // =====================================================
-    // FILTER NEW COURSES ONLY
-    // =====================================================
-    const toInsert = uniqueDtos.filter((item) => {
-      const key = [
-        normalize(item.course_code),
-        normalize(item.course_level),
-        normalize(item.course_semester),
-      ].join('-');
+  //     // =====================================================
+  //     // FILTER NEW COURSES ONLY
+  //     // =====================================================
+  //     const toInsert = uniqueDtos.filter((item) => {
+  //       const key = [
+  //         normalize(item.course_code),
+  //         normalize(item.course_level),
+  //         normalize(item.course_semester),
+  //       ].join('-');
 
-      return !existingMap.has(key);
-    });
+  //       return !existingMap.has(key);
+  //     });
 
-    // =====================================================
-    // INSERT NEW COURSES
-    // =====================================================
-    if (toInsert.length) {
-      const newCourses = queryRunner.manager.create(
-        Course,
-        toInsert.map((item) => ({
-          course_level: Number(item.course_level),
-          course_semester: Number(item.course_semester),
-          course_code: item.course_code,
-          course_title: item.course_title,
-          course_lec: Number(item.course_lec),
-          course_lab: Number(item.course_lab),
-          course_requisite: item.course_requisite || '',
-        })),
+  //     // =====================================================
+  //     // INSERT NEW COURSES
+  //     // =====================================================
+  //     if (toInsert.length) {
+  //       const newCourses = queryRunner.manager.create(
+  //         Course,
+  //         toInsert.map((item) => ({
+  //           course_level: Number(item.course_level),
+  //           course_semester: Number(item.course_semester),
+  //           course_code: item.course_code,
+  //           course_title: item.course_title,
+  //           course_lec: Number(item.course_lec),
+  //           course_lab: Number(item.course_lab),
+  //           course_requisite: item.course_requisite || '',
+  //         })),
+  //       );
+
+  //       await queryRunner.manager.save(Course, newCourses);
+  //     }
+
+  //     // =====================================================
+  //     // RETURN ALL MATCHING COURSES
+  //     // =====================================================
+  //     const finalCourses = await queryRunner.manager.find(Course);
+
+  //     await queryRunner.commitTransaction();
+
+  //     return finalCourses;
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     throw error;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
+
+  // 🔹 BULK INSERT COURSES
+  // 🔹 BULK INSERT COURSES
+  async createMany(createCourseDtos: CreateCourseDto[]): Promise<Course[]> {
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      if (!createCourseDtos?.length) {
+        await queryRunner.commitTransaction();
+        return [];
+      }
+
+      // =====================================================
+      // NORMALIZE VALUE
+      // =====================================================
+      const normalize = (val: string | number | null | undefined): string => {
+        return String(val ?? '')
+          .replace(/\s+/g, ' ')
+          .toUpperCase()
+          .trim();
+      };
+
+      // =====================================================
+      // COURSE KEY
+      //
+      // Course identity:
+      // 1. Course Code
+      // 2. Course Title
+      // 3. Course Level
+      // 4. Course Semester
+      //
+      // SAME CODE + DIFFERENT TITLE
+      // = DIFFERENT COURSE
+      //
+      // SAME CODE + SAME TITLE + SAME LEVEL + SAME SEMESTER
+      // = DUPLICATE
+      // =====================================================
+      const courseKey = (item: Partial<CreateCourseDto> | Course): string => {
+        return [
+          normalize(item.course_code),
+          normalize(item.course_title),
+          normalize(item.course_level),
+          normalize(item.course_semester),
+        ].join('|');
+      };
+
+      // =====================================================
+      // REMOVE DUPLICATES INSIDE UPLOADED FILE
+      // =====================================================
+      const uniqueDtos = Array.from(
+        new Map(
+          createCourseDtos.map((item) => {
+            const key = courseKey(item);
+            return [key, item];
+          }),
+        ).values(),
       );
 
-      await queryRunner.manager.save(Course, newCourses);
+      // =====================================================
+      // FIND EXISTING COURSES
+      // =====================================================
+      const existingCourses = await queryRunner.manager.find(Course);
+
+      // =====================================================
+      // EXISTING COURSE MAP
+      // =====================================================
+      const existingMap = new Map<string, Course>();
+
+      for (const course of existingCourses) {
+        const key = courseKey(course);
+
+        if (key) {
+          existingMap.set(key, course);
+        }
+      }
+
+      // =====================================================
+      // FIND ONLY NEW COURSES
+      // =====================================================
+      const toInsert = uniqueDtos.filter((item) => {
+        const key = courseKey(item);
+
+        return !existingMap.has(key);
+      });
+
+      // =====================================================
+      // INSERT NEW COURSES
+      // =====================================================
+      let insertedCourses: Course[] = [];
+
+      if (toInsert.length) {
+        const newCourses = queryRunner.manager.create(
+          Course,
+          toInsert.map((item) => ({
+            course_level: Number(item.course_level),
+            course_semester: Number(item.course_semester),
+            course_code: normalize(item.course_code),
+            course_title: String(item.course_title ?? '').trim(),
+            course_lec: Number(item.course_lec) || 0,
+            course_lab: Number(item.course_lab) || 0,
+            course_requisite: item.course_requisite || '',
+          })),
+        );
+
+        insertedCourses = await queryRunner.manager.save(Course, newCourses);
+      }
+
+      // =====================================================
+      // CREATE CURRICULUM-COURSE RELATIONSHIPS
+      //
+      // THIS IS IMPORTANT FOR PROSPECTUS / CURRICULUM OFFERS
+      // =====================================================
+
+      const curriculumCourseRecords: CurriculumCourse[] = [];
+
+      for (const item of uniqueDtos) {
+        if (!item.curriculum_id) {
+          continue;
+        }
+
+        const key = courseKey(item);
+
+        // Find the course either from newly inserted courses
+        // or from existing courses
+        const course =
+          insertedCourses.find((c) => courseKey(c) === key) ||
+          existingMap.get(key);
+
+        if (!course) {
+          continue;
+        }
+
+        const curriculumId = Number(item.curriculum_id);
+
+        // Prevent duplicate curriculum-course relationship
+        const existingRelation = await queryRunner.manager.findOne(
+          CurriculumCourse,
+          {
+            where: {
+              curriculum_id: curriculumId,
+              course_id: course.course_id,
+            },
+          },
+        );
+
+        if (!existingRelation) {
+          const curriculumCourse = queryRunner.manager.create(
+            CurriculumCourse,
+            {
+              curriculum_id: curriculumId,
+              course_id: course.course_id,
+            },
+          );
+
+          curriculumCourseRecords.push(curriculumCourse);
+        }
+      }
+
+      // =====================================================
+      // SAVE CURRICULUM-COURSE RELATIONSHIPS
+      // =====================================================
+      if (curriculumCourseRecords.length) {
+        await queryRunner.manager.save(
+          CurriculumCourse,
+          curriculumCourseRecords,
+        );
+      }
+
+      // =====================================================
+      // RETURN COURSES
+      // =====================================================
+      const finalCourses = await queryRunner.manager.find(Course, {
+        relations: [
+          'curriculumCourses',
+          'curriculumCourses.curriculum',
+          'curriculumCourses.curriculum.program',
+          'curriculumCourses.curriculum.program.institute',
+        ],
+      });
+
+      await queryRunner.commitTransaction();
+
+      return finalCourses;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    // =====================================================
-    // RETURN ALL MATCHING COURSES
-    // =====================================================
-    const finalCourses = await queryRunner.manager.find(Course);
-
-    await queryRunner.commitTransaction();
-
-    return finalCourses;
-  } catch (error) {
-    await queryRunner.rollbackTransaction();
-    throw error;
-  } finally {
-    await queryRunner.release();
   }
-}
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
     const course = this.courseRepository.create(createCourseDto);
     return await this.courseRepository.save(course);
@@ -222,79 +415,79 @@ async createMany(createCourseDtos: CreateCourseDto[]): Promise<Course[]> {
     return course;
   }
 
- async update(id: number, updateCourseDto: any): Promise<Course> {
-  const queryRunner = this.dataSource.createQueryRunner();
+  async update(id: number, updateCourseDto: any): Promise<Course> {
+    const queryRunner = this.dataSource.createQueryRunner();
 
-  await queryRunner.connect();
-  await queryRunner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  try {
-    const {
-      curriculum_id,
-      course_code,
-      course_title,
-      course_semester,
-      course_level,
-      course_lec,
-      course_lab,
-      course_requisite,
-    } = updateCourseDto;
+    try {
+      const {
+        curriculum_id,
+        course_code,
+        course_title,
+        course_semester,
+        course_level,
+        course_lec,
+        course_lab,
+        course_requisite,
+      } = updateCourseDto;
 
-    const course = await queryRunner.manager.findOne(Course, {
-      where: { course_id: id },
-    });
+      const course = await queryRunner.manager.findOne(Course, {
+        where: { course_id: id },
+      });
 
-    if (!course) {
-      throw new NotFoundException(`Course with ID ${id} not found`);
-    }
+      if (!course) {
+        throw new NotFoundException(`Course with ID ${id} not found`);
+      }
 
-    course.course_code = course_code;
-    course.course_title = course_title;
-    course.course_semester = Number(course_semester);
-    course.course_level = Number(course_level);
-    course.course_lec = Number(course_lec);
-    course.course_lab = Number(course_lab);
-    course.course_requisite = course_requisite;
+      course.course_code = course_code;
+      course.course_title = course_title;
+      course.course_semester = Number(course_semester);
+      course.course_level = Number(course_level);
+      course.course_lec = Number(course_lec);
+      course.course_lab = Number(course_lab);
+      course.course_requisite = course_requisite;
 
-    const savedCourse = await queryRunner.manager.save(Course, course);
+      const savedCourse = await queryRunner.manager.save(Course, course);
 
-    if (curriculum_id) {
-      const existingCurriculumCourse = await queryRunner.manager.findOne(
-        CurriculumCourse,
-        {
-          where: { course_id: id },
-        },
-      );
-
-      if (existingCurriculumCourse) {
-        existingCurriculumCourse.curriculum_id = Number(curriculum_id);
-        await queryRunner.manager.save(
-          CurriculumCourse,
-          existingCurriculumCourse,
-        );
-      } else {
-        const newCurriculumCourse = queryRunner.manager.create(
+      if (curriculum_id) {
+        const existingCurriculumCourse = await queryRunner.manager.findOne(
           CurriculumCourse,
           {
-            curriculum_id: Number(curriculum_id),
-            course_id: id,
+            where: { course_id: id },
           },
         );
 
-        await queryRunner.manager.save(CurriculumCourse, newCurriculumCourse);
+        if (existingCurriculumCourse) {
+          existingCurriculumCourse.curriculum_id = Number(curriculum_id);
+          await queryRunner.manager.save(
+            CurriculumCourse,
+            existingCurriculumCourse,
+          );
+        } else {
+          const newCurriculumCourse = queryRunner.manager.create(
+            CurriculumCourse,
+            {
+              curriculum_id: Number(curriculum_id),
+              course_id: id,
+            },
+          );
+
+          await queryRunner.manager.save(CurriculumCourse, newCurriculumCourse);
+        }
       }
+
+      await queryRunner.commitTransaction();
+
+      return savedCourse;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
     }
-
-    await queryRunner.commitTransaction();
-
-    return savedCourse;
-  } catch (error) {
-    await queryRunner.rollbackTransaction();
-    throw error;
-  } finally {
-    await queryRunner.release();
   }
-}
 
   async remove(id: number): Promise<{ message: string }> {
     const course = await this.findOne(id);

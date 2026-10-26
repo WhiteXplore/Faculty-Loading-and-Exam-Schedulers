@@ -60,10 +60,10 @@
               v-if="user?.role === 'Admin'"
             >
               <div
-                class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+                class="relative flex items-center rounded-xl border border-gray-200 bg-white transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
               >
                 <!-- Icon -->
-                <div class="absolute left-3 text-defaultGreen">
+                <div class="absolute left-3 text-gray-400">
                   <svg
                     class="h-4 w-4"
                     fill="none"
@@ -138,11 +138,15 @@
                   <!-- All -->
                   <button
                     @click="selectProgram('all')"
-                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
-                    :class="selectedProgram === 'all' ? 'bg-green-50' : ''"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
+                    :class="
+                      selectedProgram === 'all'
+                        ? 'bg-defaultGreen text-white'
+                        : ''
+                    "
                   >
                     <div>
-                      <p class="text-sm text-gray-800">All Programs</p>
+                      <p class="text-sm">All Programs</p>
                     </div>
                   </button>
 
@@ -151,14 +155,14 @@
                     v-for="program in availablePrograms"
                     :key="program.program_id"
                     @click="selectProgram(program.program_id)"
-                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
                     :class="
                       Number(selectedProgram) === Number(program.program_id)
-                        ? 'bg-green-50'
+                        ? 'bg-defaultGreen text-white'
                         : ''
                     "
                   >
-                    <p class="text-sm text-gray-800">
+                    <p class="text-sm">
                       {{ program.program_code }}
                     </p>
 
@@ -192,9 +196,7 @@
                 @input="changePage(1)"
               />
 
-              <div
-                class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
-              >
+              <div class="search-icon">
                 <svg
                   class="w-4 h-4"
                   fill="none"
@@ -213,7 +215,7 @@
 
       <!-- Faculty Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <div class="max-h-[69vh] overflow-y-auto">
+        <div class="max-h-[73vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead
               class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
@@ -225,11 +227,16 @@
                 <th class="px-4 py-3 text-center font-normal w-[8%]">
                   Unit Loads
                 </th>
+
                 <th class="px-4 py-3 text-center font-normal w-[15%]">
-                  Designation
+                  Department
                 </th>
                 <th class="px-4 py-3 text-center font-normal w-[15%]">
                   Employment Status
+                </th>
+
+                <th class="px-4 py-3 text-center font-normal w-[15%]">
+                  Branch Coordinator
                 </th>
                 <th class="px-4 py-3 text-center font-normal w-[20%]">
                   Preferred Time
@@ -259,7 +266,11 @@
                 </td>
 
                 <td class="px-4 py-3 text-center">
-                  {{ faculty.designation || "-" }}
+                  {{
+                    faculty.department?.department_id
+                      ? faculty.department.department_name
+                      : "-"
+                  }}
                 </td>
 
                 <td class="px-4 py-3 text-center">
@@ -275,7 +286,7 @@
                         faculty.employment_type === 'Contract of Service',
 
                       'border border-orange-600 text-orange-800':
-                        faculty.employment_type === 'Part Time',
+                        faculty.employment_type === 'Part-Timer',
 
                       'text-gray-400 border-gray-300': !faculty.employment_type,
                     }"
@@ -283,6 +294,21 @@
                   >
                     {{ faculty.employment_type || "-" }}
                   </span>
+                </td>
+
+                <td class="px-4 py-3 text-center">
+                  {{
+                    faculty.college_branch?.college_branch_name ||
+                    college_branch?.find(
+                      (branch) =>
+                        Number(branch.college_branch_id) ===
+                        Number(
+                          faculty.college_branch_id ??
+                            faculty.college_branch?.college_branch_id,
+                        ),
+                    )?.college_branch_name ||
+                    "-"
+                  }}
                 </td>
 
                 <td class="px-4 py-3 text-center">
@@ -308,8 +334,12 @@
                   <span v-else class="text-gray-400">-</span>
                 </td>
 
-                <td class="px-4 py-3 items-center justify-center flex relative">
+                <td
+                  class="px-4 py-3 flex items-center justify-center relative"
+                  :class="{ 'z-50': openActionMenuId === faculty.id }"
+                >
                   <div class="per-page-container">
+                    <!-- See Details -->
                     <button
                       class="btn-see-details"
                       @click="toggleView(faculty)"
@@ -317,6 +347,7 @@
                       See Details
                     </button>
 
+                    <!-- Three dots button -->
                     <button
                       class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                       @click.stop="toggleActionMenu(faculty.id)"
@@ -325,12 +356,18 @@
                     </button>
                   </div>
 
-                  <!-- Dropdown actions -->
+                  <!-- Dropdown actions with overlay positioning -->
                   <div
                     v-if="openActionMenuId === faculty.id"
                     @mouseleave="openActionMenuId = null"
-                    class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
+                    :class="[
+                      'absolute right-0 z-[99999] w-40 bg-white border border-gray-200 rounded-lg shadow-xl p-2 space-y-0.5',
+                      paginatedData.length === 1
+                        ? 'bottom-0 top-auto'
+                        : 'top-12 bottom-auto',
+                    ]"
                   >
+                    <!-- Update -->
                     <button
                       class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
                       @click="handleAction('update', faculty)"
@@ -342,6 +379,7 @@
                       Update
                     </button>
 
+                    <!-- Assign -->
                     <button
                       class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
                       @click="handleAction('assign', faculty)"
@@ -500,52 +538,78 @@
 
           <!-- Faculty Information Tab -->
           <div v-if="activeUpdateTab === 'faculty'" class="space-y-3">
-            <div>
-              <label class="font-normal block mb-1">Designation</label>
+            <div class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">Designation:</label>
+
               <input
                 v-model="form.designation"
-                type="text"
-                class="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+                class="input-text"
                 placeholder="Enter designation"
               />
             </div>
 
-            <div>
-              <label class="font-normal block mb-1">Unit Load</label>
+            <div class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">Unit Load:</label>
+
               <input
                 v-model.number="form.unit_load"
                 type="number"
                 min="0"
-                step="0.01"
-                class="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
+                step="0.25"
+                class="input-text"
                 placeholder="Enter unit load"
               />
             </div>
 
-            <div>
-              <label class="font-normal block mb-1">Role</label>
-              <select
-                v-model="form.role"
-                class="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 cursor-pointer"
-              >
-                <option disabled value="">-- Select Role --</option>
-                <option value="Faculty">Faculty</option>
-                <option value="Program Chairperson">Program Chairperson</option>
-                <option value="Admin">Admin</option>
-              </select>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Role -->
+              <div class="flex flex-col space-y-2 w-full">
+                <label class="input-label">Role:</label>
+                <select v-model="form.role" class="input-text cursor-pointer">
+                  <option disabled value="">-- Select Role --</option>
+                  <option value="Faculty">Faculty</option>
+                  <option value="Program Chairperson">
+                    Program Chairperson
+                  </option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
 
-            <div>
-              <label class="font-normal block mb-1">Employment Type</label>
+              <!-- Employment Type -->
+              <div class="flex flex-col space-y-2 w-full">
+                <label class="input-label">Employment Type:</label>
+                <select
+                  v-model="form.employment_type"
+                  class="input-text cursor-pointer"
+                >
+                  <option disabled value="">Select Employment Type</option>
+                  <option value="Permanent">Permanent</option>
+                  <option value="Temporary">Temporary</option>
+                  <option value="Contract of Service">
+                    Contract of Service
+                  </option>
+                  <option value="Part Time">Part Time</option>
+                </select>
+              </div>
+            </div>
+            <!-- Department -->
+
+            <div class="flex flex-col space-y-2 w-full">
+              <label class="input-label">Department:</label>
+
               <select
-                v-model="form.employment_type"
-                class="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 cursor-pointer"
+                v-model.number="form.department_id"
+                class="input-text cursor-pointer"
               >
-                <option disabled value="">Select Employment Type</option>
-                <option value="Permanent">Permanent</option>
-                <option value="Temporary">Temporary</option>
-                <option value="Contract of Service">Contract of Service</option>
-                <option value="Part Time">Part Time</option>
+                <option :value="null">No Department</option>
+
+                <option
+                  v-for="department in departments || []"
+                  :key="department.department_id"
+                  :value="Number(department.department_id)"
+                >
+                  {{ department.department_name }}
+                </option>
               </select>
             </div>
           </div>
@@ -726,9 +790,7 @@
 
   <!-- View Modal -->
   <div v-if="showViewModal" class="modal-overlay">
-    <div
-      class="w-full max-w-5xl rounded-2xl bg-white shadow-xl overflow-hidden"
-    >
+    <div class="w-full h-screen rounded-2xl bg-white shadow-xl overflow-hidden">
       <!-- Header -->
       <div class="modal-header">
         <div class="flex items-center gap-3">
@@ -762,55 +824,154 @@
         class="p-6 space-y-6 max-h-[85vh] overflow-y-auto"
       >
         <!-- Faculty Overview -->
+
+        <!-- Faculty Profile Overview -->
         <div
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm rounded-xl bg-gray-50 p-4"
+          class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
         >
-          <div class="space-y-1">
-            <p class="input-label">Faculty Name</p>
-            <p class="font-medium text-gray-900">
-              {{ selectedFaculty.first_name }}
-              {{ selectedFaculty.last_name }}
-            </p>
+          <!-- Profile Header -->
+          <div
+            class="relative overflow-hidden border-b border-gray-100 p-5 sm:p-6 bg-gradient-to-r from-defaultGreen/10 via-white to-defaultGreen/10"
+          >
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <!-- Faculty Avatar -->
+              <div
+                class="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl border-4 border-white bg-green-50 text-2xl font-bold text-green-800 shadow-sm"
+              >
+                <img
+                  v-if="
+                    selectedFaculty.profile_image_url ||
+                    selectedFaculty.profile_image
+                  "
+                  :src="
+                    selectedFaculty.profile_image_url ||
+                    selectedFaculty.profile_image
+                  "
+                  :alt="`${selectedFaculty.first_name} ${selectedFaculty.last_name}`"
+                  class="h-full w-full object-cover"
+                  @error="$event.target.style.display = 'none'"
+                />
+
+                <span v-else>
+                  {{ selectedFaculty.first_name?.charAt(0) || ""
+                  }}{{ selectedFaculty.last_name?.charAt(0) || "" }}
+                </span>
+              </div>
+
+              <!-- Faculty Name -->
+              <div class="min-w-0 flex-1">
+                <p
+                  class="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-green-700"
+                >
+                  Faculty Profile
+                </p>
+
+                <h3
+                  class="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl"
+                >
+                  {{ selectedFaculty.first_name }}
+                  {{ selectedFaculty.last_name }}
+                </h3>
+
+                <p class="mt-1 text-sm text-gray-500">
+                  {{ selectedFaculty.designation || "Faculty Member" }}
+                </p>
+
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-medium text-green-800"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-600"></span>
+                    {{
+                      selectedFaculty.employment_type || "Employment not set"
+                    }}
+                  </span>
+
+                  <span
+                    class="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-600"
+                  >
+                    {{ selectedFaculty.unit_load ?? 0 }} Unit Load
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="space-y-1">
-            <p class="input-label">Institute</p>
-            <p class="font-medium text-gray-900">
-              {{ selectedFaculty.institute?.institute_name || "N/A" }}
-            </p>
-          </div>
+          <!-- Faculty Details -->
+          <div class="p-4 sm:p-5">
+            <div class="mb-4 flex items-center gap-2">
+              <div
+                class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 text-green-800"
+              >
+                <icon name="user-account" />
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-gray-800">
+                  Faculty Information
+                </h4>
+                <p class="text-xs text-gray-400">
+                  Academic assignment and employment details
+                </p>
+              </div>
+            </div>
 
-          <div class="space-y-1">
-            <p class="input-label">Program</p>
-            <p class="font-medium text-gray-900">
-              {{ selectedFaculty.program?.program_name || "N/A" }}
-            </p>
-          </div>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2">
+              <!-- Institute -->
+              <div
+                class="rounded-xl border border-gray-100 bg-gray-50/70 p-3.5"
+              >
+                <div class="mb-2 flex items-center gap-2 text-gray-400">
+                  <span class="text-xs font-medium">Institute</span>
+                </div>
+                <p class="text-sm font-semibold leading-relaxed text-gray-800">
+                  {{ selectedFaculty.institute?.institute_name || "N/A" }}
+                </p>
+              </div>
 
-          <div class="space-y-1">
-            <p class="input-label">Designation</p>
-            <p class="font-medium text-gray-900">
-              {{ selectedFaculty.designation || "N/A" }}
-            </p>
-          </div>
+              <!-- Department -->
+              <div
+                class="rounded-xl border border-gray-100 bg-gray-50/70 p-3.5"
+              >
+                <div class="mb-2 flex items-center gap-2 text-gray-400">
+                  <span class="text-xs font-medium">Department</span>
+                </div>
+                <p class="text-sm font-semibold leading-relaxed text-gray-800">
+                  {{
+                    (selectedFaculty.department?.department_id,
+                    selectedFaculty.department?.department_name || "N/A")
+                  }}
+                </p>
+              </div>
 
-          <div class="space-y-1">
-            <p class="input-label">Employment Type</p>
-            <p class="font-medium text-gray-900">
-              {{ selectedFaculty.employment_type || "N/A" }}
-            </p>
-          </div>
+              <!-- Program -->
+              <div
+                class="rounded-xl border border-gray-100 bg-gray-50/70 p-3.5"
+              >
+                <div class="mb-2 flex items-center gap-2 text-gray-400">
+                  <span class="text-xs font-medium">Program</span>
+                </div>
+                <p class="text-sm font-semibold leading-relaxed text-gray-800">
+                  {{ selectedFaculty.program?.program_name || "N/A" }}
+                </p>
+              </div>
 
-          <div class="space-y-1">
-            <p class="input-label">Unit Load</p>
-            <p class="font-medium text-gray-900">
-              {{ selectedFaculty.unit_load ?? "N/A" }}
-            </p>
+              <!-- Designation -->
+              <div
+                class="rounded-xl border border-gray-100 bg-gray-50/70 p-3.5"
+              >
+                <div class="mb-2 flex items-center gap-2 text-gray-400">
+                  <span class="text-xs font-medium">Designation</span>
+                </div>
+                <p class="text-sm font-semibold leading-relaxed text-gray-800">
+                  {{ selectedFaculty.designation || "N/A" }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Expertise Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <!-- Expertise -->
           <div
             class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition"
@@ -1156,7 +1317,7 @@ export default {
         unit_load: null,
         role: "",
         employment_type: "",
-
+        department_id: null,
         morningStart: "",
         morningEnd: "",
         afternoonStart: "",
@@ -1178,6 +1339,7 @@ export default {
       "college_branch",
       "faculty_branch",
       "programs",
+      "departments",
     ]),
     availablePrograms() {
       return this.programs || [];
@@ -1262,15 +1424,21 @@ export default {
       // ADMIN
       // ==========================
       if (currentUser.role === "Admin") {
-        list = this.rawusers.filter(
-          (u) => u.role === "Faculty" || u.role === "Program Chairperson",
-        );
+        const allowedRoles = [
+          "Faculty",
+          "Program Chairperson",
+          "Department Chairperson",
+          "Coordinator",
+        ];
+
+        list = this.rawusers.filter((u) => allowedRoles.includes(u.role));
 
         // Program filter
         if (this.selectedProgram !== "all") {
           list = list.filter(
             (u) =>
-              Number(u.program?.program_id) === Number(this.selectedProgram),
+              Number(u.program?.program_id ?? u.program_id) ===
+              Number(this.selectedProgram),
           );
         }
       }
@@ -1288,17 +1456,40 @@ export default {
         list = this.rawusers.filter(
           (u) =>
             u.role === "Faculty" &&
-            Number(u.program?.program_id) === Number(programId) &&
-            Number(u.institute?.institute_id) === Number(instituteId),
+            Number(u.program?.program_id ?? u.program_id) ===
+              Number(programId) &&
+            Number(u.institute?.institute_id ?? u.institute_id) ===
+              Number(instituteId),
         );
       }
 
+      // ==========================
+      // DEPARTMENT CHAIRPERSON
+      // ==========================
+      else if (currentUser.role === "Department Chairperson") {
+        const departmentId =
+          currentUser.department?.department_id ?? currentUser.department_id;
+
+        list = this.rawusers.filter(
+          (u) =>
+            u.role === "Faculty" &&
+            departmentId != null &&
+            Number(u.department?.department_id ?? u.department_id) ===
+              Number(departmentId),
+        );
+      }
+
+      // ==========================
+      // SEARCH FILTER
+      // ==========================
       return list.filter((u) =>
         [
           `${u.first_name || ""} ${u.last_name || ""}`,
           u.program?.program_name || "",
           u.program?.program_code || "",
           u.institute?.institute_name || "",
+          u.department?.department_name || "",
+          u.college_branch?.college_branch_name || "",
           u.designation || "",
           u.role || "",
           u.employment_type || "",
@@ -1308,6 +1499,7 @@ export default {
           .includes(query),
       );
     },
+
     totalPages() {
       return Math.ceil(this.filteredData.length / this.itemsPerPage) || 1;
     },
@@ -1460,9 +1652,13 @@ export default {
 
     async loadUsers() {
       const store = useFetchDataStore();
+      console.log("FACULTY DATA:", store.rawusers);
+      console.log("COLLEGE BRANCHES:", store.college_branch);
       await store.fetchRawUsers();
       await store.fetchFacultyBranch();
       await store.fetchPrograms();
+      await store.fetchDepartments();
+      await store.fetchCollegeBranch();
     },
 
     openAssignModal(user) {
@@ -1486,7 +1682,10 @@ export default {
         unit_load: user.unit_load ?? null,
         role: user.role || "",
         employment_type: user.employment_type || "",
-
+        department_id:
+          user.department?.department_id != null
+            ? Number(user.department.department_id)
+            : null,
         morningStart: "",
         morningEnd: "",
         afternoonStart: "",
@@ -1595,6 +1794,7 @@ export default {
               unit_load: this.form.unit_load,
               role: this.form.role,
               employment_type: this.form.employment_type,
+              department_id: this.form.department_id,
             },
             { withCredentials: true },
           );

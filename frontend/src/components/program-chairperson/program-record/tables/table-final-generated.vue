@@ -172,6 +172,7 @@
                           canEditSchedule(item) &&
                           !(isJoined && Number(item.class_size) >= 30)
                         "
+                        @click.stop="handleScheduleClick(item)"
                         @dblclick.stop="handleDoubleClick(item)"
                         @dragstart="onDragStart($event, item)"
                         @mouseenter="
@@ -742,6 +743,8 @@ export default {
       dragRecords: [],
       temporaryGroups: {},
       currentConflictIndex: 0,
+      clickCount: 0,
+      clickTimer: null,
     };
   },
 
@@ -767,10 +770,7 @@ export default {
         ),
       );
     },
-    rawusers() {
-      const store = useFetchDataStore();
-      return store.rawusers || [];
-    },
+
     collegeBranches() {
       const store = useFetchDataStore();
       return store.college_branch || [];
@@ -824,10 +824,17 @@ export default {
     hasMoreCards() {
       return Object.keys(this.filteredBySearch).length > this.visibleCardCount;
     },
+
+    rawusers() {
+      const store = useFetchDataStore();
+      return Array.isArray(store.rawusers) ? store.rawusers : [];
+    },
+
     coursesList() {
       const store = useFetchDataStore();
-      return store.courses || [];
-    }, // Total units per faculty
+      return Array.isArray(store.courses) ? store.courses : [];
+    },
+    // Total units per faculty
     facultyTotalUnits() {
       const result = {};
 
@@ -1002,6 +1009,26 @@ export default {
   },
 
   methods: {
+    handleScheduleClick() {
+      this.clickCount++;
+
+      clearTimeout(this.clickTimer);
+
+      this.clickTimer = setTimeout(() => {
+        this.clickCount = 0;
+      }, 400);
+
+      if (this.clickCount === 3) {
+        this.selectedDragGroup = [];
+        this.dragRecords = [];
+        this.draggedRecord = null;
+        this.dragGroupMode = false;
+
+        this.clickCount = 0;
+
+        clearTimeout(this.clickTimer);
+      }
+    },
     isTemporaryGrouped(item) {
       const groupId = this.temporaryGroups[item.id];
 
@@ -1116,50 +1143,46 @@ export default {
           Number(s.semester) === Number(this.activeSchoolYear.semester),
       );
     },
+
     canEditSchedule(schedule) {
       if (!schedule) return false;
 
-      // ✅ Newly added schedules always editable
-      if (schedule.isNew) return true;
-
-      // ================================
-      // PROGRAM CHAIRPERSON
-      // ONLY own institute + own program
-      // ================================
+      // Preserve existing Program Chairperson permission
       if (this.user.role === "Program Chairperson") {
-        const sameClassProgram =
-          Number(schedule.class_program_id) === Number(this.user.program_id);
-
-        const sameClassInstitute =
-          Number(schedule.class_institute_id) ===
-          Number(this.user.institute_id);
-
-        return sameClassProgram && sameClassInstitute;
-      }
-
-      // ==========================================
-      // DEPARTMENT CHAIRPERSON
-      // Can edit EVERYTHING
-      // EXCEPT own exact institute + program
-      // ==========================================
-      if (this.user.role === "Department Chairperson") {
-        // Department Chair only sees their own faculty already
-        // so just check if the class belongs to their own program
-
-        const ownsSection =
+        return (
           Number(schedule.class_program_id) === Number(this.user.program_id) &&
-          Number(schedule.class_institute_id) ===
-            Number(this.user.institute_id);
-
-        // Own section = Program Chair responsibility
-        if (ownsSection) {
-          return false;
-        }
-
-        // Faculty teaching outside the department
-        return true;
+          Number(schedule.class_institute_id) === Number(this.user.institute_id)
+        );
       }
+
+      // Department Chairperson
+      if (this.user.role === "Department Chairperson") {
+        const currentProgramId = Number(this.user.program_id);
+
+        const currentDepartmentId = Number(
+          this.user.department?.department_id ?? this.user.department_id,
+        );
+
+        const facultyProgramId = Number(schedule.faculty_program_id);
+        const facultyDepartmentId = Number(schedule.faculty_department_id);
+
+        const classProgramId = Number(schedule.class_program_id);
+
+        return (
+          Number.isFinite(currentProgramId) &&
+          Number.isFinite(currentDepartmentId) &&
+          Number.isFinite(facultyProgramId) &&
+          Number.isFinite(facultyDepartmentId) &&
+          Number.isFinite(classProgramId) &&
+          facultyProgramId === currentProgramId &&
+          facultyDepartmentId === currentDepartmentId &&
+          classProgramId !== currentProgramId
+        );
+      }
+
+      return true;
     },
+
     async fetchCollegeBranch() {
       const store = useFetchDataStore();
       await store.fetchCollegeBranch();
@@ -1187,30 +1210,33 @@ export default {
 
       this.joinIndex = index;
     },
+
     rebuildAllIndexes() {
-      this.groupedSchedule = this.groupByInstructor(this.finalSchedules);
+      let schedules = [...(this.finalSchedules || [])];
 
-      // Department Chairperson: filter faculty cards only
-      if (this.user.role === "Department Chairperson") {
-        this.groupedSchedule = Object.fromEntries(
-          Object.entries(this.groupedSchedule).filter(([, schedules]) => {
-            const first = schedules[0];
+      const currentDepartmentId =
+        this.user?.department?.department_id ?? this.user?.department_id;
 
-            return (
-              Number(first.faculty_program_id) ===
-                Number(this.user.program_id) &&
-              Number(first.faculty_institute_id) ===
-                Number(this.user.institute_id)
-            );
-          }),
-        );
+      if (this.user?.role === "Department Chairperson") {
+        if (currentDepartmentId == null) {
+          schedules = [];
+        } else {
+          schedules = schedules.filter(
+            (schedule) =>
+              schedule.faculty_department_id != null &&
+              Number(schedule.faculty_department_id) ===
+                Number(currentDepartmentId),
+          );
+        }
       }
 
+      this.groupedSchedule = this.groupByInstructor(schedules);
       this.filteredGroupedSchedule = { ...this.groupedSchedule };
 
       this.buildScheduleIndex();
       this.buildJoinIndex();
     },
+
     handleUnjoin(record) {
       if (!record.is_joined || !record.join_group_id) return;
 
@@ -2211,6 +2237,12 @@ export default {
             display_institute_code:
               cls?.program?.institute?.institute_code || "",
 
+            // Faculty home department
+            faculty_department_id:
+              faculty?.department?.department_id ??
+              faculty?.department_id ??
+              null,
+
             // Faculty home program (NEW)
             faculty_program_id: faculty?.program?.program_id || null,
             // Faculty Home Program
@@ -2267,30 +2299,26 @@ export default {
         }
         // ================================
         // DEPARTMENT CHAIRPERSON
+        // Match logged-in user's department
+        // with the faculty department in final schedules
         // ================================
-        // else if (this.user.role === "Department Chairperson") {
-        //   // Only faculty under my department
-        //   const ownedFacultyIds = [
-        //     ...new Set(
-        //       schedules
-        //         .filter(
-        //           (s) =>
-        //             Number(s.faculty_program_id) ===
-        //               Number(this.user.program_id) &&
-        //             Number(s.faculty_institute_id) ===
-        //               Number(this.user.institute_id),
-        //         )
-        //         .map((s) => s.faculty_id),
-        //     ),
-        //   ];
+        else if (this.user.role === "Department Chairperson") {
+          const currentDepartmentId =
+            this.user.department?.department_id ?? this.user.department_id;
 
-        //   schedules = schedules.filter((s) =>
-        //     ownedFacultyIds.includes(s.faculty_id),
-        //   );
-        // }
-        // ================================
-        // SAVE
-        // ================================
+          if (currentDepartmentId == null) {
+            schedules = [];
+          } else {
+            schedules = schedules.filter((schedule) => {
+              return (
+                schedule.faculty_department_id != null &&
+                Number(schedule.faculty_department_id) ===
+                  Number(currentDepartmentId)
+              );
+            });
+          }
+        }
+
         this.finalSchedules = schedules;
 
         this.buildScheduleIndex();

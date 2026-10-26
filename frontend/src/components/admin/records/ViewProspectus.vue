@@ -1,143 +1,73 @@
 <template>
-  <div class="min-h-screen rounded-xl bg-[#F4F7F5] px-2 text-gray-800">
+  <div class="min-h-screen rounded-xl bg-[#F4F7F5] p-5 text-gray-800">
     <!-- TOP BAR -->
-    <div class="flex justify-between py-2">
+    <div
+      class="mb-5 flex flex-col gap-4 rounded-2xl border border-white/80 bg-white/90 p-5 shadow-sm backdrop-blur md:flex-row md:items-center md:justify-between"
+    >
       <div>
-        <div @click="goBack" class="btn-goBack">
-          <div class="btn-goBack-icon">
-            <icon name="circle-arrow-left" />
-          </div>
-
-          <span class="btn-add-text">Go back</span>
-        </div>
+        <p
+          class="text-xs font-semibold uppercase tracking-[0.25em] text-defaultGreen"
+        >
+          Curriculum Report
+        </p>
+        <h1 class="mt-1 text-2xl font-bold tracking-tight text-gray-900">
+          {{ currentInstituteName }}
+        </h1>
+        <p class="mt-1 text-sm text-gray-500">
+          View and generate curriculum checklist by program.
+        </p>
       </div>
+
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <!-- Program Select -->
-        <div class="relative w-full sm:w-[22rem]" ref="programDropdownRef">
-          <div
-            class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+        <div class="relative w-full sm:w-[22rem]">
+          <select
+            v-model="selectedProgram"
+            id="program"
+            class="h-11 w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 pr-11 text-sm font-semibold text-gray-800 shadow-inner outline-none transition-all duration-300 hover:border-defaultGreen hover:bg-white focus:border-defaultGreen focus:bg-white focus:ring-4 focus:ring-green-100"
           >
-            <div class="absolute left-3 text-defaultGreen">
-              <svg
-                class="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 6v6l4 2"
-                />
-                <circle cx="12" cy="12" r="9" />
-              </svg>
-            </div>
-
-            <button
-              type="button"
-              @click="showProgramDropdown = !showProgramDropdown"
-              class="w-full rounded-xl bg-transparent py-3 pl-10 pr-10 text-left text-sm font-semibold text-gray-700 outline-none"
+            <option value="" disabled>Select a program</option>
+            <option
+              v-for="program in uniquePrograms"
+              :key="program.program_id"
+              :value="program.program_id"
             >
-              <span v-if="selectedProgramData">
-                {{ selectedProgramData.program_code }} -
-                {{ selectedProgramData.curriculum_start_year }} -
-                {{ selectedProgramData.curriculum_end_year }}
-              </span>
-              <span v-else class="text-gray-400">Select a program</span>
-            </button>
-
-            <button
-              type="button"
-              @click="showProgramDropdown = !showProgramDropdown"
-              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
-            >
-              <svg
-                class="h-4 w-4 transition-transform duration-200"
-                :class="{ 'rotate-180': showProgramDropdown }"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-          </div>
+              {{ program.program_name }}
+            </option>
+          </select>
 
           <div
-            v-if="showProgramDropdown"
-            class="absolute right-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
+            class="pointer-events-none absolute inset-y-0 right-4 flex items-center"
           >
-            <div class="border-b border-gray-100 px-4 py-3">
-              <p
-                class="text-xs font-semibold uppercase tracking-wide text-gray-400"
-              >
-                Curriculum Prospectus
-              </p>
-            </div>
-
-            <div class="max-h-[260px] overflow-y-auto p-1.5">
-              <button
-                v-for="program in uniquePrograms"
-                :key="program.value"
-                type="button"
-                @click="selectProgram(program)"
-                class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left transition hover:bg-green-50"
-                :class="selectedProgram === program.value ? 'bg-green-50' : ''"
-              >
-                <div>
-                  <div class="flex justify-between items-center w-[16vw]">
-                    <p class="text-sm font-semibold text-gray-800">
-                      {{ program.program_code }}
-                    </p>
-                    <span
-                      class="rounded-full bg-green-50 px-2.5 py-1 text-[11px] font-semibold text-green-700"
-                    >
-                      {{ program.curriculum_start_year }} -
-                      {{ program.curriculum_end_year }}
-                    </span>
-                  </div>
-
-                  <p class="text-xs text-gray-500">
-                    {{ program.program_name }}
-                  </p>
-                </div>
-              </button>
-
-              <div
-                v-if="uniquePrograms.length === 0"
-                class="px-4 py-6 text-center text-sm text-gray-400"
-              >
-                No program found
-              </div>
-            </div>
-
-            <div v-if="selectedProgram" class="border-t border-gray-100 p-2">
-              <button
-                type="button"
-                @click="clearProgramSelection"
-                class="w-full rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition hover:bg-gray-50 hover:text-gray-700"
-              >
-                Clear selection
-              </button>
-            </div>
+            <svg
+              class="h-4 w-4 text-defaultGreen"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
           </div>
         </div>
 
         <!-- Generate Report Button -->
-
-        <div @click="downloadProspectusPdf" class="btn-download">
-          <div class="btn-download-icon">
-            <icon name="circle-arrow-down" />
-          </div>
-
-          <span class="btn-add-text"> Download Prospectus</span>
-        </div>
+        <button
+          type="button"
+          @click="toggleGenerate"
+          class="group inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-defaultGreen px-5 text-sm font-semibold text-white shadow-md shadow-green-900/10 transition-all duration-300 hover:-translate-y-0.5 hover:bg-green-700 hover:shadow-lg"
+        >
+          <span
+            class="flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition group-hover:bg-white/25"
+          >
+            <icon :name="'circle-add'" />
+          </span>
+          Generate Report
+        </button>
       </div>
     </div>
 
@@ -147,7 +77,45 @@
       class="h-[82vh] overflow-auto rounded-2xl border border-gray-100 bg-white p-6 shadow-xl shadow-gray-200/60"
     >
       <!-- REPORT HEADER -->
-      <div class="mb-4 overflow-hidden">
+      <div
+        class="mb-6 overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br from-white via-white to-green-50"
+      >
+        <!-- <div
+          class="flex flex-col gap-5 p-6 lg:flex-row lg:items-center lg:justify-between"
+        >
+          <div class="flex items-center gap-4">
+            <div
+              class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-gray-100"
+            >
+              <img
+                src="@/assets/img/dnsc_logo.png"
+                alt="DNSC Logo"
+                class="h-16 w-16 object-contain"
+              />
+            </div>
+
+            <div>
+              <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
+                DAVAO DEL NORTE
+              </h2>
+              <h3 class="text-xl font-medium tracking-wide text-gray-700">
+                STATE COLLEGE
+              </h3>
+              <p class="mt-1 text-sm italic text-gray-500">
+                "Inspiring Change, Creating Futures"
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="rounded-2xl border border-gray-100 bg-white/80 px-5 py-4 text-sm text-gray-600 shadow-sm"
+          >
+            <p class="font-medium">president@dnsc.edu.ph</p>
+            <p>dnsc.edu.ph</p>
+            <p>@officialdnsc</p>
+          </div>
+        </div> -->
+
         <div class="px-6 py-5 text-center">
           <p
             class="text-xs font-semibold uppercase tracking-[0.25em] text-defaultGreen"
@@ -308,12 +276,12 @@
     <!-- SELECT PROGRAM EMPTY STATE -->
     <div
       v-else
-      class="flex h-[84vh] flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white text-center shadow-sm"
+      class="flex h-[70vh] flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white text-center shadow-sm"
     >
       <div
         class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-defaultGreen"
       >
-        <icon name="book-open" />
+        <icon :name="'book'" />
       </div>
       <h2 class="text-lg font-bold text-gray-800">Select a program</h2>
       <p class="mt-1 text-sm text-gray-500">
@@ -328,9 +296,7 @@ import icon from "@/assets/icon.vue";
 import { mapState } from "pinia";
 import { useFetchDataStore } from "@/store/fetch-data-store";
 import { eventBus } from "@/bus/event-bus";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-pdfMake.vfs = pdfFonts.vfs;
+
 export default {
   name: "ViewReportCurriculumPage",
 
@@ -344,7 +310,6 @@ export default {
       instituteId: null,
       activeSchoolYear: null,
       stopEventBus: null,
-      showProgramDropdown: false,
     };
   },
 
@@ -374,82 +339,64 @@ export default {
     uniquePrograms() {
       if (!this.instituteId) return [];
 
-      const map = new Map();
-
-      (this.curriculum_courses || []).forEach((item) => {
-        const curriculum = item.curriculum;
-        const program = curriculum?.program;
-
-        if (!curriculum || !program) return;
-
-        if (String(curriculum.institute_id) !== String(this.instituteId))
-          return;
-
-        // IMPORTANT
-        const key = String(curriculum.curriculum_id);
-
-        if (!map.has(key)) {
-          map.set(key, {
-            value: String(curriculum.curriculum_id),
-
-            curriculum_id: curriculum.curriculum_id,
-
-            program_id: curriculum.program_id,
-
-            program_name: program.program_name,
-
-            program_code: program.program_code,
-
-            curriculum_start_year: curriculum.curriculum_start_year,
-
-            curriculum_end_year: curriculum.curriculum_end_year,
-          });
-        }
-      });
-
-      return Array.from(map.values());
+      return this.programs
+        .filter(
+          (program) =>
+            String(program.institute_id) === String(this.instituteId),
+        )
+        .map((program) => ({
+          program_id: program.program_id,
+          program_name: program.program_name,
+          program_code: program.program_code,
+        }));
     },
+
     selectedProgramData() {
-      return this.uniquePrograms.find(
-        (program) => String(program.value) === String(this.selectedProgram),
+      return this.programs.find(
+        (program) =>
+          String(program.program_id) === String(this.selectedProgram) &&
+          String(program.institute_id) === String(this.instituteId),
       );
     },
 
     filteredCourses() {
       if (!this.selectedProgram || !this.instituteId) return [];
 
-      return (this.curriculum_courses || [])
-        .filter((item) => {
+      let result = this.curriculum_courses || [];
+
+      result = result.filter((item) => {
+        return (
+          String(item.curriculum?.institute_id) === String(this.instituteId) &&
+          String(item.curriculum?.program_id) === String(this.selectedProgram)
+        );
+      });
+
+      if (this.activeSchoolYear) {
+        result = result.filter((item) => {
           return (
-            String(item.curriculum?.institute_id) ===
-              String(this.instituteId) &&
-            // ONLY FILTER BY CURRICULUM ID
-            String(item.curriculum?.curriculum_id) ===
-              String(this.selectedProgram)
+            String(item.curriculum?.curriculum_start_year) ===
+              String(this.activeSchoolYear.start_year) &&
+            String(item.curriculum?.curriculum_end_year) ===
+              String(this.activeSchoolYear.end_year) &&
+            Number(item.course?.course_semester) ===
+              Number(this.activeSchoolYear.semester)
           );
-        })
-        .map((item) => ({
-          curriculum_course_id: item.curriculum_course_id,
+        });
+      }
 
-          curriculum: item.curriculum,
-
-          course_id: item.course?.course_id,
-
-          course_code: item.course?.course_code,
-
-          course_description:
-            item.course?.course_title || item.course?.course_description,
-
-          course_semester: item.course?.course_semester,
-
-          course_level: item.course?.course_level,
-
-          course_lec: Number(item.course?.course_lec || 0),
-
-          course_lab: Number(item.course?.course_lab || 0),
-
-          course_requisite: item.course?.course_requisite || "",
-        }));
+      return result.map((item) => ({
+        curriculum_course_id: item.curriculum_course_id,
+        curriculum: item.curriculum,
+        course_id: item.course?.course_id,
+        course_code: item.course?.course_code,
+        course_description:
+          item.course?.course_title || item.course?.course_description,
+        course_semester: item.course?.course_semester,
+        course_level: item.course?.course_level,
+        course_lec: Number(item.course?.course_lec || 0),
+        course_lab: Number(item.course?.course_lab || 0),
+        course_requisite: item.course?.course_requisite || "",
+      }));
     },
 
     groupedCourses() {
@@ -480,27 +427,14 @@ export default {
     uniquePrograms: {
       immediate: true,
       handler(programs) {
-        if (!programs.length) {
-          this.selectedProgram = "";
+        if (!this.selectedProgram && programs.length) {
+          this.selectedProgram = programs[0].program_id;
         }
       },
     },
   },
 
   methods: {
-    goBack() {
-      this.$router.push("/report-curriculum-offers");
-    },
-
-    selectProgram(program) {
-      this.selectedProgram = program.value;
-      this.showProgramDropdown = false;
-    },
-
-    clearProgramSelection() {
-      this.selectedProgram = "";
-      this.showProgramDropdown = false;
-    },
     formatYearLevel(level) {
       switch (Number(level)) {
         case 1:
@@ -522,170 +456,13 @@ export default {
           return "First Semester";
         case 2:
           return "Second Semester";
-        case 3:
-          return "Summer";
         default:
           return `Semester ${sem}`;
       }
     },
-    downloadProspectusPdf() {
-      if (!this.groupedCourses.length) {
-        alert("No curriculum checklist available to download.");
-        return;
-      }
 
-      const body = [];
-
-      body.push([
-        { text: "Code", bold: true },
-        { text: "Description", bold: true },
-        { text: "Sem", bold: true, alignment: "center" },
-        { text: "Level", bold: true, alignment: "center" },
-        { text: "Lec", bold: true, alignment: "center" },
-        { text: "Lab", bold: true, alignment: "center" },
-        { text: "Units", bold: true, alignment: "center" },
-        { text: "Requisite", bold: true },
-      ]);
-
-      this.groupedCourses.forEach((group) => {
-        body.push([
-          {
-            text: `${this.formatYearLevel(group.level)} - ${this.formatSemester(
-              group.semester,
-            )}`,
-            colSpan: 8,
-            bold: true,
-            fillColor: "#EAF5EE",
-            color: "#166534",
-            margin: [0, 5, 0, 5],
-          },
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-          {},
-        ]);
-
-        group.courses.forEach((course) => {
-          body.push([
-            course.course_code || "",
-            course.course_description || course.course_title || "",
-            { text: String(course.course_semester || ""), alignment: "center" },
-            { text: String(course.course_level || ""), alignment: "center" },
-            { text: String(course.course_lec || 0), alignment: "center" },
-            { text: String(course.course_lab || 0), alignment: "center" },
-            {
-              text: String(
-                Number(course.course_lec || 0) + Number(course.course_lab || 0),
-              ),
-              alignment: "center",
-              bold: true,
-            },
-            course.course_requisite || "None",
-          ]);
-        });
-
-        const totalUnits = group.courses.reduce(
-          (sum, course) =>
-            sum +
-            Number(course.course_lec || 0) +
-            Number(course.course_lab || 0),
-          0,
-        );
-
-        body.push([
-          {
-            text: "Total Credit Units",
-            colSpan: 6,
-            alignment: "right",
-            bold: true,
-          },
-          {},
-          {},
-          {},
-          {},
-          {},
-          {
-            text: String(totalUnits),
-            alignment: "center",
-            bold: true,
-            color: "#166534",
-          },
-          "",
-        ]);
-      });
-
-      const docDefinition = {
-        pageSize: "A4",
-        pageOrientation: "landscape",
-        pageMargins: [30, 30, 30, 30],
-
-        content: [
-          {
-            text: this.currentInstituteName,
-            alignment: "center",
-            bold: true,
-            fontSize: 13,
-          },
-          {
-            text:
-              this.selectedProgramData?.program_name || "No program selected",
-            alignment: "center",
-            fontSize: 11,
-            margin: [0, 2, 0, 2],
-          },
-          {
-            text: this.filteredCourses.length
-              ? `Curriculum Year ${
-                  this.filteredCourses[0].curriculum?.curriculum_start_year ||
-                  ""
-                } - ${
-                  this.filteredCourses[0].curriculum?.curriculum_end_year || ""
-                }`
-              : "",
-            alignment: "center",
-            fontSize: 10,
-            margin: [0, 0, 0, 15],
-          },
-          {
-            table: {
-              headerRows: 1,
-              widths: ["10%", "30%", "7%", "7%", "7%", "7%", "8%", "24%"],
-              body,
-            },
-            layout: {
-              fillColor(rowIndex) {
-                return rowIndex === 0 ? "#F3F4F6" : null;
-              },
-              hLineColor() {
-                return "#D1D5DB";
-              },
-              vLineColor() {
-                return "#D1D5DB";
-              },
-            },
-            fontSize: 8,
-          },
-        ],
-
-        defaultStyle: {
-          fontSize: 9,
-        },
-      };
-
-      const startYear =
-        this.filteredCourses[0]?.curriculum?.curriculum_start_year || "Unknown";
-
-      const endYear =
-        this.filteredCourses[0]?.curriculum?.curriculum_end_year || "Unknown";
-
-      const fileName = `Curriculum_Checklist_${
-        this.selectedProgramData?.program_code || "Prospectus"
-      }_${startYear}-${endYear}.pdf`;
-
-      pdfMake.createPdf(docDefinition).download(fileName);
+    toggleGenerate() {
+      window.print();
     },
   },
 

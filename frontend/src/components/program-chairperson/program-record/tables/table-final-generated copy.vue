@@ -20,7 +20,7 @@
               class="w-4 h-4 text-blue-600 group-hover:text-blue-600"
             />
           </div>
-             <span class="btn-add-text">
+          <span class="btn-add-text">
             {{ showFacultyTable ? "View Cards" : "View Faculty" }}
           </span>
         </button>
@@ -40,7 +40,7 @@
               class="w-4 h-4 text-yellow-600 group-hover:text-yellow-600"
             />
           </div>
-             <span class="btn-add-text"> Swap </span>
+          <span class="btn-add-text"> Swap </span>
         </button>
         <div
           class="flex items-center gap-3 flex-wrap ml-auto"
@@ -112,7 +112,7 @@
         class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
       >
         <icon name="arrow-left" class="w-4 h-4" />
-           <span class="btn-add-text">Back to Table</span>
+        <span class="btn-add-text">Back to Table</span>
       </button>
     </div>
 
@@ -125,7 +125,7 @@
             class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
           >
             <!-- TODO  Items per page -->
-       <div class="per-page-container">
+            <div class="per-page-container">
               <div class="relative">
                 <select
                   v-model="itemsPerPage"
@@ -166,9 +166,7 @@
                 class="search-input"
                 @input="changePage(1)"
               />
-              <div
-                class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
-              >
+              <div class="search-icon">
                 <svg
                   class="w-4 h-4"
                   fill="none"
@@ -185,7 +183,7 @@
 
           <!-- TODO  Faculty Table -->
           <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-            <div class="max-h-[69vh] overflow-y-auto">
+            <div class="max-h-[73vh] overflow-y-auto">
               <table class="min-w-full text-sm text-gray-700 border-collapse">
                 <thead
                   class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"

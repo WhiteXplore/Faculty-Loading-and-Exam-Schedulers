@@ -26,7 +26,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </div>
           </div>
@@ -63,9 +67,11 @@
 
       <!-- TABLE -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <div class="max-h-[69vh] overflow-y-auto">
+        <div class="max-h-[73vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
-            <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+            <thead
+              class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+            >
               <tr>
                 <th class="px-4 py-3 text-left font-normal">Room</th>
                 <th class="px-4 py-3 text-center font-normal">Day</th>
@@ -106,10 +112,14 @@
                     class="flex flex-col items-center justify-center text-center text-gray-500"
                   >
                     <div class="text-center text-gray-500">
-                      <p class="text-lg font-semibold mb-2">No schedule data available</p>
+                      <p class="text-lg font-semibold mb-2">
+                        No schedule data available
+                      </p>
                       <p class="text-sm text-gray-400">
                         Please click
-                        <span class="font-medium text-defaultGreen">"Generate"</span>
+                        <span class="font-medium text-defaultGreen"
+                          >"Generate"</span
+                        >
                         to generate schedule data.
                       </p>
                     </div>
@@ -124,7 +134,8 @@
       <!-- PAGINATION (EXACT DESIGN AS ROOM TABLE) -->
       <div class="flex justify-between items-center mt-4">
         <div class="text-gray-700 text-sm">
-          Showing {{ startIndex }} to {{ endIndex }} of {{ filteredData.length }} entries
+          Showing {{ startIndex }} to {{ endIndex }} of
+          {{ filteredData.length }} entries
         </div>
 
         <div class="flex items-center gap-1 text-sm">
@@ -206,14 +217,16 @@ export default {
             (s.faculty_name && s.faculty_name.toLowerCase().includes(q)) ||
             (s.course_code && s.course_code.toLowerCase().includes(q)) ||
             (s.program_code && s.program_code.toLowerCase().includes(q)) ||
-            (s.set_name && s.set_name.toLowerCase().includes(q))
+            (s.set_name && s.set_name.toLowerCase().includes(q)),
         );
       }
 
       return list.sort((a, b) => {
-        if (a.room_name !== b.room_name) return a.room_name.localeCompare(b.room_name);
+        if (a.room_name !== b.room_name)
+          return a.room_name.localeCompare(b.room_name);
 
-        if (a.day !== b.day) return this.days.indexOf(a.day) - this.days.indexOf(b.day);
+        if (a.day !== b.day)
+          return this.days.indexOf(a.day) - this.days.indexOf(b.day);
 
         return a.start_hour - b.start_hour;
       });

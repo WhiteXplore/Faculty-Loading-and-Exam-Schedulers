@@ -4,6 +4,7 @@ import { Class } from 'src/class/entities/class.entity';
 import { FacultyBranch } from 'src/faculty_branch/entities/faculty_branch.entity';
 
 import { BuildingArea } from 'src/building_areas/entities/building_area.entity';
+import { User_Accounts } from 'src/user/entities/user.entity';
 
 @Entity('college_branch')
 export class CollegeBranch {
@@ -22,4 +23,7 @@ export class CollegeBranch {
   // ONE CollegeBranch → MANY BuildingAreas
   @OneToMany(() => BuildingArea, (area) => area.collegeBranch)
   buildingAreas: BuildingArea[];
+
+  @OneToMany(() => User_Accounts, (user) => user.college_branch)
+  users: User_Accounts[];
 }

@@ -7,6 +7,8 @@ import { UserExpertise } from './entities/user_expertise.entity';
 import { UserOtherExpertise } from './entities/user_other_expertise.entity';
 import { Program } from 'src/programs/entities/program.entity';
 import { Course } from 'src/courses/entities/course.entity';
+import { Department } from 'src/departments/entities/department.entity';
+import { CollegeBranch } from 'src/college_branch/entities/college_branch.entity';
 UserOtherExpertise;
 @Module({
   imports: [
@@ -16,6 +18,8 @@ UserOtherExpertise;
       UserOtherExpertise,
       Program,
       Course,
+      Department,
+      CollegeBranch,
     ]),
   ],
   controllers: [UserController],

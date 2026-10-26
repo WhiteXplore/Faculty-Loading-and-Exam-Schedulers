@@ -4,7 +4,11 @@
       <!-- FILTER BAR -->
       <div class="flex justify-between items-center mb-3 gap-4">
         <!-- CURRENT ROOM TITLE -->
-        <span v-for="(schedules, room) in filteredRooms" :key="room" class="text-lg">
+        <span
+          v-for="(schedules, room) in filteredRooms"
+          :key="room"
+          class="text-lg"
+        >
           <span class="font-bold text-defaultGreen">
             {{ room }} - {{ roomTypeMap[room] || "Unknown" }}
           </span>
@@ -15,7 +19,7 @@
           <div
             class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
           >
-            <div class="absolute left-3 text-defaultGreen">
+            <div class="absolute left-3 text-gray-400">
               <svg
                 class="w-4 h-4"
                 fill="none"
@@ -53,7 +57,11 @@
                 stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
           </div>
@@ -64,7 +72,9 @@
             class="absolute right-0 z-50 mt-2 w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xl"
           >
             <div class="border-b border-gray-100 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              <p
+                class="text-xs font-semibold uppercase tracking-wide text-gray-400"
+              >
                 Available Rooms
               </p>
             </div>
@@ -120,7 +130,10 @@
         </div>
       </div>
 
-      <div v-if="Object.keys(groupedSchedule).length" class="grid grid-cols-1 gap-3">
+      <div
+        v-if="Object.keys(groupedSchedule).length"
+        class="grid grid-cols-1 gap-3"
+      >
         <div
           v-for="(schedules, room) in filteredRooms"
           :key="room"
@@ -144,7 +157,11 @@
                     {{ formatTime(slot.end) }}
                   </td>
 
-                  <td v-for="day in days" :key="day" class="border relative h-[60px]">
+                  <td
+                    v-for="day in days"
+                    :key="day"
+                    class="border relative h-[60px]"
+                  >
                     <template v-if="room !== 'Online'">
                       <div
                         v-for="item in getScheduleForCell(slot, day, room)"
@@ -286,7 +303,9 @@
                   <p class="font-medium">
                     {{ formatTime(selectedSchedule.start_hour) }} –
                     {{
-                      formatTime(selectedSchedule.start_hour + selectedSchedule.duration)
+                      formatTime(
+                        selectedSchedule.start_hour + selectedSchedule.duration,
+                      )
                     }}
                   </p>
                 </div>
@@ -347,7 +366,9 @@
                       <p class="text-xs text-gray-500">Time</p>
                       <p class="font-medium">
                         {{ formatTime(conflict.start_hour) }} –
-                        {{ formatTime(conflict.start_hour + conflict.duration) }}
+                        {{
+                          formatTime(conflict.start_hour + conflict.duration)
+                        }}
                       </p>
                     </div>
                   </div>
@@ -441,7 +462,8 @@ export default {
         const roomType = (this.roomTypeMap[room] || "").toLowerCase();
 
         return (
-          roomName !== "online" && (roomName.includes(query) || roomType.includes(query))
+          roomName !== "online" &&
+          (roomName.includes(query) || roomType.includes(query))
         );
       });
 

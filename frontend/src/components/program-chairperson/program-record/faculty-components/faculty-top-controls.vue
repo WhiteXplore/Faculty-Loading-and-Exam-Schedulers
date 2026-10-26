@@ -42,9 +42,7 @@
           placeholder="Search faculty..."
           class="rounded-xl border border-defaultGreen px-4 py-2.5 pl-10 text-sm shadow-sm w-full"
         />
-        <div
-          class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-        >
+        <div class="search-icon">
           <svg
             class="w-4 h-4"
             fill="none"

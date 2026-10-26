@@ -6,7 +6,7 @@
     <div
       class="flex items-center justify-between px-2 py-2 text-white bg-defaultGreen rounded-t-lg"
     >
-      <h3 class="header1">Unscheduled Courses</h3>
+      <h3 class="header1">Unscheduled Coursessss</h3>
 
       <input
         v-model="searchQuery"
@@ -471,7 +471,7 @@ import axios from "axios";
 import icon from "@/assets/icon.vue";
 
 export default {
-  name: "AssignCoursePage",
+  name: "AssignUnscheduleMeetings",
 
   components: {
     icon,
@@ -649,26 +649,86 @@ export default {
     },
 
     setSelectedCourse(item) {
+      // =====================================================
+      // COLLEGE BRANCH / CAMPUS
+      // =====================================================
+
+      let collegeBranchId =
+        item.college_branch_id != null && item.college_branch_id !== ""
+          ? Number(item.college_branch_id)
+          : null;
+
+      // Fallback: try to get campus from section/class
+      if (!collegeBranchId && item.class_id) {
+        const section = (this.store.sections || []).find(
+          (sec) => Number(sec.class_id) === Number(item.class_id),
+        );
+
+        collegeBranchId =
+          section?.college_branch_id != null
+            ? Number(section.college_branch_id)
+            : section?.collegeBranch?.college_branch_id != null
+            ? Number(section.collegeBranch.college_branch_id)
+            : null;
+      }
+
+      // Fallback: find campus through rooms
+      const campus = (this.rooms || [])
+        .map((room) => room.building?.buildingArea?.collegeBranch)
+        .find(
+          (branch) =>
+            Number(branch?.college_branch_id) === Number(collegeBranchId),
+        );
+
+      const collegeBranchName =
+        item.college_branch_name || campus?.college_branch_name || "";
+
+      // =====================================================
+      // COURSE
+      // =====================================================
+
       const courseInfo = this.store.courses?.find(
         (c) => Number(c.course_id) === Number(item.course_id),
       );
+
+      // =====================================================
+      // PROGRAM
+      // =====================================================
 
       const programInfo = this.store.programs?.find(
         (p) => Number(p.program_id) === Number(item.program_id),
       );
 
+      // =====================================================
+      // FINAL SELECTED COURSE
+      // =====================================================
+
       this.selectedCourse = {
         ...item,
+
         course_code: item.course_code || courseInfo?.course_code || "Unknown",
+
         course_title: item.course_title || courseInfo?.course_title || "",
+
         program_code:
           item.program_code || programInfo?.program_code || "Unknown",
+
         program_name: item.program_name || programInfo?.program_name || "",
+
+        // IMPORTANT
+        college_branch_id: collegeBranchId,
+        college_branch_name: collegeBranchName,
+
         set_name: this.getSetName(item.class_id) || item.class_id,
+
         hours: item.hours || "3h lec",
       };
-    },
 
+      console.log("[Unscheduled] SELECTED COURSE CAMPUS:", {
+        college_branch_id: this.selectedCourse.college_branch_id,
+        college_branch_name: this.selectedCourse.college_branch_name,
+      });
+    },
     openDetailsModal(item) {
       this.setSelectedCourse(item);
 
@@ -715,11 +775,21 @@ export default {
       // Keep the original unscheduled meeting ID
       const unscheduledId = this.selectedCourse.id;
 
+      const facultyName = this.getFacultyName(this.selectedInstructor);
+
       const course = {
         ...JSON.parse(JSON.stringify(this.selectedCourse)),
+
+        // Selected instructor
         faculty_id: this.selectedInstructor,
-        faculty_name: this.getFacultyName(this.selectedInstructor),
+        faculty_name: facultyName,
+
+        // Keep original unscheduled record ID
         unscheduled_id: unscheduledId,
+        unscheduled_meeting_id: unscheduledId,
+
+        // Mark this as coming from unscheduled
+        isUnscheduledAssignment: true,
       };
 
       // Remove the original id since the schedule table has its own id
@@ -733,6 +803,17 @@ export default {
 
       const instituteId = this.getInstituteId(course.program_id);
 
+      // Get branch/campus ID
+      const branchId =
+        course.college_branch_id != null && course.college_branch_id !== ""
+          ? Number(course.college_branch_id)
+          : null;
+
+      const branchName =
+        course.college_branch_name ||
+        this.selectedCourse?.college_branch_name ||
+        "";
+
       let payload = [];
 
       if (course.type === "Lecture+Lab") {
@@ -742,6 +823,10 @@ export default {
             type: "Lecture",
             duration: lectureDuration,
             institute_id: instituteId,
+
+            college_branch_id: branchId,
+            college_branch_name: branchName,
+
             start_hour: 7,
             day: "Monday",
             time_slot: "7:00 AM - 10:00 AM",
@@ -752,6 +837,10 @@ export default {
             type: "Laboratory",
             duration: labDuration,
             institute_id: instituteId,
+
+            college_branch_id: branchId,
+            college_branch_name: branchName,
+
             start_hour: 13,
             day: "Monday",
             time_slot: "1:00 PM - 4:00 PM",
@@ -764,6 +853,10 @@ export default {
             ...course,
             duration: lectureDuration || labDuration,
             institute_id: instituteId,
+
+            college_branch_id: branchId,
+            college_branch_name: branchName,
+
             start_hour: 7,
             day: "Monday",
             time_slot: "7:00 AM - 10:00 AM",

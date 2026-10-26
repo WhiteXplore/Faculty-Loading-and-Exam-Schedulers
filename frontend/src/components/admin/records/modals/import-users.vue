@@ -3,88 +3,73 @@
     <div class="rounded-[16px] shadow-lg justify-center animate-slideUp">
       <div class="w-auto bg-white text-[13px] rounded-[16px] shadow-lg">
         <!-- Header -->
+
         <div class="modal-header">
-          <div class="flex gap-1 items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
-            <h1 class="header1">Import Users</h1>
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
+
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">Import Users</h2>
+
+              <p class="text-xs text-green-100">Upload user accounts data.</p>
+            </div>
           </div>
-          <button
+
+          <icon
+            :name="'circle-close3'"
             @click="$emit('close')"
-            class="text-white hover:text-gray-200 cursor-pointer"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+            class="close-button-header"
+          />
         </div>
 
         <!-- Form Content -->
-        <div class="p-5 w-[35vw] space-y-4">
+        <div class="p-5 w-[25vw] space-y-4">
           <!-- Instructions -->
-          <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-            <h3 class="font-bold text-blue-800 mb-2">Import Instructions:</h3>
-            <ul class="text-blue-700 text-sm space-y-1">
-              <li>• File must be in XLSX format (.xlsx)</li>
-              <li>• Required columns: Last Name, First Name, Email, Role</li>
-              <li>
-                • Optional column: Program (must match existing program name)
+
+          <!-- <div class="rounded-lg border border-blue-100 bg-blue-50/60 p-4">
+            <h3 class="mb-3 text-sm font-semibold text-blue-800">
+              Import Instructions
+            </h3>
+
+            <ul class="space-y-2 text-sm text-gray-600">
+              <li class="flex items-start gap-2">
+                <span class="text-blue-500">•</span>
+                <span>File must be in XLSX format (.xlsx).</span>
               </li>
-              <li>• Default password will be: Password123!</li>
+
+              <li class="flex items-start gap-2">
+                <span class="text-blue-500">•</span>
+                <span>
+                  Required columns: Last Name, First Name, Email, Role.
+                </span>
+              </li>
+
+              <li class="flex items-start gap-2">
+                <span class="text-blue-500">•</span>
+                <span>
+                  Optional column: Program (must match an existing program
+                  name).
+                </span>
+              </li>
+
+              <li class="flex items-start gap-2">
+                <span class="text-blue-500">•</span>
+                <span>
+                  Default password will be:
+                  <span class="font-semibold text-gray-800">Password123!</span>
+                </span>
+              </li>
             </ul>
-          </div>
+          </div> -->
 
           <!-- Download Template Button -->
-          <div class="flex justify-center">
-            <button
-              type="button"
-              @click="downloadTemplate"
-              class="flex items-center gap-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-700 hover:text-white transition duration-200"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-              Download Template
-            </button>
-          </div>
 
           <!-- File Upload Area -->
           <div class="space-y-2">
-            <label class="font-bold text-gray-800">Upload XLSX File:</label>
             <div
               @dragover.prevent="dragOver = true"
               @dragleave.prevent="dragOver = false"
@@ -119,16 +104,42 @@
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                   />
                 </svg>
-                <p class="text-gray-600">
-                  Drag & drop your XLSX file here, or
-                  <button
-                    type="button"
-                    @click="$refs.fileInput.click()"
-                    class="text-defaultGreen hover:text-green-700 font-semibold underline"
-                  >
-                    browse
-                  </button>
-                </p>
+                <div class="text-center">
+                  <!-- No file selected -->
+                  <div v-if="!file">
+                    <p class="text-gray-600">
+                      <span class="text-defaultGreen font-semibold"
+                        >Upload a file</span
+                      >
+                      or drag and drop, or
+                      <button
+                        type="button"
+                        @click.stop="$refs.fileInput.click()"
+                        class="text-defaultGreen hover:text-green-700 font-semibold underline"
+                      >
+                        browse
+                      </button>
+                    </p>
+
+                    <p class="text-xs text-gray-500 mt-1">
+                      Excel / CSV (.xlsx, .xls, .csv) up to 10MB
+                    </p>
+                  </div>
+
+                  <!-- File selected -->
+                  <p v-else class="text-defaultGreen font-medium">
+                    File uploaded: {{ file.name }}
+                  </p>
+
+                  <!-- Hidden file input -->
+                  <input
+                    type="file"
+                    class="hidden"
+                    ref="fileInput"
+                    @change="handleFileUpload"
+                    accept=".csv, .xlsx, .xls"
+                  />
+                </div>
               </div>
 
               <div v-else class="space-y-2">
@@ -162,7 +173,12 @@
               </div>
             </div>
           </div>
-
+          <div class="flex w-full justify-center">
+            <button class="btn-save-nobg" @click="downloadTemplate">
+              Download Template
+            </button>
+          </div>
+          <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
           <!-- Progress Bar -->
           <div v-if="uploading" class="space-y-2">
             <div class="flex justify-between text-sm">
@@ -181,41 +197,99 @@
 
           <!-- Import Results -->
           <div v-if="importResults" class="space-y-3">
+            <!-- Success Results -->
             <div
-              class="bg-green-50 border-l-4 border-green-500 p-4 rounded"
               v-if="importResults.success > 0"
+              class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50/70 p-4"
             >
-              <p class="font-semibold text-green-800">
-                ✓ Successfully imported {{ importResults.success }} users
-              </p>
+              <div
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-100 text-green-600"
+              >
+                <icon name="check" class="text-lg" />
+              </div>
+
+              <div>
+                <p class="text-sm font-semibold text-green-800">
+                  Import Successful
+                </p>
+                <p class="text-xs text-green-700">
+                  Successfully imported
+                  <span class="font-semibold">{{ importResults.success }}</span>
+                  {{ importResults.success === 1 ? "user" : "users" }}.
+                </p>
+              </div>
             </div>
 
+            <!-- Failed Results -->
             <div
-              class="bg-red-50 border-l-4 border-red-500 p-4 rounded"
               v-if="importResults.failed > 0"
+              class="overflow-hidden rounded-lg border border-red-200 bg-white"
             >
-              <p class="font-semibold text-red-800 mb-2">
-                ✗ Failed to import {{ importResults.failed }} users
-              </p>
-              <div class="max-h-40 overflow-y-auto space-y-2">
+              <!-- Error Header -->
+              <div class="flex items-center gap-3 bg-red-50/70 p-4">
                 <div
-                  v-for="(error, index) in importResults.errors"
-                  :key="index"
-                  class="text-sm text-red-700 bg-red-100 p-2 rounded"
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600"
                 >
-                  <p>
-                    <strong>Row {{ error.row }}:</strong> {{ error.error }}
+                  <icon name="circle-close3" class="text-lg" />
+                </div>
+
+                <div>
+                  <p class="text-sm font-semibold text-red-800">
+                    Import Failed
                   </p>
-                  <p v-if="error.email" class="text-xs">
-                    Email: {{ error.email }}
+                  <p class="text-xs text-red-700">
+                    {{ importResults.failed }}
+                    {{ importResults.failed === 1 ? "user" : "users" }}
+                    could not be imported.
                   </p>
+                </div>
+              </div>
+
+              <!-- Error Details -->
+              <div class="p-3">
+                <p
+                  class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500"
+                >
+                  Error Details
+                </p>
+
+                <div class="max-h-40 space-y-2 overflow-y-auto pr-1">
+                  <div
+                    v-for="(error, index) in importResults.errors"
+                    :key="index"
+                    class="rounded-md border border-red-100 bg-red-50/40 p-3"
+                  >
+                    <div class="flex items-start justify-between gap-2">
+                      <p class="text-xs font-semibold text-gray-700">
+                        Row {{ error.row }}
+                      </p>
+
+                      <span
+                        class="rounded bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-700"
+                      >
+                        Failed
+                      </span>
+                    </div>
+
+                    <p class="mt-1 text-sm text-red-700 break-words">
+                      {{ error.error }}
+                    </p>
+
+                    <p
+                      v-if="error.email"
+                      class="mt-2 border-t border-red-100 pt-2 text-xs text-gray-500 break-all"
+                    >
+                      <span class="font-medium text-gray-600">Email:</span>
+                      {{ error.email }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex justify-end gap-3 pt-4">
+          <div class="flex justify-end gap-3">
             <button type="button" @click="$emit('close')" class="btn-cancel">
               Cancel
             </button>
@@ -240,12 +314,16 @@
 </template>
 
 <script>
+import icon from "@/assets/icon.vue";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import * as XLSX from "xlsx";
 
 export default {
   name: "ImportUsers",
+  components: {
+    icon,
+  },
   data() {
     return {
       selectedFile: null,
@@ -301,6 +379,8 @@ export default {
           Designation: "Instructor I",
           Unit: 3,
           "Employment Type": "Full Time",
+          Department: "Language and Literature",
+          BranchCoordinator: "Main",
         },
       ];
 

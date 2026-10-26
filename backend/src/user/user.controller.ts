@@ -69,14 +69,20 @@ export class UserController {
         last_name: String(row['Last Name'] || row['last_name'] || '').trim(),
         email: String(row['Email'] || row['email'] || '').trim(),
         role: String(row['Role'] || row['role'] || '').trim(),
-
         program: String(row['Program'] || row['program'] || '').trim(),
+        department: String(row['Department'] || row['department'] || '').trim(),
         designation: String(
           row['Designation'] || row['designation'] || '',
         ).trim(),
         unit_load: Number(row['Unit'] || row['unit_load'] || 0),
         employment_type: String(
           row['Employment Type'] || row['employment_type'] || '',
+        ).trim(),
+        college_branch: String(
+          row['Branch Coordinator'] ??
+            row['branch_coordinator'] ??
+            row['college_branch'] ??
+            '',
         ).trim(),
       }));
 

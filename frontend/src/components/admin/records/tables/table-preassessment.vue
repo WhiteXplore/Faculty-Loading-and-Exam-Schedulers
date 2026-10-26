@@ -319,7 +319,7 @@
               class="mt-3 relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
             >
               <!-- Icon -->
-              <div class="absolute left-3 text-defaultGreen">
+              <div class="absolute left-3 text-gray-400">
                 <icon name="academic-cap" />
               </div>
 
@@ -458,7 +458,7 @@
               "
             >
               <!-- Icon -->
-              <div class="absolute left-3 text-defaultGreen">
+              <div class="absolute left-3 text-gray-400">
                 <icon name="academic-cap" />
               </div>
 

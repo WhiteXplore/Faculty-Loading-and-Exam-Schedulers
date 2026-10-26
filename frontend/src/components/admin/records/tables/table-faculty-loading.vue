@@ -133,7 +133,7 @@
             class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
           >
             <!-- Icon -->
-            <div class="absolute left-3 text-defaultGreen">
+            <div class="absolute left-3 text-gray-400">
               <icon name="academic-cap" />
             </div>
 
@@ -199,10 +199,12 @@
                   selectedInstituteId = '';
                   showInstituteDropdown = false;
                 "
-                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
-                :class="selectedInstituteId === '' ? 'bg-green-50' : ''"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
+                :class="
+                  selectedInstituteId === '' ? 'bg-defaultGreen text-white' : ''
+                "
               >
-                <p class="text-sm text-gray-800">All Institutes</p>
+                <p class="text-sm">All Institutes</p>
 
                 <svg
                   v-if="selectedInstituteId === ''"
@@ -228,14 +230,14 @@
                   selectedInstituteId = institute.id;
                   showInstituteDropdown = false;
                 "
-                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
                 :class="
                   Number(selectedInstituteId) === Number(institute.id)
-                    ? 'bg-green-50'
+                    ? 'bg-defaultGreen text-white'
                     : ''
                 "
               >
-                <p class="text-sm text-gray-800">
+                <p class="text-sm">
                   {{ institute.name }}
                 </p>
 
@@ -266,7 +268,7 @@
             :class="!selectedInstituteId ? 'opacity-60 cursor-not-allowed' : ''"
           >
             <!-- Icon -->
-            <div class="absolute left-3 text-defaultGreen">
+            <div class="absolute left-3 text-gray-400">
               <icon name="academic-cap" />
             </div>
 
@@ -285,9 +287,7 @@
                 }}
               </span>
 
-              <span v-else class="font-light text-gray-600">
-                All Programs
-              </span>
+              <span v-else class="font-light"> All Programs </span>
             </button>
 
             <!-- Arrow -->
@@ -334,10 +334,12 @@
                   selectedProgramId = '';
                   showProgramDropdown = false;
                 "
-                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
-                :class="selectedProgramId === '' ? 'bg-green-50' : ''"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
+                :class="
+                  selectedProgramId === '' ? 'bg-defaultGreen text-white' : ''
+                "
               >
-                <p class="text-sm text-gray-800">All Programs</p>
+                <p class="text-sm 0">All Programs</p>
 
                 <svg
                   v-if="selectedProgramId === ''"
@@ -363,14 +365,14 @@
                   selectedProgramId = program.id;
                   showProgramDropdown = false;
                 "
-                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
                 :class="
                   Number(selectedProgramId) === Number(program.id)
-                    ? 'bg-green-50'
+                    ? 'bg-defaultGreen text-white'
                     : ''
                 "
               >
-                <p class="text-sm text-gray-800">
+                <p class="text-sm">
                   {{ program.name }}
                 </p>
 
@@ -407,9 +409,7 @@
             class="search-input"
           />
 
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
-          >
+          <div class="search-icon">
             <svg
               class="w-4 h-4"
               fill="none"
@@ -425,11 +425,11 @@
         <!-- Actions -->
         <div class="per-page-container">
           <!-- Generate -->
-          <button @click="generateSchedule" class="btn-download">
-            <div class="btn-download-icon">
+          <button @click="generateSchedule" class="btn-generate">
+            <div class="btn-generate-icon">
               <icon name="arrow-path" />
             </div>
-            <span class="btn-download-text">Generate</span>
+            <span class="btn-generate-text">Generate</span>
           </button>
 
           <!-- Save -->
@@ -456,7 +456,7 @@
               <icon name="download" />
             </div>
             <span class="btn-download-text">
-              {{ downloadingSchedule ? "Downloading..." : "Download Schedule" }}
+              {{ downloadingSchedule ? "Downloading..." : "Download" }}
             </span>
           </button>
         </div>
@@ -1053,9 +1053,14 @@ export default {
           const counted = new Set();
 
           schedules.forEach((sched) => {
-            const key = `${sched.set_name}-${sched.course_code}`;
+            // IMPORTANT:
+            // A section can have the same set_name in different programs.
+            // Use program_id + class_id + course_code to identify
+            // one actual course assignment.
+            const key = `${sched.program_id}-${sched.class_id}-${sched.course_code}`;
 
             if (counted.has(key)) return;
+
             counted.add(key);
 
             const course = this.coursesList.find(

@@ -9,6 +9,7 @@ import {
 import { Program } from 'src/programs/entities/program.entity';
 import { Room } from 'src/rooms/entities/room.entity';
 import { User_Accounts } from 'src/user/entities/user.entity';
+import { Department } from 'src/departments/entities/department.entity';
 
 @Entity('institutes')
 export class Institute {
@@ -34,6 +35,9 @@ export class Institute {
 
   @OneToMany(() => Room, (room) => room.institute)
   rooms: Room[];
+
+  @OneToMany(() => Department, (department) => department.institute)
+  departments: Department[];
 
   @OneToMany(() => User_Accounts, (user) => user.institute)
   users: User_Accounts[];

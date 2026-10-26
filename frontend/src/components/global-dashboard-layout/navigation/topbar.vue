@@ -11,7 +11,7 @@
           <div
             class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200"
           >
-            <div class="absolute left-3 text-defaultGreen">
+            <div class="absolute left-3 text-gray-400">
               <icon name="calendar" />
             </div>
 
@@ -166,16 +166,16 @@
         <!-- School Year -->
         <div class="relative w-[260px]" ref="schoolYearDropdownRef">
           <div
-            class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
+            class="relative flex items-center rounded-xl border border-gray-400 bg-white transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
           >
-            <div class="absolute left-3 text-defaultGreen">
+            <div class="absolute left-3 text-gray-600">
               <icon name="calendar" />
             </div>
 
             <button
               type="button"
               @click.stop="isDropdownOpen = !isDropdownOpen"
-              class="w-full rounded-xl bg-transparent py-2.5 pl-10 pr-10 text-left text-sm font-semibold text-gray-700"
+              class="w-full rounded-xl bg-transparent py-2.5 pl-10 pr-10 text-left text-sm font-semibold text-gray-600"
             >
               <span
                 v-if="
@@ -205,7 +205,7 @@
             <button
               type="button"
               @click.stop="isDropdownOpen = !isDropdownOpen"
-              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-defaultGreen"
+              class="absolute right-2 flex h-7 w-7 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 hover:text-defaultGreen"
             >
               <svg
                 class="h-4 w-4 transition-transform duration-200"
@@ -294,7 +294,7 @@
         >
           <div
             ref="profileIcon"
-            class="w-9 h-9 rounded-xl border border-green-600 overflow-hidden"
+            class="w-10 h-10 rounded-xl border border-gray-400 overflow-hidden"
           >
             <img
               src="../../../assets/img/users1.png"

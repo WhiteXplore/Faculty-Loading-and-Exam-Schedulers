@@ -73,4 +73,15 @@ export class ClassService {
     FROM dnsc_class_scheduler2.classes_course
   `);
   }
+  async getFacultyClassesCourseRaw() {
+    const result = await this.dataSource.query(`
+    SELECT *
+    FROM dnsc_class_scheduler2.faculty_expertise_courses
+  `);
+
+    console.log('Faculty Expertise Courses:', result.length);
+    console.log(result);
+
+    return result;
+  }
 }

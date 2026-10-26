@@ -99,6 +99,10 @@ def _status(util_pct, has_hard_fail=False):
     return "PASS"
 
 
+def _same_id(a, b):
+    return str(a).strip() == str(b).strip() if a is not None and b is not None else a is b
+
+
 def evaluate(institute_id=None, program_id=None):
     cc = _fetch("classes_course")
     fec = _fetch("faculty_expertise_courses")
@@ -117,19 +121,24 @@ def evaluate(institute_id=None, program_id=None):
 
     # -------- optional scope: restrict demand to one institute / program -----
     if institute_id is not None:
-        cc = [c for c in cc if c.get("institute_id") == institute_id]
+        cc = [c for c in cc if _same_id(c.get("institute_id"), institute_id)]
     if program_id is not None:
-        cc = [c for c in cc if c.get("program_id") == program_id]
+        cc = [c for c in cc if _same_id(c.get("program_id"), program_id)]
 
-    total_sections = len(cc)
-    at_risk = set()            # class-course rows (by index) at risk of not scheduling
+    total_sections = len({c.get("class_id") for c in cc if c.get("class_id") is not None})
+    # If class_id is missing, retain a conservative row-based count rather than
+    # silently dropping demand records.
+    total_sections += sum(1 for c in cc if c.get("class_id") is None)
+    at_risk_rows = set()
+    at_risk_section_ids = set()
 
     # normalized course codes actually offered in-scope - faculty capacity is
     # scoped down to experts who can teach at least one of these, so gates 2/3
     # answer "can THIS institute/program be covered", not the whole school.
     scoped_codes = {norm(c.get("course_code")) for c in cc if c.get("course_code")}
-    fec_scoped = fec if institute_id is None and program_id is None else [
-        f for f in fec if f.get("course_code") and norm(f.get("course_code")) in scoped_codes]
+    offered_pairs = {(norm(c.get("course_code")), str(c.get("program_id"))) for c in cc}
+    fec_scoped = [f for f in fec if f.get("course_code") and
+                  (norm(f.get("course_code")), str(f.get("program_id"))) in offered_pairs]
 
     # unique active faculty (one record per faculty_id) + their load caps + names
     fac = {}
@@ -138,8 +147,8 @@ def evaluate(institute_id=None, program_id=None):
         fid = f.get("faculty_id")
         if fid is not None:
             fac_name.setdefault(fid, f.get("faculty_name"))
-            if fid not in fac:
-                fac[fid] = float(f.get("load_unit") or 0)
+            cap = float(f.get("load_unit") or 0)
+            fac[fid] = max(fac.get(fid, 0.0), cap)
     active_fac = {fid: lu for fid, lu in fac.items() if lu and lu > 0}
 
     # normalized course_code -> set of qualified faculty_ids
@@ -147,22 +156,22 @@ def evaluate(institute_id=None, program_id=None):
     for f in fec_scoped:
         code = f.get("course_code")
         if code:
-            code_experts.setdefault(norm(code), set()).add(f.get("faculty_id"))
+            code_experts.setdefault((norm(code), str(f.get("program_id"))), set()).add(f.get("faculty_id"))
 
     gates = []
     prescriptions = []
 
     # -------- GATE 1: Expertise coverage (does every course have a teacher?) --
-    offered_codes = {}   # normalized code -> [section indices]
+    offered_codes = {}
     for i, c in enumerate(cc):
-        offered_codes.setdefault(norm(c.get("course_code")), []).append(i)
-    uncovered = {code: idxs for code, idxs in offered_codes.items()
-                 if not code_experts.get(code)}
-    uncovered_sections = sum(len(idxs) for idxs in uncovered.values())
+        offered_codes.setdefault((norm(c.get("course_code")), str(c.get("program_id"))), []).append(i)
+    uncovered = {key: idxs for key, idxs in offered_codes.items() if not code_experts.get(key)}
+    uncovered_sections = len({cc[i].get("class_id") for idxs in uncovered.values() for i in idxs})
     for idxs in uncovered.values():
-        at_risk.update(idxs)
+        at_risk_rows.update(idxs)
+        at_risk_section_ids.update(cc[i].get("class_id") for i in idxs if cc[i].get("class_id") is not None)
     uncovered_rows = []
-    for code, idxs in uncovered.items():
+    for key, idxs in uncovered.items():
         rep = cc[idxs[0]]
         progs_aff = sorted({cc[i].get("program_code") for i in idxs if cc[i].get("program_code")})
         uncovered_rows.append({
@@ -232,8 +241,8 @@ def evaluate(institute_id=None, program_id=None):
 
     # -------- GATE 3: Per-course capacity (specialist bottlenecks) ------------
     short_pools = []
-    for code, idxs in offered_codes.items():
-        experts = code_experts.get(code)
+    for key, idxs in offered_codes.items():
+        experts = code_experts.get(key)
         if not experts:
             continue  # already counted in gate 1
         pool_demand = sum(_load_units(cc[i]) for i in idxs)
@@ -248,7 +257,8 @@ def evaluate(institute_id=None, program_id=None):
                     f"{_abbrev_name(fac_name.get(fid)) or fid} ({_fmt_units(fac.get(fid, 0))} units)"
                     for fid in experts))[:140],
             })
-            at_risk.update(idxs)
+            at_risk_rows.update(idxs)
+            at_risk_section_ids.update(cc[i].get("class_id") for i in idxs if cc[i].get("class_id") is not None)
     short_pools.sort(key=lambda p: -(p["demand_units"] - p["their_total_cap"]))
     g3_status = "FAIL" if len(short_pools) > 5 else ("WARN" if short_pools else "PASS")
     gates.append({
@@ -305,7 +315,10 @@ def evaluate(institute_id=None, program_id=None):
                                   "lab_rooms": n,
                                   "demand_hours": round(dem), "supply_hours": sup,
                                   "rooms_needed": int(need)})
-            at_risk.update(lab_idx_by_inst.get(inst, []))
+            affected = lab_idx_by_inst.get(inst, [])
+            at_risk_rows.update(affected)
+            at_risk_section_ids.update(cc[i].get("class_id") for i in affected
+                                       if cc[i].get("class_id") is not None)
     lab_offenders.sort(key=lambda x: -(x["demand_hours"] - x["supply_hours"]))
     tot_lab_dem = sum(lab_demand_by_inst.values())
     tot_lab_sup = sum(lab_rooms_by_inst.get(i, 0) for i in lab_demand_by_inst) * ROOM_WEEK_HOURS
@@ -391,7 +404,9 @@ def evaluate(institute_id=None, program_id=None):
     overpacked.sort(key=lambda o: -o["hours"])
     tight = [cid for cid, h in sec_hours.items() if SECTION_WEEK_HOURS >= h > SECTION_WEEK_HOURS * 0.85]
     for o in overpacked:
-        at_risk.update(sec_idx.get(o["class_id"], []))
+        at_risk_rows.update(sec_idx.get(o["class_id"], []))
+        if o.get("class_id") is not None:
+            at_risk_section_ids.add(o["class_id"])
     gates.append({
         "id": "section_fit", "label": "Section feasibility",
         "status": "FAIL" if overpacked else ("WARN" if tight else "PASS"),
@@ -421,7 +436,7 @@ def evaluate(institute_id=None, program_id=None):
         verdict = "READY_WITH_GAPS"
     else:
         verdict = "READY"
-    schedulable_pct = round(100 * (total_sections - len(at_risk)) / max(1, total_sections))
+    schedulable_pct = round(100 * (total_sections - len(at_risk_section_ids)) / max(1, total_sections))
 
     # -------- structured recommendations (what to set up, grouped) -----------
     recommendations = []
@@ -490,7 +505,7 @@ def evaluate(institute_id=None, program_id=None):
     return {
         "verdict": verdict,
         "schedulable_estimate_pct": schedulable_pct,
-        "at_risk_sections": len(at_risk),
+        "at_risk_sections": len(at_risk_section_ids),
         "filter": {
             "institute_id": institute_id,
             "institute_name": inst_name.get(institute_id) if institute_id is not None else None,
@@ -500,6 +515,7 @@ def evaluate(institute_id=None, program_id=None):
         "totals": {
             "sections": total_sections,
             "active_faculty": len(active_fac),
+            "active_faculty_basis": "Unique faculty_id with positive load_unit among faculty qualified for in-scope course+program pairs. This is not an HR active-status count.",
             "faculty_total_capacity_units": round(sum(active_fac.values()), 1),
             "rooms": len(rooms),
         },

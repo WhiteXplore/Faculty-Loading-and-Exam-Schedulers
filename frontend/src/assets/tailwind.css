@@ -7,7 +7,13 @@
   /* Tables  */
   /* Container */
   .table-container {
-    @apply mt-2 overflow-x-auto border p-3 rounded-xl bg-white;
+    @apply mt-2 overflow-x-auto border p-3 rounded-xl bg-white min-h-screen;
+    min-height: calc(100vh - 135px);
+  }
+
+  .table-container2 {
+    @apply mt-2 overflow-x-auto border p-3 rounded-xl bg-white min-h-screen;
+    min-height: calc(100vh - 177px);
   }
 
   .table-controls {
@@ -39,11 +45,11 @@
   }
 
   .select-input {
-    @apply appearance-none rounded-xl border border-green-600 bg-white px-3 py-1 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md;
+    @apply appearance-none rounded-xl border border-gray-300 bg-white px-3 py-2 pr-8 text-green-900 text-sm font-semibold  cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md;
   }
 
   .select-filter-input {
-    @apply appearance-none rounded-xl border border-green-600 bg-white px-3 py-2.5 text-green-900 text-sm font-normal shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md;
+    @apply appearance-none rounded-xl border border-green-600 bg-white px-3 py-2.5 text-green-900 text-sm font-normal  cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md;
   }
 
   .select-arrow {
@@ -59,11 +65,11 @@
   }
 
   .search-input {
-    @apply rounded-xl border border-green-600 bg-white px-4 py-2.5 pl-10 text-sm shadow-sm w-[350px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md;
+    @apply rounded-xl border border-gray-200 bg-white px-4 py-3 pl-10 text-sm  w-[350px] transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md;
   }
 
   .search-icon {
-    @apply absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none;
+    @apply absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none;
   }
 
   /* Delete Confirmation Modal  */
@@ -103,6 +109,10 @@
 
   .btn-save {
     @apply text-[12px] py-2.5 px-3 rounded-xl bg-defaultGreen text-white hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;
+  }
+
+  .btn-save-nobg {
+    @apply text-[12px] py-2.5 px-3 rounded-xl  text-defaultGreen hover:bg-white border hover:border-green-800 hover:text-green-800 hover:shadow-md transform transition-all duration-300 hover:scale-105;
   }
 
   .btn-edit {
@@ -147,6 +157,14 @@
 
   .btn-download-icon {
     @apply p-1 bg-blue-600 bg-opacity-20 rounded-full flex items-center justify-center;
+  }
+
+  .btn-generate {
+    @apply flex items-center gap-2 py-2.5 px-3 border border-indigo-700 bg-indigo-700 text-white rounded-xl cursor-pointer transition duration-200 hover:bg-white hover:text-indigo-700 hover:shadow-lg transform transition-all duration-300 hover:scale-105;
+  }
+
+  .btn-generate-icon {
+    @apply p-1 bg-indigo-600 bg-opacity-20 rounded-full flex items-center justify-center;
   }
 
   .btn-goBack {

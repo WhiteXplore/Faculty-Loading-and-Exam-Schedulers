@@ -42,9 +42,58 @@ export const useFetchDataStore = defineStore("fetchData", {
     loading: false,
     error: null,
     activeYearInterval: null, // for polling
+    classes_course: [],
+    faculty_expertise_course: [],
+    departments: [],
   }),
 
   actions: {
+    async fetchDepartments() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const { data } = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/departments/get-all-departments",
+        );
+        this.departments = data;
+      } catch (err) {
+        this.error = err.message || "Failed to fetch departments";
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchClassesCourse() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const { data } = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/class/get-classes-course",
+        );
+        this.classes_course = data;
+      } catch (err) {
+        this.error = err.message || "Failed to fetch classes_course";
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async fetchFacultyExpertiseCourses() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const { data } = await axios.get(
+          process.env.VUE_APP_API_BASE_URL +
+            "/class/get-faculty-expertise-course",
+        );
+        this.faculty_expertise_course = data;
+      } catch (err) {
+        this.error = err.message || "Failed to fetch faculty_expertise_course";
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async fetchAllSchoolYears() {
       this.loading = true;
       this.error = null;

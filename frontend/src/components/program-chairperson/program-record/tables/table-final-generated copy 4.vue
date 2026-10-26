@@ -18,12 +18,14 @@
     <div class="flex flex-wrap items-center gap-4 px-2 mt-2">
       <!-- TODO  Back Button -->
       <button
-        v-if="!showFacultyTable && Object.keys(filteredGroupedSchedule).length === 1"
+        v-if="
+          !showFacultyTable && Object.keys(filteredGroupedSchedule).length === 1
+        "
         @click="backToFacultyTable"
         class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
       >
         <icon name="arrow-left" class="w-4 h-4" />
-           <span class="btn-add-text">Back to Table</span>
+        <span class="btn-add-text">Back to Table</span>
       </button>
     </div>
 
@@ -36,7 +38,7 @@
             class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
           >
             <!-- TODO  Items per page -->
-       <div class="per-page-container">
+            <div class="per-page-container">
               <div class="relative">
                 <select
                   v-model="itemsPerPage"
@@ -77,9 +79,7 @@
                 class="search-input"
                 @input="changePage(1)"
               />
-              <div
-                class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
-              >
+              <div class="search-icon">
                 <svg
                   class="w-4 h-4"
                   fill="none"
@@ -96,11 +96,15 @@
 
           <!-- TODO  Faculty Table -->
           <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-            <div class="max-h-[69vh] overflow-y-auto">
+            <div class="max-h-[73vh] overflow-y-auto">
               <table class="min-w-full text-sm text-gray-700 border-collapse">
-                <thead class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide">
+                <thead
+                  class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
+                >
                   <tr>
-                    <th class="px-5 py-3 text-left font-semibold whitespace-nowrap">
+                    <th
+                      class="px-5 py-3 text-left font-semibold whitespace-nowrap"
+                    >
                       Faculty Name
                     </th>
                     <th
@@ -116,7 +120,9 @@
                     :key="instructor"
                     class="hover:bg-green-50 border-t transition-colors"
                   >
-                    <td class="px-5 py-3 font-medium text-gray-800 whitespace-nowrap">
+                    <td
+                      class="px-5 py-3 font-medium text-gray-800 whitespace-nowrap"
+                    >
                       {{ instructor }}
                     </td>
                     <td class="px-5 py-3 text-center">
@@ -132,7 +138,9 @@
                     v-if="!Object.keys(filteredGroupedSchedule).length"
                     class="text-center bg-gray-50"
                   >
-                    <td colspan="2" class="py-5 text-gray-500">No faculty found.</td>
+                    <td colspan="2" class="py-5 text-gray-500">
+                      No faculty found.
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -229,7 +237,9 @@
             <table class="w-full text-left border-collapse text-[11px]">
               <thead class="sticky top-0 bg-gray-100 z-10">
                 <tr class="text-gray-700">
-                  <th class="px-4 py-2 border border-gray-200 w-24 text-center">Time</th>
+                  <th class="px-4 py-2 border border-gray-200 w-24 text-center">
+                    Time
+                  </th>
                   <th
                     v-for="day in days"
                     :key="day"
@@ -247,7 +257,9 @@
                   :style="{ height: timeSlotHeight + 'px' }"
                 >
                   <!-- Time Column -->
-                  <td class="px-4 py-4 border text-center font-medium whitespace-nowrap">
+                  <td
+                    class="px-4 py-4 border text-center font-medium whitespace-nowrap"
+                  >
                     {{ formatTime(slot.start) }} - {{ formatTime(slot.end) }}
                   </td>
 
@@ -260,11 +272,17 @@
                       'bg-green-100':
                         isJoined &&
                         draggedRecord &&
-                        getJoinableSchedules(draggedRecord).some((j) => j.day === day),
+                        getJoinableSchedules(draggedRecord).some(
+                          (j) => j.day === day,
+                        ),
                       'bg-red-100':
                         draggedRecord &&
-                        getConflictsForDrag(draggedRecord, instructor, day, slot.start)
-                          .length,
+                        getConflictsForDrag(
+                          draggedRecord,
+                          instructor,
+                          day,
+                          slot.start,
+                        ).length,
                     }"
                     @dragover.prevent
                     @drop="onDrop($event, instructor, day, slot.start)"
@@ -272,12 +290,15 @@
                     <template
                       v-for="item in getScheduleForCell(slot, day, instructor)"
                       :key="
-                        item.id || item.course_code + item.start_hour + item.room_name
+                        item.id ||
+                        item.course_code + item.start_hour + item.room_name
                       "
                     >
                       <div
                         v-if="isStartingSlot(item, slot)"
-                        :draggable="!(isJoined && Number(item.class_size) >= 30)"
+                        :draggable="
+                          !(isJoined && Number(item.class_size) >= 30)
+                        "
                         @dblclick.stop="handleUnjoin(item)"
                         @dragstart="onDragStart($event, item)"
                         @mouseenter="showScheduleTooltip($event, item)"
@@ -335,7 +356,9 @@
                           <template v-if="item.is_joined && item.join_group_id">
                             {{
                               finalSchedules
-                                .filter((s) => s.join_group_id === item.join_group_id)
+                                .filter(
+                                  (s) => s.join_group_id === item.join_group_id,
+                                )
                                 .map((s) => s.set_name)
                                 .join(" + ")
                             }}
@@ -379,7 +402,9 @@
               <div
                 class="bg-white border border-gray-300 rounded-xl p-3 scale-125 origin-top-left"
               >
-                <div class="flex items-center justify-between gap-2 mb-2 w-full">
+                <div
+                  class="flex items-center justify-between gap-2 mb-2 w-full"
+                >
                   <!-- Course Code -->
                   <div class="text-sm font-bold text-defaultGreen leading-none">
                     {{ tooltipItem.course_code }}
@@ -395,19 +420,27 @@
                         : 'bg-purple-500'
                     "
                   >
-                    {{ tooltipItem.mode === "face to face" ? "Face to Face" : "Online" }}
+                    {{
+                      tooltipItem.mode === "face to face"
+                        ? "Face to Face"
+                        : "Online"
+                    }}
                   </span>
                 </div>
 
                 <div class="text-[10px] text-gray-700 space-y-0.5">
-                  <p><strong>Faculty:</strong> {{ tooltipItem.faculty_name }}</p>
+                  <p>
+                    <strong>Faculty:</strong> {{ tooltipItem.faculty_name }}
+                  </p>
 
                   <p><strong>Year & Section:</strong></p>
                   <ul class="ml-2 list-disc">
-                    <template v-if="tooltipItem.is_joined && tooltipItem.join_group_id">
+                    <template
+                      v-if="tooltipItem.is_joined && tooltipItem.join_group_id"
+                    >
                       <li
                         v-for="s in finalSchedules.filter(
-                          (s) => s.join_group_id === tooltipItem.join_group_id
+                          (s) => s.join_group_id === tooltipItem.join_group_id,
                         )"
                         :key="s.class_id"
                       >
@@ -417,8 +450,9 @@
                     </template>
                     <template v-else>
                       <li>
-                        {{ tooltipItem.program_code }} - {{ tooltipItem.set_name }} (Class
-                        Size: {{ tooltipItem.class_size }})
+                        {{ tooltipItem.program_code }} -
+                        {{ tooltipItem.set_name }} (Class Size:
+                        {{ tooltipItem.class_size }})
                       </li>
                     </template>
                   </ul>
@@ -429,7 +463,9 @@
                     <strong>Time:</strong>
                     {{ formatTime(tooltipItem.start_hour) }} –
                     {{
-                      formatTime(tooltipItem.start_hour + Number(tooltipItem.duration))
+                      formatTime(
+                        tooltipItem.start_hour + Number(tooltipItem.duration),
+                      )
                     }}
                   </p>
                   <p><strong>Type:</strong> {{ tooltipItem.type }}</p>
@@ -630,7 +666,7 @@ export default {
     },
     totalCardPages() {
       return Math.ceil(
-        Object.keys(this.filteredGroupedSchedule).length / this.cardsPerPage
+        Object.keys(this.filteredGroupedSchedule).length / this.cardsPerPage,
       );
     },
     paginatedSource() {
@@ -639,16 +675,21 @@ export default {
       const q = this.searchQuery.toLowerCase();
       return Object.fromEntries(
         Object.entries(this.filteredGroupedSchedule).filter(([name]) =>
-          name.toLowerCase().includes(q)
-        )
+          name.toLowerCase().includes(q),
+        ),
       );
     },
     visibleFacultyCards() {
-      return Object.entries(this.filteredGroupedSchedule).slice(0, this.visibleCardCount);
+      return Object.entries(this.filteredGroupedSchedule).slice(
+        0,
+        this.visibleCardCount,
+      );
     },
 
     hasMoreCards() {
-      return Object.keys(this.filteredGroupedSchedule).length > this.visibleCardCount;
+      return (
+        Object.keys(this.filteredGroupedSchedule).length > this.visibleCardCount
+      );
     },
     coursesList() {
       const store = useFetchDataStore();
@@ -657,43 +698,47 @@ export default {
     facultyTotalUnits() {
       const result = {};
 
-      Object.entries(this.filteredGroupedSchedule).forEach(([faculty, schedules]) => {
-        let totalLecture = 0;
-        let totalLab = 0;
+      Object.entries(this.filteredGroupedSchedule).forEach(
+        ([faculty, schedules]) => {
+          let totalLecture = 0;
+          let totalLab = 0;
 
-        schedules.forEach((sched) => {
-          const course = this.coursesList.find(
-            (c) => c.course_code === sched.course_code
-          );
-          if (!course) return;
+          schedules.forEach((sched) => {
+            const course = this.coursesList.find(
+              (c) => c.course_code === sched.course_code,
+            );
+            if (!course) return;
 
-          const duration = Number(sched.duration || 0); // e.g., 1.5
-          if (sched.type === "Lecture") {
-            // Standard lecture assumed 3 hours
-            const unitsPerSlot = (duration / 3) * Number(course.course_lec || 0);
-            totalLecture += unitsPerSlot;
-          } else if (sched.type === "Laboratory") {
-            // Standard lab assumed 3 hours
-            const unitsPerSlot = (duration / 3) * Number(course.course_lab || 0);
-            totalLab += unitsPerSlot;
-          }
-        });
+            const duration = Number(sched.duration || 0); // e.g., 1.5
+            if (sched.type === "Lecture") {
+              // Standard lecture assumed 3 hours
+              const unitsPerSlot =
+                (duration / 3) * Number(course.course_lec || 0);
+              totalLecture += unitsPerSlot;
+            } else if (sched.type === "Laboratory") {
+              // Standard lab assumed 3 hours
+              const unitsPerSlot =
+                (duration / 3) * Number(course.course_lab || 0);
+              totalLab += unitsPerSlot;
+            }
+          });
 
-        // result[faculty] = {
-        //   lectureUnits: totalLecture,
-        //   labUnits: totalLab,
-        //   totalUnits: totalLecture + totalLab,
-        // };
-        const lectureUnits = Number(totalLecture.toFixed(2));
-        const labUnits = Number(totalLab.toFixed(2));
-        const totalUnits = Number((lectureUnits + labUnits).toFixed(2));
+          // result[faculty] = {
+          //   lectureUnits: totalLecture,
+          //   labUnits: totalLab,
+          //   totalUnits: totalLecture + totalLab,
+          // };
+          const lectureUnits = Number(totalLecture.toFixed(2));
+          const labUnits = Number(totalLab.toFixed(2));
+          const totalUnits = Number((lectureUnits + labUnits).toFixed(2));
 
-        result[faculty] = {
-          lectureUnits,
-          labUnits,
-          totalUnits,
-        };
-      });
+          result[faculty] = {
+            lectureUnits,
+            labUnits,
+            totalUnits,
+          };
+        },
+      );
 
       return result;
     },
@@ -701,14 +746,14 @@ export default {
     uniqueInstitutes() {
       const store = useFetchDataStore();
       const institutes = store.institutes || [];
-      return Array.from(new Set(this.finalSchedules.map((s) => s.institute_id))).map(
-        (id) => {
-          const inst = institutes.find((i) => i.institute_id === id);
-          return inst
-            ? { id, name: inst.institute_name }
-            : { id, name: `Institute ${id}` };
-        }
-      );
+      return Array.from(
+        new Set(this.finalSchedules.map((s) => s.institute_id)),
+      ).map((id) => {
+        const inst = institutes.find((i) => i.institute_id === id);
+        return inst
+          ? { id, name: inst.institute_name }
+          : { id, name: `Institute ${id}` };
+      });
     },
     // Map program IDs to their names (filtered by selectedInstituteId if any)
     filteredPrograms() {
@@ -721,15 +766,17 @@ export default {
             .filter((s) =>
               this.selectedInstituteId
                 ? String(s.institute_id) === String(this.selectedInstituteId)
-                : true
+                : true,
             )
-            .map((s) => s.program_id)
-        )
+            .map((s) => s.program_id),
+        ),
       );
 
       return programIds.map((id) => {
         const prog = programs.find((p) => String(p.program_id) === String(id));
-        return prog ? { id, name: prog.program_code } : { id, name: `Program ${id}` };
+        return prog
+          ? { id, name: prog.program_code }
+          : { id, name: `Program ${id}` };
       });
     },
     // Compute latest active school year dynamically
@@ -738,12 +785,14 @@ export default {
       const activeYears = this.schoolYears.filter((y) => y.is_active);
       if (!activeYears.length) return null;
       return activeYears.reduce((latest, current) =>
-        new Date(current.updated_at) > new Date(latest.updated_at) ? current : latest
+        new Date(current.updated_at) > new Date(latest.updated_at)
+          ? current
+          : latest,
       );
     },
     totalPages() {
       return Math.ceil(
-        Object.keys(this.filteredGroupedSchedule).length / this.itemsPerPage
+        Object.keys(this.filteredGroupedSchedule).length / this.itemsPerPage,
       );
     },
     startIndex() {
@@ -752,7 +801,7 @@ export default {
     endIndex() {
       return Math.min(
         this.currentPage * this.itemsPerPage,
-        Object.keys(this.filteredGroupedSchedule).length
+        Object.keys(this.filteredGroupedSchedule).length,
       );
     },
     pageNumbers() {
@@ -782,8 +831,8 @@ export default {
       const query = this.searchQuery.toLowerCase();
       return Object.fromEntries(
         Object.entries(this.filteredGroupedSchedule).filter(([name]) =>
-          name.toLowerCase().includes(query)
-        )
+          name.toLowerCase().includes(query),
+        ),
       );
     },
   },
@@ -807,7 +856,7 @@ export default {
     },
     getCollegeBranchName(branchId) {
       const branch = this.collegeBranches.find(
-        (b) => Number(b.college_branch_id) === Number(branchId)
+        (b) => Number(b.college_branch_id) === Number(branchId),
       );
 
       return branch ? branch.college_branch_name : `Branch ${branchId}`;
@@ -848,7 +897,7 @@ export default {
 
       // Get all records in the same join group
       const groupRecords = this.finalSchedules.filter(
-        (r) => r.join_group_id === record.join_group_id
+        (r) => r.join_group_id === record.join_group_id,
       );
 
       try {
@@ -860,9 +909,9 @@ export default {
                 is_joined: false,
                 join_group_id: null,
                 joined_with: [],
-              }
-            )
-          )
+              },
+            ),
+          ),
         );
 
         // Update local state
@@ -927,7 +976,7 @@ export default {
 
       // 🔥 STEP 1: Filter only truly joinable targets
       const validTargets = this.pendingJoinTargets.filter((target) =>
-        canJoin(baseRecord, target)
+        canJoin(baseRecord, target),
       );
 
       if (!validTargets.length) {
@@ -944,7 +993,7 @@ export default {
       const joinedIds = allToJoin.map((s) => s.id);
       const totalStudents = allToJoin.reduce(
         (sum, s) => sum + Number(s.class_size || 0),
-        0
+        0,
       );
 
       allToJoin.forEach((s) => {
@@ -987,12 +1036,14 @@ export default {
                 join_group_id: s.join_group_id,
                 is_joined: s.is_joined,
                 joined_with: s.joined_with,
-              }
-            )
-          )
+              },
+            ),
+          ),
         );
 
-        toast.success(`Classes successfully joined! Total students: ${totalStudents}`);
+        toast.success(
+          `Classes successfully joined! Total students: ${totalStudents}`,
+        );
         this.rebuildAllIndexes();
         await this.fetchFinalSchedules();
       } catch (error) {
@@ -1024,7 +1075,7 @@ export default {
             room_name: record.room_name,
             mode: record.mode,
             type: record.type,
-          }
+          },
         );
 
         // toast.success("Schedule moved successfully!");
@@ -1070,7 +1121,8 @@ export default {
         Number(recordA.class_size) < 30 && Number(recordB.class_size) < 30;
 
       // Must be the same mode to join
-      const sameMode = recordA.mode?.toLowerCase() === recordB.mode?.toLowerCase();
+      const sameMode =
+        recordA.mode?.toLowerCase() === recordB.mode?.toLowerCase();
 
       return (
         recordA.id !== recordB.id &&
@@ -1152,13 +1204,16 @@ export default {
           if (rStart == null || rEnd == null) return false;
 
           // Check time overlap first
-          const overlaps = Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
+          const overlaps =
+            Math.max(rStart, recordStart) < Math.min(rEnd, recordEnd);
 
           if (!overlaps) return false;
 
           // ✅ 1. FACULTY CONFLICT (always conflict)
           const sameFaculty =
-            (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
+            (r.faculty_id &&
+              record.faculty_id &&
+              r.faculty_id === record.faculty_id) ||
             (r.faculty_name &&
               record.faculty_name &&
               r.faculty_name.trim().toLowerCase() ===
@@ -1204,7 +1259,9 @@ export default {
 
           // Faculty conflict
           if (
-            (r.faculty_id && record.faculty_id && r.faculty_id === record.faculty_id) ||
+            (r.faculty_id &&
+              record.faculty_id &&
+              r.faculty_id === record.faculty_id) ||
             (r.faculty_name &&
               record.faculty_name &&
               r.faculty_name.trim().toLowerCase() ===
@@ -1253,7 +1310,7 @@ export default {
             r.college_branch_id === record.college_branch_id
           ) {
             reason.push(
-              "ONLINE conflict: Same program section cannot attend two online classes at the same time."
+              "ONLINE conflict: Same program section cannot attend two online classes at the same time.",
             );
           }
 
@@ -1298,8 +1355,10 @@ export default {
       if (!this.compareInstructorA || !this.compareInstructorB) return;
 
       this.filteredGroupedSchedule = {
-        [this.compareInstructorA]: this.groupedSchedule[this.compareInstructorA] || [],
-        [this.compareInstructorB]: this.groupedSchedule[this.compareInstructorB] || [],
+        [this.compareInstructorA]:
+          this.groupedSchedule[this.compareInstructorA] || [],
+        [this.compareInstructorB]:
+          this.groupedSchedule[this.compareInstructorB] || [],
       };
 
       this.showFacultyTable = false;
@@ -1310,9 +1369,11 @@ export default {
     },
     openEditInstructorModal(instructor) {
       // Send fresh copies of schedules to modal
-      this.editInstructorData = (this.groupedSchedule[instructor] || []).map((r) => ({
-        ...r,
-      }));
+      this.editInstructorData = (this.groupedSchedule[instructor] || []).map(
+        (r) => ({
+          ...r,
+        }),
+      );
       this.showEditModal = true;
     },
     handleModalSaved(updatedInstructorSchedules) {
@@ -1327,11 +1388,11 @@ export default {
 
       // Only update groupedSchedule for affected instructors
       const affectedInstructors = Array.from(
-        new Set(updatedInstructorSchedules.map((u) => u.faculty_name))
+        new Set(updatedInstructorSchedules.map((u) => u.faculty_name)),
       );
       affectedInstructors.forEach((inst) => {
         this.groupedSchedule[inst] = this.finalSchedules.filter(
-          (s) => s.faculty_name === inst
+          (s) => s.faculty_name === inst,
         );
       });
 
@@ -1343,7 +1404,9 @@ export default {
       }
     },
     handleDeletedSchedule(deletedId) {
-      this.finalSchedules = this.finalSchedules.filter((s) => s.id !== deletedId);
+      this.finalSchedules = this.finalSchedules.filter(
+        (s) => s.id !== deletedId,
+      );
       this.groupedSchedule = this.groupByInstructor(this.finalSchedules);
       this.filterSchedules();
     },
@@ -1360,14 +1423,16 @@ export default {
           this.draggedRecord,
           instructor,
           day,
-          slotStart
+          slotStart,
         );
       });
     },
     onDragStart(event, record) {
       // Block large classes if Join is active
       if (this.isJoined && Number(record.class_size) >= 30) {
-        toast.info("Cannot move classes with 30 or more students when Join is active.");
+        toast.info(
+          "Cannot move classes with 30 or more students when Join is active.",
+        );
         event.preventDefault();
         return;
       }
@@ -1403,7 +1468,7 @@ export default {
       const recordsToMove =
         baseRecord.is_joined && baseRecord.join_group_id
           ? this.finalSchedules.filter(
-              (r) => r.join_group_id === baseRecord.join_group_id
+              (r) => r.join_group_id === baseRecord.join_group_id,
             )
           : [baseRecord];
 
@@ -1444,9 +1509,9 @@ export default {
                 room_name: r.room_name,
                 mode: r.mode,
                 type: r.type,
-              }
-            )
-          )
+              },
+            ),
+          ),
         );
         // toast.success("Schedule moved successfully!");
         await this.fetchFinalSchedules();
@@ -1509,17 +1574,20 @@ export default {
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
             schedules.some(
-              (s) => String(s.institute_id) === String(this.selectedInstituteId)
-            )
-          )
+              (s) =>
+                String(s.institute_id) === String(this.selectedInstituteId),
+            ),
+          ),
         );
       }
 
       if (this.selectedProgramId) {
         filtered = Object.fromEntries(
           Object.entries(filtered).filter(([, schedules]) =>
-            schedules.some((s) => String(s.program_id) === String(this.selectedProgramId))
-          )
+            schedules.some(
+              (s) => String(s.program_id) === String(this.selectedProgramId),
+            ),
+          ),
         );
       }
 
@@ -1571,9 +1639,12 @@ export default {
 
     async fetchUser() {
       try {
-        const res = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/auth/me`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `${process.env.VUE_APP_API_BASE_URL}/auth/me`,
+          {
+            withCredentials: true,
+          },
+        );
         this.user = res.data || {};
       } catch {
         this.user = {};
@@ -1619,7 +1690,7 @@ export default {
         const { data } = await axios.get(
           process.env.VUE_APP_API_BASE_URL +
             "/final-generated-class-schedule/get-all-final-schedules",
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         let schedules = data || [];
@@ -1627,7 +1698,7 @@ export default {
           schedules = schedules.filter(
             (s) =>
               s.institute_id === this.user.institute_id &&
-              s.program_id === this.user.program_id
+              s.program_id === this.user.program_id,
           );
         }
         this.buildScheduleIndex();
@@ -1655,7 +1726,7 @@ export default {
     async fetchSchoolYears() {
       try {
         const res = await axios.get(
-          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years"
+          process.env.VUE_APP_API_BASE_URL + "/school-year/get-school-years",
         );
         this.schoolYears = res.data.map((y) => ({ ...y }));
       } catch (err) {

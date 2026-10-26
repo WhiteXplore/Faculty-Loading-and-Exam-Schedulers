@@ -20,7 +20,7 @@
               class="w-4 h-4 text-blue-600 group-hover:text-blue-600"
             />
           </div>
-             <span class="btn-add-text">
+          <span class="btn-add-text">
             {{ showFacultyTable ? "View Cards" : "View Faculty" }}
           </span>
         </button>
@@ -35,7 +35,7 @@
           >
             <icon name="arrow-path" class="w-4 h-4 text-defaultGreen" />
           </div>
-             <span class="btn-add-text">Auto Generation</span>
+          <span class="btn-add-text">Auto Generation</span>
         </button>
 
         <!-- TODO  Save Schedule -->
@@ -49,7 +49,7 @@
           >
             <icon name="circle-check" class="w-4 h-4 text-defaultGreen" />
           </div>
-             <span class="btn-add-text">Save this schedule</span>
+          <span class="btn-add-text">Save this schedule</span>
         </button>
       </div>
     </div>
@@ -64,7 +64,7 @@
         class="flex items-center gap-2 px-4 py-2 border border-gray-400 rounded-xl shadow-sm hover:bg-gray-100 transition"
       >
         <icon name="arrow-left" class="w-4 h-4" />
-           <span class="btn-add-text">Back to Table</span>
+        <span class="btn-add-text">Back to Table</span>
       </button>
 
       <!-- TODO  Filters (pushed to the end) -->
@@ -156,7 +156,7 @@
             class="flex justify-between items-center flex-wrap gap-3 text-gray-700 bg-white"
           >
             <!-- TODO  Items per page -->
-       <div class="per-page-container">
+            <div class="per-page-container">
               <div class="relative">
                 <select
                   v-model="itemsPerPage"
@@ -197,9 +197,7 @@
                 class="search-input"
                 @input="changePage(1)"
               />
-              <div
-                class="absolute inset-y-0 left-3 flex items-center text-defaultGreen pointer-events-none"
-              >
+              <div class="search-icon">
                 <svg
                   class="w-4 h-4"
                   fill="none"
@@ -216,7 +214,7 @@
 
           <!-- TODO  Table -->
           <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-            <div class="max-h-[69vh] overflow-y-auto">
+            <div class="max-h-[73vh] overflow-y-auto">
               <table class="min-w-full text-sm text-gray-700 border-collapse">
                 <thead
                   class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"

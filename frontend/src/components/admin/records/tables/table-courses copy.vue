@@ -86,9 +86,7 @@
               placeholder="Search courses..."
               class="rounded-full border border-green-600 px-4 py-2 pl-10 text-sm shadow-sm w-full"
             />
-            <div
-              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-            >
+            <div class="search-icon">
               <svg
                 class="w-4 h-4"
                 fill="none"
@@ -106,7 +104,7 @@
 
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <div class="max-h-[69vh] overflow-y-auto">
+        <div class="max-h-[73vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead
               class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"

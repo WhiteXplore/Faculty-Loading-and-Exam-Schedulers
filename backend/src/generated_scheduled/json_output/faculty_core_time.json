@@ -1,0 +1,1660 @@
+{
+  "metadata": {
+    "generated_at": "2026-10-25T18:18:01.382467",
+    "total_faculty": 46,
+    "full_time_weekly_target": 40,
+    "faculty_with_multiple_branches_count": 0
+  },
+  "faculty_schedules": [
+    {
+      "faculty_id": 3203,
+      "faculty_name": "Abdul Jamara",
+      "employment_type": "Permanent",
+      "weekly_hours": 29,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3170,
+      "faculty_name": "Almer Kaye Aguadera",
+      "employment_type": "Permanent",
+      "weekly_hours": 23,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 5,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "4:00 PM",
+          "time_out": "6:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 6,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3192,
+      "faculty_name": "Alneza Bangasin",
+      "employment_type": "Permanent",
+      "weekly_hours": 21,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3072,
+      "faculty_name": "Ana Raissa Lagarto",
+      "employment_type": "Permanent",
+      "weekly_hours": 28,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3204,
+      "faculty_name": "Anababes Catala",
+      "employment_type": "Permanent",
+      "weekly_hours": 13,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "8:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 6,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 6,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3215,
+      "faculty_name": "Benjie Solarte",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "8:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 3,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3171,
+      "faculty_name": "Caressha Faye Bernaldez",
+      "employment_type": "Permanent",
+      "weekly_hours": 14,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "10:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 4,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3172,
+      "faculty_name": "Carl Daniel Ganal",
+      "employment_type": "Permanent",
+      "weekly_hours": 20,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "11:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 5,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3073,
+      "faculty_name": "Carylmae Balmores",
+      "employment_type": "Permanent",
+      "weekly_hours": 4,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "10:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "10:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3173,
+      "faculty_name": "Celeste Joy Ligutom",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3174,
+      "faculty_name": "Christy Lyne Relox",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "2:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "1:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "2:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "2:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3217,
+      "faculty_name": "Criscire Palabrica",
+      "employment_type": "Permanent",
+      "weekly_hours": 9,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "5:00 PM",
+          "time_out": "9:00 PM",
+          "hours": 4,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 PM",
+          "time_out": "9:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "5:00 PM",
+          "time_out": "9:00 PM",
+          "hours": 4,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3205,
+      "faculty_name": "Cristover Vidal",
+      "employment_type": "Permanent",
+      "weekly_hours": 26,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "8:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3074,
+      "faculty_name": "Czarina Trixia Giangan",
+      "employment_type": "Permanent",
+      "weekly_hours": 13,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 6,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "2:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 6,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3075,
+      "faculty_name": "Daryl Mark Jakosalem",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3206,
+      "faculty_name": "Emmanuel Abuzo",
+      "employment_type": "Permanent",
+      "weekly_hours": 42,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "8:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3186,
+      "faculty_name": "Erlyn Dag-Uman",
+      "employment_type": "Permanent",
+      "weekly_hours": 10,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "2:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3207,
+      "faculty_name": "Eugine Dodongan",
+      "employment_type": "Permanent",
+      "weekly_hours": 18,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "8:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3076,
+      "faculty_name": "Felmark Levara",
+      "employment_type": "Permanent",
+      "weekly_hours": 15,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3284,
+      "faculty_name": "Gladys Guzman",
+      "employment_type": "Permanent",
+      "weekly_hours": 9,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "1:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "9:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 5,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3078,
+      "faculty_name": "Glenne Lagura",
+      "employment_type": "Permanent",
+      "weekly_hours": 16,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3209,
+      "faculty_name": "Ian Joel Vertudes",
+      "employment_type": "Permanent",
+      "weekly_hours": 9,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "10:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 4,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "10:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 4,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3225,
+      "faculty_name": "Ian Somosot",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Tuesday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "10:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "1:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "10:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3175,
+      "faculty_name": "Ivan Gallegos",
+      "employment_type": "Permanent",
+      "weekly_hours": 18.0,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "11:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "11:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 7.0,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "11:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 7.0,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3079,
+      "faculty_name": "Ivan Mariano Escaño",
+      "employment_type": "Permanent",
+      "weekly_hours": 19,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "9:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 5,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3210,
+      "faculty_name": "Jean Centina",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3176,
+      "faculty_name": "Jineva Sucnaan",
+      "employment_type": "Permanent",
+      "weekly_hours": 22,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "1:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 9,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "4:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3081,
+      "faculty_name": "Junry Lanoy",
+      "employment_type": "Permanent",
+      "weekly_hours": 15,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3082,
+      "faculty_name": "Kara Dupay",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3234,
+      "faculty_name": "Kimberly Ann Solano",
+      "employment_type": "Permanent",
+      "weekly_hours": 22,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "9:00 AM",
+          "time_out": "5:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "1:00 PM",
+          "time_out": "3:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 9,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3177,
+      "faculty_name": "Kimberly Sulla",
+      "employment_type": "Permanent",
+      "weekly_hours": 16,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3178,
+      "faculty_name": "Kirstein Mae Manigos",
+      "employment_type": "Permanent",
+      "weekly_hours": 30.0,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "10:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 8.5,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "4:00 PM",
+          "time_out": "6:30 PM",
+          "hours": 2.5,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "3:30 PM",
+          "hours": 8.5,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "10:00 AM",
+          "time_out": "6:30 PM",
+          "hours": 8.5,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3212,
+      "faculty_name": "Lib Romeo Mapansa",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "3:00 PM",
+          "time_out": "4:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "2:00 PM",
+          "time_out": "4:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "2:00 PM",
+          "time_out": "5:00 PM",
+          "hours": 3,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3083,
+      "faculty_name": "Libh Anthony Limama",
+      "employment_type": "Permanent",
+      "weekly_hours": 16,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3179,
+      "faculty_name": "Luzelle Pearl Serrano",
+      "employment_type": "Permanent",
+      "weekly_hours": 21,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "3:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3085,
+      "faculty_name": "Manuel Jarabe",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3088,
+      "faculty_name": "Mary Joy Ilagan",
+      "employment_type": "Permanent",
+      "weekly_hours": 15,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "1:00 PM",
+          "time_out": "2:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3089,
+      "faculty_name": "Mayka Marie Dumagil",
+      "employment_type": "Permanent",
+      "weekly_hours": 4,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3084,
+      "faculty_name": "Myrelle Joy Olita",
+      "employment_type": "Permanent",
+      "weekly_hours": 16,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "11:00 AM",
+          "time_out": "6:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "11:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "11:00 AM",
+          "time_out": "7:00 PM",
+          "hours": 8,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3238,
+      "faculty_name": "Nancy Raiz",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Tuesday",
+          "time_in": "3:00 PM",
+          "time_out": "5:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "5:00 PM",
+          "time_out": "6:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "3:00 PM",
+          "time_out": "4:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "5:00 PM",
+          "time_out": "7:00 PM",
+          "hours": 2,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3180,
+      "faculty_name": "Napoleon Clave",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "11:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "10:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "11:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "10:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "11:00 AM",
+          "time_out": "12:00 PM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3200,
+      "faculty_name": "Niño Helorentino",
+      "employment_type": "Permanent",
+      "weekly_hours": 23,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "9:00 AM",
+          "time_out": "11:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 6,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "9:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "2:00 PM",
+          "hours": 7,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3181,
+      "faculty_name": "Reymart Mancao",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3182,
+      "faculty_name": "Ryan Balolot",
+      "employment_type": "Permanent",
+      "weekly_hours": 6,
+      "schedule": [
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "7:00 AM",
+          "time_out": "9:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "7:00 AM",
+          "time_out": "8:00 AM",
+          "hours": 1,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3183,
+      "faculty_name": "Saimehen Lloid Iluis",
+      "employment_type": "Permanent",
+      "weekly_hours": 12,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "8:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Tuesday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "8:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 2,
+          "has_classes": true
+        },
+        {
+          "day": "Thursday",
+          "time_in": "7:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 3,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "8:00 AM",
+          "time_out": "10:00 AM",
+          "hours": 2,
+          "has_classes": true
+        }
+      ]
+    },
+    {
+      "faculty_id": 3184,
+      "faculty_name": "Sancho Macalisang",
+      "employment_type": "Permanent",
+      "weekly_hours": 9,
+      "schedule": [
+        {
+          "day": "Monday",
+          "time_in": "7:00 PM",
+          "time_out": "8:00 PM",
+          "hours": 1,
+          "has_classes": true
+        },
+        {
+          "day": "Wednesday",
+          "time_in": "4:00 PM",
+          "time_out": "8:00 PM",
+          "hours": 4,
+          "has_classes": true
+        },
+        {
+          "day": "Friday",
+          "time_in": "4:00 PM",
+          "time_out": "8:00 PM",
+          "hours": 4,
+          "has_classes": true
+        }
+      ]
+    }
+  ],
+  "faculty_with_multiple_branches": {}
+}

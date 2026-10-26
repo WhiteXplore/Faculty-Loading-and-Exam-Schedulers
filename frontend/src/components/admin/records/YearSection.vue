@@ -3,7 +3,7 @@
     <!-- Headers -->
     <div class="flex justify-between items-start">
       <h1 class="font-semibold tracking-wide text-sm px-1">
-        Class & Assigned Courses Overview
+        Assigned Year & Section
       </h1>
     </div>
 

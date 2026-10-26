@@ -12,6 +12,8 @@ import { UserExpertise } from 'src/user/entities/user_expertise.entity';
 import { UserOtherExpertise } from 'src/user/entities/user_other_expertise.entity';
 import { SchoolYear } from 'src/school_year/entities/school_year.entity';
 import { FacultyBranch } from 'src/faculty_branch/entities/faculty_branch.entity';
+import { Department } from 'src/departments/entities/department.entity';
+import { CollegeBranch } from 'src/college_branch/entities/college_branch.entity';
 @Entity('user_accounts')
 export class User_Accounts {
   @PrimaryGeneratedColumn('increment')
@@ -93,4 +95,23 @@ export class User_Accounts {
     cascade: true,
   })
   facultyBranches: FacultyBranch[];
+
+  // Add inside User_Accounts entity
+
+  @Column({ type: 'boolean', default: false })
+  is_under_dpt: boolean;
+
+  @ManyToOne(() => Department, (department) => department.users, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'department_id' })
+  department: Department | null;
+
+  @ManyToOne(() => CollegeBranch, (collegeBranch) => collegeBranch.users, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'college_branch_id' })
+  college_branch: CollegeBranch | null;
 }

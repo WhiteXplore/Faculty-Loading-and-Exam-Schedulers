@@ -30,7 +30,7 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.userRepository.findOne({
       where: { email },
-      relations: ['institute', 'program'], // ✅ load relations
+      relations: ['institute', 'program', 'department'], // ✅ load relations
     });
 
     if (!user) {
@@ -56,6 +56,7 @@ export class AuthService {
       institute_id: user.institute?.institute_id ?? null, // ✅ only the ID
       program_id: user.program?.program_id ?? null, // optional if you also want program_id
       designation: user.designation, // ✅ include designation
+      department_id: user.department?.department_id ?? null, // ✅ include department_id
     };
 
     const token = this.jwtService.sign(payload, { expiresIn: '1h' });
@@ -72,6 +73,7 @@ export class AuthService {
       role: user.role,
       institute_id: user.institute?.institute_id ?? null, // ✅ also in response
       program_id: user.program?.program_id ?? null,
+      department_id: user.department?.department_id ?? null,
       designation: user.designation, // ✅ include designation
     });
   }
@@ -103,6 +105,7 @@ export class AuthService {
         role: user.role,
         first_name: user.first_name,
         last_name: user.last_name,
+        department_id: user.department?.department_id ?? null,
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired token');
@@ -235,6 +238,8 @@ export class AuthService {
         'expertise.course', // ✅ include course details
         'other_expertise',
         'other_expertise.course', // ✅ include course details
+        'department',
+        'college_branch',
       ],
     });
   }
@@ -245,7 +250,13 @@ export class AuthService {
   ): Promise<Partial<User_Accounts>> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['institute', 'program', 'school_year', 'expertise'],
+      relations: [
+        'institute',
+        'program',
+        'school_year',
+        'expertise',
+        'college_branch',
+      ],
     });
 
     if (!user) {

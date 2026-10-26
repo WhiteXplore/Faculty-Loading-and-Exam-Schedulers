@@ -32,6 +32,11 @@ export class ClassController {
     return this.classService.getClassesCourseRaw();
   }
 
+  @Get('get-faculty-expertise-course')
+  getFacultyClassesCourseRaw() {
+    return this.classService.getFacultyClassesCourseRaw();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.classService.findOne(+id);

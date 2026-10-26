@@ -25,7 +25,7 @@ export default {
             email: this.email.trim(),
             password: this.password,
           },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         const role = response.data.role?.trim();
@@ -36,19 +36,15 @@ export default {
 
         if (role === "Admin") {
           this.$router.push("/admin-dashboard");
-
         } else if (
           ["Program Chairperson", "Department Chairperson"].includes(role)
         ) {
           this.$router.push("/progchair-dashboard");
-
         } else if (role === "Faculty") {
           this.$router.push("/faculty-dashboard");
-
         } else {
           toast.error("Unauthorized role.");
         }
-
       } catch (error) {
         console.error(error);
 

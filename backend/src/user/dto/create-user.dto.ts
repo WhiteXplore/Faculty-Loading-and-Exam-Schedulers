@@ -69,6 +69,20 @@ export class CreateUserDto {
   @Type(() => Number)
   @IsNumber()
   program_id?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  department_id?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  college_branch_id?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  is_under_dpt?: boolean;
 }
 
 export class ImportUserDto {
@@ -94,6 +108,10 @@ export class ImportUserDto {
 
   @IsOptional()
   @IsString()
+  department?: string;
+
+  @IsOptional()
+  @IsString()
   designation?: string;
 
   @IsOptional()
@@ -104,6 +122,17 @@ export class ImportUserDto {
   @IsOptional()
   @IsString()
   employment_type?: string;
+
+  // Branch name from the Excel "Branch Coordinator" column
+  @IsOptional()
+  @IsString()
+  college_branch?: string;
+
+  // Optional branch ID, if importing by ID instead
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  college_branch_id?: number;
 }
 
 export class UpdateUserDto {
@@ -157,4 +186,20 @@ export class UpdateUserDto {
   @Type(() => Number)
   @IsNumber()
   program_id?: number | null;
+
+  // Department assignment
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  department_id?: number | null;
+
+  // College Branch assignment
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  college_branch_id?: number | null;
+
+  @IsOptional()
+  @IsBoolean()
+  is_under_dpt?: boolean;
 }

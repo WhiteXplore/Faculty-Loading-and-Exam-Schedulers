@@ -48,9 +48,7 @@
               @input="changePage(1)"
             />
             <!-- Search icon -->
-            <div
-              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-            >
+            <div class="search-icon">
               <svg
                 class="w-4 h-4"
                 fill="none"
@@ -123,7 +121,7 @@
 
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <div class="max-h-[69vh] overflow-y-auto">
+        <div class="max-h-[73vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead
               class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
@@ -201,9 +199,12 @@
                     }}
                   </span>
                 </td>
-                <td class="px-4 py-3 items-center justify-center flex relative">
+                <td
+                  class="px-4 py-3 flex items-center justify-center relative"
+                  :class="{ 'z-50': openActionMenuId === user.id }"
+                >
                   <div class="per-page-container">
-                    <!-- Always visible -->
+                    <!-- See Details -->
                     <button
                       class="btn-see-details"
                       @click="toggleViewExpertise(user)"
@@ -211,7 +212,7 @@
                       See Details
                     </button>
 
-                    <!-- 3 dots button -->
+                    <!-- Three dots button -->
                     <button
                       class="w-5.5 h-8 rounded-md border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                       @click.stop="toggleActionMenu(user.id)"
@@ -221,10 +222,16 @@
                   </div>
 
                   <!-- Dropdown actions -->
+                  <!-- Dropdown actions -->
                   <div
                     v-if="openActionMenuId === user.id"
-                    @mouseleave="openActionMenuId = false"
-                    class="absolute right-0 top-12 z-50 w-40 bg-white border rounded-lg shadow-lg p-2 space-y-0.5"
+                    @mouseleave="openActionMenuId = null"
+                    :class="[
+                      'absolute right-0 z-[99999] w-40 bg-white border border-gray-200 rounded-lg shadow-xl p-2 space-y-0.5',
+                      paginatedData.length === 1
+                        ? 'bottom-0 top-auto'
+                        : 'top-12 bottom-auto',
+                    ]"
                   >
                     <button
                       class="w-full flex gap-2 items-center text-left px-2 py-2 hover:bg-green-50 rounded-md text-xs"
@@ -352,9 +359,9 @@
   <!-- Import Selection Modal -->
   <div
     v-if="showImportSelector"
-    class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+    class="fixed inset-0 flex items-center justify-center z-50 modal-overlay"
   >
-    <div class="bg-white rounded-2xl shadow-xl w-[450px] animate-slideUp">
+    <div class="bg-white rounded-2xl shadow-xl w-[25vw] animate-slideUp">
       <!-- Title -->
       <div class="modal-header">
         <div class="flex items-center gap-3">
@@ -381,70 +388,100 @@
       </div>
 
       <!-- Cards -->
-      <div class="grid grid-cols-2 gap-4 p-4">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
         <!-- Import Users -->
         <div
           @click="openImportUsers"
-          class="border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-blue-50 hover:border-blue-500 transition"
+          class="group relative flex cursor-pointer flex-col rounded-xl border border-gray-200 bg-white p-5 transition-all duration-200 hover:border-blue-300 hover:bg-blue-50/40 hover:shadow-md"
         >
-          <div class="bg-blue-100 p-3 rounded-full mb-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 text-blue-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div class="flex items-start justify-between">
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-600 transition-colors duration-200 group-hover:bg-blue-100"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2m7-10a4 4 0 100-8 4 4 0 000 8zm9-3v6m-3-3h6"
+                />
+              </svg>
+            </div>
+
+            <span
+              class="text-xs font-medium text-gray-400 transition-colors group-hover:text-blue-600"
+            >
+              Import
+            </span>
           </div>
 
-          <span class="text-sm font-semibold text-gray-700">
-            Import Users
-          </span>
+          <div class="mt-4">
+            <h3
+              class="text-sm font-semibold text-gray-800 transition-colors group-hover:text-blue-700"
+            >
+              Import Users
+            </h3>
 
-          <p class="text-xs text-gray-500 text-center mt-1">
-            Upload user accounts CSV
-          </p>
+            <p class="mt-1 text-xs leading-relaxed text-gray-500">
+              Upload user accounts using a CSV or Excel file.
+            </p>
+          </div>
         </div>
 
         <!-- Import Expertise -->
         <div
           @click="openImportExpertise"
-          class="border rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-purple-50 hover:border-purple-500 transition"
+          class="group relative flex cursor-pointer flex-col rounded-xl border border-gray-200 bg-white p-5 transition-all duration-200 hover:border-purple-300 hover:bg-purple-50/40 hover:shadow-md"
         >
-          <div class="bg-purple-100 p-3 rounded-full mb-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-6 h-6 text-purple-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div class="flex items-start justify-between">
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-purple-50 text-purple-600 transition-colors duration-200 group-hover:bg-purple-100"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 14v7m-3-3l3 3 3-3M5 10V5a2 2 0 012-2h10a2 2 0 012 2v5M3 14h18"
+                />
+              </svg>
+            </div>
+
+            <span
+              class="text-xs font-medium text-gray-400 transition-colors group-hover:text-purple-600"
+            >
+              Import
+            </span>
           </div>
 
-          <span class="text-sm font-semibold text-gray-700">
-            Import Expertise
-          </span>
+          <div class="mt-4">
+            <h3
+              class="text-sm font-semibold text-gray-800 transition-colors group-hover:text-purple-700"
+            >
+              Import Expertise
+            </h3>
 
-          <p class="text-xs text-gray-500 text-center mt-1">
-            Upload expertise data CSV
-          </p>
+            <p class="mt-1 text-xs leading-relaxed text-gray-500">
+              Upload faculty expertise data using a CSV or Excel file.
+            </p>
+          </div>
         </div>
       </div>
 
+      <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
       <!-- Cancel -->
       <div class="p-4 text-center flex justify-end">
         <button @click="showImportSelector = false" class="btn-cancel">

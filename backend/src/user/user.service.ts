@@ -12,6 +12,8 @@ import { ImportExpertiseDto } from './dto/import-expertise.dto';
 import { Program } from 'src/programs/entities/program.entity';
 import { Course } from 'src/courses/entities/course.entity';
 import { UserExpertise } from './entities/user_expertise.entity';
+import { Department } from 'src/departments/entities/department.entity';
+import { CollegeBranch } from 'src/college_branch/entities/college_branch.entity';
 import * as bcrypt from 'bcrypt';
 
 export interface ImportError {
@@ -38,6 +40,10 @@ export class UserService {
     private readonly courseRepository: Repository<Course>,
     @InjectRepository(UserExpertise)
     private readonly userExpertiseRepository: Repository<UserExpertise>,
+    @InjectRepository(Department)
+    private readonly departmentRepository: Repository<Department>,
+    @InjectRepository(CollegeBranch)
+    private readonly collegeBranchRepository: Repository<CollegeBranch>,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User_Accounts> {
@@ -97,7 +103,10 @@ export class UserService {
         'institute',
         'program',
         'expertise',
-        'expertise.course', // ✅ include course details
+        'expertise.course',
+        'department',
+        'college_branch',
+        // ✅ include course details
         // 'other_expertise',
         // 'other_expertise.course',
       ], // eager load relations if needed
@@ -121,7 +130,7 @@ export class UserService {
   ): Promise<User_Accounts> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['program', 'institute'],
+      relations: ['program', 'institute', 'college_branch'],
     });
 
     if (!user) {
@@ -190,6 +199,46 @@ export class UserService {
       user.is_active = updateUserDto.is_active;
     }
 
+    if (updateUserDto.department_id !== undefined) {
+      if (updateUserDto.department_id === null) {
+        user.department = null;
+      } else {
+        const department = await this.departmentRepository.findOne({
+          where: {
+            department_id: Number(updateUserDto.department_id),
+          },
+        });
+
+        if (!department) {
+          throw new NotFoundException('Department not found');
+        }
+
+        user.department = department;
+      }
+
+      // Compute based on the department assignment
+      user.is_under_dpt = user.department != null;
+    }
+
+    // COLLEGE BRANCH ASSIGNMENT
+    if (updateUserDto.college_branch_id !== undefined) {
+      if (updateUserDto.college_branch_id === null) {
+        user.college_branch = null;
+      } else {
+        const collegeBranch = await this.collegeBranchRepository.findOne({
+          where: {
+            college_branch_id: Number(updateUserDto.college_branch_id),
+          },
+        });
+
+        if (!collegeBranch) {
+          throw new NotFoundException('College branch not found');
+        }
+
+        user.college_branch = collegeBranch;
+      }
+    }
+
     if (
       updateUserDto.program_id !== undefined &&
       updateUserDto.program_id !== null
@@ -224,108 +273,216 @@ export class UserService {
       errors: [],
     };
 
+    // Load reference data once before processing rows
     const programs = await this.programRepository.find({
       relations: ['institute'],
     });
 
-    for (let i = 0; i < importData.length; i++) {
-      try {
-        const userData = importData[i];
+    const departments = await this.departmentRepository.find();
 
-        // REQUIRED VALIDATION
+    const branches = await this.collegeBranchRepository.find();
+
+    // Normalize names for matching
+    const normalizeName = (value: unknown): string =>
+      String(value ?? '')
+        .normalize('NFKC')
+        .trim()
+        .replace(/&/g, 'and')
+        .replace(/\s+/g, ' ')
+        .toLowerCase();
+
+    for (let i = 0; i < importData.length; i++) {
+      const userData = importData[i];
+      const rowNumber = i + 2;
+
+      try {
+        // 1. REQUIRED VALIDATION
         if (
-          !userData.first_name ||
-          !userData.last_name ||
-          !userData.email ||
-          !userData.role
+          !userData.first_name?.trim() ||
+          !userData.last_name?.trim() ||
+          !userData.email?.trim() ||
+          !userData.role?.trim()
         ) {
           results.failed++;
 
           results.errors.push({
-            row: i + 2,
-            error: 'Missing required fields',
+            row: rowNumber,
+            error:
+              'Missing required fields: First Name, Last Name, Email, or Role.',
             data: userData,
           });
 
           continue;
         }
 
-        // CHECK EXISTING EMAIL
+        const email = userData.email.trim().toLowerCase();
+
+        // 2. CHECK EXISTING EMAIL
         const existingUser = await this.userRepository.findOne({
-          where: {
-            email: userData.email.trim().toLowerCase(),
-          },
+          where: { email },
         });
 
         if (existingUser) {
           results.failed++;
 
           results.errors.push({
-            row: i + 2,
+            row: rowNumber,
+            email,
             error: 'Email already exists',
-            email: userData.email,
           });
 
           continue;
         }
 
-        // FIND PROGRAM
-        // FIND PROGRAM
-        let program: Program | undefined = undefined;
+        // 3. FIND PROGRAM
+        let program: Program | null = null;
 
-        if (userData.program) {
-          const programSearch = userData.program.toLowerCase();
+        const programName = normalizeName(userData.program);
 
-          program = programs.find(
-            (p) =>
-              p.program_name?.toLowerCase() === programSearch ||
-              p.program_code?.toLowerCase() === programSearch,
-          );
-        }
-        // DEFAULT PASSWORD
-        const defaultPassword = 'Password123!';
-        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+        if (programName) {
+          program =
+            programs.find(
+              (p) =>
+                normalizeName(p.program_name) === programName ||
+                normalizeName(p.program_code) === programName,
+            ) ?? null;
 
-        // CREATE USER PAYLOAD
-        const userPayload: any = {
-          first_name: userData.first_name.trim(),
-          last_name: userData.last_name.trim(),
-          email: userData.email.trim().toLowerCase(),
-          password: hashedPassword,
+          if (!program) {
+            results.failed++;
 
-          role: userData.role?.trim(),
+            results.errors.push({
+              row: rowNumber,
+              email,
+              error: `Program not found: "${userData.program}"`,
+              data: userData,
+            });
 
-          employment_type: userData.employment_type?.trim() || 'Full Time',
-
-          unit_load: Number(userData.unit_load || 0),
-
-          designation: userData.designation?.trim() || '',
-
-          preffered_time: '',
-        };
-
-        // PROGRAM + INSTITUTE
-        if (program) {
-          userPayload.program = program;
-
-          if (program.institute) {
-            userPayload.institute = program.institute;
+            continue;
           }
         }
 
+        // 4. FIND DEPARTMENT
+        let department: Department | null = null;
+
+        const departmentName = normalizeName(userData.department);
+
+        if (departmentName) {
+          department =
+            departments.find(
+              (d) => normalizeName(d.department_name) === departmentName,
+            ) ?? null;
+
+          if (!department) {
+            results.failed++;
+
+            results.errors.push({
+              row: rowNumber,
+              email,
+              error: `Department not found: "${userData.department}"`,
+              data: userData,
+            });
+
+            continue;
+          }
+        }
+
+        // 5. FIND COLLEGE BRANCH
+        let collegeBranch: CollegeBranch | null = null;
+
+        const branchName = normalizeName(userData.college_branch);
+
+        if (branchName) {
+          /*
+           * IMPORTANT:
+           * This assumes the CollegeBranch entity property is
+           * college_branch_name.
+           * Change it if your entity uses a different property.
+           */
+          collegeBranch =
+            branches.find(
+              (branch) =>
+                normalizeName(branch.college_branch_name) === branchName,
+            ) ?? null;
+
+          if (!collegeBranch) {
+            results.failed++;
+
+            results.errors.push({
+              row: rowNumber,
+              email,
+              error: `College branch not found: "${userData.college_branch}"`,
+              data: userData,
+            });
+
+            continue;
+          }
+        }
+
+        // 6. LOG MATCHED REFERENCE RECORDS
+        console.log(`Import row ${rowNumber}`, {
+          email,
+          program: program?.program_name ?? null,
+          program_id: program?.program_id ?? null,
+          department: department?.department_name ?? null,
+          department_id: department?.department_id ?? null,
+          college_branch_id: collegeBranch?.college_branch_id ?? null,
+          is_under_dpt: department !== null,
+        });
+
+        // 7. HASH DEFAULT PASSWORD
+        const hashedPassword = await bcrypt.hash('Password', 10);
+
+        // 8. BUILD USER PAYLOAD
+        const userPayload: Partial<User_Accounts> = {
+          first_name: userData.first_name.trim(),
+          last_name: userData.last_name.trim(),
+          email,
+          password: hashedPassword,
+          role: userData.role.trim(),
+          employment_type: userData.employment_type?.trim() || 'Full Time',
+          unit_load: Number(userData.unit_load || 0),
+          designation: userData.designation?.trim() || '',
+          preffered_time: '',
+          is_active: true,
+
+          // Department relationship and flag
+          department: department,
+          is_under_dpt: department !== null,
+
+          // Program and institute relationships
+          program: program,
+          institute: program?.institute ?? null,
+
+          // College branch relationship
+          college_branch: collegeBranch,
+        };
+
+        // 9. SAVE USER
         const newUser = this.userRepository.create(userPayload);
 
-        await this.userRepository.save(newUser);
+        const savedUser = await this.userRepository.save(newUser);
 
+        // 10. COUNT SUCCESS ONLY AFTER SAVE
         results.success++;
+
+        console.log(`Successfully imported row ${rowNumber}`, {
+          user_id: savedUser.id,
+          department_id: savedUser.department?.department_id ?? null,
+          is_under_dpt: savedUser.is_under_dpt,
+          college_branch_id:
+            savedUser.college_branch?.college_branch_id ?? null,
+        });
       } catch (error) {
         results.failed++;
 
         results.errors.push({
-          row: i + 2,
+          row: rowNumber,
+          email: userData.email,
           error: error.message || 'Unknown error',
-          data: importData[i],
+          data: userData,
         });
+
+        console.error(`Failed to import row ${rowNumber}:`, error);
       }
     }
 

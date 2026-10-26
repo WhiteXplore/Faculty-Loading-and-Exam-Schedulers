@@ -4,10 +4,7 @@
     <div class="text-sm flex justify-between px-1">
       <div class="text-[13px] text-text mt-4">Pages / Programs</div>
 
-      <div
-        @click="toggleAdd"
-        class="btn-add"
-      >
+      <div @click="toggleAdd" class="btn-add">
         <div
           class="flex items-center justify-center w-5 h-5 bg-white rounded-full group-hover:bg-green-100 transition-colors duration-300"
         >
@@ -16,19 +13,19 @@
             class="w-4 h-4 text-defaultGreen transition-colors duration-300 group-hover:text-defaultGreen"
           />
         </div>
-           <span class="btn-add-text">Add Program</span>
+        <span class="btn-add-text">Add Program</span>
       </div>
     </div>
 
     <!-- Controls -->
     <div class="table-container">
-        <div class="table-controls">
+      <div class="table-controls">
         <!-- Items per page -->
-   <div class="per-page-container">
-           <div class="select-wrapper">
+        <div class="per-page-container">
+          <div class="select-wrapper">
             <select
               v-model="itemsPerPage"
-              class="select-input" 
+              class="select-input"
               @change="changePage(1)"
             >
               <option value="10">10</option>
@@ -60,7 +57,7 @@
         <!-- Filters -->
         <div class="flex items-center gap-3 flex-wrap">
           <!-- Institute Filter -->
-           <div class="select-wrapper">
+          <div class="select-wrapper">
             <select
               v-model="selectedInstitute"
               class="appearance-none rounded-full border border-green-600 bg-white px-4 py-2 pr-8 text-green-900 text-sm font-semibold shadow-sm cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-green-500 focus:border-green-500 hover:shadow-md"
@@ -105,9 +102,7 @@
               @input="changePage(1)"
             />
             <!-- Search icon -->
-            <div
-              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-            >
+            <div class="search-icon">
               <svg
                 class="w-4 h-4"
                 fill="none"
@@ -240,10 +235,7 @@
   />
 
   <!-- Delete Confirmation -->
-  <div
-    v-if="showDeleteModal"
-    class="modal-overlay"
-  ></div>
+  <div v-if="showDeleteModal" class="modal-overlay"></div>
   <div
     v-if="showDeleteModal"
     class="rounded-xl shadow-lg w-[300px] md:w-[400px] bg-white py-6 px-4 flex flex-col items-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"

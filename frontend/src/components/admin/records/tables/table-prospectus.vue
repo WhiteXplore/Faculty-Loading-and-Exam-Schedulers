@@ -94,7 +94,10 @@
                 <div class="flex gap-2">
                   <router-link
                     :to="{
-                      path: `/view-curriculum-offers/${reportCurriculum_data.institute_id}`,
+                      path:
+                        user?.role === 'Admin'
+                          ? `/view-curriculum-offers/${reportCurriculum_data.institute_id}`
+                          : `/prog-view-curriculum-offers/${reportCurriculum_data.institute_id}`,
                       query: activeSchoolYear
                         ? {
                             sy_start: activeSchoolYear.start_year,
@@ -231,6 +234,7 @@ export default {
       // ✅ SAME AS TableCourses
       activeSchoolYear: null,
       stopEventBus: null,
+      user: null,
     };
   },
 
@@ -322,6 +326,66 @@ export default {
   },
 
   methods: {
+    async redirectToMyInstitute() {
+      try {
+        const response = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
+
+        const user = response.data;
+
+        console.log("Logged-in user:", user);
+
+        // Only apply automatic institute filtering to
+        // Program Chairperson / Department Chairperson
+        if (
+          !["Program Chairperson", "Department Chairperson"].includes(user.role)
+        ) {
+          return;
+        }
+
+        // Adjust this depending on your actual auth response structure
+        const userInstituteId =
+          user.institute_id ||
+          user.institute?.institute_id ||
+          user.institute?.id;
+
+        if (!userInstituteId) {
+          console.warn("No institute_id found for logged-in user.");
+          return;
+        }
+
+        // ✅ Find the user's institute from the loaded institute records
+        const institute = this.detailedReportCurriculum.find(
+          (item) => String(item.institute_id) === String(userInstituteId),
+        );
+
+        if (!institute) {
+          console.warn(
+            "Logged-in user's institute was not found:",
+            userInstituteId,
+          );
+          return;
+        }
+
+        // ✅ Automatically open the user's institute details
+        this.$router.replace({
+          path: `/prog-view-curriculum-offers/${institute.institute_id}`,
+          query: this.activeSchoolYear
+            ? {
+                sy_start: this.activeSchoolYear.start_year,
+                sy_end: this.activeSchoolYear.end_year,
+                semester: this.activeSchoolYear.semester,
+              }
+            : {},
+        });
+      } catch (error) {
+        console.error("Failed to identify user's institute:", error);
+      }
+    },
     async loadReportCurriculums() {
       const store = useFetchDataStore();
       await store.fetchReportCurriculum();
@@ -359,22 +423,49 @@ export default {
     changePage(page) {
       this.currentPage = Math.max(1, Math.min(page, this.totalPages));
     },
+    async fetchUser() {
+      try {
+        const response = await axios.get(
+          process.env.VUE_APP_API_BASE_URL + "/auth/me",
+          {
+            withCredentials: true,
+          },
+        );
+        if (response.data) {
+          this.user = response.data;
+          console.log("Authenticated User:", this.user);
+        } else {
+          this.$router.push("/");
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        this.$router.push("/");
+      }
+    },
   },
 
   async mounted() {
     const store = useFetchDataStore();
 
+    // ✅ Get logged-in user first
+    await this.fetchUser();
+
+    // ✅ Load institute/curriculum data
     await this.loadReportCurriculums();
 
     if (!this.courses.length) {
       await store.fetchCourses();
     }
 
-    // ✅ SAME ACTIVE YEAR LISTENER AS TableCourses
+    // ✅ Active school year listener
     this.stopEventBus = eventBus.on((newYear) => {
       if (!newYear) return;
+
       this.activeSchoolYear = newYear;
     });
+
+    // ✅ Automatically open user's institute
+    await this.redirectToMyInstitute();
   },
 
   beforeUnmount() {

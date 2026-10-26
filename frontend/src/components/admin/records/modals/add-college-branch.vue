@@ -27,7 +27,7 @@
             <!-- Title -->
             <div>
               <h2 class="text-lg font-semibold text-white">
-                {{ isEdit ? "Edit College Branch" : "Add College Branch" }}
+                {{ isEditMode ? "Edit College Branch" : "Add College Branch" }}
               </h2>
 
               <p class="text-xs text-green-100">

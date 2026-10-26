@@ -1,99 +1,109 @@
 <template>
-  <div
-    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 w-screen"
-  >
-    <div
-      class="flex justify-center items-center w-full max-w-md bg-white p-4 rounded-xl shadow-lg"
-    >
-      <div class="flex flex-col w-full">
+  <div class="modal-overlay">
+    <div class="modal-wrapper">
+      <div class="modal-container">
         <!-- Header -->
-        <div class="flex justify-start">
-          <h1 class="font-semibold text-lg text-gray-800">Upload Courses</h1>
-        </div>
-        <p class="text-sm text-gray-500 mt-1">
-          Upload an Excel or CSV file containing the course list.
-        </p>
+        <div class="modal-header gap-10">
+          <div class="flex items-center gap-3">
+            <!-- Icon -->
+            <div class="glass-container">
+              <icon name="circle-add2" class="text-white" />
+            </div>
 
-        <!-- Drag & Drop / Click Zone -->
-        <div
-          class="flex justify-center items-center cursor-pointer border-2 border-dashed border-gray-300 rounded-md p-8 w-full max-w-xl mx-auto mt-3"
-          :class="{ 'bg-gray-100': dragging }"
-          @dragover.prevent="dragging = true"
-          @dragleave.prevent="dragging = false"
-          @drop.prevent="handleDrop"
-          @click="triggerFileInput"
-        >
-          <div class="text-center">
-            <p v-if="!file" class="text-gray-600">
-              <span class="text-defaultGreen">Upload a file</span> or drag and
-              drop<br />
-              Excel / CSV (.xlsx, .xls, .csv) up to 10MB
-            </p>
-            <p v-else class="text-defaultGreen">
-              File uploaded: {{ file.name }}
-            </p>
+            <!-- Title -->
+            <div>
+              <h2 class="text-lg font-semibold text-white">Upload Courses</h2>
 
-            <input
-              type="file"
-              class="hidden"
-              ref="fileInput"
-              @change="handleFileUpload"
-              accept=".csv, .xlsx, .xls"
-            />
+              <p class="text-xs text-green-100">
+                Upload an Excel or CSV file containing the course list.
+              </p>
+            </div>
           </div>
+
+          <icon
+            :name="'circle-close3'"
+            @click="$emit('close')"
+            class="close-button-header"
+          />
         </div>
-
-        <!-- Accepted Files Info -->
-        <div class="mt-3 text-[13px] flex justify-between text-left">
-          <div>
-            <p class="text-gray-600">Accepted Files: .xlsx, .xls, .csv</p>
-            <p class="text-green-700">example.xlsx</p>
-          </div>
-        </div>
-
-        <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
-
-        <!-- Uploading Status -->
-        <div
-          v-if="uploading"
-          class="text-defaultGreen text-sm flex items-center gap-2 mt-2"
-        >
-          <span
-            class="animate-spin border-2 border-green-600 border-t-transparent rounded-full w-4 h-4"
-          ></span>
-          Uploading...
-        </div>
-
-        <!-- Duplicate course_code container -->
-        <div
-          v-if="duplicateCourseCodes.length"
-          class="mt-3 rounded-lg border border-yellow-300 bg-yellow-50 p-3"
-        >
-          <p class="text-sm font-semibold text-yellow-800">
-            These course codes already exist in the database:
-          </p>
-
-          <div class="mt-2 flex flex-wrap gap-2 max-h-28 overflow-y-auto">
-            <span
-              v-for="code in duplicateCourseCodes"
-              :key="code"
-              class="px-2 py-1 rounded-full bg-yellow-200 text-yellow-900 text-xs font-medium"
-            >
-              {{ code }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="tracking-wide flex justify-end gap-2 mt-4">
-          <button class="btn-cancel" @click="$emit('close')">Cancel</button>
-          <button
-            class="btn-save"
-            @click="submitUpload"
-            :disabled="!file || uploading"
+        <div class="p-4">
+          <div
+            class="flex justify-center items-center cursor-pointer border-2 border-dashed border-gray-300 rounded-md p-8 w-full max-w-xl mx-auto h-32"
+            :class="{ 'bg-gray-100': dragging }"
+            @dragover.prevent="dragging = true"
+            @dragleave.prevent="dragging = false"
+            @drop.prevent="handleDrop"
+            @click="triggerFileInput"
           >
-            {{ uploading ? "Processing..." : "Upload" }}
-          </button>
+            <div class="text-center">
+              <p v-if="!file" class="text-gray-600">
+                <span class="text-defaultGreen">Upload a file</span> or drag and
+                drop<br />
+                Excel / CSV (.xlsx, .xls, .csv) up to 10MB
+              </p>
+              <p v-else class="text-defaultGreen">
+                File uploaded: {{ file.name }}
+              </p>
+
+              <input
+                type="file"
+                class="hidden"
+                ref="fileInput"
+                @change="handleFileUpload"
+                accept=".csv, .xlsx, .xls"
+              />
+            </div>
+          </div>
+          <div class="flex w-full justify-center">
+            <button class="btn-save-nobg mt-3" @click="downloadTemplate">
+              Download Template
+            </button>
+          </div>
+
+          <div class="w-full h-[1px] rounded-md bg-gray-200 mt-4"></div>
+
+          <!-- Uploading Status -->
+          <div
+            v-if="uploading"
+            class="text-defaultGreen text-sm flex items-center gap-2 mt-2"
+          >
+            <span
+              class="animate-spin border-2 border-green-600 border-t-transparent rounded-full w-4 h-4"
+            ></span>
+            Uploading...
+          </div>
+
+          <!-- Duplicate course_code container -->
+          <div
+            v-if="duplicateCourseCodes.length"
+            class="mt-3 rounded-lg border border-yellow-300 bg-yellow-50 p-3"
+          >
+            <p class="text-sm font-semibold text-yellow-800">
+              These course codes already exist in the database:
+            </p>
+
+            <div class="mt-2 flex flex-wrap gap-2 max-h-28 overflow-y-auto">
+              <span
+                v-for="code in duplicateCourseCodes"
+                :key="code"
+                class="px-2 py-1 rounded-full bg-yellow-200 text-yellow-900 text-xs font-medium"
+              >
+                {{ code }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="tracking-wide flex justify-end gap-2 mt-4">
+            <button class="btn-cancel" @click="$emit('close')">Cancel</button>
+            <button
+              class="btn-save"
+              @click="submitUpload"
+              :disabled="!file || uploading"
+            >
+              {{ uploading ? "Processing..." : "Upload" }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -105,9 +115,12 @@ import * as XLSX from "xlsx";
 import axios from "axios";
 import { toast } from "vue3-toastify";
 import { useFetchDataStore } from "../../../../store/fetch-data-store";
-
+import icon from "@/assets/icon.vue";
 export default {
   name: "UploadCoursesPage",
+  components: {
+    icon,
+  },
   data() {
     return {
       file: null,
@@ -119,6 +132,45 @@ export default {
   },
 
   methods: {
+    downloadTemplate() {
+      const templateData = [
+        {
+          "School Year": "2024-2025",
+          Institute: "IC",
+          Program: "BSIT",
+          "Year Level": 1,
+          Semester: 1,
+          "Course Code": "IT 111",
+          "Course Title": "Introduction to Computing",
+          "Lecture Units": 2,
+          "Laboratory Units": 1,
+        },
+      ];
+
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(templateData);
+
+      // Set column widths
+      worksheet["!cols"] = [
+        { wch: 15 }, // School Year
+        { wch: 15 }, // Institute
+        { wch: 15 }, // Program
+        { wch: 15 }, // Year Level
+        { wch: 12 }, // Semester
+        { wch: 18 }, // Course Code
+        { wch: 40 }, // Course Title
+        { wch: 18 }, // Lecture Units
+        { wch: 20 }, // Laboratory Units
+      ];
+
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Courses Template");
+
+      // Download Excel file
+      XLSX.writeFile(workbook, "Courses_Upload_Template.xlsx");
+    },
     triggerFileInput() {
       this.$refs.fileInput.click();
     },

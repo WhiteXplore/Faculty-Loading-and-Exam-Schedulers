@@ -22,6 +22,7 @@ import { FacultyBranchModule } from './faculty_branch/faculty_branch.module';
 import { BuildingsModule } from './buildings/buildings.module';
 import { BuildingAreasModule } from './building_areas/building_areas.module';
 import { CurriculumCoursesModule } from './curriculum_courses/curriculum_courses.module';
+import { DepartmentsModule } from './departments/departments.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { CurriculumCoursesModule } from './curriculum_courses/curriculum_courses
     BuildingsModule,
     BuildingAreasModule,
     CurriculumCoursesModule,
+    DepartmentsModule,
   ],
 })
 export class AppModule {}

@@ -52,7 +52,7 @@
                 class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
               >
                 <!-- Icon -->
-                <div class="absolute left-3 text-defaultGreen">
+                <div class="absolute left-3 text-gray-400">
                   <svg
                     class="h-4 w-4"
                     fill="none"
@@ -127,11 +127,15 @@
                   <!-- All -->
                   <button
                     @click="selectProgram('all')"
-                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
-                    :class="selectedProgram === 'all' ? 'bg-green-50' : ''"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
+                    :class="
+                      selectedProgram === 'all'
+                        ? 'bg-defaultGreen text-white'
+                        : ''
+                    "
                   >
                     <div>
-                      <p class="text-sm text-gray-800">All Programs</p>
+                      <p class="text-sm">All Programs</p>
                     </div>
                   </button>
 
@@ -140,14 +144,14 @@
                     v-for="program in availablePrograms"
                     :key="program.program_id"
                     @click="selectProgram(program.program_id)"
-                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-green-50"
+                    class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-defaultGreen hover:text-white"
                     :class="
                       Number(selectedProgram) === Number(program.program_id)
-                        ? 'bg-green-50'
+                        ? 'bg-defaultGreen text-white'
                         : ''
                     "
                   >
-                    <p class="text-sm text-gray-800">
+                    <p class="text-sm">
                       {{ program.program_code }}
                     </p>
 
@@ -180,9 +184,7 @@
                 @input="changePage(1)"
               />
               <!-- Search icon -->
-              <div
-                class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-              >
+              <div class="search-icon">
                 <svg
                   class="w-4 h-4"
                   fill="none"
@@ -199,8 +201,8 @@
         </div>
 
         <!-- Table -->
-        <div class="w-full mt-1 rounded-xl border bg-white overflow-hidden">
-          <div class="max-h-[69vh] overflow-y-auto">
+        <div class="w-full rounded-xl border bg-white overflow-hidden">
+          <div class="max-h-[73vh] overflow-y-auto">
             <table class="min-w-full text-sm border-collapse">
               <thead
                 class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
@@ -243,9 +245,9 @@
                   <td class="px-4 py-3">
                     {{ cls.program?.program_name || "N/A" }}
                   </td>
-                  <td class="px-4 py-3 text-center">
+                  <td class="text-center">
                     <span
-                      class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full"
+                      class="border border-green-600 text-green-800 text-xs px-2 py-1 rounded-full"
                     >
                       {{ cls.class_size }} students
                     </span>
@@ -409,11 +411,7 @@
                   </td>
 
                   <td class="schedule-td text-center">
-                    <span
-                      class="px-2 py-1 rounded-full bg-green-100 text-defaultGreen text-xs"
-                    >
-                      {{ getYearLevelLabel(course.course_level) }}
-                    </span>
+                    {{ getYearLevelLabel(course.course_level) }}
                   </td>
 
                   <td class="schedule-td text-center">
@@ -453,7 +451,7 @@
     @click.self="closeScheduleModal"
   >
     <div
-      class="bg-white rounded-2xl shadow-2xl w-[950px] max-h-[90vh] overflow-hidden"
+      class="bg-white rounded-2xl shadow-2xl w-[70vw] max-h-[90vh] overflow-hidden"
     >
       <!-- Header -->
       <div class="modal-header">

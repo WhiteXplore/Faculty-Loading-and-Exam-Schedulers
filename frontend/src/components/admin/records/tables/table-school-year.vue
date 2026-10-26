@@ -48,9 +48,7 @@
               @input="changePage(1)"
             />
             <!-- Search icon -->
-            <div
-              class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-            >
+            <div class="search-icon">
               <svg
                 class="w-4 h-4"
                 fill="none"

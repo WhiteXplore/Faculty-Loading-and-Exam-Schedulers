@@ -70,9 +70,7 @@
             placeholder="Search faculty ..."
             class="search-input"
           />
-          <div
-            class="absolute inset-y-0 left-3 flex items-center text-green-700 pointer-events-none"
-          >
+          <div class="search-icon">
             <svg
               class="w-4 h-4"
               fill="none"
@@ -89,7 +87,7 @@
 
       <!-- Table -->
       <div class="w-full mt-3 rounded-xl border bg-white overflow-hidden">
-        <div class="max-h-[69vh] overflow-y-auto">
+        <div class="max-h-[73vh] overflow-y-auto">
           <table class="min-w-full text-sm text-gray-700 border-collapse">
             <thead
               class="bg-defaultGreen text-white sticky top-0 z-10 tracking-wide"
@@ -659,42 +657,32 @@ export default {
           });
         });
       }
-      // ===============================
+      // =====================================================
       // 🔹 NOT SELECTED EXPERTISE
-      // ===============================
+      // =====================================================
       if (this.activeTab === "Not Selected Expertise") {
         expanded = [];
 
-        // Courses selected by faculty in the CURRENT institute/program
-        const currentSelectedCourseIds = new Set();
+        // =====================================================
+        // ALL COURSE CODES ALREADY SELECTED BY FACULTY
+        // =====================================================
+        const selectedCourseCodes = new Set();
 
-        // Courses selected by faculty from OTHER institutes/programs
-        const otherInstituteCourseIds = new Set();
-
-        // Check every faculty
         (this.rawusers || [])
-          .filter((u) => u.role === "Faculty")
+          .filter((faculty) => faculty.role === "Faculty")
           .forEach((faculty) => {
-            const isCurrentProgram =
-              Number(faculty.institute?.institute_id) ===
-                Number(this.user.institute_id) &&
-              Number(faculty.program?.program_id) ===
-                Number(this.user.program_id);
+            (faculty.expertise || []).forEach((expertise) => {
+              const courseCode = expertise.course?.course_code;
 
-            (faculty.expertise || []).forEach((e) => {
-              if (!e.course?.course_id) return;
-
-              const courseId = Number(e.course.course_id);
-
-              if (isCurrentProgram) {
-                currentSelectedCourseIds.add(courseId);
-              } else {
-                otherInstituteCourseIds.add(courseId);
+              if (courseCode) {
+                selectedCourseCodes.add(courseCode.trim().toUpperCase());
               }
             });
           });
 
-        // Curriculum of the logged-in Program Chairperson only
+        // =====================================================
+        // CURRENT PROGRAM CURRICULUM
+        // =====================================================
         const availableCurriculumCourses = curriculumCourses
           .filter(
             (cc) =>
@@ -708,19 +696,31 @@ export default {
               index ===
               self.findIndex(
                 (x) =>
-                  Number(x.course.course_id) === Number(cc.course.course_id),
+                  Number(x.course?.course_id) === Number(cc.course?.course_id),
               ),
           );
 
+        // =====================================================
+        // ONLY SHOW COURSES NOT SELECTED ANYWHERE
+        // =====================================================
         availableCurriculumCourses.forEach((cc) => {
-          const courseId = Number(cc.course.course_id);
+          const courseId = Number(cc.course?.course_id);
 
-          // Already selected by current faculty
-          if (currentSelectedCourseIds.has(courseId)) return;
+          const courseCode = cc.course?.course_code?.trim().toUpperCase();
 
-          // Selected by Cross institute/program
-          if (otherInstituteCourseIds.has(courseId)) return;
+          if (!courseId || !courseCode) return;
 
+          // ===================================================
+          // SAME COURSE CODE IS ALREADY SELECTED
+          // BY ANOTHER FACULTY / PROGRAM / INSTITUTE
+          // ===================================================
+          if (selectedCourseCodes.has(courseCode)) {
+            return;
+          }
+
+          // ===================================================
+          // COURSE HAS NOT BEEN SELECTED ANYWHERE
+          // ===================================================
           expanded.push({
             curriculum_course_id: cc.curriculum_course_id,
             course_id: courseId,

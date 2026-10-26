@@ -160,7 +160,7 @@
                   <table
                     class="w-full table-auto border-separate border-spacing-0 text-[11px]"
                   >
-                    <thead class="sticky top-0 z-20 bg-gray-200">
+                    <thead class="sticky top-0 z-[5000] bg-gray-200">
                       <tr>
                         <th class="px-3 py-3 border text-center w-24">Time</th>
                         <th
@@ -502,7 +502,10 @@
                                 : ''
                             "
                             @focus="expandedRecord.showCampusDropdown = true"
-                            @input="expandedRecord.college_branch_id = null"
+                            @input="
+                              expandedRecord.college_branch_id = null;
+                              expandedRecord.college_branch_name = '';
+                            "
                           />
 
                           <div
@@ -529,7 +532,7 @@
                                 v-for="campus in availableCampuses().filter(
                                   (campus) =>
                                     campus.college_branch_name
-                                      .toLowerCase()
+                                      ?.toLowerCase()
                                       .includes(
                                         (
                                           expandedRecord.searchCampusQuery || ''
@@ -539,11 +542,18 @@
                                 :key="campus.college_branch_id"
                                 class="dropdown-item"
                                 @mousedown.prevent="
-                                  expandedRecord.college_branch_id =
-                                    campus.college_branch_id;
+                                  expandedRecord.college_branch_id = Number(
+                                    campus.college_branch_id,
+                                  );
+
+                                  expandedRecord.college_branch_name =
+                                    campus.college_branch_name;
+
                                   expandedRecord.searchCampusQuery =
                                     campus.college_branch_name;
+
                                   expandedRecord.showCampusDropdown = false;
+
                                   onCampusChange(expandedRecord);
                                 "
                               >
@@ -560,53 +570,130 @@
 
                       <!-- ===================== ROOM ===================== -->
                       <div class="dropdown-container relative">
-                        <label class="dropdown-label">Room :</label>
+                        <label class="dropdown-label"> Room : </label>
 
-                        <div class="dropdown-wrapper">
-                          <input
-                            v-model="expandedRecord.searchRoomQuery"
-                            :disabled="!canEditSchedule(expandedRecord)"
-                            type="text"
-                            placeholder="Select room..."
-                            class="dropdown-input"
-                            :class="
-                              !canEditSchedule(expandedRecord)
-                                ? 'bg-gray-100 cursor-not-allowed text-gray-500'
-                                : ''
-                            "
-                            @focus="expandedRecord.showRoomDropdown = true"
-                            @input="
-                              expandedRecord.room_id = null;
-                              expandedRecord.room_name = null;
-                              expandedRecord.room_type = null;
-                              expandedRecord.room_capacity = null;
-                            "
-                          />
+                        <div class="flex items-start gap-2">
+                          <!-- ======================================================= -->
+                          <!-- NORMAL ROOM SEARCH -->
+                          <!-- ======================================================= -->
+                          <div class="dropdown-wrapper relative flex-1">
+                            <input
+                              v-model="expandedRecord.searchRoomQuery"
+                              :disabled="!canEditSchedule(expandedRecord)"
+                              type="text"
+                              placeholder="Select room..."
+                              class="dropdown-input w-full"
+                              :class="
+                                !canEditSchedule(expandedRecord)
+                                  ? 'bg-gray-100 cursor-not-allowed text-gray-500'
+                                  : ''
+                              "
+                              @focus="expandedRecord.showRoomDropdown = true"
+                              @input="
+                                expandedRecord.room_id = null;
+                                expandedRecord.room_name = null;
+                                expandedRecord.room_type = null;
+                                expandedRecord.room_capacity = null;
+                              "
+                            />
 
-                          <div
-                            v-if="expandedRecord.showRoomDropdown"
-                            class="dropdown-menu"
-                            @mouseleave="
-                              expandedRecord.showRoomDropdown = false
-                            "
-                          >
-                            <div v-if="filteredRooms(expandedRecord).length">
+                            <!-- ===================================================== -->
+                            <!-- ROOM DROPDOWN -->
+                            <!-- ===================================================== -->
+                            <div
+                              v-if="expandedRecord.showRoomDropdown"
+                              class="dropdown-menu"
+                              @mouseleave="
+                                expandedRecord.showRoomDropdown = false
+                              "
+                            >
+                              <div v-if="filteredRooms(expandedRecord).length">
+                                <div
+                                  v-for="room in filteredRooms(expandedRecord)"
+                                  :key="room.room_id"
+                                  class="dropdown-item flex items-center justify-between gap-3"
+                                  @mousedown.prevent="
+                                    selectRoom(expandedRecord, room)
+                                  "
+                                >
+                                  <!-- Room Information -->
+                                  <div class="min-w-0">
+                                    <div class="truncate font-medium">
+                                      {{ room.room_name }}
+                                    </div>
+
+                                    <div class="text-[10px] text-gray-400">
+                                      Capacity:
+                                      {{ room.room_capacity || "-" }}
+                                    </div>
+                                  </div>
+
+                                  <!-- Room Type -->
+                                  <span
+                                    class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase"
+                                    :class="
+                                      getRoomTypeBadgeClass(room.room_type)
+                                    "
+                                  >
+                                    {{ getRoomTypeLabel(room.room_type) }}
+                                  </span>
+                                </div>
+                              </div>
+
                               <div
-                                v-for="room in filteredRooms(expandedRecord)"
-                                :key="room.room_id"
-                                class="dropdown-item"
-                                @mousedown.prevent="
-                                  selectRoom(expandedRecord, room)
-                                "
+                                v-else
+                                class="dropdown-item py-3 text-center text-gray-400"
                               >
-                                {{ room.room_name }}
+                                No room found
                               </div>
                             </div>
-
-                            <div v-else class="dropdown-item text-gray-400">
-                              No room found
-                            </div>
                           </div>
+
+                          <!-- ======================================================= -->
+                          <!-- 2D MAP BUTTON -->
+                          <!-- ======================================================= -->
+                          <button
+                            type="button"
+                            :disabled="!canEditSchedule(expandedRecord)"
+                            class="flex h-[38px] w-[42px] shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-600 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-300"
+                            title="Select room from 2D map"
+                            @click="openRoomMap"
+                          >
+                            <!-- Map Icon -->
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-[18px] w-[18px]"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.8"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 20.25 3.75 18V5.25L9 7.5m0 12.75 6-2.25m-6 2.25V7.5m6 10.5 5.25 2.25V7.5L15 5.25m0 12.75V5.25m0 0L9 7.5"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <!-- ========================================================= -->
+                        <!-- SELECTED ROOM INFORMATION -->
+                        <!-- ========================================================= -->
+                        <div
+                          v-if="expandedRecord.room_id"
+                          class="mt-1 flex items-center gap-2 text-[10px] text-gray-400"
+                        >
+                          <span>
+                            Capacity:
+                            {{ expandedRecord.room_capacity || "-" }}
+                          </span>
+
+                          <span>•</span>
+
+                          <span>
+                            {{ getRoomTypeLabel(expandedRecord.room_type) }}
+                          </span>
                         </div>
                       </div>
 
@@ -1288,6 +1375,13 @@
     @close="cancelJoin"
     @confirm="confirmJoin"
   />
+  <RoomMapModal
+    :show="showRoomMap"
+    :rooms="expandedRecord ? filteredRooms(expandedRecord) : rooms"
+    :selected-room-id="expandedRecord?.room_id || null"
+    @close="closeRoomMap"
+    @select-room="selectRoomFromMap"
+  />
 </template>
 
 <script>
@@ -1299,13 +1393,30 @@ import icon from "@/assets/icon.vue";
 import editJoinValdiation from "../faculty-components/edit-join-valdiation.vue";
 import unscheduled from "../faculty-components/unscheduled.vue";
 import UnjoinModal from "../faculty-components/unjoin-validation-modal.vue";
+import RoomMapModal from "../modals/room-map-modal.vue";
 export default {
   name: "EditScheduleModal",
-  components: { icon, editJoinValdiation, unscheduled, UnjoinModal },
+  components: {
+    icon,
+    editJoinValdiation,
+    unscheduled,
+    UnjoinModal,
+    RoomMapModal,
+  },
   props: {
     show: Boolean,
-    instructorData: { type: Array, default: () => [] },
+
+    instructorData: {
+      type: Array,
+      default: () => [],
+    },
+
     activeSchoolYear: {
+      type: Object,
+      default: null,
+    },
+
+    selectedUnscheduledMeeting: {
       type: Object,
       default: null,
     },
@@ -1372,6 +1483,8 @@ export default {
       expandedRecord: null,
       college_branch: [],
       restoredUnscheduledMeetings: [],
+
+      showRoomMap: false,
     };
   },
   computed: {
@@ -1408,13 +1521,12 @@ export default {
 
       return grid;
     },
+
     canEditSchedule() {
       return (item) => {
-        // ✅ Newly added rows always editable
         if (item.isNew) return true;
 
-        // ✅ Program Chairperson
-        // ONLY own program editable
+        // Program Chairperson: preserve existing permission
         if (this.user.role === "Program Chairperson") {
           return (
             Number(item.institute_id) === Number(this.user.institute_id) &&
@@ -1422,18 +1534,56 @@ export default {
           );
         }
 
-        // ✅ Department Chairperson
-        // EVERYTHING editable EXCEPT own exact program
+        // Department Chairperson
         if (this.user.role === "Department Chairperson") {
-          return !(
-            Number(item.institute_id) === Number(this.user.institute_id) &&
-            Number(item.program_id) === Number(this.user.program_id)
+          const currentProgramId = Number(this.user.program_id);
+
+          const currentDepartmentId = Number(
+            this.user.department?.department_id ?? this.user.department_id,
+          );
+
+          // Get the faculty assigned to this schedule
+          const faculty = (this.rawusers || []).find(
+            (user) =>
+              Number(user.user_id ?? user.id) ===
+              Number(item.faculty_id ?? item.user_id),
+          );
+
+          const facultyProgramId = Number(
+            faculty?.program_id ?? faculty?.program?.program_id,
+          );
+
+          const facultyDepartmentId = Number(
+            faculty?.department?.department_id ?? faculty?.department_id,
+          );
+
+          // Program where the subject/class is offered
+          const classProgramId = Number(
+            item.class_program_id ??
+              item.classInfo?.program?.program_id ??
+              item.program_id,
+          );
+
+          // Allow editing only if:
+          // 1. Faculty belongs to the chairperson's department
+          // 2. Faculty belongs to the chairperson's program
+          // 3. Subject/class is offered in another program
+          return (
+            Number.isFinite(currentProgramId) &&
+            Number.isFinite(currentDepartmentId) &&
+            Number.isFinite(facultyProgramId) &&
+            Number.isFinite(facultyDepartmentId) &&
+            Number.isFinite(classProgramId) &&
+            facultyProgramId === currentProgramId &&
+            facultyDepartmentId === currentDepartmentId &&
+            classProgramId !== currentProgramId
           );
         }
 
         return true;
       };
     },
+
     isDraggable(record) {
       // If Join is active and class size >= 30 → not draggable
       return !(this.isJoined && Number(record.class_size) >= 30);
@@ -1577,6 +1727,570 @@ export default {
     },
   },
   watch: {
+    selectedUnscheduledMeeting: {
+      immediate: true,
+      deep: true,
+
+      async handler(meeting) {
+        if (!meeting) return;
+
+        console.log("[Edit Schedule] Selected unscheduled meeting:", meeting);
+
+        // =========================================================
+        // 1. LOAD CURRENT INSTRUCTOR SCHEDULES
+        // =========================================================
+        this.localData = (this.instructorData || []).map((record) => ({
+          ...record,
+        }));
+
+        // =========================================================
+        // 2. GET SELECTED FACULTY
+        //
+        // IMPORTANT:
+        // The faculty selected from the possible-faculty list
+        // must be the faculty receiving this temporary schedule.
+        // =========================================================
+        const selectedFacultyName =
+          meeting.selected_faculty_name ||
+          meeting.faculty_name ||
+          this.selectedInstructorName ||
+          "";
+
+        const normalizeName = (name) =>
+          String(name || "")
+            .trim()
+            .replace(/\s+/g, " ")
+            .toLowerCase();
+
+        const normalizedFacultyName = normalizeName(selectedFacultyName);
+
+        const selectedFaculty = (this.rawusers || []).find(
+          (user) =>
+            normalizeName(
+              `${user.first_name || ""} ${user.last_name || ""}`,
+            ) === normalizedFacultyName,
+        );
+
+        const selectedFacultyId =
+          meeting.selected_faculty_id ||
+          meeting.faculty_id ||
+          selectedFaculty?.id ||
+          selectedFaculty?.user_id ||
+          null;
+
+        console.log("[Edit Schedule] SELECTED FACULTY:", {
+          name: selectedFacultyName,
+          id: selectedFacultyId,
+          user: selectedFaculty,
+        });
+
+        if (!selectedFacultyName) {
+          console.error("[Edit Schedule] No selected faculty found.", meeting);
+
+          toast.error("No faculty was selected.");
+          return;
+        }
+
+        // =========================================================
+        // 3. IDENTIFY THE ACTUAL CLASS / SECTION
+        //
+        // We MUST NOT rely only on meeting.class_id.
+        //
+        // Example:
+        //
+        // CHEM 111 - BSFAS 1st Year D
+        //
+        // must not accidentally become:
+        //
+        // CHEM 111 - BSFAS 1st Year C
+        // =========================================================
+
+        const store = useFetchDataStore();
+
+        // Adjust this only if your Pinia store uses another
+        // property name for the class sections.
+        const sections = store.classes || store.classSections || [];
+
+        const meetingProgramId = Number(
+          meeting.class_program_id || meeting.program_id || 0,
+        );
+
+        const meetingSetName = String(meeting.set_name || "")
+          .trim()
+          .toLowerCase();
+
+        const meetingCourseCode = String(meeting.course_code || "")
+          .trim()
+          .toLowerCase();
+
+        console.log("[Edit Schedule] Searching class:", {
+          meetingProgramId,
+          meetingSetName,
+          meetingCourseCode,
+        });
+
+        // =========================================================
+        // FIRST: USE CLASS ID IF IT ALREADY EXISTS
+        // =========================================================
+        let matchedSection = null;
+
+        const directClassId =
+          meeting.class_id ||
+          meeting.classId ||
+          meeting.class?.class_id ||
+          null;
+
+        if (directClassId) {
+          matchedSection = sections.find(
+            (section) =>
+              Number(section.class_id || section.id) === Number(directClassId),
+          );
+        }
+
+        // =========================================================
+        // SECOND: MATCH PROGRAM + SECTION
+        // =========================================================
+        if (!matchedSection && sections.length) {
+          matchedSection = sections.find((section) => {
+            const sectionProgramId = Number(
+              section.program_id || section.program?.program_id || 0,
+            );
+
+            const sectionSetName = String(section.set_name || "")
+              .trim()
+              .toLowerCase();
+
+            return (
+              sectionProgramId === meetingProgramId &&
+              sectionSetName === meetingSetName
+            );
+          });
+        }
+
+        // =========================================================
+        // THIRD: MATCH PROGRAM + SECTION + COURSE
+        //
+        // This is the safest fallback when multiple sections
+        // have the same course.
+        // =========================================================
+        if (!matchedSection && sections.length) {
+          matchedSection = sections.find((section) => {
+            const sectionProgramId = Number(
+              section.program_id || section.program?.program_id || 0,
+            );
+
+            const sectionSetName = String(section.set_name || "")
+              .trim()
+              .toLowerCase();
+
+            const sectionCourseCode = String(
+              section.course_code || section.course?.course_code || "",
+            )
+              .trim()
+              .toLowerCase();
+
+            return (
+              sectionProgramId === meetingProgramId &&
+              sectionSetName === meetingSetName &&
+              sectionCourseCode === meetingCourseCode
+            );
+          });
+        }
+
+        // =========================================================
+        // RESOLVE FINAL CLASS ID
+        // =========================================================
+        const classId = Number(
+          directClassId || matchedSection?.class_id || matchedSection?.id || 0,
+        );
+
+        console.log("[Edit Schedule] RESOLVED CLASS:", {
+          classId,
+          matchedSection,
+          courseCode: meetingCourseCode,
+          setName: meetingSetName,
+          programId: meetingProgramId,
+        });
+
+        if (!classId) {
+          console.error("[Edit Schedule] Unable to resolve class_id.", {
+            meeting,
+            matchedSection,
+            sectionsCount: sections.length,
+          });
+
+          toast.error(
+            `Unable to identify class section ${meeting.set_name || ""}.`,
+          );
+
+          return;
+        }
+
+        // =========================================================
+        // 4. GET CLASS OWNERSHIP DATA
+        // =========================================================
+        const finalProgramId =
+          meeting.class_program_id ||
+          meeting.program_id ||
+          matchedSection?.program_id ||
+          matchedSection?.program?.program_id ||
+          null;
+
+        const finalInstituteId =
+          meeting.class_institute_id ||
+          meeting.institute_id ||
+          matchedSection?.institute_id ||
+          matchedSection?.program?.institute_id ||
+          null;
+
+        const finalCourseId =
+          meeting.course_id ||
+          matchedSection?.course_id ||
+          matchedSection?.course?.course_id ||
+          null;
+
+        const finalCourseCode =
+          meeting.course_code ||
+          matchedSection?.course_code ||
+          matchedSection?.course?.course_code ||
+          "";
+
+        const finalSetName = meeting.set_name || matchedSection?.set_name || "";
+
+        const finalClassSize =
+          meeting.class_size ||
+          matchedSection?.class_size ||
+          matchedSection?.class?.class_size ||
+          null;
+
+        // =========================================================
+        // 5. PARSE HOURS
+        // =========================================================
+        const hoursText = String(meeting.hours || "");
+
+        const lectureMatch = hoursText.match(/(\d+(?:\.\d+)?)\s*h\s*lec/i);
+
+        const laboratoryMatch = hoursText.match(/(\d+(?:\.\d+)?)\s*h\s*lab/i);
+
+        const lectureHours = lectureMatch ? Number(lectureMatch[1]) : 0;
+
+        const laboratoryHours = laboratoryMatch
+          ? Number(laboratoryMatch[1])
+          : 0;
+
+        console.log("[Edit Schedule] Parsed hours:", {
+          lectureHours,
+          laboratoryHours,
+        });
+
+        // =========================================================
+        // 5.5. CAMPUS / COLLEGE BRANCH
+        // =========================================================
+        const incomingCollegeBranchId =
+          meeting.college_branch_id ??
+          matchedSection?.college_branch_id ??
+          matchedSection?.collegeBranch?.college_branch_id ??
+          null;
+
+        const collegeBranchId =
+          incomingCollegeBranchId !== null &&
+          incomingCollegeBranchId !== undefined &&
+          incomingCollegeBranchId !== ""
+            ? Number(incomingCollegeBranchId)
+            : null;
+
+        const collegeBranchName =
+          meeting.college_branch_name ||
+          matchedSection?.college_branch_name ||
+          matchedSection?.collegeBranch?.college_branch_name ||
+          this.getCollegeBranchName(collegeBranchId) ||
+          "";
+
+        console.log("[Edit Schedule] RECEIVED CAMPUS:", {
+          college_branch_id: collegeBranchId,
+          college_branch_name: collegeBranchName,
+        });
+
+        // =========================================================
+        // 6. CREATE BASE RECORD
+        // =========================================================
+        const recordsToAdd = [];
+
+        const baseTempId = `temp-unscheduled-${
+          meeting.id || classId
+        }-${Date.now()}`;
+
+        const baseRecord = {
+          ...JSON.parse(JSON.stringify(meeting)),
+
+          // =======================================================
+          // ACTUAL CLASS
+          // =======================================================
+          class_id: classId,
+
+          tempId: baseTempId,
+
+          isNew: true,
+          isUnscheduledAssignment: true,
+
+          // =======================================================
+          // SELECTED FACULTY
+          // =======================================================
+          faculty_name: selectedFacultyName,
+
+          faculty_id: selectedFacultyId,
+
+          selected_faculty_name: selectedFacultyName,
+
+          selected_faculty_id: selectedFacultyId,
+
+          // =======================================================
+          // CLASS OWNERSHIP
+          // =======================================================
+          program_id: finalProgramId,
+
+          institute_id: finalInstituteId,
+
+          program_code:
+            meeting.program_code ||
+            matchedSection?.program_code ||
+            matchedSection?.program?.program_code ||
+            "",
+
+          // =======================================================
+          // COURSE
+          // =======================================================
+          course_id: finalCourseId,
+
+          course_code: finalCourseCode,
+
+          // =======================================================
+          // SECTION
+          // =======================================================
+          set_name: finalSetName,
+
+          class_size: finalClassSize,
+
+          // =======================================================
+          // CAMPUS / COLLEGE BRANCH
+          // =======================================================
+          college_branch_id: collegeBranchId,
+
+          college_branch_name: collegeBranchName,
+
+          // =======================================================
+          // SCHOOL YEAR / SEMESTER
+          // =======================================================
+          school_year:
+            meeting.school_year || this.activeSchoolYear?.school_year,
+
+          semester: meeting.semester || this.activeSchoolYear?.semester,
+
+          // =======================================================
+          // ROOM
+          // =======================================================
+          room_id: null,
+
+          room_name: "",
+
+          room_type: "",
+
+          room_capacity: null,
+
+          // =======================================================
+          // DEFAULT POSITION
+          // =======================================================
+          day: "Monday",
+
+          start_hour: 7,
+
+          // =======================================================
+          // SEARCH FIELDS
+          // =======================================================
+          searchRoomQuery: "",
+
+          showRoomDropdown: false,
+
+          searchCourseQuery: finalCourseCode,
+
+          showCourseDropdown: false,
+
+          searchSectionQuery: finalSetName,
+
+          showSectionDropdown: false,
+
+          // IMPORTANT FOR CAMPUS DISPLAY
+          searchCampusQuery: collegeBranchName,
+
+          showCampusDropdown: false,
+        };
+
+        console.log("[Edit Schedule] BASE RECORD:", baseRecord);
+
+        // =========================================================
+        // 7. LECTURE RECORD
+        // =========================================================
+        if (lectureHours > 0) {
+          recordsToAdd.push({
+            ...baseRecord,
+
+            tempId: `${baseTempId}-lecture`,
+
+            type: "Lecture",
+
+            duration: lectureHours,
+
+            hours: `${lectureHours}h lec`,
+
+            time_slot: `${this.formatTime(
+              baseRecord.start_hour,
+            )} - ${this.formatTime(baseRecord.start_hour + lectureHours)}`,
+          });
+        }
+
+        // =========================================================
+        // 8. LABORATORY RECORD
+        // =========================================================
+        if (laboratoryHours > 0) {
+          const labStart = Number(baseRecord.start_hour) + lectureHours;
+
+          recordsToAdd.push({
+            ...baseRecord,
+
+            tempId: `${baseTempId}-laboratory`,
+
+            type: "Laboratory",
+
+            duration: laboratoryHours,
+
+            hours: `${laboratoryHours}h lab`,
+
+            start_hour: labStart,
+
+            time_slot: `${this.formatTime(labStart)} - ${this.formatTime(
+              labStart + laboratoryHours,
+            )}`,
+          });
+        }
+
+        // =========================================================
+        // 9. FALLBACK
+        // =========================================================
+        if (!recordsToAdd.length) {
+          const duration = this.getUnscheduledDuration(meeting);
+
+          recordsToAdd.push({
+            ...baseRecord,
+
+            tempId: `${baseTempId}-lecture`,
+
+            type: "Lecture",
+
+            duration,
+
+            time_slot: `${this.formatTime(
+              baseRecord.start_hour,
+            )} - ${this.formatTime(baseRecord.start_hour + duration)}`,
+          });
+        }
+
+        // =========================================================
+        // 10. IMPORTANT VALIDATION
+        //
+        // Every generated record MUST belong to the selected
+        // faculty and actual class.
+        // =========================================================
+        recordsToAdd.forEach((record) => {
+          record.faculty_name = selectedFacultyName;
+
+          record.faculty_id = selectedFacultyId;
+
+          record.class_id = classId;
+
+          record.program_id = finalProgramId;
+
+          record.institute_id = finalInstituteId;
+
+          record.course_id = finalCourseId;
+
+          record.course_code = finalCourseCode;
+
+          record.set_name = finalSetName;
+
+          // =======================================================
+          // CAMPUS / COLLEGE BRANCH
+          // =======================================================
+          record.college_branch_id = collegeBranchId;
+
+          record.college_branch_name = collegeBranchName;
+
+          record.searchCampusQuery = collegeBranchName;
+
+          record.showCampusDropdown = false;
+
+          record.isNew = true;
+
+          record.isUnscheduledAssignment = true;
+        });
+
+        // =========================================================
+        // 11. ADD ONLY TO SELECTED FACULTY CALENDAR
+        // =========================================================
+        this.localData.push(...recordsToAdd);
+
+        console.log("[Edit Schedule] Added unscheduled records:", recordsToAdd);
+
+        // =========================================================
+        // 12. SELECT FIRST RECORD
+        // =========================================================
+        this.expandedRecord = recordsToAdd[0];
+
+        this.highlightedRecordId = recordsToAdd[0].tempId;
+
+        // =========================================================
+        // 13. OPEN EDIT SCHEDULE
+        // =========================================================
+        this.showAddPanel = true;
+
+        this.showUnscheduledPanel = false;
+
+        await this.$nextTick();
+
+        // =========================================================
+        // 14. FINAL VALIDATION LOG
+        // =========================================================
+        console.log("[Edit Schedule] FINAL ASSIGNMENT:", {
+          faculty_name: selectedFacultyName,
+
+          faculty_id: selectedFacultyId,
+
+          class_id: classId,
+
+          program_id: finalProgramId,
+
+          institute_id: finalInstituteId,
+
+          course_id: finalCourseId,
+
+          course_code: finalCourseCode,
+
+          set_name: finalSetName,
+
+          records: recordsToAdd,
+        });
+
+        console.log(
+          "[Edit Schedule] Lecture/Lab records:",
+          this.localData.filter(
+            (record) =>
+              record.isUnscheduledAssignment &&
+              Number(record.class_id) === Number(classId) &&
+              normalizeName(record.faculty_name) ===
+                normalizeName(selectedFacultyName),
+          ),
+        );
+      },
+    },
     // Watch for changes in instructorData to update localData
     instructorData: {
       immediate: true,
@@ -1640,6 +2354,58 @@ export default {
   },
 
   methods: {
+    // ============================================================
+    // ROOM MAP
+    // ============================================================
+
+    openRoomMap() {
+      if (!this.expandedRecord) {
+        return;
+      }
+
+      if (!this.canEditSchedule(this.expandedRecord)) {
+        return;
+      }
+
+      // Close normal room dropdown
+      this.expandedRecord.showRoomDropdown = false;
+
+      // DEBUG
+      console.log("[Room Map] Expanded Record:", this.expandedRecord);
+      console.log(
+        "[Room Map] Filtered Rooms:",
+        this.filteredRooms(this.expandedRecord),
+      );
+
+      // Open map
+      this.showRoomMap = true;
+    },
+    selectRoomFromMap(room) {
+      if (!this.expandedRecord || !room) {
+        return;
+      }
+
+      // Use the EXISTING room selection logic
+      this.selectRoom(this.expandedRecord, room);
+
+      // Close map
+      this.showRoomMap = false;
+    },
+
+    closeRoomMap() {
+      this.showRoomMap = false;
+    },
+    getUnscheduledDuration(meeting) {
+      const hours = String(meeting.hours || "");
+
+      const lec = hours.match(/(\d+(?:\.\d+)?)h\s*lec/i);
+      const lab = hours.match(/(\d+(?:\.\d+)?)h\s*lab/i);
+
+      if (lec) return Number(lec[1]);
+      if (lab) return Number(lab[1]);
+
+      return 3;
+    },
     ...mapActions(useFetchDataStore, [
       "fetchRooms",
       "fetchCurriculumCourses",
@@ -2036,11 +2802,10 @@ export default {
         return;
       }
 
-      courses.forEach((course) => {
-        /*
-         * KEEP THE ORIGINAL UNSCHEDULED RECORD.
-         * We will use this exact record when Cancel is clicked.
-         */
+      let selectedRecord = null;
+
+      courses.forEach((course, index) => {
+        // Keep original unscheduled record for Cancel
         this.restoredUnscheduledMeetings.push(
           JSON.parse(JSON.stringify(course)),
         );
@@ -2049,6 +2814,9 @@ export default {
           Math.random() * 100000,
         )}`;
 
+        // =========================================================
+        // FACULTY
+        // =========================================================
         const facultyName =
           course.faculty_name || this.selectedInstructorName || "TBD";
 
@@ -2058,46 +2826,130 @@ export default {
             String(facultyName).trim().toLowerCase(),
         );
 
+        // =========================================================
+        // CAMPUS
+        // =========================================================
+
+        // =======================================================
+        // CAMPUS / COLLEGE BRANCH
+        // =======================================================
+
+        // Always receive the ID from the unscheduled payload
+        const collegeBranchId =
+          course.college_branch_id !== null &&
+          course.college_branch_id !== undefined &&
+          course.college_branch_id !== ""
+            ? Number(course.college_branch_id)
+            : null;
+
+        // Resolve the name using the ID
+        const collegeBranchName =
+          course.college_branch_name ||
+          this.getCollegeBranchName(collegeBranchId) ||
+          "";
+
+        console.log("[Edit Schedule] UNSCHEDULED CAMPUS:", {
+          college_branch_id: collegeBranchId,
+          college_branch_name: collegeBranchName,
+        });
+        // =========================================================
+        // NEW RECORD
+        // =========================================================
         const newRecord = {
           ...JSON.parse(JSON.stringify(course)),
 
           tempId,
           isNew: true,
+          isUnscheduledAssignment: true,
 
+          // Faculty
           faculty_name: facultyName,
 
           faculty_id:
             course.faculty_id || faculty?.id || faculty?.user_id || null,
 
-          searchRoomQuery: course.room_name || "",
-          showRoomDropdown: false,
-
-          searchCourseQuery: course.course_code || "",
-          showCourseDropdown: false,
-
+          // Section
           searchSectionQuery: course.set_name || "",
           showSectionDropdown: false,
 
-          searchCampusQuery:
-            course.college_branch_name ||
-            this.getCollegeBranchName(course.college_branch_id) ||
-            "",
+          // Course
+          searchCourseQuery: course.course_code || "",
+          showCourseDropdown: false,
+
+          // =====================================================
+          // CAMPUS
+          // =====================================================
+          college_branch_id: collegeBranchId,
+
+          college_branch_name: collegeBranchName,
+
+          // IMPORTANT:
+          // This is what the Campus input displays
+          searchCampusQuery: collegeBranchName,
 
           showCampusDropdown: false,
 
+          // Room
+          searchRoomQuery: course.room_name || "",
+          showRoomDropdown: false,
+
+          // School Year / Semester
           school_year: this.activeSchoolYear?.school_year || course.school_year,
 
           semester: this.activeSchoolYear?.semester || course.semester,
         };
 
+        // =========================================================
+        // DEBUG
+        // =========================================================
+        console.log("[Unscheduled] Campus assigned:", {
+          college_branch_id: newRecord.college_branch_id,
+          college_branch_name: newRecord.college_branch_name,
+          searchCampusQuery: newRecord.searchCampusQuery,
+        });
+
+        // =========================================================
+        // ADD TO LOCAL DATA
+        // =========================================================
         this.localData.push(newRecord);
+
+        // First record = selected record
+        if (index === 0) {
+          selectedRecord = newRecord;
+        }
       });
+
+      // ===========================================================
+      // SELECTED FACULTY
+      // ===========================================================
+      this.selectedInstructorName =
+        selectedRecord?.faculty_name || this.selectedInstructorName;
+
+      // ===========================================================
+      // CLOSE UNSCHEDULED PANEL
+      // ===========================================================
+      this.showUnscheduledPanel = false;
+
+      // ===========================================================
+      // OPEN EDIT SCHEDULE PANEL
+      // ===========================================================
+      this.showAddPanel = true;
+
+      // ===========================================================
+      // DISPLAY SELECTED RECORD
+      // ===========================================================
+      this.expandedRecord = selectedRecord;
+
+      // ===========================================================
+      // HIGHLIGHT
+      // ===========================================================
+      this.highlightedRecordId = selectedRecord?.id || selectedRecord?.tempId;
+
+      console.log("[Unscheduled] FINAL selected record:", this.expandedRecord);
 
       toast.success(
         `${courses.length} course(s) assigned to ${this.selectedInstructorName}.`,
       );
-
-      this.closeAddSchedulePanel();
     },
     cancelJoin() {
       this.resetJoinState();
@@ -2657,30 +3509,219 @@ export default {
     },
 
     /* ------------------ 3. FILTERING ------------------ */
+    isLectureRoom(room) {
+      const type = String(room?.room_type || "")
+        .trim()
+        .toLowerCase();
 
+      return (
+        type.includes("lecture") || type.includes("lec") || type === "classroom"
+      );
+    },
+
+    isLaboratoryRoom(room) {
+      const type = String(room?.room_type || "")
+        .trim()
+        .toLowerCase();
+
+      return type.includes("laboratory") || type.includes("lab");
+    },
+
+    getRoomTypeLabel(roomType) {
+      const type = String(roomType || "")
+        .trim()
+        .toLowerCase();
+
+      if (type.includes("lab") || type.includes("laboratory")) {
+        return "LAB";
+      }
+
+      if (
+        type.includes("lecture") ||
+        type.includes("lec") ||
+        type === "classroom"
+      ) {
+        return "LECTURE";
+      }
+
+      return roomType || "ROOM";
+    },
+
+    getRoomTypeBadgeClass(roomType) {
+      const type = String(roomType || "")
+        .trim()
+        .toLowerCase();
+
+      if (type.includes("lab") || type.includes("laboratory")) {
+        return "bg-purple-100 text-purple-700 border border-purple-200";
+      }
+
+      if (
+        type.includes("lecture") ||
+        type.includes("lec") ||
+        type === "classroom"
+      ) {
+        return "bg-blue-100 text-blue-700 border border-blue-200";
+      }
+
+      return "bg-gray-100 text-gray-600 border border-gray-200";
+    },
     filteredRooms(record) {
-      let rooms = this.rooms || [];
+      let rooms = [...(this.rooms || [])];
 
-      const selectedCampusId = Number(record.college_branch_id);
+      // ============================================================
+      // 1. FILTER BY CAMPUS
+      // ============================================================
+      const selectedCampusId = Number(record?.college_branch_id);
 
       if (selectedCampusId) {
         rooms = rooms.filter((room) => {
           const roomCampusId = Number(
-            room.building?.buildingArea?.collegeBranch?.college_branch_id,
+            room?.building?.buildingArea?.collegeBranch?.college_branch_id,
           );
 
           return roomCampusId === selectedCampusId;
         });
       }
 
-      const query = record.searchRoomQuery?.trim().toLowerCase();
+      // ============================================================
+      // 2. COURSE REQUIREMENTS
+      // ============================================================
+      let courseLec = Number(record?.course_lec || 0);
+      let courseLab = Number(record?.course_lab || 0);
+
+      // Existing schedule may not contain course_lec/course_lab
+      if (courseLec === 0 && courseLab === 0 && record?.course_id) {
+        const selectedCourse = this.coursesList.find(
+          (course) => Number(course.course_id) === Number(record.course_id),
+        );
+
+        if (selectedCourse) {
+          courseLec = Number(selectedCourse.course_lec || 0);
+          courseLab = Number(selectedCourse.course_lab || 0);
+        }
+      }
+
+      // ============================================================
+      // 3. CURRENT SCHEDULE TYPE
+      // ============================================================
+      const scheduleType = String(record?.type || "")
+        .trim()
+        .toLowerCase();
+
+      // ============================================================
+      // 4. CURRENT LOGGED-IN USER INSTITUTE
+      // ============================================================
+      const currentUserInstituteId = Number(this.user?.institute_id);
+
+      // ============================================================
+      // 5. GET ROOM INSTITUTE
+      // ============================================================
+      const getRoomInstituteId = (room) => {
+        return Number(
+          room?.institute_id ??
+            room?.institute?.institute_id ??
+            room?.building?.institute_id ??
+            room?.building?.institute?.institute_id ??
+            room?.building?.buildingArea?.institute_id ??
+            room?.building?.buildingArea?.institute?.institute_id ??
+            null,
+        );
+      };
+
+      // ============================================================
+      // 6. LABORATORY
+      // ============================================================
+      if (
+        scheduleType === "laboratory" ||
+        scheduleType.includes("laboratory") ||
+        scheduleType === "lab"
+      ) {
+        // ONLY LABORATORY ROOMS
+        rooms = rooms.filter((room) => this.isLaboratoryRoom(room));
+
+        // ==========================================================
+        // IMPORTANT:
+        // LABORATORY ROOMS MUST BELONG TO
+        // THE CURRENT LOGGED-IN USER'S INSTITUTE
+        // ==========================================================
+        if (currentUserInstituteId > 0) {
+          rooms = rooms.filter((room) => {
+            const roomInstituteId = getRoomInstituteId(room);
+
+            return roomInstituteId === currentUserInstituteId;
+          });
+        }
+      }
+
+      // ============================================================
+      // 7. LECTURE
+      // ============================================================
+      else if (
+        scheduleType === "lecture" ||
+        scheduleType.includes("lecture") ||
+        scheduleType === "lec"
+      ) {
+        // Lecture rooms:
+        // Campus + Lecture type only
+        rooms = rooms.filter((room) => this.isLectureRoom(room));
+      }
+
+      // ============================================================
+      // 8. FALLBACK WHEN RECORD TYPE IS EMPTY
+      // ============================================================
+      else {
+        // ----------------------------------------------------------
+        // LECTURE ONLY
+        // ----------------------------------------------------------
+        if (courseLec > 0 && courseLab === 0) {
+          rooms = rooms.filter((room) => this.isLectureRoom(room));
+        }
+
+        // ----------------------------------------------------------
+        // LAB ONLY
+        // ----------------------------------------------------------
+        else if (courseLec === 0 && courseLab > 0) {
+          rooms = rooms.filter((room) => this.isLaboratoryRoom(room));
+
+          // Laboratory must belong to logged-in user's institute
+          if (currentUserInstituteId > 0) {
+            rooms = rooms.filter((room) => {
+              const roomInstituteId = getRoomInstituteId(room);
+
+              return roomInstituteId === currentUserInstituteId;
+            });
+          }
+        }
+
+        // ----------------------------------------------------------
+        // BOTH LECTURE + LAB
+        // ----------------------------------------------------------
+        else if (courseLec > 0 && courseLab > 0) {
+          // The schedule must specify whether it is
+          // Lecture or Laboratory.
+          rooms = [];
+        }
+      }
+
+      // ============================================================
+      // 9. ROOM SEARCH
+      // ============================================================
+      const query = String(record?.searchRoomQuery || "")
+        .trim()
+        .toLowerCase();
 
       if (query) {
         rooms = rooms.filter((room) =>
-          room.room_name?.toLowerCase().includes(query),
+          String(room?.room_name || "")
+            .toLowerCase()
+            .includes(query),
         );
       }
 
+      // ============================================================
+      // 10. RETURN FILTERED ROOMS
+      // ============================================================
       return rooms;
     },
     filteredSections(record) {
@@ -2820,7 +3861,10 @@ export default {
       record.course_id = course.course_id;
       record.course_code = course.course_code;
 
-      // ✅ gikan sa PROP
+      // IMPORTANT: store course requirements
+      record.course_lec = Number(course.course_lec || 0);
+      record.course_lab = Number(course.course_lab || 0);
+
       const currentSchoolYear = await this.getCurrentSchoolYear();
 
       record.school_year = currentSchoolYear.school_year;
@@ -2832,6 +3876,13 @@ export default {
 
       record.searchCourseQuery = course.course_code;
       record.showCourseDropdown = false;
+
+      // Reset room because the required room type may change
+      record.room_id = null;
+      record.room_name = "";
+      record.room_type = "";
+      record.room_capacity = null;
+      record.searchRoomQuery = "";
     },
     /* ------------------ 5. ROW MANAGEMENT ------------- */
 
@@ -3295,7 +4346,12 @@ export default {
       );
     },
     onDragStart(event, record) {
-      if (!record) return;
+      if (!record || !this.canEditSchedule(record)) {
+        event.preventDefault();
+        this.draggedRecord = null;
+        this.isDragging = false;
+        return;
+      }
 
       this.isDragging = true;
 
@@ -3338,7 +4394,10 @@ export default {
       this.conflictPreview = [];
     },
     async onDrop(event, targetInstructor, targetDay, targetStartHour) {
-      if (!this.draggedRecord) return;
+      if (!this.draggedRecord || !this.canEditSchedule(this.draggedRecord)) {
+        this.onDragEnd();
+        return;
+      }
 
       const group = this.draggedGroup?.length
         ? this.draggedGroup

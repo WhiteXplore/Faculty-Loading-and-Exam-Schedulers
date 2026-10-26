@@ -102,11 +102,57 @@
                 <option value="Department Chairperson">
                   Department Chairperson
                 </option>
+                <option value="Coordinator">Coordinator</option>
                 <option value="Faculty">Faculty</option>
+              </select>
+            </div>
+            <div class="w-full space-y-2 text-left flex flex-col">
+              <label class="input-label">Employment Type:</label>
+              <select v-model="form.employment_type" class="input-text">
+                <option value="" disabled>Select employment type</option>
+                <option value="Permanent">Permanent</option>
+                <option value="Temporary">Temporary</option>
+                <option value="Contract of Service">Contract of Service</option>
+                <option value="Part Time">Part Time</option>
               </select>
             </div>
 
             <template v-if="!isAdminRole">
+              <!-- Branch Coordinator: Department Chairperson only -->
+              <div
+                v-if="requiresCoorBranch"
+                class="col-span-2 space-y-2 text-left flex flex-col"
+              >
+                <label class="input-label" for="college_branch_id">
+                  Branch Coordinator:
+                </label>
+
+                <select
+                  id="college_branch_id"
+                  v-model.number="form.college_branch_id"
+                  class="input-text"
+                  :disabled="form.role === 'Faculty'"
+                  :required="form.role === 'Coordinator'"
+                >
+                  <option :value="null">Select branch</option>
+
+                  <option
+                    v-for="branch in college_branch || []"
+                    :key="branch.college_branch_id"
+                    :value="Number(branch.college_branch_id)"
+                  >
+                    {{ branch.college_branch_name }}
+                  </option>
+                </select>
+
+                <p
+                  v-if="!(college_branch || []).length"
+                  class="text-xs text-red-500"
+                >
+                  No branches available. Please add a branch first.
+                </p>
+              </div>
+
               <div class="w-full space-y-2 text-left flex flex-col">
                 <label class="input-label">Designation:</label>
                 <input
@@ -117,31 +163,75 @@
                 />
               </div>
 
-              <div class="w-full space-y-2 text-left flex flex-col">
-                <label class="input-label">Unit Load:</label>
-                <input
-                  v-model.number="form.unit_load"
-                  type="number"
-                  min="0"
-                  class="input-text"
-                  placeholder="Enter unit load"
-                />
-              </div>
+              <!-- Department: Faculty and Program Chairperson only -->
 
-              <div class="w-full space-y-2 text-left flex flex-col">
-                <label class="input-label">Employment Type:</label>
-                <select v-model="form.employment_type" class="input-text">
-                  <option value="" disabled>Select employment type</option>
-                  <option value="Permanent">Permanent</option>
-                  <option value="Temporary">Temporary</option>
-                  <option value="Contract of Service">
-                    Contract of Service
+              <div
+                v-if="requiresDepartment"
+                class="w-full space-y-2 text-left flex flex-col"
+              >
+                <label
+                  class="input-label"
+                  for="department_id"
+                  :class="{ 'text-gray-400': !!form.college_branch_id }"
+                >
+                  Department:
+                </label>
+
+                <select
+                  id="department_id"
+                  v-model.number="form.department_id"
+                  class="input-text transition-colors duration-200 truncate"
+                  :class="
+                    form.college_branch_id
+                      ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                      : 'bg-white text-gray-700 border-gray-300'
+                  "
+                  :disabled="form.role === 'Coordinator'"
+                  :required="form.role === 'Faculty'"
+                  :title="
+                    departments.find(
+                      (d) =>
+                        Number(d.department_id) === Number(form.department_id),
+                    )?.department_name || 'Select department'
+                  "
+                >
+                  <option :value="null">Select department</option>
+
+                  <option
+                    v-for="department in departments"
+                    :key="department.department_id"
+                    :value="department.department_id"
+                    :title="
+                      department.department_name +
+                      (department.institute?.institute_name
+                        ? ` - ${department.institute.institute_name}`
+                        : '')
+                    "
+                  >
+                    {{ department.department_name }}
+                    {{
+                      department.institute?.institute_name
+                        ? ` - ${department.institute.institute_name}`
+                        : ""
+                    }}
                   </option>
-                  <option value="Part Time">Part Time</option>
                 </select>
+
+                <p
+                  v-if="!departments.length"
+                  class="text-xs"
+                  :class="
+                    form.college_branch_id ? 'text-gray-400' : 'text-red-500'
+                  "
+                >
+                  No departments available. Please add a department first.
+                </p>
               </div>
 
-              <div class="flex flex-col space-y-2 w-full relative">
+              <div
+                ref="instituteDropdown"
+                class="flex flex-col space-y-2 w-full relative"
+              >
                 <label class="input-label">Institute:</label>
                 <input
                   v-model="searchInstituteQuery"
@@ -173,7 +263,10 @@
                 </div>
               </div>
 
-              <div class="flex flex-col space-y-2 w-full relative">
+              <div
+                ref="programDropdown"
+                class="flex flex-col space-y-2 w-full relative"
+              >
                 <label class="input-label">Program:</label>
                 <input
                   v-model="searchProgramQuery"
@@ -185,6 +278,7 @@
 
                 <div
                   v-if="showProgramDropdown"
+                  @clickOutside="showProgramDropdown = false"
                   class="absolute top-[75px] left-0 w-full bg-white border border-gray-300 rounded-md max-h-40 overflow-y-auto z-50 shadow-lg"
                 >
                   <div
@@ -215,6 +309,16 @@
                   step="0.25"
                   class="input-text"
                   placeholder="Enter SP/MAS Unit"
+                />
+              </div>
+              <div class="w-full space-y-2 text-left flex flex-col">
+                <label class="input-label">Unit Load:</label>
+                <input
+                  v-model.number="form.unit_load"
+                  type="number"
+                  min="0"
+                  class="input-text"
+                  placeholder="Enter unit load"
                 />
               </div>
             </template>
@@ -340,6 +444,8 @@ export default {
         is_active: true,
         institute_id: null,
         program_id: null,
+        department_id: null,
+        college_branch_id: null,
       },
 
       searchProgramQuery: "",
@@ -360,7 +466,12 @@ export default {
   },
 
   computed: {
-    ...mapState(useFetchDataStore, ["programs", "institutes"]),
+    ...mapState(useFetchDataStore, [
+      "programs",
+      "institutes",
+      "departments",
+      "college_branch",
+    ]),
 
     isEditMode() {
       return !!this.userData;
@@ -369,7 +480,13 @@ export default {
     isAdminRole() {
       return this.form.role === "Admin";
     },
+    requiresDepartment() {
+      return this.form.role === "Faculty";
+    },
 
+    requiresCoorBranch() {
+      return this.form.role === "Coordinator";
+    },
     filteredPrograms() {
       const query = this.searchProgramQuery?.toLowerCase() || "";
 
@@ -409,17 +526,71 @@ export default {
         this.form.unit_load = 0;
         this.form.institute_id = null;
         this.form.program_id = null;
+        this.form.department_id = null;
+        this.form.is_under_dpt = false;
+
         this.searchInstituteQuery = "";
         this.searchProgramQuery = "";
-      } else if (!this.form.employment_type) {
-        this.form.employment_type = "Full Time";
+      } else if (
+        newRole !== "Coordinator" &&
+        newRole !== "Department Chairperson"
+      ) {
+        this.form.college_branch_id = null;
+      } else {
+        if (!this.form.employment_type) {
+          this.form.employment_type = "Full Time";
+        }
+
+        if (newRole === "Faculty") {
+          this.form.is_under_dpt = true;
+        } else {
+          this.form.department_id = null;
+          this.form.is_under_dpt = false;
+        }
       }
+    },
+    "form.college_branch_id"(newBranchId) {
+      if (newBranchId) {
+        this.form.department_id = null;
+        this.form.is_under_dpt = false;
+      }
+    },
+
+    "form.department_id"(newDepartmentId) {
+      this.form.is_under_dpt =
+        newDepartmentId !== null &&
+        newDepartmentId !== undefined &&
+        newDepartmentId !== "";
     },
   },
 
   methods: {
-    ...mapActions(useFetchDataStore, ["fetchPrograms", "fetchInstitutes"]),
+    ...mapActions(useFetchDataStore, [
+      "fetchPrograms",
+      "fetchInstitutes",
+      "fetchDepartments",
+      "fetchCollegeBranch",
+    ]),
+    handleClickOutside(event) {
+      const dropdowns = [
+        {
+          ref: "instituteDropdown",
+          state: "showInstituteDropdown",
+        },
+        {
+          ref: "programDropdown",
+          state: "showProgramDropdown",
+        },
+      ];
 
+      dropdowns.forEach(({ ref, state }) => {
+        const element = this.$refs[ref];
+
+        if (element && !element.contains(event.target)) {
+          this[state] = false;
+        }
+      });
+    },
     selectProgram(program) {
       this.form.program_id = program.program_id;
       this.searchProgramQuery = program.program_name;
@@ -450,6 +621,20 @@ export default {
         return;
       }
 
+      if (
+        role === "Faculty" &&
+        !this.form.college_branch_id &&
+        !this.form.department_id
+      ) {
+        toast.error("Please select a department or college branch.");
+        return;
+      }
+
+      if (role === "Department Chairperson" && !this.form.college_branch_id) {
+        toast.error("Please select a branch.");
+        return;
+      }
+
       this.currentStep = 2;
     },
 
@@ -464,6 +649,7 @@ export default {
 
       if (!this.isAdminRole) {
         payload.employment_type = this.form.employment_type || "Full Time";
+
         payload.designation = this.form.designation?.trim() || "";
         payload.preferred_rest_day = this.form.preferred_rest_day;
 
@@ -477,6 +663,35 @@ export default {
         payload.program_id = Number(this.form.program_id);
       }
 
+      if (this.requiresDepartment) {
+        payload.department_id = this.form.department_id
+          ? Number(this.form.department_id)
+          : null;
+
+        payload.college_branch_id = null;
+        payload.is_under_dpt = payload.department_id !== null;
+      } else if (this.requiresCoorBranch) {
+        payload.department_id = null;
+        payload.college_branch_id = this.form.college_branch_id
+          ? Number(this.form.college_branch_id)
+          : null;
+
+        payload.is_under_dpt = false;
+      } else {
+        payload.department_id = null;
+        payload.college_branch_id = null;
+        payload.is_under_dpt = false;
+      }
+
+      if (this.requiresCoorBranch) {
+        payload.college_branch_id =
+          this.form.college_branch_id != null &&
+          this.form.college_branch_id !== ""
+            ? Number(this.form.college_branch_id)
+            : null;
+      } else {
+        payload.college_branch_id = null;
+      }
       if (!this.isEditMode) {
         payload.password = this.form.password;
       }
@@ -507,11 +722,18 @@ export default {
         return;
       }
 
+      if (!this.isAdminRole && !this.form.institute_id) {
+        toast.error("Institute is required.");
+        return;
+      }
+
       if (
-        !this.isAdminRole &&
-        (!this.form.institute_id || !this.form.program_id)
+        this.requiresDepartment &&
+        !this.form.department_id &&
+        !this.form.college_branch_id
       ) {
-        toast.error("Institute and Program are required.");
+        toast.error("Please select a department or college branch.");
+        this.currentStep = 1;
         return;
       }
 
@@ -559,7 +781,9 @@ export default {
 
     fillEditForm() {
       if (!this.userData) return;
-
+      console.log("EDIT USER:", this.userData);
+      console.log("BRANCH ID:", this.form.college_branch_id);
+      console.log("AVAILABLE BRANCHES:", this.college_branch);
       this.form = {
         id: this.userData.id,
         email: this.userData.email || "",
@@ -580,6 +804,21 @@ export default {
 
         program_id:
           this.userData.program_id || this.userData.program?.program_id || null,
+        department_id:
+          this.userData.department?.department_id != null
+            ? Number(this.userData.department.department_id)
+            : this.userData.department_id != null
+            ? Number(this.userData.department_id)
+            : null,
+
+        college_branch_id:
+          this.userData.college_branch?.college_branch_id != null
+            ? Number(this.userData.college_branch.college_branch_id)
+            : this.userData.college_branch_id != null
+            ? Number(this.userData.college_branch_id)
+            : null,
+
+        is_under_dpt: this.userData.is_under_dpt ?? false,
       };
 
       if (this.form.role === "Admin") {
@@ -592,7 +831,7 @@ export default {
         this.searchProgramQuery = "";
         return;
       }
-
+      this.form.is_under_dpt = this.form.department_id != null;
       this.searchInstituteQuery =
         this.userData.institute?.institute_name ||
         this.userData.institute_name ||
@@ -604,12 +843,20 @@ export default {
   },
 
   async mounted() {
-    await this.fetchInstitutes();
-    await this.fetchPrograms();
+    document.addEventListener("click", this.handleClickOutside);
+    await Promise.all([
+      this.fetchInstitutes(),
+      this.fetchPrograms(),
+      this.fetchDepartments(),
+      this.fetchCollegeBranch(),
+    ]);
 
     if (this.isEditMode) {
       this.fillEditForm();
     }
+  },
+  beforeUnmount() {
+    document.removeEventListener("click", this.handleClickOutside);
   },
 };
 </script>

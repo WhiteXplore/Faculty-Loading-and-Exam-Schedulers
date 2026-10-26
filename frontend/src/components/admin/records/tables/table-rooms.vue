@@ -9,7 +9,7 @@
     </div> -->
 
     <!-- Table -->
-    <div class="table-container">
+    <div class="table-container2">
       <!-- Top Controls -->
       <div class="table-controls">
         <!-- Items per page -->
@@ -63,7 +63,7 @@
               class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
             >
               <!-- Icon -->
-              <div class="absolute left-3 text-defaultGreen">
+              <div class="absolute left-3 text-gray-400">
                 <svg
                   class="h-4 w-4"
                   fill="none"
@@ -186,7 +186,7 @@
             <div
               class="relative flex items-center rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-200 focus-within:border-defaultGreen focus-within:ring-4 focus-within:ring-green-100"
             >
-              <div class="absolute left-3 text-defaultGreen">
+              <div class="absolute left-3 text-gray-400">
                 <svg
                   class="h-4 w-4"
                   fill="none"

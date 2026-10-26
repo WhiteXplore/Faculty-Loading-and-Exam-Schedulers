@@ -163,6 +163,13 @@ const routes = [
         meta: { requiresAuth: true, role: "Admin" },
         children: [],
       },
+      {
+        path: "/departments",
+        name: "departments",
+        component: () => import("@/components/admin/records/Departments.vue"),
+        meta: { requiresAuth: true, role: "Admin" },
+        children: [],
+      },
     ],
   },
   // Program Chair View
@@ -295,6 +302,24 @@ const routes = [
         name: "prog-pre-assessment",
         component: () => import("@/components/admin/records/PreAssessment.vue"),
         meta: { requiresAuth: true, role: "Program Chairperson" },
+      },
+
+      {
+        path: "/prog-report-curriculum-offers",
+        name: "prog-report-curriculum-offers",
+        component: () => import("@/components/admin/records/Prospectus.vue"),
+        meta: { requiresAuth: true, role: "Program Chairperson" },
+      },
+
+      {
+        path: "/prog-view-curriculum-offers/:institute_id",
+        name: "prog-view-curriculum-offers",
+        component: () =>
+          import("@/components/admin/records/ViewProspectus.vue"),
+        meta: {
+          requiresAuth: true,
+          roles: ["Program Chairperson", "Department Chairperson"],
+        },
       },
     ],
   },
