@@ -10,3 +10,7 @@ __pycache__/
 
 # Ad-hoc safety-net backups made before overwriting real scheduler output
 backend/src/generated_scheduled/json_output/_backup_*/
+
+# Intentionally untracked going forward — machine-specific (python.exe path);
+# stays frozen at its last-committed version, future edits won't be tracked.
+/backend/src/generated_scheduled/generated_scheduled.service.ts
