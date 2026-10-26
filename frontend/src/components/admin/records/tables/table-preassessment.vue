@@ -737,7 +737,7 @@
                       </thead>
                       <tbody>
                         <tr
-                          v-for="(o, i) in g.offenders"
+                          v-for="(o, i) in pagedOffenders(g)"
                           :key="i"
                           class="border-t border-gray-100"
                         >
@@ -762,12 +762,58 @@
                       </tbody>
                     </table>
                   </div>
-                  <p
-                    v-if="g.offenders_total > g.offenders.length"
-                    class="text-[10px] text-gray-400 mt-1"
+                  <div
+                    v-if="g.offenders.length > offenderPageSize"
+                    class="flex items-center justify-between mt-1 text-[10px] text-gray-500"
                   >
-                    showing {{ g.offenders.length }} of {{ g.offenders_total }}
-                  </p>
+                    <span>
+                      Showing
+                      {{
+                        (gateOffenderPage[g.id] || 1) * offenderPageSize -
+                        offenderPageSize +
+                        1
+                      }}–{{
+                        Math.min(
+                          (gateOffenderPage[g.id] || 1) * offenderPageSize,
+                          g.offenders.length,
+                        )
+                      }}
+                      of {{ g.offenders.length }}
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <button
+                        @click="
+                          setGateOffenderPage(
+                            g.id,
+                            (gateOffenderPage[g.id] || 1) - 1,
+                          )
+                        "
+                        :disabled="(gateOffenderPage[g.id] || 1) <= 1"
+                        class="px-2 py-0.5 rounded border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+                      >
+                        Prev
+                      </button>
+                      <span>
+                        Page {{ gateOffenderPage[g.id] || 1 }} of
+                        {{ gateOffenderPageCount(g) }}
+                      </span>
+                      <button
+                        @click="
+                          setGateOffenderPage(
+                            g.id,
+                            (gateOffenderPage[g.id] || 1) + 1,
+                          )
+                        "
+                        :disabled="
+                          (gateOffenderPage[g.id] || 1) >=
+                          gateOffenderPageCount(g)
+                        "
+                        class="px-2 py-0.5 rounded border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </template>
@@ -864,7 +910,7 @@
                       </thead>
                       <tbody>
                         <tr
-                          v-for="(it, i) in rec.items"
+                          v-for="(it, i) in pagedRecItems(rec)"
                           :key="i"
                           class="border-t border-gray-100"
                         >
@@ -878,12 +924,51 @@
                       </tbody>
                     </table>
                   </div>
-                  <p
-                    v-if="rec.items_total > rec.items.length"
-                    class="text-[10px] text-gray-400 mt-1"
+                  <div
+                    v-if="rec.items.length > offenderPageSize"
+                    class="flex items-center justify-between mt-1 text-[10px] text-gray-500"
                   >
-                    showing {{ rec.items.length }} of {{ rec.items_total }}
-                  </p>
+                    <span>
+                      Showing
+                      {{
+                        (recItemPage[rec.key] || 1) * offenderPageSize -
+                        offenderPageSize +
+                        1
+                      }}–{{
+                        Math.min(
+                          (recItemPage[rec.key] || 1) * offenderPageSize,
+                          rec.items.length,
+                        )
+                      }}
+                      of {{ rec.items.length }}
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <button
+                        @click="
+                          setRecItemPage(rec, (recItemPage[rec.key] || 1) - 1)
+                        "
+                        :disabled="(recItemPage[rec.key] || 1) <= 1"
+                        class="px-2 py-0.5 rounded border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+                      >
+                        Prev
+                      </button>
+                      <span>
+                        Page {{ recItemPage[rec.key] || 1 }} of
+                        {{ recItemPageCount(rec) }}
+                      </span>
+                      <button
+                        @click="
+                          setRecItemPage(rec, (recItemPage[rec.key] || 1) + 1)
+                        "
+                        :disabled="
+                          (recItemPage[rec.key] || 1) >= recItemPageCount(rec)
+                        "
+                        class="px-2 py-0.5 rounded border border-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
                 </td>
               </tr>
             </template>
@@ -913,6 +998,9 @@ export default {
       activeTab: "gates",
       gateOpen: {},
       recOpen: {},
+      gateOffenderPage: {},
+      recItemPage: {},
+      offenderPageSize: 10,
 
       fetchDataStore: useFetchDataStore(),
 
@@ -1113,9 +1201,49 @@ export default {
     },
     toggleGate(id) {
       this.gateOpen[id] = !this.gateOpen[id];
+      if (this.gateOpen[id]) this.gateOffenderPage[id] = 1;
     },
     toggleRec(key) {
       this.recOpen[key] = !this.recOpen[key];
+      if (this.recOpen[key]) this.recItemPage[key] = 1;
+    },
+    pagedOffenders(g) {
+      const page = this.gateOffenderPage[g.id] || 1;
+      const start = (page - 1) * this.offenderPageSize;
+      return (g.offenders || []).slice(start, start + this.offenderPageSize);
+    },
+    gateOffenderPageCount(g) {
+      return Math.max(
+        1,
+        Math.ceil((g.offenders || []).length / this.offenderPageSize),
+      );
+    },
+    setGateOffenderPage(gateId, page) {
+      const clamped = Math.min(
+        Math.max(1, page),
+        this.gateOffenderPageCount(
+          this.report.gates.find((g) => g.id === gateId),
+        ),
+      );
+      this.gateOffenderPage[gateId] = clamped;
+    },
+    pagedRecItems(rec) {
+      const page = this.recItemPage[rec.key] || 1;
+      const start = (page - 1) * this.offenderPageSize;
+      return (rec.items || []).slice(start, start + this.offenderPageSize);
+    },
+    recItemPageCount(rec) {
+      return Math.max(
+        1,
+        Math.ceil((rec.items || []).length / this.offenderPageSize),
+      );
+    },
+    setRecItemPage(rec, page) {
+      const clamped = Math.min(
+        Math.max(1, page),
+        this.recItemPageCount(rec),
+      );
+      this.recItemPage[rec.key] = clamped;
     },
     statusText(s) {
       return { PASS: "OK", WARN: "Warning", FAIL: "Shortage" }[s] || s;

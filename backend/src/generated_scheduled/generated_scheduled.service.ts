@@ -25,12 +25,12 @@ export class GeneratedScheduledService {
   runPythonScheduler(): Promise<any> {
     return new Promise((resolve, reject) => {
       const scriptPath = path
-        .resolve(__dirname, '../../../python/faculty_ga_remar.py')
+        .resolve(__dirname, '../../../python/faculty_loading_jhomel_v2.py')
         .replace(/\\/g, '/');
 
       console.log('Running Python script:', scriptPath);
 
-      const pythonProcess = spawn('C:\\Program Files\\Python314\\python.exe', [
+      const pythonProcess = spawn('C:\\Program Files\\Python313\\python.exe', [
         scriptPath,
       ]);
       let stdoutData = '';
@@ -42,6 +42,15 @@ export class GeneratedScheduledService {
 
       pythonProcess.stderr.on('data', (data) => {
         stderrData += data.toString();
+      });
+
+      pythonProcess.on('error', (err) => {
+        console.error('Failed to start Python process:', err);
+        reject(
+          new InternalServerErrorException(
+            `Failed to start Python process: ${err.message}`,
+          ),
+        );
       });
 
       pythonProcess.on('close', (code) => {
@@ -108,7 +117,7 @@ export class GeneratedScheduledService {
 
       // Run the actual Python script
       const pythonProcess = spawn(
-        'C:\\Program Files\\Python314\\python.exe',
+        'C:\\Program Files\\Python313\\python.exe',
         scriptArgs,
       );
 

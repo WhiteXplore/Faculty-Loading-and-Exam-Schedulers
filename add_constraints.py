@@ -50,6 +50,23 @@ def add_row(ws, data, even):
         c.border = border
     ws.row_dimensions[r].height = 55
 
+# Remove any previously-generated "SCHEDULING CONSTRAINT TEST CASES" block so
+# re-running this script updates it in place instead of duplicating it below
+# whatever was written by an earlier run (the INT-* rows above it are left
+# untouched either way).
+DIVIDER_LABEL = "SCHEDULING CONSTRAINT TEST CASES"
+_start_row = None
+for _r in range(1, ws.max_row + 1):
+    _val = ws.cell(_r, 1).value
+    if _val and DIVIDER_LABEL in str(_val):
+        _start_row = _r
+        break
+if _start_row is not None:
+    _delete_from = _start_row
+    if _start_row > 1 and all(c.value in (None, "") for c in ws[_start_row - 1]):
+        _delete_from = _start_row - 1
+    ws.delete_rows(_delete_from, ws.max_row - _delete_from + 1)
+
 ws.append([""] * N)
 divider(ws, "  SCHEDULING CONSTRAINT TEST CASES  (from GA Scheduler rules)")
 
@@ -151,6 +168,42 @@ data = [
         ("CON-24", "IAAS institute lab and lecture rooms are interchangeable",
          "Create courses under the IAAS institute (ID 63), run the GA, and check which room types are assigned.",
          "For IAAS courses, the scheduler may assign either a lecture room or a lab room regardless of the course type, with no room type mismatch error."),
+    ]),
+    ("Hard Constraint - Faculty Prep Limit", [
+        ("CON-25", "Faculty capped at 4 distinct course preps (PREP_LIMIT)",
+         "Register one faculty's expertise for 5 distinct course codes, each with available sections and enough spare load capacity to take all 5, then run faculty assignment.",
+         "The faculty must not receive more than 4 distinct course codes (preps) in total, even though load capacity was available for a 5th. The 5th course's sections should be offered to other qualified faculty instead."),
+    ]),
+    ("Hard Constraint - Course Code Matching", [
+        ("CON-26", "Duplicate/misspelled course codes are matched via normalization",
+         "Create a class section with course_code 'ENG 111' and a faculty expertise entry with course_code 'ENG111' (same course, differing only in whitespace/case) under the same program_id, then run faculty assignment.",
+         "The faculty must be recognized as qualified for the class despite the spelling difference — course codes are normalized (whitespace stripped, uppercased) before matching, so the class is not left with 'no qualified faculty'."),
+    ]),
+    ("Special Rule - Cross-Program Assignment", [
+        ("CON-27", "Cross-program overflow for shared GenEd-type course codes",
+         "Create a class under program_id A for a course_code with no faculty registered under program_id A, but with a faculty registered for that same course_code under a different program_id B who has spare load and prep room, then run faculty assignment.",
+         "The class must be assigned to the program-B faculty as a fallback, but only after native-program assignment and the exhaustion pass have both failed to place it, and only if doing so does not exceed that faculty's load_unit cap or PREP_LIMIT."),
+    ]),
+    ("Special Rule - Saturation Assignment Order", [
+        ("CON-28", "One faculty absorbs all sections of a course before overflow",
+         "Register 2 faculty as qualified for the same course code with 6 available sections, where one faculty has much more spare load capacity than the other, then run faculty assignment.",
+         "The least-loaded qualified faculty should receive ALL 6 sections up to their load_unit cap before any sections overflow to the second qualified faculty — sections should not be split evenly/arbitrarily between them."),
+        ("CON-29", "Branch-expertise faculty get priority for non-Main branch courses",
+         "For a course at a non-Main branch, register two qualified faculty: one with that branch listed in their own branch-expertise field and one without, giving the non-listed faculty a lower current load, then run faculty assignment.",
+         "The faculty with the matching branch-expertise listing must be assigned the course first, ahead of the otherwise less-loaded faculty who lacks that branch registration."),
+    ]),
+    ("Soft Constraint - Repair Pass (Relaxation Tiers)", [
+        ("CON-30", "Unscheduled classes are retried under progressively relaxed SOFT constraints only",
+         "Set up a class that fails initial scheduling only because of a soft constraint (e.g. preferred-time window or AM/PM balancing), while a genuinely free faculty/room/class time slot still exists, then run the GA.",
+         "The repair pass must place the class by relaxing soft constraints (preferred-time, daily-span, then daily-hour cap, in that order) while never violating a HARD constraint — validate_schedule() must still report zero conflicts after the repair pass runs."),
+        ("CON-31", "Lecture+Lab decouples to independent days/times as a last resort",
+         "Set up a Lecture+Lab class that cannot fit as one consecutive lecture-then-lab block under any day pattern or time slot even after every other repair tier, then run the GA.",
+         "As the final repair tier, the lecture and lab components may be scheduled on different days/times (the lecture may go online); this decoupled placement is only used when a coupled placement is impossible, and is rolled back entirely if the lecture component still cannot be placed after the lab is booked."),
+    ]),
+    ("Special Rule - DAPECOL Branch", [
+        ("CON-32", "All DAPECOL programs share the same fixed 2-day f2f/online pair",
+         "Assign faculty from two different programs to DAPECOL classes, run the GA, and compare which days each program's classes land on.",
+         "Every DAPECOL class across every program must use the identical 2-day pattern (e.g. same f2f day and the same paired online day) — the day pair is fixed once per run for the whole branch, not chosen independently per program or per faculty."),
     ]),
 ]
 
